@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Sport Track IA",
+  title: "Sport Tracker IA",
   description: "Modern sport tracking platform",
 };
 
