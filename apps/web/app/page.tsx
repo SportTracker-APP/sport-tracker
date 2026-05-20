@@ -1,13 +1,12 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-
 import {
   Activity,
   Flame,
   Route,
   Trophy,
 } from "lucide-react";
-
 import { StatsCard } from "@/components/dashboard/stats-card";
+import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-chart";
 
 
 export default function HomePage() {
@@ -52,7 +51,10 @@ export default function HomePage() {
               description="2 objectifs presque atteints"
               icon={Trophy}
             />
+          
         </div>
+        {/* Intégration Graphique activité hebdomadaire */}
+        <WeeklyActivityChart /> 
       </div>
     </DashboardLayout>
   );
