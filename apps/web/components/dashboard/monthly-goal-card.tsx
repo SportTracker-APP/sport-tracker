@@ -2,7 +2,7 @@ export function MonthlyGoalCard() {
   const progress = 74;
 
   return (
-    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-zinc-400">

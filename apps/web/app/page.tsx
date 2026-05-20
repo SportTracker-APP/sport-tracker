@@ -10,6 +10,7 @@ import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-char
 import { RecentActivities } from "@/components/dashboard/recent-activities";
 import { MonthlyGoalCard } from "@/components/dashboard/monthly-goal-card";
 import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
+import { FadeIn } from "@/components/ui/fade-in";
 
 
 export default function HomePage() {
@@ -27,48 +28,66 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 2xl:grid-cols-4">
+          <FadeIn delay={0.2}>
             <StatsCard
               title="Activités"
               value="128"
               description="+12% ce mois-ci"
               icon={Activity}
             />
+          </FadeIn>
 
+          <FadeIn delay={0.2}>
             <StatsCard
               title="Distance"
               value="842 km"
               description="+84 km cette semaine"
               icon={Route}
             />
+          </FadeIn>
 
+          <FadeIn delay={0.2}>
             <StatsCard
               title="Calories"
               value="24 300"
               description="Très bonne progression"
               icon={Flame}
             />
+          </FadeIn>
 
+          <FadeIn delay={0.2}>
             <StatsCard
               title="Objectif mensuel"
               value="6"
               description="2 objectifs presque atteints"
               icon={Trophy}
             />
+          </FadeIn>
           
         </div>
         <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
           {/* Intégration Graphique activité hebdomadaire */}
-          <WeeklyActivityChart /> 
+          <FadeIn delay={0.5}>
+            <WeeklyActivityChart /> 
+          </FadeIn>
 
           {/* Intégration Liste récente activités */}
-          <RecentActivities />
+          <FadeIn delay={0.6}>
+            <RecentActivities />
+          </FadeIn>
+
         </div>
         <div className="mt-4 grid gap-4 sm:mt-6 sm:gap-6 xl:grid-cols-2">
           {/* Intégration Graphique Objectif Mensuel Card */}
-          <MonthlyGoalCard /> 
+          <FadeIn delay={0.7}>
+            <MonthlyGoalCard /> 
+          </FadeIn>
 
           {/* Intégration Heatmap */}
-          <ActivityHeatmap />
+          <FadeIn delay={0.7}>
+           <ActivityHeatmap />
+          </FadeIn>
+          
         </div>
       </div>
     </DashboardLayout>

@@ -31,7 +31,7 @@ const activities = [
 
 export function RecentActivities() {
   return (
-    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h3 className="text-xl font-semibold text-white">
