@@ -1,5 +1,15 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
+import {
+  Activity,
+  Flame,
+  Route,
+  Trophy,
+} from "lucide-react";
+
+import { StatsCard } from "@/components/dashboard/stats-card";
+
+
 export default function HomePage() {
   return (
     <DashboardLayout>
@@ -14,46 +24,34 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-            <p className="text-sm text-zinc-400">
-              Total Activities
-            </p>
+        <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-4">
+            <StatsCard
+              title="Activités"
+              value="128"
+              description="+12% ce mois-ci"
+              icon={Activity}
+            />
 
-            <h3 className="mt-4 text-3xl font-bold text-white">
-              128
-            </h3>
-          </div>
+            <StatsCard
+              title="Distance"
+              value="842 km"
+              description="+84 km cette semaine"
+              icon={Route}
+            />
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-            <p className="text-sm text-zinc-400">
-              Distance
-            </p>
+            <StatsCard
+              title="Calories"
+              value="24 300"
+              description="Très bonne progression"
+              icon={Flame}
+            />
 
-            <h3 className="mt-4 text-3xl font-bold text-white">
-              842 km
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-            <p className="text-sm text-zinc-400">
-              Calories
-            </p>
-
-            <h3 className="mt-4 text-3xl font-bold text-white">
-              24 300
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-            <p className="text-sm text-zinc-400">
-              Active Goals
-            </p>
-
-            <h3 className="mt-4 text-3xl font-bold text-white">
-              6
-            </h3>
-          </div>
+            <StatsCard
+              title="Objectifs"
+              value="6"
+              description="2 objectifs presque atteints"
+              icon={Trophy}
+            />
         </div>
       </div>
     </DashboardLayout>
