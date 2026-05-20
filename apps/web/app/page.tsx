@@ -8,6 +8,8 @@ import {
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-chart";
 import { RecentActivities } from "@/components/dashboard/recent-activities";
+import { MonthlyGoalCard } from "@/components/dashboard/monthly-goal-card";
+import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 
 
 export default function HomePage() {
@@ -47,7 +49,7 @@ export default function HomePage() {
             />
 
             <StatsCard
-              title="Objectifs"
+              title="Objectif mensuel"
               value="6"
               description="2 objectifs presque atteints"
               icon={Trophy}
@@ -59,6 +61,12 @@ export default function HomePage() {
           <WeeklyActivityChart /> 
           {/* Intégration Liste récente activités */}
           <RecentActivities />
+        </div>
+        <div className="grid gap-6 xl:grid-cols-2">
+          {/* Intégration Graphique Objectif Mensuel Card */}
+          <MonthlyGoalCard /> 
+          {/* Intégration Heatmap */}
+          <ActivityHeatmap />
         </div>
       </div>
     </DashboardLayout>
