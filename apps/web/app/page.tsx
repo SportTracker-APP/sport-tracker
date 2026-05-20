@@ -15,7 +15,7 @@ import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 export default function HomePage() {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 overflow-hidden">
         <div>
           <h1 className="text-3xl font-bold text-white">
             Welcome back 👋
@@ -26,7 +26,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 2xl:grid-cols-4">
             <StatsCard
               title="Activités"
               value="128"
@@ -56,14 +56,14 @@ export default function HomePage() {
             />
           
         </div>
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
           {/* Intégration Graphique activité hebdomadaire */}
           <WeeklyActivityChart /> 
-          
+
           {/* Intégration Liste récente activités */}
           <RecentActivities />
         </div>
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:mt-6 sm:gap-6 xl:grid-cols-2">
           {/* Intégration Graphique Objectif Mensuel Card */}
           <MonthlyGoalCard /> 
 

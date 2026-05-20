@@ -46,7 +46,8 @@ export function ActivityHeatmap() {
       </div>
 
       {/* Heatmap */}
-      <div className="space-y-3">
+      <div className="overflow-x-auto">
+        <div className="min-w-[620px] space-y-3">
         {heatmapData.map((row, rowIndex) => (
           <div
             key={rowIndex}
