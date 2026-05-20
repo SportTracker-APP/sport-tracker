@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-chart";
+import { RecentActivities } from "@/components/dashboard/recent-activities";
 
 
 export default function HomePage() {
@@ -53,8 +54,12 @@ export default function HomePage() {
             />
           
         </div>
-        {/* Intégration Graphique activité hebdomadaire */}
-        <WeeklyActivityChart /> 
+        <div className="grid gap-6 xl:grid-cols-2">
+          {/* Intégration Graphique activité hebdomadaire */}
+          <WeeklyActivityChart /> 
+          {/* Intégration Liste récente activités */}
+          <RecentActivities />
+        </div>
       </div>
     </DashboardLayout>
   );
