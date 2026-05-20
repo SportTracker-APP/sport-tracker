@@ -59,12 +59,14 @@ export default function HomePage() {
         <div className="grid gap-6 xl:grid-cols-2">
           {/* Intégration Graphique activité hebdomadaire */}
           <WeeklyActivityChart /> 
+          
           {/* Intégration Liste récente activités */}
           <RecentActivities />
         </div>
         <div className="grid gap-6 xl:grid-cols-2">
           {/* Intégration Graphique Objectif Mensuel Card */}
           <MonthlyGoalCard /> 
+
           {/* Intégration Heatmap */}
           <ActivityHeatmap />
         </div>
