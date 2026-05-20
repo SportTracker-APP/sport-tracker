@@ -12,6 +12,12 @@ import { MonthlyGoalCard } from "@/components/dashboard/monthly-goal-card";
 import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 import { FadeIn } from "@/components/ui/fade-in";
 
+import {
+  monthlyGoal,
+  recentActivities,
+  statsData,
+} from "@/lib/data/dashboard-data";
+
 
 export default function HomePage() {
   return (
@@ -19,51 +25,28 @@ export default function HomePage() {
       <div className="space-y-6 overflow-hidden">
         <div>
           <h1 className="text-3xl font-bold text-white">
-            Welcome back 👋
+            Continuez votre progression. 👋
           </h1>
 
           <p className="mt-2 text-zinc-400">
-            Here is your sport performance overview.
+            Suivez vos performances et gardez le rythme cette semaine.
           </p>
         </div>
 
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 2xl:grid-cols-4">
-          <FadeIn delay={0.2}>
-            <StatsCard
-              title="Activités"
-              value="128"
-              description="+12% ce mois-ci"
-              icon={Activity}
-            />
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <StatsCard
-              title="Distance"
-              value="842 km"
-              description="+84 km cette semaine"
-              icon={Route}
-            />
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <StatsCard
-              title="Calories"
-              value="24 300"
-              description="Très bonne progression"
-              icon={Flame}
-            />
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <StatsCard
-              title="Objectif mensuel"
-              value="6"
-              description="2 objectifs presque atteints"
-              icon={Trophy}
-            />
-          </FadeIn>
-          
+          {statsData.map((stat, index) => (
+            <FadeIn
+              key={stat.title}
+              delay={0.2 * (index + 1)}
+            >
+              <StatsCard
+                title={stat.title}
+                value={stat.value}
+                description={stat.description}
+                icon={stat.icon}
+              />
+            </FadeIn>
+          ))}          
         </div>
         <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
           {/* Intégration Graphique activité hebdomadaire */}
@@ -87,7 +70,7 @@ export default function HomePage() {
           <FadeIn delay={0.7}>
            <ActivityHeatmap />
           </FadeIn>
-          
+
         </div>
       </div>
     </DashboardLayout>

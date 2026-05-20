@@ -51,7 +51,7 @@ const navigationItems = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden hidden lg:flex w-72 border-r border-zinc-800 bg-zinc-950 lg:flex lg:flex-col">
+    <aside className="hidden w-72 border-r border-zinc-800 bg-zinc-950 lg:flex lg:flex-col">
       <div className="border-b border-zinc-800 p-6">
         <h1 className="text-2xl font-bold text-white">
           Sport Tracker App

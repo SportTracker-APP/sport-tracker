@@ -18,10 +18,6 @@ export function Topbar() {
           <h2 className="text-lg font-semibold text-white sm:text-xl">
             Tableau de bord
           </h2>
-
-          <p className="text-xs text-zinc-400 sm:text-sm">
-            Suivez vos performances sportives.
-          </p>
         </div>
       </div>
 
