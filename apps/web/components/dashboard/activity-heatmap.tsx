@@ -80,6 +80,7 @@ export function ActivityHeatmap() {
             </div>
           </div>
         ))}
+        </div>
       </div>
 
       {/* Footer */}
