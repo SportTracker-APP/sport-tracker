@@ -1,5 +1,7 @@
-import { Bell } from "lucide-react";
+"use client";
 
+import { usePathname } from "next/navigation";
+import { Bell } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
 
 import {
@@ -8,6 +10,7 @@ import {
 } from "@/components/ui/avatar";
 
 export function Topbar() {
+  const pathname = usePathname();
   return (
     <header className="flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 sm:px-8">
       {/* Partie gauche */}
@@ -16,7 +19,11 @@ export function Topbar() {
 
         <div>
           <h2 className="text-lg font-semibold text-white sm:text-xl">
-            Tableau de bord
+            {pathname === "/"
+             ? "Tableau de bord"
+             : pathname === "/activites"
+              ? "Activités"
+              : "Sport Tracker"}
           </h2>
         </div>
       </div>
