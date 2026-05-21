@@ -3,6 +3,7 @@ import {
   Dumbbell,
   Footprints,
   Mountain,
+  MountainSnow,
 } from "lucide-react";
 
 export const activities = [
@@ -46,4 +47,44 @@ export const activities = [
     date: "Vendredi",
     icon: Dumbbell,
   },
+ {
+    id: 5,
+    title: "Trail forêt",
+    type: "Trail",
+    distance: "10 km",
+    duration: "1h10",
+    calories: 975,
+    date: "Mercredi",
+    icon: Mountain,
+  },
+ {
+    id: 6,
+    title: "Course Afterwork",
+    type: "Course",
+    distance: "14.07 km",
+    duration: "1h10",
+    calories: 1210,
+    date: "Lundi",
+    icon: Footprints,
+  },
+ {
+    id: 7,
+    title: "Séance haut corps",
+    type: "Musculation",
+    distance: "-",
+    duration: "1h00",
+    calories: 598,
+    date: "Samedi 16/05/2026",
+    icon: Dumbbell,
+  },
+ {
+    id: 8,
+    title: "Randonnée",
+    type: "Randonnée",
+    distance: "9.3 km",
+    duration: "1h10",
+    calories: 874,
+    date: "Vendredi 15/05/2026",
+    icon: MountainSnow,
+  }
 ];

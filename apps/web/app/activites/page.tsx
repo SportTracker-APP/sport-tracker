@@ -1,12 +1,26 @@
+"use client";
+
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-
 import { ActivityCard } from "@/components/activities/activity-card";
-
 import { FadeIn } from "@/components/ui/fade-in";
-
 import { activities } from "@/lib/data/activities-data";
+import { ActivityFilters } from "@/components/activities/activity-filters";
+import { useMemo, useState } from "react";
 
 export default function ActivitiesPage() {
+  const [activeFilter, setActiveFilter] =
+    useState("Tous");
+
+  const filteredActivities = useMemo(() => {
+    if (activeFilter === "Tous") {
+      return activities;
+    }
+
+    return activities.filter(
+      (activity) => activity.type === activeFilter
+    );
+  }, [activeFilter]);
+  
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -21,9 +35,13 @@ export default function ActivitiesPage() {
           </p>
         </div>
 
+        <ActivityFilters
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
         {/* Liste activités */}
         <div className="space-y-4">
-          {activities.map((activity, index) => (
+          {filteredActivities.map((activity, index) => (
             <FadeIn
               key={activity.id}
               delay={0.1 * (index + 1)}
