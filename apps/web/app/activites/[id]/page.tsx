@@ -5,16 +5,14 @@ import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 import {
+  Activity,
   ArrowLeft,
   Calendar,
   Flame,
   Gauge,
   HeartPulse,
   MapPin,
-  Mountain,
   Timer,
-  TrendingDown,
-  Zap,
 } from "lucide-react";
 
 import {
@@ -49,42 +47,51 @@ const elevationData = [
   { distance: 8.42, elevation: 540, grade: 3 },
 ];
 
-const stats = [
+const performanceStats = [
   {
-    title: "Allure moyenne",
-    value: "5:02/km",
-    subtitle: "Max 3:48/km",
+    title: "Allure",
+    value: "5'01",
+    unit: "/km",
     icon: Timer,
     color: "text-lime-400",
     bg: "bg-lime-500/10",
     border: "border-lime-500/20",
   },
   {
-    title: "Vitesse moyenne",
-    value: "11.9 km/h",
-    subtitle: "Max 15.8 km/h",
+    title: "Vitesse",
+    value: "11.9",
+    unit: "km/h",
     icon: Gauge,
     color: "text-sky-400",
     bg: "bg-sky-500/10",
     border: "border-sky-500/20",
   },
   {
-    title: "Fréq. cardiaque",
-    value: "148 bpm",
-    subtitle: "Max 178 bpm",
+    title: "BPM moyen",
+    value: "154",
+    unit: "bpm",
     icon: HeartPulse,
     color: "text-red-400",
     bg: "bg-red-500/10",
     border: "border-red-500/20",
   },
   {
-    title: "Puissance",
-    value: "242 w",
-    subtitle: "Max 412 w",
-    icon: Zap,
-    color: "text-yellow-400",
-    bg: "bg-yellow-500/10",
-    border: "border-yellow-500/20",
+    title: "Cadence",
+    value: "172",
+    unit: "spm",
+    icon: Activity,
+    color: "text-cyan-400",
+    bg: "bg-cyan-500/10",
+    border: "border-cyan-500/20",
+  },
+  {
+    title: "Calories",
+    value: "560",
+    unit: "kcal",
+    icon: Flame,
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/20",
   },
 ];
 
@@ -139,7 +146,7 @@ export default function ActivityDetailsPage({
               </p>
             </div>
 
-            {/* Stats top */}
+            {/* Top stats */}
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
               <div className="rounded-2xl border border-zinc-800 bg-black/20 p-2.5">
                 <p className="text-[11px] uppercase tracking-wide text-zinc-500">
@@ -192,292 +199,276 @@ export default function ActivityDetailsPage({
           </div>
         </div>
 
-        {/* Elevation section */}
-        <div className="grid gap-4 xl:grid-cols-[1.65fr_260px]">
-          {/* Graph */}
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-4 backdrop-blur-xl">
-            <div className="mb-4 flex items-start justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-white">
-                  Profil d’élévation
-                </h2>
-
-                <p className="mt-1 text-sm text-zinc-400">
-                  Analyse du parcours et du dénivelé.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-zinc-800 bg-black/20 px-3 py-2">
-                <p className="text-[11px] uppercase tracking-wide text-zinc-500">
-                  Altitude max
-                </p>
-
-                <p className="mt-1 text-xl font-bold text-white">
-                  1240m
-                </p>
-              </div>
-            </div>
-
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={elevationData}
-                  margin={{
-                    top: 10,
-                    right: 12,
-                    left: 18,
-                    bottom: 0,
-                  }}
-                >
-                  <defs>
-                    <linearGradient
-                      id="elevationGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor="#84cc16"
-                        stopOpacity={0.35}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="#84cc16"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-
-                    <filter id="glow">
-                      <feGaussianBlur
-                        stdDeviation="6"
-                        result="coloredBlur"
-                      />
-
-                      <feMerge>
-                        <feMergeNode in="coloredBlur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
-                  </defs>
-
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="#27272a"
-                    opacity={0.35}
-                  />
-
-                  <XAxis
-                    dataKey="distance"
-                    stroke="#71717a"
-                    tickFormatter={(value) => `${value} km`}
-                    tickLine={false}
-                    axisLine={false}
-                    fontSize={11}
-                  />
-
-                  <YAxis
-                    width={60}
-                    tick={{ fill: "#71717a", fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                    domain={[0, 1400]}
-                    ticks={[0, 350, 700, 1050, 1400]}
-                    tickFormatter={(value) => `${value}m`}
-                  />
-
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#09090b",
-                      border: "1px solid #27272a",
-                      borderRadius: "14px",
-                      color: "#fff",
-                    }}
-                  />
-
-                  <Area
-                    type="natural"
-                    dataKey="elevation"
-                    stroke="#84cc16"
-                    strokeWidth={3}
-                    fill="url(#elevationGradient)"
-                    fillOpacity={1}
-                    filter="url(#glow)"
-                    dot={false}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Gradient de pente */}
-            <div className="mt-8 px-2">
-            <div className="mb-3 flex items-center justify-between">
+        {/* MAIN CONTENT */}
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_280px]">
+          {/* LEFT */}
+          <div>
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-xl">
+              {/* Graph header */}
+              <div className="mb-5 flex items-start justify-between">
                 <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
-                    Lecture de pente
-                </p>
+                  <h2 className="text-[2rem] font-semibold tracking-tight text-white">
+                    Profil d&apos;élévation
+                  </h2>
 
-                <p className="mt-1 text-xs text-zinc-600">
-                    Répartition visuelle des portions du parcours.
-                </p>
+                  <p className="mt-1 text-[15px] text-zinc-400">
+                    Analyse du parcours et du dénivelé.
+                  </p>
                 </div>
 
-                <div className="rounded-full border border-zinc-800 bg-zinc-900/70 px-3 py-1 text-[11px] text-zinc-400">
-                Pente moyenne 6.2%
-                </div>
-            </div>
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-950/80 px-5 py-4">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">
+                    Altitude max
+                  </p>
 
-            <div className="h-2.5 w-full overflow-hidden rounded-full border border-zinc-800/80 bg-zinc-950">
-                <div className="flex h-full w-full">
-                <div className="w-[18%] bg-lime-400" />
-                <div className="w-[24%] bg-yellow-400" />
-                <div className="w-[16%] bg-orange-400" />
-                <div className="w-[12%] bg-red-500" />
-                <div className="w-[20%] bg-yellow-400" />
-                <div className="w-[10%] bg-lime-400" />
+                  <p className="mt-1 text-2xl font-semibold text-white">
+                    1240m
+                  </p>
                 </div>
-            </div>
+              </div>
+
+              {/* Chart */}
+              <div className="h-[340px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={elevationData}
+                    margin={{
+                      top: 10,
+                      right: 12,
+                      left: 18,
+                      bottom: 0,
+                    }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="elevationGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor="#84cc16"
+                          stopOpacity={0.45}
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#84cc16"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+
+                      <filter id="glow">
+                        <feGaussianBlur
+                          stdDeviation="8"
+                          result="coloredBlur"
+                        />
+
+                        <feMerge>
+                          <feMergeNode in="coloredBlur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                    </defs>
+
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#27272a"
+                      opacity={0.35}
+                    />
+
+                    <XAxis
+                      dataKey="distance"
+                      tick={{
+                        fill: "#71717a",
+                        fontSize: 12,
+                      }}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+
+                    <YAxis
+                      width={60}
+                      tick={{
+                        fill: "#71717a",
+                        fontSize: 12,
+                      }}
+                      tickLine={false}
+                      axisLine={false}
+                      domain={[0, 1400]}
+                      ticks={[0, 350, 700, 1050, 1400]}
+                      tickFormatter={(value) => `${value}m`}
+                    />
+
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#09090b",
+                        border: "1px solid #27272a",
+                        borderRadius: "16px",
+                        color: "#fff",
+                      }}
+                    />
+
+                    <Area
+                      type="natural"
+                      dataKey="elevation"
+                      stroke="#84cc16"
+                      strokeWidth={3}
+                      fill="url(#elevationGradient)"
+                      filter="url(#glow)"
+                      dot={false}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Gradient */}
+              <div className="mt-8 px-2">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                      Lecture de pente
+                    </p>
+
+                    <p className="mt-1 text-xs text-zinc-600">
+                      Répartition visuelle des portions du parcours.
+                    </p>
+                  </div>
+
+                  <div className="rounded-full border border-zinc-800 bg-zinc-900/70 px-3 py-1 text-[11px] text-zinc-400">
+                    Pente moyenne 6.2%
+                  </div>
+                </div>
+
+                <div className="h-2.5 w-full overflow-hidden rounded-full border border-zinc-800/80 bg-zinc-950">
+                  <div className="flex h-full w-full">
+                    <div className="w-[18%] bg-lime-400" />
+                    <div className="w-[24%] bg-yellow-400" />
+                    <div className="w-[16%] bg-orange-400" />
+                    <div className="w-[12%] bg-red-500" />
+                    <div className="w-[20%] bg-yellow-400" />
+                    <div className="w-[10%] bg-lime-400" />
+                  </div>
+                </div>
 
                 <div className="mt-4 flex flex-wrap items-center gap-5 text-[11px] text-zinc-500">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <div className="h-2.5 w-2.5 rounded-full bg-lime-400 shadow-[0_0_8px_rgba(132,204,22,0.7)]" />
                     <span>Pente légère &lt; 5%</span>
-                    </div>
+                  </div>
 
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <div className="h-2.5 w-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.7)]" />
                     <span>Montée modérée 5–10%</span>
-                    </div>
+                  </div>
 
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <div className="h-2.5 w-2.5 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.7)]" />
                     <span>Montée soutenue 10–15%</span>
-                    </div>
+                  </div>
 
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <div className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
                     <span>Très raide &gt; 15%</span>
-                    </div>
+                  </div>
                 </div>
-            </div>
-        </div>
-
-          {/* Right panel */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 backdrop-blur-xl">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">
-                Dénivelé
-              </h3>
-
-              <div className="rounded-xl border border-zinc-800 bg-black/30 p-2">
-                <Mountain className="h-4 w-4 text-lime-400" />
-              </div>
-            </div>
-
-            <div className="mt-5 space-y-4">
-              {/* D+ */}
-              <div className="rounded-2xl border border-lime-500/10 bg-lime-500/5 p-4">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-500">
-                  <Mountain className="h-3.5 w-3.5 text-lime-400" />
-                  Dénivelé positif
-                </div>
-
-                <p className="mt-2 text-[38px] font-bold leading-none text-lime-400">
-                  +420m
-                </p>
-
-                <p className="mt-2 text-xs text-zinc-500">
-                  Montée cumulée totale
-                </p>
               </div>
 
-              {/* D- */}
-              <div className="rounded-2xl border border-orange-500/10 bg-orange-500/5 p-4">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-zinc-500">
-                  <TrendingDown className="h-3.5 w-3.5 text-orange-400" />
-                  Dénivelé négatif
+              {/* Elevation stats */}
+              <div className="mt-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div className="rounded-2xl border border-lime-500/15 bg-lime-500/5 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-lime-300/70">
+                    Dénivelé positif
+                  </p>
+
+                  <p className="mt-2 text-3xl font-semibold text-lime-400">
+                    +420m
+                  </p>
                 </div>
 
-                <p className="mt-2 text-[38px] font-bold leading-none text-orange-400">
-                  -398m
-                </p>
+                <div className="rounded-2xl border border-orange-500/15 bg-orange-500/5 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-orange-300/70">
+                    Dénivelé négatif
+                  </p>
 
-                <p className="mt-2 text-xs text-zinc-500">
-                  Descente cumulée totale
-                </p>
-              </div>
+                  <p className="mt-2 text-3xl font-semibold text-orange-400">
+                    -398m
+                  </p>
+                </div>
 
-              {/* Mini stats */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="rounded-2xl border border-zinc-800 bg-black/20 p-3">
-                  <p className="text-[11px] uppercase tracking-wide text-zinc-500">
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">
                     Alt. min
                   </p>
 
-                  <p className="mt-2 text-xl font-bold text-white">
+                  <p className="mt-2 text-2xl font-semibold text-white">
                     612m
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-zinc-800 bg-black/20 p-3">
-                  <p className="text-[11px] uppercase tracking-wide text-zinc-500">
-                    Alt. max
-                  </p>
-
-                  <p className="mt-2 text-xl font-bold text-white">
-                    1240m
-                  </p>
-                </div>
-
-                <div className="col-span-2 rounded-2xl border border-sky-500/10 bg-sky-500/5 p-3">
-                  <p className="text-[11px] uppercase tracking-wide text-zinc-500">
+                <div className="rounded-2xl border border-sky-500/15 bg-sky-500/5 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-sky-300/70">
                     Pente moyenne
                   </p>
 
-                  <p className="mt-2 text-2xl font-bold text-sky-400">
+                  <p className="mt-2 text-2xl font-semibold text-sky-400">
                     6.2%
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Bottom stats */}
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-              <div
-                key={stat.title}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 backdrop-blur-xl transition hover:border-zinc-700 hover:bg-zinc-900"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`rounded-xl border p-2.5 ${stat.bg} ${stat.border}`}
-                  >
-                    <Icon
-                      className={`h-4 w-4 ${stat.color}`}
-                    />
-                  </div>
-
-                  <p className="text-sm text-zinc-500">
-                    {stat.title}
-                  </p>
-                </div>
-
-                <h3 className="mt-4 text-[28px] font-bold text-white">
-                  {stat.value}
+          {/* RIGHT PERFORMANCE PANEL */}
+          <div>
+            <div className="sticky top-6 flex flex-col rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-xl">
+              <div className="mb-5">
+                <h3 className="text-2xl font-semibold text-white">
+                  Performance
                 </h3>
 
                 <p className="mt-1 text-sm text-zinc-500">
-                  {stat.subtitle}
+                  Résumé de la séance
                 </p>
               </div>
-            );
-          })}
+
+              <div className="grid grid-cols-1 gap-3">
+                {performanceStats.map((stat) => {
+                  const Icon = stat.icon;
+
+                  return (
+                    <div
+                      key={stat.title}
+                      className={`rounded-2xl border p-4 ${stat.bg} ${stat.border}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="rounded-lg border border-white/5 bg-black/20 p-2">
+                          <Icon className={`h-4 w-4 ${stat.color}`} />
+                        </div>
+
+                        <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                          {stat.title}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 flex items-end gap-1">
+                        <p
+                          className={`text-3xl font-semibold ${stat.color}`}
+                        >
+                          {stat.value}
+                        </p>
+
+                        <span className="pb-1 text-sm text-zinc-500">
+                          {stat.unit}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </DashboardLayout>
