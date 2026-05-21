@@ -12,6 +12,7 @@ const activities = [
     duration: "42 min",
     date: "Aujourd’hui",
     icon: Footprints,
+    color: "violet",
   },
   {
     title: "Sortie vélo",
@@ -19,6 +20,7 @@ const activities = [
     duration: "1h52",
     date: "Hier",
     icon: Bike,
+    color: "sky",
   },
   {
     title: "Trail forêt",
@@ -26,15 +28,17 @@ const activities = [
     duration: "1h24",
     date: "Samedi",
     icon: Mountain,
+    color: "emerald",
   },
 ];
 
 export function RecentActivities() {
   return (
     <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-semibold text-white">
+          <h3 className="text-xl font-semibold tracking-tight text-white">
             Activités récentes
           </h3>
 
@@ -43,14 +47,15 @@ export function RecentActivities() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-black/30 p-3">
+        <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 p-3">
           <Timer
             size={20}
-            className="text-zinc-300"
+            className="text-violet-400"
           />
         </div>
       </div>
 
+      {/* Activities */}
       <div className="space-y-4">
         {activities.map((activity) => {
           const Icon = activity.icon;
@@ -58,16 +63,34 @@ export function RecentActivities() {
           return (
             <div
               key={activity.title}
-              className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-black/20 p-4 transition-colors hover:border-zinc-700 hover:bg-black/30"
+              className="group flex items-center justify-between rounded-2xl border border-zinc-800 bg-black/20 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700 hover:bg-zinc-900/80"
             >
               <div className="flex items-center gap-4">
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-3">
-                  <Icon
-                    size={20}
-                    className="text-zinc-300"
-                  />
+                {/* Colored left bar */}
+                <div
+                  className={`h-12 w-1 rounded-full ${
+                    activity.color === "violet"
+                      ? "bg-violet-500"
+                      : activity.color === "sky"
+                        ? "bg-sky-500"
+                        : "bg-emerald-500"
+                  }`}
+                />
+
+                {/* Icon */}
+                <div
+                  className={`rounded-2xl border p-3 transition-all duration-300 group-hover:scale-105 ${
+                    activity.color === "violet"
+                      ? "border-violet-500/20 bg-violet-500/10 text-violet-400"
+                      : activity.color === "sky"
+                        ? "border-sky-500/20 bg-sky-500/10 text-sky-400"
+                        : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                  }`}
+                >
+                  <Icon size={20} />
                 </div>
 
+                {/* Content */}
                 <div>
                   <p className="font-medium text-white">
                     {activity.title}
@@ -79,9 +102,12 @@ export function RecentActivities() {
                 </div>
               </div>
 
-              <p className="text-sm text-zinc-500">
-                {activity.date}
-              </p>
+              {/* Date */}
+              <div className="text-right">
+                <p className="text-sm text-zinc-500">
+                  {activity.date}
+                </p>
+              </div>
             </div>
           );
         })}

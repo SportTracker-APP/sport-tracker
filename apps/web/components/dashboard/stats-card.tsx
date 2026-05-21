@@ -1,4 +1,12 @@
-import { LucideIcon } from "lucide-react";
+import {
+  Activity,
+  Flame,
+  LucideIcon,
+  Route,
+  Trophy,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 type StatsCardProps = {
   title: string;
@@ -13,15 +21,44 @@ export function StatsCard({
   description,
   icon: Icon,
 }: StatsCardProps) {
+  const isActivity = Icon === Activity;
+  const isRoute = Icon === Route;
+  const isFlame = Icon === Flame;
+  const isTrophy = Icon === Trophy;
+
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700 hover:bg-zinc-900 sm:p-6">
-      {/* Glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <div
+      className={cn(
+        "group relative overflow-hidden rounded-3xl border p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700 sm:p-6",
+        isActivity &&
+          "border-violet-500/20 bg-violet-500/10",
+        isRoute &&
+          "border-sky-500/20 bg-sky-500/10",
+        isFlame &&
+          "border-orange-500/20 bg-orange-500/10",
+        isTrophy &&
+          "border-emerald-500/20 bg-emerald-500/10"
+      )}
+    >
+      {/* Glow */}
+      <div
+        className={cn(
+          "absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100",
+          isActivity &&
+            "bg-gradient-to-br from-violet-400/10 to-transparent",
+          isRoute &&
+            "bg-gradient-to-br from-sky-400/10 to-transparent",
+          isFlame &&
+            "bg-gradient-to-br from-orange-400/10 to-transparent",
+          isTrophy &&
+            "bg-gradient-to-br from-emerald-400/10 to-transparent"
+        )}
+      />
 
       <div className="relative flex items-start justify-between gap-4">
         {/* Content */}
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 sm:text-sm">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500 sm:text-sm">
             {title}
           </p>
 
@@ -35,7 +72,19 @@ export function StatsCard({
         </div>
 
         {/* Icon */}
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-zinc-800 bg-black/40 text-zinc-300 transition-colors duration-300 group-hover:border-zinc-700 group-hover:text-white sm:h-14 sm:w-14">
+        <div
+          className={cn(
+            "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-black/40 transition-all duration-300 group-hover:scale-105 sm:h-14 sm:w-14",
+            isActivity &&
+              "border-violet-500/20 text-violet-400",
+            isRoute &&
+              "border-sky-500/20 text-sky-400",
+            isFlame &&
+              "border-orange-500/20 text-orange-400",
+            isTrophy &&
+              "border-emerald-500/20 text-emerald-400"
+          )}
+        >
           <Icon size={22} />
         </div>
       </div>

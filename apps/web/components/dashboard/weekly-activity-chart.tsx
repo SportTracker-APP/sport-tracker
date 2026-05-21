@@ -49,18 +49,27 @@ export function WeeklyActivityChart() {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorKm" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="0%"
-                  stopColor="#ffffff"
-                  stopOpacity={0.25}
-                />
+              <stop
+                offset="0%"
+                stopColor="#8b5cf6"
+                stopOpacity={0.35}
+              />
 
-                <stop
-                  offset="100%"
-                  stopColor="#ffffff"
-                  stopOpacity={0}
-                />
-              </linearGradient>
+              <stop
+                offset="100%"
+                stopColor="#8b5cf6"
+                stopOpacity={0}
+              />
+            </linearGradient>
+
+            <filter id="purpleGlow">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
             </defs>
 
             <CartesianGrid
@@ -88,9 +97,10 @@ export function WeeklyActivityChart() {
             <Area
               type="monotone"
               dataKey="km"
-              stroke="#ffffff"
+              stroke="#a855f7"
               strokeWidth={3}
               fill="url(#colorKm)"
+              filter="url(#purpleGlow)"
             />
           </AreaChart>
         </ResponsiveContainer>

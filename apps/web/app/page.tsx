@@ -22,9 +22,9 @@ import {
 export default function HomePage() {
   return (
     <DashboardLayout>
-      <div className="space-y-6 overflow-hidden">
+      <div className="-mt-6 space-y-6 overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.14),transparent_42%)] pt-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
             Continuez votre progression. 👋
           </h1>
 
