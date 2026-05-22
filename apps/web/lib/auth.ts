@@ -10,7 +10,7 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
-export async function register(
+export async function registerUser(
   email: string,
   password: string
 ): Promise<AuthResponse> {

@@ -16,7 +16,9 @@ import {
   Mail,
 } from "lucide-react";
 
-import { register } from "@/lib/auth";
+import { registerUser } from "@/lib/auth";
+
+import { useAuthStore } from "@/store/auth-store";
 
 import {
   registerSchema,
@@ -54,6 +56,10 @@ function getPasswordStrength(password: string) {
 export function RegisterForm() {
   const router = useRouter();
 
+  const setAuth = useAuthStore(
+  (state) => state.setAuth,
+);
+
   const [showPassword, setShowPassword] =
     useState(false);
 
@@ -81,20 +87,36 @@ export function RegisterForm() {
     [password],
   );
 
-  async function onSubmit(data: RegisterSchema) {
-    try {
-      setServerError(null);
+ async function onSubmit(data: RegisterSchema) {
+  console.log("SUBMIT OK");
 
-      await register(data.email, data.password);
+  console.log(data);
 
-      router.push("/dashboard");
-    } catch (error: any) {
-      setServerError(
-        error?.response?.data?.message ||
-          "Une erreur est survenue",
-      );
-    }
+  try {
+    setServerError(null);
+
+    const response = await registerUser(
+      data.email,
+      data.password,
+    );
+
+    console.log(response);
+
+    setAuth(
+      response.accessToken,
+      response.user,
+    );
+
+    router.push("/");
+  } catch (error: any) {
+    console.log(error);
+
+    setServerError(
+      error?.response?.data?.message ||
+        "Une erreur est survenue",
+    );
   }
+}
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
