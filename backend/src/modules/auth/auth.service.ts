@@ -2,9 +2,7 @@ import {
   BadRequestException,
   Injectable,
 } from '@nestjs/common';
-
 import { JwtService } from '@nestjs/jwt';
-
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../../prisma/prisma.service';
@@ -14,8 +12,8 @@ import { RegisterDto } from './dto/register.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -26,15 +24,10 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new BadRequestException(
-        'Email already used',
-      );
+      throw new BadRequestException('Email already used');
     }
 
-    const hashedPassword = await bcrypt.hash(
-      dto.password,
-      10,
-    );
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const user = await this.prisma.user.create({
       data: {
@@ -43,14 +36,13 @@ export class AuthService {
       },
     });
 
-    const accessToken =
-      await this.jwtService.signAsync({
-        sub: user.id,
-        email: user.email,
-      });
+    const token = await this.jwtService.signAsync({
+      sub: user.id,
+      email: user.email,
+    });
 
     return {
-      accessToken,
+      accessToken: token,
       user: {
         id: user.id,
         email: user.email,

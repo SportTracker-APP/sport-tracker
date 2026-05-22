@@ -44,7 +44,7 @@ export function WeeklyActivityChart() {
         </div>
       </div>
 
-      <div className="h-[320px]">
+      <div className="h-[320px] w-full min-w-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>

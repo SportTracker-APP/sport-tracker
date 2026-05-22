@@ -48,7 +48,7 @@ export default function HomePage() {
             </FadeIn>
           ))}          
         </div>
-        <div className="grid gap-4 sm:gap-6 xl:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 xl:grid-cols-2 min-w-0">
           {/* Intégration Graphique activité hebdomadaire */}
           <FadeIn delay={0.5}>
             <WeeklyActivityChart /> 
