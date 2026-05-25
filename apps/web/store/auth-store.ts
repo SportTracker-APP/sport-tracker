@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface User {
   id: string;
@@ -15,6 +15,11 @@ interface AuthState {
     user: User,
   ) => void;
 
+  hydrateAuth: (
+    accessToken: string,
+    user: User,
+  ) => void;
+
   logout: () => void;
 }
 
@@ -26,7 +31,7 @@ export const useAuthStore =
 
     setAuth: (accessToken, user) => {
       localStorage.setItem(
-        'accessToken',
+        "accessToken",
         accessToken,
       );
 
@@ -36,9 +41,16 @@ export const useAuthStore =
       });
     },
 
+    hydrateAuth: (accessToken, user) => {
+      set({
+        accessToken,
+        user,
+      });
+    },
+
     logout: () => {
       localStorage.removeItem(
-        'accessToken',
+        "accessToken",
       );
 
       set({

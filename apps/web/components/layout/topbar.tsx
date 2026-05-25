@@ -4,16 +4,20 @@ import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
 import { useAuthStore } from "@/store/auth-store";
+import { Button } from "@/components/ui/button";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function Topbar() {
   const pathname = usePathname();
 
-  const getLocationLabel = () => {
-    // placeholder propre (plus tard -> API geo/user profile)
-    return "Annecy, FR";
-  };
+ const user = useAuthStore(
+  (state) => state.user,
+);
+
+const logout = useAuthStore(
+  (state) => state.logout,
+);
 
   return (
     <header className="flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 sm:px-8">
@@ -37,7 +41,10 @@ export function Topbar() {
         {/* Context info (NOUVEAU) */}
         <div className="hidden sm:flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/40 px-3 py-1 text-xs text-zinc-300">
           <span className="h-2 w-2 rounded-full bg-emerald-400" />
-          {getLocationLabel()}
+
+          <span>
+            {user?.email ?? "Non connecté"}
+          </span>
         </div>
 
         {/* Notification */}
@@ -47,6 +54,15 @@ export function Topbar() {
           {/* badge notif (future API) */}
           <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-purple-500" />
         </button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={logout}
+          className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+        >
+          Déconnexion
+        </Button>
 
         {/* Avatar */}
         <Avatar>

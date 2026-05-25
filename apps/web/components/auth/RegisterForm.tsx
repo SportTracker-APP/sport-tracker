@@ -4,9 +4,12 @@ import { useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
+import Link from "next/link";
+
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+
 
 import {
   Eye,
@@ -253,9 +256,13 @@ export function RegisterForm() {
         {/* FOOTER */}
         <p className="pt-4 text-center text-sm text-zinc-500">
           Déjà un compte ?{" "}
-          <span className="cursor-pointer text-violet-400 hover:text-violet-300">
+
+          <Link
+            href="/login"
+            className="text-violet-400 transition hover:text-violet-300"
+          >
             Se connecter
-          </span>
+          </Link>
         </p>
       </form>
     </div>

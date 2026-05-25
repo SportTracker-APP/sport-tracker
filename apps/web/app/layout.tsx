@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
 import "./globals.css";
-
 import { ThemeProvider } from "@/providers/theme-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,8 +27,10 @@ export default function RootLayout({
     >
       <body className={inter.className}>
         <ThemeProvider>
-          {children}
-        </ThemeProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+      </ThemeProvider>
       </body>
     </html>
   );
