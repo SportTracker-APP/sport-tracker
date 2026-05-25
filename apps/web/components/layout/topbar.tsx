@@ -1,6 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import {
+  usePathname,
+  useRouter,
+} from "next/navigation";
 import { Bell } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
 import { useAuthStore } from "@/store/auth-store";
@@ -10,6 +13,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function Topbar() {
   const pathname = usePathname();
+
+  const router = useRouter();
 
  const user = useAuthStore(
   (state) => state.user,
@@ -56,12 +61,16 @@ const logout = useAuthStore(
         </button>
 
         <Button
-          variant="outline"
-          size="sm"
-          onClick={logout}
-          className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-        >
-          Déconnexion
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              logout();
+
+              router.push("/login");
+            }}
+            className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+          >
+            Déconnexion
         </Button>
 
         {/* Avatar */}
