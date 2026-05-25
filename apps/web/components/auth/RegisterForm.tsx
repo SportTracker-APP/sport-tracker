@@ -17,6 +17,7 @@ import {
   Loader2,
   Lock,
   Mail,
+  User,
 } from "lucide-react";
 
 import { registerUser } from "@/lib/auth";
@@ -99,6 +100,7 @@ export function RegisterForm() {
     setServerError(null);
 
     const response = await registerUser(
+      data.firstName,
       data.email,
       data.password,
     );
@@ -143,6 +145,31 @@ export function RegisterForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-5"
       >
+
+        {/* FIRST NAME */}
+        <div className="space-y-2">
+          <label className="text-sm text-zinc-300">
+            Prénom
+          </label>
+
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-500" />
+
+            <Input
+              type="text"
+              placeholder="Thibaut"
+              autoComplete="given-name"
+              className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
+              {...formRegister("firstName")}
+            />
+          </div>
+
+          {errors.firstName && (
+            <p className="text-sm text-red-400">
+              {errors.firstName.message}
+            </p>
+          )}
+        </div>
         {/* EMAIL */}
         <div className="space-y-2">
           <label className="text-sm text-zinc-300">
@@ -156,7 +183,6 @@ export function RegisterForm() {
               type="email"
               placeholder="ton@email.com"
               autoComplete="email"
-              autoFocus
               className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
               {...formRegister("email")}
             />

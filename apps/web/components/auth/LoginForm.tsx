@@ -138,7 +138,6 @@ export function LoginForm() {
               type="email"
               placeholder="ton@email.com"
               autoComplete="email"
-              autoFocus
               className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
               {...register("email")}
             />
