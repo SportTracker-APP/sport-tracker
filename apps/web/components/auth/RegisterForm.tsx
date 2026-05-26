@@ -157,7 +157,7 @@ export function RegisterForm() {
 
             <Input
               type="text"
-              placeholder="Thibaut"
+              placeholder="Ton prénom"
               autoComplete="given-name"
               className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
               {...formRegister("firstName")}

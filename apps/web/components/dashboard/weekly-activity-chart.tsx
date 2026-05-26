@@ -21,7 +21,7 @@ const data = [
 
 export function WeeklyActivityChart() {
   return (
-    <div className="rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+    <div className="min-w-0 rounded-[28px] border border-white/5 bg-zinc-950/70 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h3 className="text-xl font-semibold text-white">
@@ -44,7 +44,7 @@ export function WeeklyActivityChart() {
         </div>
       </div>
 
-      <div className="h-[320px] w-full min-w-0">
+      <div className="mt-6 h-[320px] min-w-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>

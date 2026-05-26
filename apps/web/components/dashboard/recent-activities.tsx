@@ -34,7 +34,7 @@ const activities = [
 
 export function RecentActivities() {
   return (
-    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-950/70 p-6 backdrop-blur-xl">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -63,7 +63,7 @@ export function RecentActivities() {
           return (
             <div
               key={activity.title}
-              className="group flex items-center justify-between rounded-2xl border border-zinc-800 bg-black/20 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700 hover:bg-zinc-900/80"
+              className="group flex items-center justify-between rounded-2xl border border-zinc-800 bg-black/20 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-white/10 hover:bg-zinc-900/80"
             >
               <div className="flex items-center gap-4">
                 {/* Colored left bar */}

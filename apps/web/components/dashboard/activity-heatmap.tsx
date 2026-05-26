@@ -5,11 +5,19 @@ const heatmapData = [
   [3, 2, 2, 1, 1, 0, 2],
 ];
 
-const days = ["L", "M", "M", "J", "V", "S", "D"];
+const days = [
+  "Lu",
+  "Ma",
+  "Me",
+  "Je",
+  "Ve",
+  "Sa",
+  "Di",
+];
 
 export function ActivityHeatmap() {
   return (
-    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-950/70 p-6 backdrop-blur-xl">
       {/* Header */}
       <div className="mb-8 flex items-start justify-between">
         <div>

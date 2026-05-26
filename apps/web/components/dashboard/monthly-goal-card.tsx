@@ -2,7 +2,7 @@ export function MonthlyGoalCard() {
   const progress = 74;
 
   return (
-    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl">
+    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-950/70 p-6 backdrop-blur-xl">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-zinc-400">
@@ -33,7 +33,7 @@ export function MonthlyGoalCard() {
       <div className="mt-8">
         <div className="h-3 overflow-hidden rounded-full bg-zinc-800">
           <div
-            className="h-full rounded-full bg-white transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-700"
             style={{
               width: `${progress}%`,
             }}

@@ -29,7 +29,7 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-3xl border p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700 sm:p-6",
+        "group relative overflow-hidden rounded-[28px] border border-white/5 bg-zinc-950/70 p-5 shadow-xl shadow-black/20 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/10 hover:shadow-2xl sm:p-6",
         isActivity &&
           "border-violet-500/20 bg-violet-500/10",
         isRoute &&
