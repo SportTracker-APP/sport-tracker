@@ -35,24 +35,20 @@ export function AuthProvider({
     (state) => state.logout,
   );
 
-  const user = useAuthStore(
-    (state) => state.user,
-  );
-
   const [isLoading, setIsLoading] =
     useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const accessToken =
-          localStorage.getItem(
-            "accessToken",
-          );
-
         const isPublicRoute =
           publicRoutes.includes(
             pathname,
+          );
+
+        const accessToken =
+          localStorage.getItem(
+            "accessToken",
           );
 
         // PAS CONNECTÉ
@@ -66,7 +62,7 @@ export function AuthProvider({
           return;
         }
 
-        // VALIDATION USER
+        // VALIDATION TOKEN
         const currentUser =
           await getMe();
 
@@ -75,7 +71,7 @@ export function AuthProvider({
           currentUser,
         );
 
-        // DÉJÀ CONNECTÉ
+        // SI connecté et page publique
         if (isPublicRoute) {
           router.replace("/");
         }
@@ -94,24 +90,12 @@ export function AuthProvider({
     };
 
     initializeAuth();
-  }, [
-    hydrateAuth,
-    logout,
-    pathname,
-    router,
-  ]);
+  }, [pathname]);
 
-  // LOADING SCREEN
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="space-y-4 text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
-
-          <p className="text-sm text-zinc-500">
-            Chargement...
-          </p>
-        </div>
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
       </div>
     );
   }

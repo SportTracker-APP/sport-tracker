@@ -112,7 +112,7 @@ export function RegisterForm() {
       response.user,
     );
 
-    router.push("/");
+    window.location.href = "/";
   } catch (error: any) {
     console.log(error);
 

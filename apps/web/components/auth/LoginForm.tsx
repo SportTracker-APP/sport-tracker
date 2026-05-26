@@ -64,10 +64,17 @@ export function LoginForm() {
       isSubmitting,
       isValid,
     },
-  } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
-    mode: "onChange",
-  });
+
+} = useForm<LoginSchema>({
+  resolver: zodResolver(loginSchema),
+
+  mode: "all",
+
+  defaultValues: {
+    email: "",
+    password: "",
+  },
+});
 
   async function onSubmit(
     data: LoginSchema,
@@ -85,7 +92,7 @@ export function LoginForm() {
         response.user,
       );
 
-      router.push("/");
+      window.location.href = "/";
     } catch (error: any) {
       console.log(error);
 
@@ -215,7 +222,7 @@ export function LoginForm() {
         {/* BUTTON */}
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting}
+          disabled={isSubmitting}
           className="h-12 w-full rounded-xl bg-violet-500 text-base font-medium text-white transition-all hover:bg-violet-400"
         >
           {isSubmitting ? (

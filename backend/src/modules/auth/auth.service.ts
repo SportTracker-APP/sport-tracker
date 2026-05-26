@@ -19,6 +19,63 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  private async generateAccessToken(
+    userId: string,
+    email: string,
+  ) {
+    return this.jwtService.signAsync(
+      {
+        sub: userId,
+        email,
+      },
+      {
+        secret:
+          process.env.JWT_ACCESS_SECRET ||
+          'access-secret',
+
+        expiresIn: '15m',
+      },
+    );
+  }
+
+  private async generateRefreshToken(
+    userId: string,
+    email: string,
+  ) {
+    return this.jwtService.signAsync(
+      {
+        sub: userId,
+        email,
+      },
+      {
+        secret:
+          process.env.JWT_REFRESH_SECRET ||
+          'refresh-secret',
+
+        expiresIn: '7d',
+      },
+    );
+  }
+
+  private async updateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ) {
+    const hashedRefreshToken =
+      await bcrypt.hash(refreshToken, 10);
+
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+
+      data: {
+        refreshToken:
+          hashedRefreshToken,
+      },
+    });
+  }
+
   async register(dto: RegisterDto) {
     const existingUser =
       await this.prisma.user.findUnique({
@@ -47,15 +104,27 @@ export class AuthService {
         },
       });
 
-    const token =
-      await this.jwtService.signAsync({
-        sub: user.id,
+    const accessToken =
+      await this.generateAccessToken(
+        user.id,
+        user.email,
+      );
 
-        email: user.email,
-      });
+    const refreshToken =
+      await this.generateRefreshToken(
+        user.id,
+        user.email,
+      );
+
+    await this.updateRefreshToken(
+      user.id,
+      refreshToken,
+    );
 
     return {
-      accessToken: token,
+      accessToken,
+
+      refreshToken,
 
       user: {
         id: user.id,
@@ -80,7 +149,7 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException(
-        'Invalid credentials',
+        'Email ou mot de passe incorrect',
       );
     }
 
@@ -92,19 +161,31 @@ export class AuthService {
 
     if (!passwordMatches) {
       throw new UnauthorizedException(
-        'Invalid credentials',
+        'Email ou mot de passe incorrect',
       );
     }
 
-    const token =
-      await this.jwtService.signAsync({
-        sub: user.id,
+    const accessToken =
+      await this.generateAccessToken(
+        user.id,
+        user.email,
+      );
 
-        email: user.email,
-      });
+    const refreshToken =
+      await this.generateRefreshToken(
+        user.id,
+        user.email,
+      );
+
+    await this.updateRefreshToken(
+      user.id,
+      refreshToken,
+    );
 
     return {
-      accessToken: token,
+      accessToken,
+
+      refreshToken,
 
       user: {
         id: user.id,
