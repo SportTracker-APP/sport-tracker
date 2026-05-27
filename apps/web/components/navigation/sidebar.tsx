@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { usePathname } from "next/navigation";
+
 import {
   Activity,
   Calendar,
@@ -55,72 +57,88 @@ const secondaryItems = [
 ];
 
 export function Sidebar() {
-  return (
-    <aside className="relative hidden w-[290px] shrink-0 border-r border-white/10 bg-black lg:flex lg:flex-col">
+  const pathname = usePathname();
 
-      {/* BACKGROUND */}
+  return (
+    <aside className="relative hidden w-[270px] shrink-0 border-r border-white/5 bg-black lg:flex lg:flex-col">
+
+      {/* SUBTLE BACKGROUND */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-        <div className="absolute left-[-20%] top-[10%] h-[300px] w-[300px] rounded-full bg-violet-500/10 blur-3xl" />
+        <div className="absolute left-[-25%] top-[5%] h-[280px] w-[280px] rounded-full bg-violet-500/5 blur-3xl" />
 
-        <div className="absolute bottom-[-10%] left-[-10%] h-[250px] w-[250px] rounded-full bg-fuchsia-500/10 blur-3xl" />
+        <div className="absolute bottom-[-20%] left-[-10%] h-[240px] w-[240px] rounded-full bg-fuchsia-500/5 blur-3xl" />
       </div>
 
       {/* HEADER */}
-      <div className="relative border-b border-white/10 px-7 py-8">
+      <div className="relative px-7 py-8">
 
         <div className="flex items-center gap-4">
 
           {/* LOGO */}
-          <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-500/20">
-
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-500/10">
             <Zap
-              size={24}
+              size={20}
               className="text-white"
             />
-
-            <div className="absolute inset-0 rounded-2xl ring-1 ring-white/20" />
           </div>
 
           {/* BRAND */}
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">
+            <h1 className="text-lg font-semibold tracking-tight text-white">
               Sport Tracker
             </h1>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-0.5 text-sm text-zinc-500">
               Performance Platform
             </p>
           </div>
         </div>
       </div>
 
-      {/* NAVIGATION */}
-      <div className="relative flex flex-1 flex-col justify-between overflow-hidden">
+      {/* CONTENT */}
+      <div className="relative flex flex-1 flex-col px-4">
 
         {/* MAIN NAV */}
-        <nav className="space-y-2 p-4">
+        <nav className="space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
+
+            const isActive =
+              pathname === item.href;
 
             return (
               <Link
                 key={item.title}
                 href={item.href}
-                className="group flex items-center gap-4 rounded-2xl border border-transparent bg-white/[0.02] px-4 py-3.5 text-sm font-medium text-zinc-400 transition-all duration-200 hover:border-white/10 hover:bg-white/[0.05] hover:text-white"
+                className={`group flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 ${
+                  isActive
+                    ? "bg-white/[0.06] text-white"
+                    : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+                }`}
               >
 
-                {/* ICON */}
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-black/40 ring-1 ring-white/5 transition-all group-hover:bg-violet-500/10 group-hover:ring-violet-500/20">
+                {/* ACTIVE BAR */}
+                <div
+                  className={`h-5 w-1 rounded-full transition-all ${
+                    isActive
+                      ? "bg-violet-400 opacity-100"
+                      : "opacity-0"
+                  }`}
+                />
 
-                  <Icon
-                    size={19}
-                    className="transition-transform duration-200 group-hover:scale-110"
-                  />
-                </div>
+                {/* ICON */}
+                <Icon
+                  size={18}
+                  className={`transition-all duration-200 ${
+                    isActive
+                      ? "text-violet-300"
+                      : "text-zinc-500 group-hover:text-zinc-300"
+                  }`}
+                />
 
                 {/* LABEL */}
-                <span className="tracking-tight">
+                <span className="text-sm font-medium">
                   {item.title}
                 </span>
               </Link>
@@ -128,63 +146,100 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* BOTTOM */}
-        <div className="space-y-6 border-t border-white/10 p-4">
+        {/* SECONDARY */}
+        <div className="mt-8 border-t border-white/5 pt-6">
 
-          {/* SECONDARY NAV */}
-          <nav className="space-y-2">
+          <div className="mb-4 px-4 text-xs font-medium uppercase tracking-[0.2em] text-zinc-600">
+            Général
+          </div>
+
+          <nav className="space-y-1">
             {secondaryItems.map((item) => {
               const Icon = item.icon;
+
+              const isActive =
+                pathname === item.href;
 
               return (
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group flex items-center gap-4 rounded-2xl px-4 py-3 text-sm font-medium text-zinc-500 transition-all hover:bg-white/[0.04] hover:text-white"
+                  className={`group flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 ${
+                    isActive
+                      ? "bg-white/[0.06] text-white"
+                      : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+                  }`}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.03] transition-all group-hover:bg-white/[0.06]">
-                    <Icon size={18} />
-                  </div>
 
-                  {item.title}
+                  <div
+                    className={`h-5 w-1 rounded-full transition-all ${
+                      isActive
+                        ? "bg-violet-400 opacity-100"
+                        : "opacity-0"
+                    }`}
+                  />
+
+                  <Icon
+                    size={18}
+                    className={`transition-all duration-200 ${
+                      isActive
+                        ? "text-violet-300"
+                        : "text-zinc-500 group-hover:text-zinc-300"
+                    }`}
+                  />
+
+                  <span className="text-sm font-medium">
+                    {item.title}
+                  </span>
                 </Link>
               );
             })}
           </nav>
+        </div>
 
-          {/* PERFORMANCE CARD */}
-          <div className="overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 p-5">
+        {/* SPACER */}
+        <div className="flex-1" />
 
-            <div className="mb-5 flex items-center justify-between">
+        {/* PERFORMANCE CARD */}
+        <div className="mb-6 overflow-hidden rounded-3xl border border-white/5 bg-white/[0.03] p-5">
 
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/20">
-                <Trophy
-                  size={22}
-                  className="text-violet-300"
-                />
-              </div>
+          {/* TOP */}
+          <div className="mb-4 flex items-center justify-between">
 
-              <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-                +12%
-              </div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10">
+              <Trophy
+                size={20}
+                className="text-violet-300"
+              />
             </div>
 
-            <h3 className="text-base font-semibold text-white">
+            <div className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+              +12%
+            </div>
+          </div>
+
+          {/* CONTENT */}
+          <div>
+            <h3 className="text-sm font-semibold text-white">
               Excellente semaine
             </h3>
 
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-              Vous êtes en avance sur vos objectifs cette semaine.
+            <p className="mt-2 text-sm leading-relaxed text-zinc-500">
+              Vous progressez plus vite que prévu cette semaine.
             </p>
+          </div>
 
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
+          {/* PROGRESS */}
+          <div className="mt-5">
+
+            <div className="mb-2 flex items-center justify-between text-xs text-zinc-600">
+              <span>72%</span>
+
+              <span>Objectif</span>
             </div>
 
-            <div className="mt-2 flex items-center justify-between text-xs text-zinc-500">
-              <span>72% complété</span>
-
-              <span>Objectif hebdo</span>
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
+              <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
             </div>
           </div>
         </div>
