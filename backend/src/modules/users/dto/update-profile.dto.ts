@@ -2,9 +2,9 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  MinLength,
   MaxLength,
-} from 'class-validator';
+  MinLength,
+} from "class-validator";
 
 export class UpdateProfileDto {
   @IsOptional()

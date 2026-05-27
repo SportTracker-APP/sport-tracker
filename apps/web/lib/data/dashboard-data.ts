@@ -12,14 +12,14 @@ import {
 export const statsData = [
   {
     title: "Activités",
-    value: "128",
+    value: "19",
     description: "+12% ce mois-ci",
     icon: Activity,
   },
   {
     title: "Distance",
-    value: "842 km",
-    description: "+84 km cette semaine",
+    value: "124 km",
+    description: "+29 km cette semaine",
     icon: Route,
   },
   {

@@ -2,8 +2,12 @@ import { create } from "zustand";
 
 interface User {
   id: string;
+
   firstName: string;
+
   email: string;
+
+  avatarUrl?: string | null;
 }
 
 interface AuthState {
@@ -21,6 +25,10 @@ interface AuthState {
     user: User,
   ) => void;
 
+  setUser: (
+    user: User | null,
+  ) => void;
+
   logout: () => void;
 }
 
@@ -30,7 +38,10 @@ export const useAuthStore =
 
     user: null,
 
-    setAuth: (accessToken, user) => {
+    setAuth: (
+      accessToken,
+      user,
+    ) => {
       localStorage.setItem(
         "accessToken",
         accessToken,
@@ -42,9 +53,18 @@ export const useAuthStore =
       });
     },
 
-    hydrateAuth: (accessToken, user) => {
+    hydrateAuth: (
+      accessToken,
+      user,
+    ) => {
       set({
         accessToken,
+        user,
+      });
+    },
+
+    setUser: (user) => {
+      set({
         user,
       });
     },

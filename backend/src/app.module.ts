@@ -8,6 +8,8 @@ import { AuthModule } from './modules/auth/auth.module';
 
 import { UsersModule } from './modules/users/users.module';
 
+import { UploadModule } from "./modules/upload/upload.module";
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +21,8 @@ import { UsersModule } from './modules/users/users.module';
     AuthModule,
 
     UsersModule,
+
+    UploadModule,
   ],
 })
 export class AppModule {}

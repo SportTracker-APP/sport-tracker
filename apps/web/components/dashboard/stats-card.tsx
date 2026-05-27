@@ -32,7 +32,7 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-5 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1 hover:border-white/[0.14] sm:p-6",
+        "group relative overflow-hidden rounded-[20px] border border-white/[0.08] bg-[#181922]/92 p-5 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1 hover:border-white/[0.14] sm:p-6",
 
         isActivity &&
           "shadow-[0_10px_45px_rgba(139,92,246,0.10)]",
@@ -89,7 +89,7 @@ export function StatsCard({
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_30%)]" />
 
       {/* INNER BORDER */}
-      <div className="absolute inset-0 rounded-[30px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" />
+      <div className="absolute inset-0 rounded-[20px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" />
 
       {/* NOISE */}
       <div className="absolute inset-0 opacity-[0.015] mix-blend-soft-light [background-image:url('https://grainy-gradients.vercel.app/noise.svg')]" />

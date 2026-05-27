@@ -60,34 +60,40 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="relative hidden w-[285px] shrink-0 overflow-hidden border-r border-white/5 bg-black/20 backdrop-blur-3xl lg:flex lg:flex-col">
+    <aside className="relative hidden w-[270px] shrink-0 overflow-hidden border-r border-white/[0.06] bg-[#0D0E14]/95 backdrop-blur-2xl lg:flex lg:flex-col">
 
-      {/* SUBTLE ATMOSPHERE */}
+      {/* GLOBAL BACKGROUND */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-        {/* VIOLET GLOW */}
-        <div className="absolute left-[-20%] top-[5%] h-[340px] w-[340px] rounded-full bg-violet-500/8 blur-[110px]" />
+        {/* MAIN GRADIENT */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#11121A_0%,#0C0D13_100%)]" />
 
-        {/* FUCHSIA GLOW */}
-        <div className="absolute bottom-[-15%] left-[0%] h-[280px] w-[280px] rounded-full bg-fuchsia-500/6 blur-[100px]" />
+        {/* PURPLE AMBIENT */}
+        <div className="absolute left-[-30%] top-[0%] h-[340px] w-[340px] rounded-full bg-violet-500/10 blur-[90px]" />
 
-        {/* LIGHT OVERLAY */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.025),transparent_25%)]" />
+        {/* FUCHSIA DEPTH */}
+        <div className="absolute bottom-[-15%] left-[-20%] h-[260px] w-[260px] rounded-full bg-fuchsia-500/10 blur-[90px]" />
+
+        {/* SOFT LIGHT */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.035),transparent_22%)]" />
 
         {/* INNER SHADOW */}
         <div className="absolute inset-0 shadow-[inset_-1px_0_0_rgba(255,255,255,0.03)]" />
+
+        {/* NOISE */}
+        <div className="absolute inset-0 opacity-[0.02] mix-blend-soft-light [background-image:url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
 
       {/* HEADER */}
-      <div className="relative px-7 pb-8 pt-9">
+      <div className="relative px-7 py-8">
 
         <div className="flex items-center gap-4">
 
           {/* LOGO */}
-          <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl">
+          <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_10px_40px_rgba(168,85,247,0.35)]">
 
-            {/* GLOW */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/25 to-fuchsia-500/20" />
+            {/* LIGHT */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.18),transparent_45%)]" />
 
             <Zap
               size={20}
@@ -97,22 +103,22 @@ export function Sidebar() {
 
           {/* BRAND */}
           <div>
-            <h1 className="text-[17px] font-semibold tracking-tight text-white">
+            <h1 className="text-lg font-semibold tracking-tight text-white">
               Sport Tracker
             </h1>
 
-            <p className="mt-1 text-sm text-zinc-500">
-              Premium Analytics
+            <p className="mt-0.5 text-sm text-zinc-500">
+              Performance Platform
             </p>
           </div>
         </div>
       </div>
 
-      {/* NAVIGATION */}
+      {/* CONTENT */}
       <div className="relative flex flex-1 flex-col px-4">
 
         {/* MAIN NAV */}
-        <nav className="space-y-2">
+        <nav className="space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
 
@@ -123,31 +129,39 @@ export function Sidebar() {
               <Link
                 key={item.title}
                 href={item.href}
-                className={`group relative flex items-center gap-4 overflow-hidden rounded-2xl px-4 py-3 transition-all duration-300 ${
+                className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                   isActive
-                    ? "border border-white/10 bg-white/[0.07] text-white shadow-lg shadow-black/10"
-                    : "border border-transparent text-zinc-500 hover:border-white/5 hover:bg-white/[0.03] hover:text-zinc-200"
+                    ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
+                    : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
                 }`}
               >
 
-                {/* ACTIVE GLOW */}
+                {/* ACTIVE BG */}
                 {isActive && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
                 )}
 
-                {/* ICON */}
+                {/* ACTIVE BAR */}
                 <div
-                  className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 ${
+                  className={`relative h-5 w-1 rounded-full transition-all ${
                     isActive
-                      ? "border-white/10 bg-white/[0.06] text-violet-200"
-                      : "border-white/5 bg-black/10 text-zinc-500 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:text-zinc-300"
+                      ? "bg-violet-400 opacity-100"
+                      : "opacity-0"
                   }`}
-                >
-                  <Icon size={18} />
-                </div>
+                />
+
+                {/* ICON */}
+                <Icon
+                  size={18}
+                  className={`relative transition-all duration-200 ${
+                    isActive
+                      ? "text-violet-300"
+                      : "text-zinc-500 group-hover:text-zinc-300"
+                  }`}
+                />
 
                 {/* LABEL */}
-                <span className="relative text-sm font-medium tracking-tight">
+                <span className="relative text-sm font-medium">
                   {item.title}
                 </span>
               </Link>
@@ -156,13 +170,13 @@ export function Sidebar() {
         </nav>
 
         {/* SECONDARY */}
-        <div className="mt-8">
+        <div className="mt-8 border-t border-white/[0.05] pt-6">
 
-          <div className="mb-4 px-4 text-[11px] font-medium uppercase tracking-[0.24em] text-zinc-600">
+          <div className="mb-4 px-4 text-xs font-medium uppercase tracking-[0.22em] text-zinc-600">
             Général
           </div>
 
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {secondaryItems.map((item) => {
               const Icon = item.icon;
 
@@ -173,31 +187,39 @@ export function Sidebar() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className={`group relative flex items-center gap-4 overflow-hidden rounded-2xl px-4 py-3 transition-all duration-300 ${
+                  className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                     isActive
-                      ? "border border-white/10 bg-white/[0.07] text-white"
-                      : "border border-transparent text-zinc-500 hover:border-white/5 hover:bg-white/[0.03] hover:text-zinc-200"
+                      ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
+                      : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
                   }`}
                 >
 
-                  {/* ACTIVE GLOW */}
+                  {/* ACTIVE BG */}
                   {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
                   )}
 
-                  {/* ICON */}
+                  {/* ACTIVE BAR */}
                   <div
-                    className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-300 ${
+                    className={`relative h-5 w-1 rounded-full transition-all ${
                       isActive
-                        ? "border-white/10 bg-white/[0.06] text-violet-200"
-                        : "border-white/5 bg-black/10 text-zinc-500 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:text-zinc-300"
+                        ? "bg-violet-400 opacity-100"
+                        : "opacity-0"
                     }`}
-                  >
-                    <Icon size={18} />
-                  </div>
+                  />
+
+                  {/* ICON */}
+                  <Icon
+                    size={18}
+                    className={`relative transition-all duration-200 ${
+                      isActive
+                        ? "text-violet-300"
+                        : "text-zinc-500 group-hover:text-zinc-300"
+                    }`}
+                  />
 
                   {/* LABEL */}
-                  <span className="relative text-sm font-medium tracking-tight">
+                  <span className="relative text-sm font-medium">
                     {item.title}
                   </span>
                 </Link>
@@ -209,52 +231,6 @@ export function Sidebar() {
         {/* SPACER */}
         <div className="flex-1" />
 
-        {/* PERFORMANCE CARD */}
-        <div className="relative mb-6 overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-3xl">
-
-          {/* BACKGROUND */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/5 to-transparent" />
-
-          {/* TOP */}
-          <div className="relative mb-5 flex items-center justify-between">
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06]">
-              <Trophy
-                size={18}
-                className="text-violet-300"
-              />
-            </div>
-
-            <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
-              +12%
-            </div>
-          </div>
-
-          {/* CONTENT */}
-          <div className="relative">
-            <h3 className="text-sm font-semibold text-white">
-              Excellente semaine
-            </h3>
-
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-              Votre rythme est supérieur à votre moyenne habituelle.
-            </p>
-          </div>
-
-          {/* PROGRESS */}
-          <div className="relative mt-5">
-
-            <div className="mb-2 flex items-center justify-between text-xs text-zinc-500">
-              <span>72%</span>
-
-              <span>Objectif hebdo</span>
-            </div>
-
-            <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(168,85,247,0.35)]" />
-            </div>
-          </div>
-        </div>
       </div>
     </aside>
   );

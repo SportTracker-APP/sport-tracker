@@ -6,6 +6,8 @@ export interface AuthUser {
   firstName: string;
 
   email: string;
+
+  avatarUrl?: string | null;
 }
 
 export interface AuthResponse {
@@ -26,9 +28,7 @@ export async function registerUser(
       "/auth/register",
       {
         firstName,
-
         email,
-
         password,
       },
     );
@@ -45,7 +45,6 @@ export async function login(
       "/auth/login",
       {
         email,
-
         password,
       },
     );
@@ -53,9 +52,11 @@ export async function login(
   return data;
 }
 
-export async function getMe() {
+export async function getMe(): Promise<AuthUser> {
   const { data } =
-    await api.get("/auth/me");
+    await api.get<AuthUser>(
+      "/users/me",
+    );
 
   return data;
 }

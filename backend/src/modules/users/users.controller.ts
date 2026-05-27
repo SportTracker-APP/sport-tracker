@@ -5,24 +5,24 @@ import {
   Patch,
   Req,
   UseGuards,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { UsersService } from './users.service';
+import { UsersService } from "./users.service";
 
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateProfileDto } from "./dto/update-profile.dto";
 
-import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdatePasswordDto } from "./dto/update-password.dto";
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('me')
+  @Get("me")
   getProfile(@Req() req: any) {
     return this.usersService.getProfile(
       req.user.id,
@@ -30,7 +30,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('profile')
+  @Patch("profile")
   updateProfile(
     @Req() req: any,
 
@@ -44,7 +44,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('password')
+  @Patch("password")
   updatePassword(
     @Req() req: any,
 

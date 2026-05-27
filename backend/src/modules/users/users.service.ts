@@ -2,15 +2,15 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from "bcrypt";
 
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from "../../prisma/prisma.service";
 
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateProfileDto } from "./dto/update-profile.dto";
 
-import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdatePasswordDto } from "./dto/update-password.dto";
 
 @Injectable()
 export class UsersService {
@@ -44,8 +44,13 @@ export class UsersService {
       },
 
       data: {
-        firstName: dto.firstName,
-        avatarUrl: dto.avatarUrl,
+        ...(dto.firstName && {
+          firstName: dto.firstName,
+        }),
+
+        ...(dto.avatarUrl && {
+          avatarUrl: dto.avatarUrl,
+        }),
       },
 
       select: {
@@ -80,7 +85,7 @@ export class UsersService {
 
     if (!passwordMatch) {
       throw new BadRequestException(
-        'Mot de passe actuel incorrect',
+        "Mot de passe actuel incorrect",
       );
     }
 
@@ -102,7 +107,7 @@ export class UsersService {
 
     return {
       message:
-        'Mot de passe mis à jour',
+        "Mot de passe mis à jour",
     };
   }
 }

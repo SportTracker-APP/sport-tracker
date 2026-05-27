@@ -1,5 +1,11 @@
 "use client";
 
+import { useState } from "react";
+
+import { Loader2 } from "lucide-react";
+
+import { api } from "@/lib/api";
+
 import { useAuthStore } from "@/store/auth-store";
 
 import { AvatarUpload } from "./avatar-upload";
@@ -12,6 +18,40 @@ export function ProfileSettingsCard() {
   const user = useAuthStore(
     (state) => state.user,
   );
+
+  const setUser = useAuthStore(
+    (state) => state.setUser,
+  );
+
+  const [firstName, setFirstName] =
+    useState(user?.firstName || "");
+
+  const [isSaving, setIsSaving] =
+    useState(false);
+
+  async function handleSave() {
+    try {
+      setIsSaving(true);
+
+      const response = await api.patch(
+        "/users/profile",
+        {
+          firstName,
+        },
+      );
+
+      setUser(response.data);
+
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        "Erreur lors de la sauvegarde.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
@@ -30,7 +70,10 @@ export function ProfileSettingsCard() {
       {/* AVATAR */}
       <AvatarUpload
         firstName={
-          user?.firstName || "U"
+          firstName || "U"
+        }
+        avatarUrl={
+          user?.avatarUrl
         }
       />
 
@@ -44,8 +87,11 @@ export function ProfileSettingsCard() {
           </label>
 
           <Input
-            defaultValue={
-              user?.firstName
+            value={firstName}
+            onChange={(e) =>
+              setFirstName(
+                e.target.value,
+              )
             }
             className="h-12 border-white/10 bg-black/20 text-white"
           />
@@ -59,14 +105,25 @@ export function ProfileSettingsCard() {
 
           <Input
             disabled
-            defaultValue={user?.email}
+            value={user?.email || ""}
             className="h-12 border-white/10 bg-black/10 text-zinc-500"
           />
         </div>
 
         {/* BUTTON */}
-        <Button className="h-11 rounded-2xl bg-violet-500 px-6 hover:bg-violet-400">
-          Sauvegarder
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+          className="h-11 rounded-2xl bg-violet-500 px-6 hover:bg-violet-400"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sauvegarde...
+            </>
+          ) : (
+            "Sauvegarder"
+          )}
         </Button>
       </div>
     </div>
