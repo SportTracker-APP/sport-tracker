@@ -2,56 +2,114 @@ export function MonthlyGoalCard() {
   const progress = 74;
 
   return (
-    <div className="h-full min-h-[320px] rounded-3xl border border-zinc-800 bg-zinc-950/70 p-6 backdrop-blur-xl">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-zinc-400">
-            Objectif mensuel
-          </p>
+    <div className="group relative h-full min-h-[320px] overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
 
-          <h3 className="mt-3 text-4xl font-bold text-white">
-            312 km
-          </h3>
+      {/* AMBIENT BACKGROUND */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.14),transparent_34%)]" />
 
-          <p className="mt-2 text-sm text-zinc-500">
-            sur 420 km ce mois-ci
-          </p>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.07),transparent_34%)]" />
+
+      {/* TOP LIGHT */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.03),transparent_24%)]" />
+
+      {/* INNER BORDER */}
+      <div className="absolute inset-0 rounded-[24px] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]" />
+
+      {/* CONTENT */}
+      <div className="relative">
+
+        {/* TOP */}
+        <div className="flex items-start justify-between gap-5">
+
+          {/* LEFT */}
+          <div>
+            <p className="text-sm font-medium text-zinc-400">
+              Objectif mensuel
+            </p>
+
+            <h3 className="mt-4 text-[44px] font-bold tracking-tight text-white">
+              312 km
+            </h3>
+
+            <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+              sur 420 km ce mois-ci
+            </p>
+          </div>
+
+          {/* RIGHT CARD */}
+          <div className="relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-5 py-4">
+
+            {/* LIGHT */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_45%)]" />
+
+            {/* GLOW */}
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/16 to-transparent" />
+
+            <p className="relative text-[11px] uppercase tracking-[0.18em] text-zinc-500">
+              Progression
+            </p>
+
+            <p className="relative mt-2 text-3xl font-bold tracking-tight text-white">
+              {progress}%
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-black/30 px-4 py-3">
-          <p className="text-sm text-zinc-400">
-            Progression
+        {/* PROGRESS */}
+        <div className="mt-10">
+
+          {/* LABELS */}
+          <div className="mb-3 flex items-center justify-between text-sm">
+
+            <span className="text-zinc-500">
+              0 km
+            </span>
+
+            <span className="text-zinc-400">
+              420 km
+            </span>
+          </div>
+
+          {/* BAR */}
+          <div className="relative h-3 overflow-hidden rounded-full border border-white/[0.05] bg-white/[0.04]">
+
+            {/* BAR LIGHT */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.025),transparent)]" />
+
+            {/* PROGRESS */}
+            <div
+              className="relative h-full rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-violet-400 transition-all duration-1000"
+              style={{
+                width: `${progress}%`,
+              }}
+            >
+
+              {/* SOFT GLOW */}
+              <div className="absolute inset-0 shadow-[0_0_20px_rgba(168,85,247,0.35)]" />
+
+              {/* SHINE */}
+              <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.28),transparent)] opacity-50" />
+            </div>
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="relative mt-8 overflow-hidden rounded-[18px] border border-white/[0.06] bg-white/[0.025] p-5">
+
+          {/* LIGHT */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.025),transparent_45%)]" />
+
+          {/* AMBIENCE */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.10),transparent_40%)]" />
+
+          <p className="relative text-sm leading-relaxed text-zinc-300">
+            Encore{" "}
+            <span className="font-semibold text-white">
+              108 km
+            </span>{" "}
+            pour atteindre votre objectif mensuel.
           </p>
-
-          <p className="text-2xl font-bold text-white">
-            {progress}%
-          </p>
         </div>
-      </div>
-
-      {/* Barre progression */}
-      <div className="mt-8">
-        <div className="h-3 overflow-hidden rounded-full bg-zinc-800">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-700"
-            style={{
-              width: `${progress}%`,
-            }}
-          />
-        </div>
-
-        <div className="mt-3 flex items-center justify-between text-sm text-zinc-500">
-          <span>0 km</span>
-
-          <span>420 km</span>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-8 rounded-2xl border border-zinc-800 bg-black/20 p-4">
-        <p className="text-sm text-zinc-400">
-          Encore 108 km pour atteindre votre objectif.
-        </p>
       </div>
     </div>
   );

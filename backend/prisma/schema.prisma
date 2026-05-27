@@ -20,6 +20,8 @@ model User {
 
   password  String
 
+  avatarUrl    String?
+
   refreshToken String?
 
   createdAt DateTime @default(now())
