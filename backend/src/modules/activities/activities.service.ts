@@ -23,6 +23,10 @@ export class ActivitiesService {
       data: {
         ...dto,
 
+        title:
+          dto.title?.trim() ||
+          "Séance sportive",
+
         startedAt: new Date(
           dto.startedAt,
         ),
@@ -85,6 +89,12 @@ export class ActivitiesService {
 
       data: {
         ...dto,
+
+        ...(dto.title !== undefined && {
+          title:
+            dto.title.trim() ||
+            "Séance sportive",
+        }),
 
         ...(dto.startedAt && {
           startedAt: new Date(

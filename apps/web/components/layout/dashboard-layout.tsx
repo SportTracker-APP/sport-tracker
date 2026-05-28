@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/navigation/sidebar";
 import { Topbar } from "@/components/layout/topbar";
+import { PageTransition } from "@/components/ui/page-transition";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -46,7 +47,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* TOPBAR */}
         <Topbar />
 
-        {/* MAIN (FIX IMPORTANT) */}
+        {/* MAIN */}
         <main className="relative flex-1 overflow-hidden">
 
           {/* SINGLE SCROLL CONTAINER */}
@@ -55,14 +56,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* CONTENT CONTAINER */}
             <div className="mx-auto flex w-full max-w-[1720px] flex-col gap-8 px-4 py-4 sm:px-6 sm:py-6 lg:px-10 lg:py-8">
 
+              {/* CONTENT WRAPPER */}
               <div className="relative">
 
                 {/* SUBTLE GLOW */}
                 <div className="pointer-events-none absolute inset-0 rounded-[40px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.02),transparent_40%)]" />
 
-                {/* CONTENT */}
+                {/* 🔥 TRANSITION WRAPPER */}
                 <div className="relative">
-                  {children}
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
                 </div>
 
               </div>
