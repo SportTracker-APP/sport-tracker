@@ -1,81 +1,134 @@
 "use client";
 
-import {
-  usePathname,
-  useRouter,
-} from "next/navigation";
-import { Bell } from "lucide-react";
-import { MobileSidebar } from "./mobile-sidebar";
-import { useAuthStore } from "@/store/auth-store";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { usePathname } from "next/navigation";
+
+import { Bell } from "lucide-react";
+
+import { MobileSidebar } from "./mobile-sidebar";
+
+import { useAuthStore } from "@/store/auth-store";
+
+import { Button } from "@/components/ui/button";
 
 export function Topbar() {
   const pathname = usePathname();
 
- const user = useAuthStore(
-  (state) => state.user,
-);
+  const user = useAuthStore(
+    (state) => state.user,
+  );
 
-const logout = useAuthStore(
-  (state) => state.logout,
-);
+  const logout = useAuthStore(
+    (state) => state.logout,
+  );
 
   return (
-    <header className="flex h-20 items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 sm:px-8">
+    <header className="relative flex h-20 items-center justify-between overflow-hidden border-b border-white/[0.05] bg-[#0b0b0f]/95 px-4 backdrop-blur-2xl sm:px-8">
+
+      {/* BACKGROUND */}
+      <div className="pointer-events-none absolute inset-0">
+
+        <div className="absolute left-[10%] top-[-120px] h-[220px] w-[220px] rounded-full bg-violet-500/5 blur-3xl" />
+
+        <div className="absolute right-[5%] top-[-80px] h-[180px] w-[180px] rounded-full bg-fuchsia-500/5 blur-3xl" />
+      </div>
+
       {/* LEFT */}
-      <div className="flex items-center gap-4">
+      <div className="relative z-10 flex items-center gap-4">
+
         <MobileSidebar />
 
         <div>
-          <h2 className="text-lg font-semibold text-white sm:text-xl">
+          <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
             {pathname === "/"
               ? "Tableau de bord"
-              : pathname === "/activites"
-              ? "Activités"
-              : "Sport Tracker"}
+              : pathname ===
+                  "/activites"
+                ? "Activités"
+                : pathname ===
+                    "/parametres"
+                  ? "Paramètres"
+                  : "Sport Tracker"}
           </h2>
+
+          <p className="mt-0.5 hidden text-xs text-zinc-500 sm:block">
+            Performance dashboard
+          </p>
         </div>
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-3">
-        {/* Context info (NOUVEAU) */}
-        <div className="hidden sm:flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/40 px-3 py-1 text-xs text-zinc-300">
-          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+      <div className="relative z-10 flex items-center gap-3">
 
-        <span>
-          {user
-            ? `Bonjour ${user.firstName} 👋`
-            : "Non connecté"}
-        </span>
-      </div>
-        {/* Notification */}
-        <button className="relative rounded-full border border-zinc-800 bg-zinc-900 p-2 text-zinc-400 transition-colors hover:text-white">
+        {/* CONTEXT */}
+        <div className="hidden items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-xs text-zinc-300 backdrop-blur-xl lg:flex">
+
+          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
+
+          <span>
+            {user
+              ? `Bonjour ${user.firstName} 👋`
+              : "Non connecté"}
+          </span>
+        </div>
+
+        {/* NOTIFICATION */}
+        <button className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.03] text-zinc-400 backdrop-blur-xl transition-all duration-300 hover:border-white/[0.10] hover:bg-white/[0.05] hover:text-white">
+
           <Bell size={18} />
 
-          {/* badge notif (future API) */}
-          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-purple-500" />
+          {/* BADGE */}
+          <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(168,85,247,0.9)]" />
         </button>
 
+        {/* LOGOUT */}
         <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              logout();
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            logout();
 
-              window.location.href = "/login";
-            }}
-            className="relative z-20 border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-          >
-            Déconnexion
+            window.location.href =
+              "/login";
+          }}
+          className="border-white/[0.08] bg-white/[0.03] text-zinc-300 backdrop-blur-xl hover:bg-white/[0.05] hover:text-white"
+        >
+          Déconnexion
         </Button>
 
-        {/* Avatar */}
-        <Avatar>
-          <AvatarFallback>TR</AvatarFallback>
-        </Avatar>
+        {/* AVATAR */}
+        <div className="group relative">
+
+          {/* GLOW */}
+          <div className="absolute inset-0 rounded-full bg-violet-500/20 opacity-0 blur-xl transition-all duration-500 group-hover:opacity-100" />
+
+          {/* AVATAR CONTAINER */}
+          <div className="relative h-12 w-12 overflow-hidden rounded-full border border-white/[0.08] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(139,92,246,0.25)]">
+
+            {user?.avatarUrl ? (
+              <Image
+                src={`${user.avatarUrl}?t=${Date.now()}`}
+                alt="Avatar"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm font-bold text-white">
+                {user?.firstName?.charAt(
+                  0,
+                ) || "U"}
+              </div>
+            )}
+
+            {/* LIGHT */}
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.14),transparent_45%)]" />
+          </div>
+
+          {/* ONLINE STATUS */}
+          <div className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[#0b0b0f] bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
+        </div>
       </div>
     </header>
   );
