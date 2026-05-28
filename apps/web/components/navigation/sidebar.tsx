@@ -56,8 +56,17 @@ const secondaryItems = [
   },
 ];
 
+const normalizePath = (path: string) => path.replace(/\/$/, "");
+
 export function Sidebar() {
   const pathname = usePathname();
+
+  const isActiveRoute = (href: string) => {
+    const current = normalizePath(pathname);
+    const target = normalizePath(href);
+
+    return current === target || current.startsWith(target + "/");
+  };
 
   return (
     <aside className="relative hidden w-[270px] shrink-0 overflow-hidden border-r border-white/[0.06] bg-[#0D0E14]/95 backdrop-blur-2xl lg:flex lg:flex-col">
