@@ -14,8 +14,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 export function Topbar() {
   const pathname = usePathname();
 
-  const router = useRouter();
-
  const user = useAuthStore(
   (state) => state.user,
 );
@@ -67,9 +65,9 @@ const logout = useAuthStore(
             onClick={() => {
               logout();
 
-              router.push("/login");
+              window.location.href = "/login";
             }}
-            className="border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            className="relative z-20 border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
           >
             Déconnexion
         </Button>
