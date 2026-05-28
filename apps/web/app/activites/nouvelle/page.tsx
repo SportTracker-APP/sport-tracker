@@ -1,0 +1,266 @@
+"use client";
+
+import {
+  Activity,
+  Bike,
+  Dumbbell,
+  Flame,
+  Footprints,
+  MapPinned,
+  Mountain,
+  Plus,
+  Timer,
+} from "lucide-react";
+
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
+
+import { CreateActivityForm } from "@/components/activities/create-activity-form";
+
+const quickStats = [
+  {
+    label: "Activités ce mois",
+    value: "24",
+    icon: Activity,
+    color:
+      "from-violet-500/20 to-fuchsia-500/10",
+  },
+  {
+    label: "Temps sportif",
+    value: "31h",
+    icon: Timer,
+    color:
+      "from-sky-500/20 to-cyan-500/10",
+  },
+  {
+    label: "Calories",
+    value: "18k",
+    icon: Flame,
+    color:
+      "from-orange-500/20 to-red-500/10",
+  },
+];
+
+const sports = [
+  {
+    label: "Trail",
+    icon: Mountain,
+  },
+  {
+    label: "Course",
+    icon: Footprints,
+  },
+  {
+    label: "VTT",
+    icon: Bike,
+  },
+  {
+    label: "Musculation",
+    icon: Dumbbell,
+  },
+];
+
+export default function NewActivityPage() {
+  return (
+    <DashboardLayout>
+      <div className="space-y-8 px-2 pb-4 [&_input[type=number]]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_input[type=number]::-webkit-outer-spin-button]:appearance-none">
+
+        {/* HERO */}
+        <section className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#181922]/95 p-7 backdrop-blur-xl">
+
+          {/* AMBIENT */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.22),transparent_32%)]" />
+
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.10),transparent_32%)]" />
+
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_24%)]" />
+
+          <div className="relative">
+            <div className="flex flex-col gap-8 xl:flex-row xl:items-start xl:justify-between">
+
+              {/* LEFT */}
+              <div className="max-w-2xl pt-1">
+                <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-300">
+                  <Plus className="h-3.5 w-3.5" />
+                  Nouvelle activité
+                </div>
+
+                <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-white xl:text-[44px]">
+                  Enregistrez une
+                  <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+                    {" "}
+                    nouvelle performance
+                  </span>
+                </h1>
+
+                <p className="mt-5 max-w-xl text-sm leading-7 text-zinc-400">
+                  Ajoutez vos séances de trail,
+                  randonnée, VTT ou course et
+                  analysez automatiquement vos
+                  performances, votre progression
+                  et votre charge d’entraînement.
+                </p>
+
+                {/* SPORT PILLS */}
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {sports.map((sport) => {
+                    const Icon = sport.icon;
+
+                    return (
+                      <div
+                        key={sport.label}
+                        className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs text-zinc-300"
+                      >
+                        <Icon className="h-3.5 w-3.5 text-violet-300" />
+
+                        {sport.label}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* RIGHT */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 xl:w-[340px] xl:grid-cols-1 xl:pt-1">
+                {quickStats.map((stat) => {
+                  const Icon = stat.icon;
+
+                  return (
+                    <div
+                      key={stat.label}
+                      className={`relative overflow-hidden rounded-[22px] border border-white/[0.08] bg-gradient-to-br ${stat.color} p-5`}
+                    >
+                      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.05),transparent_45%)]" />
+
+                      <div className="relative flex items-start justify-between">
+                        <div>
+                          <p className="text-xs text-zinc-400">
+                            {stat.label}
+                          </p>
+
+                          <p className="mt-2 text-3xl font-bold text-white">
+                            {stat.value}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl border border-white/[0.08] bg-black/20 p-2.5">
+                          <Icon className="h-4 w-4 text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CONTENT */}
+        <section className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+
+          {/* FORM */}
+          <div className="rounded-[28px] border border-white/[0.08] bg-[#181922]/95 p-6 backdrop-blur-xl">
+
+            {/* HEADER */}
+            <div className="mb-8 flex items-start justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-white">
+                  Détails de l’activité
+                </h2>
+
+                <p className="mt-2 text-sm leading-6 text-zinc-500">
+                  Remplissez les informations de
+                  votre séance pour alimenter vos
+                  statistiques et graphiques.
+                </p>
+              </div>
+
+              <div className="hidden rounded-xl border border-violet-500/20 bg-violet-500/10 p-3 lg:flex">
+                <Activity className="h-4 w-4 text-violet-300" />
+              </div>
+            </div>
+
+            <CreateActivityForm />
+          </div>
+
+          {/* SIDE PANEL */}
+          <div className="space-y-6">
+
+            {/* TRACKING CARD */}
+            <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#181922]/95 p-5 backdrop-blur-xl">
+
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-3">
+                  <MapPinned className="h-4 w-4 text-violet-300" />
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    Conseils tracking
+                  </h3>
+
+                  <p className="text-xs text-zinc-500">
+                    Optimisez vos données.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 space-y-3">
+
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <p className="text-sm font-medium text-white">
+                    Ajoutez le dénivelé
+                  </p>
+
+                  <p className="mt-1.5 text-xs leading-6 text-zinc-500">
+                    Idéal pour les activités outdoor
+                    comme le trail ou la randonnée.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <p className="text-sm font-medium text-white">
+                    Utilisez la localisation
+                  </p>
+
+                  <p className="mt-1.5 text-xs leading-6 text-zinc-500">
+                    Analysez vos performances par
+                    zone géographique et parcours.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                  <p className="text-sm font-medium text-white">
+                    Ajoutez votre ressenti
+                  </p>
+
+                  <p className="mt-1.5 text-xs leading-6 text-zinc-500">
+                    Fatigue, énergie ou difficulté
+                    enrichiront vos futures stats IA.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* MINI INFO */}
+            <div className="rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 p-5">
+
+              <p className="text-[11px] uppercase tracking-[0.18em] text-violet-300/80">
+                Smart tracking
+              </p>
+
+              <h3 className="mt-3 text-xl font-semibold leading-tight text-white">
+                Votre futur dashboard IA commence ici.
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-zinc-400">
+                Chaque activité enrichira vos analyses,
+                prédictions de progression et recommandations
+                d’entraînement.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </DashboardLayout>
+  );
+}

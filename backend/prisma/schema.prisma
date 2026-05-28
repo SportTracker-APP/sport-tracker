@@ -4,27 +4,181 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+
+  url = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
+  // PROFILE
   firstName String
 
-  lastName  String?
+  lastName String?
 
-  city      String?
+  city String?
 
-  email     String   @unique
+  bio String?
 
-  password  String
+  avatarUrl String?
 
-  avatarUrl    String?
+  birthDate DateTime?
+
+  weight Float?
+
+  height Float?
+
+  // AUTH
+  email String @unique
+
+  password String
 
   refreshToken String?
+
+  // SETTINGS
+  isProfilePublic Boolean @default(false)
+
+  // RELATIONS
+  activities Activity[]
+
+  // DATES
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id String @id @default(cuid())
+
+  // CONTENT
+  title String?
+
+  description String?
+
+  type ActivityType
+
+  sport SportType
+
+  status ActivityStatus @default(COMPLETED)
+
+  // PERFORMANCE
+  distance Float? // km
+
+  duration Int // secondes
+
+  movingTime Int? // secondes réelles en mouvement
+
+  elevationGain Int? // mètres +
+
+  elevationLoss Int? // mètres -
+
+  calories Int?
+
+  steps Int?
+
+  cadence Int?
+
+  power Int?
+
+  averageSpeed Float?
+
+  maxSpeed Float?
+
+  pace Float? // min/km
+
+  averageHeartRate Int?
+
+  maxHeartRate Int?
+
+  // WEATHER
+  temperature Float?
+
+  weather WeatherType?
+
+  // LOCATION
+  startLatitude Float?
+
+  startLongitude Float?
+
+  endLatitude Float?
+
+  endLongitude Float?
+
+  city String?
+
+  country String?
+
+  routePolyline String?
+
+  // MEDIA
+  coverImageUrl String?
+
+  // SOCIAL
+  isPublic Boolean @default(false)
+
+  likesCount Int @default(0)
+
+  commentsCount Int @default(0)
+
+  // DATES
+  startedAt DateTime
+
+  endedAt DateTime?
 
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  // RELATIONS
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+
+  @@index([type])
+
+  @@index([sport])
+
+  @@index([startedAt])
+
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  TRAINING
+  RACE
+  RECOVERY
+  WALK
+}
+
+enum ActivityStatus {
+  PLANNED
+  COMPLETED
+  CANCELLED
+}
+
+enum SportType {
+  RUNNING
+  TRAIL
+  HIKING
+  WALKING
+  ROAD_CYCLING
+  MTB
+  GRAVEL
+  SWIMMING
+  GYM
+  FITNESS
+  SKI
+  SNOWBOARD
+  CLIMBING
+}
+
+enum WeatherType {
+  SUNNY
+  CLOUDY
+  RAINY
+  SNOWY
+  WINDY
+  FOGGY
 }

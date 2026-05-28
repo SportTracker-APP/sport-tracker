@@ -1,8 +1,135 @@
+import {
+  Bike,
+  Dumbbell,
+  Footprints,
+  Mountain,
+  Waves,
+} from "lucide-react";
+
 const heatmapData = [
-  [1, 2, 0, 3, 2, 1, 0],
-  [0, 1, 2, 3, 2, 1, 1],
-  [2, 3, 1, 0, 0, 2, 3],
-  [3, 2, 2, 1, 1, 0, 2],
+  [
+    {
+      intensity: 1,
+      type: "running",
+    },
+    {
+      intensity: 2,
+      type: "cycling",
+    },
+    {
+      intensity: 0,
+      type: null,
+    },
+    {
+      intensity: 3,
+      type: "hiking",
+    },
+    {
+      intensity: 2,
+      type: "gym",
+    },
+    {
+      intensity: 1,
+      type: "running",
+    },
+    {
+      intensity: 0,
+      type: null,
+    },
+  ],
+
+  [
+    {
+      intensity: 0,
+      type: null,
+    },
+    {
+      intensity: 1,
+      type: "swimming",
+    },
+    {
+      intensity: 2,
+      type: "running",
+    },
+    {
+      intensity: 3,
+      type: "cycling",
+    },
+    {
+      intensity: 2,
+      type: "gym",
+    },
+    {
+      intensity: 1,
+      type: "running",
+    },
+    {
+      intensity: 1,
+      type: "running",
+    },
+  ],
+
+  [
+    {
+      intensity: 2,
+      type: "hiking",
+    },
+    {
+      intensity: 3,
+      type: "cycling",
+    },
+    {
+      intensity: 1,
+      type: "running",
+    },
+    {
+      intensity: 0,
+      type: null,
+    },
+    {
+      intensity: 0,
+      type: null,
+    },
+    {
+      intensity: 2,
+      type: "gym",
+    },
+    {
+      intensity: 3,
+      type: "running",
+    },
+  ],
+
+  [
+    {
+      intensity: 3,
+      type: "hiking",
+    },
+    {
+      intensity: 2,
+      type: "running",
+    },
+    {
+      intensity: 2,
+      type: "cycling",
+    },
+    {
+      intensity: 1,
+      type: "swimming",
+    },
+    {
+      intensity: 1,
+      type: "running",
+    },
+    {
+      intensity: 0,
+      type: null,
+    },
+    {
+      intensity: 2,
+      type: "gym",
+    },
+  ],
 ];
 
 const days = [
@@ -14,6 +141,30 @@ const days = [
   "Sa",
   "Di",
 ];
+
+function getActivityIcon(
+  type: string | null,
+) {
+  switch (type) {
+    case "running":
+      return Footprints;
+
+    case "cycling":
+      return Bike;
+
+    case "hiking":
+      return Mountain;
+
+    case "swimming":
+      return Waves;
+
+    case "gym":
+      return Dumbbell;
+
+    default:
+      return null;
+  }
+}
 
 export function ActivityHeatmap() {
   return (
@@ -36,7 +187,6 @@ export function ActivityHeatmap() {
         {/* HEADER */}
         <div className="mb-8 flex items-start justify-between">
 
-          {/* LEFT */}
           <div>
             <h3 className="text-xl font-semibold tracking-tight text-white">
               Heatmap activité
@@ -50,10 +200,8 @@ export function ActivityHeatmap() {
           {/* STREAK CARD */}
           <div className="relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-5 py-4">
 
-            {/* LIGHT */}
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_45%)]" />
 
-            {/* GLOW */}
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/16 to-transparent" />
 
             <p className="relative text-[11px] uppercase tracking-[0.18em] text-zinc-500">
@@ -83,44 +231,82 @@ export function ActivityHeatmap() {
 
           <div className="min-w-[560px] space-y-3">
 
-            {heatmapData.map((row, rowIndex) => (
-              <div
-                key={rowIndex}
-                className="flex items-center gap-3"
-              >
+            {heatmapData.map(
+              (row, rowIndex) => (
+                <div
+                  key={rowIndex}
+                  className="flex items-center gap-3"
+                >
 
-                {/* WEEK LABEL */}
-                <div className="w-10 text-sm font-medium text-zinc-500">
-                  S{rowIndex + 1}
+                  {/* WEEK */}
+                  <div className="w-10 text-sm font-medium text-zinc-500">
+                    S{rowIndex + 1}
+                  </div>
+
+                  {/* CELLS */}
+                  <div className="flex gap-3">
+
+                    {row.map(
+                      (
+                        activity,
+                        cellIndex,
+                      ) => {
+                        const Icon =
+                          getActivityIcon(
+                            activity.type,
+                          );
+
+                        return (
+                          <div
+                            key={cellIndex}
+                            className={`
+                              relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-[12px] border transition-all duration-300 hover:scale-[1.06]
+
+                              ${
+                                activity.intensity ===
+                                0
+                                  ? "border-white/[0.05] bg-white/[0.025]"
+                                  : activity.intensity ===
+                                      1
+                                    ? "border-violet-500/10 bg-violet-500/12"
+                                    : activity.intensity ===
+                                        2
+                                      ? "border-violet-400/16 bg-violet-400/24"
+                                      : "border-fuchsia-400/20 bg-gradient-to-br from-violet-400 to-fuchsia-400 shadow-[0_0_16px_rgba(168,85,247,0.28)]"
+                              }
+                            `}
+                          >
+
+                            {/* LIGHT */}
+                            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.08),transparent_50%)]" />
+
+                            {/* ICON */}
+                            {Icon && (
+                              <Icon
+                                size={14}
+                                className={`
+                                  relative z-10
+
+                                  ${
+                                    activity.intensity ===
+                                    1
+                                      ? "text-violet-200/60"
+                                      : activity.intensity ===
+                                          2
+                                        ? "text-violet-100/80"
+                                        : "text-white"
+                                  }
+                                `}
+                              />
+                            )}
+                          </div>
+                        );
+                      },
+                    )}
+                  </div>
                 </div>
-
-                {/* CELLS */}
-                <div className="flex gap-3">
-                  {row.map((value, cellIndex) => (
-                    <div
-                      key={cellIndex}
-                      className={`
-                        relative h-9 w-9 overflow-hidden rounded-[12px] border transition-all duration-300 hover:scale-[1.04]
-
-                        ${
-                          value === 0
-                            ? "border-white/[0.05] bg-white/[0.025]"
-                            : value === 1
-                              ? "border-violet-500/10 bg-violet-500/12"
-                              : value === 2
-                                ? "border-violet-400/16 bg-violet-400/24"
-                                : "border-fuchsia-400/20 bg-gradient-to-br from-violet-400 to-fuchsia-400 shadow-[0_0_16px_rgba(168,85,247,0.28)]"
-                        }
-                      `}
-                    >
-
-                      {/* LIGHT */}
-                      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.08),transparent_50%)]" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </div>
 
