@@ -155,7 +155,7 @@ enum ActivityType {
 enum ActivityStatus {
   PLANNED
   COMPLETED
-  CANCELLED
+  MISSED
 }
 
 enum SportType {

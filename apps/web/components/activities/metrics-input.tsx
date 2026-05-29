@@ -1,42 +1,44 @@
-interface Props {
-  label: string;
+import { InputHTMLAttributes } from "react";
 
-  unit?: string;
+type MetricsInputProps =
+  InputHTMLAttributes<HTMLInputElement> & {
+    label: string;
 
-  value: string;
+    unit?: string;
 
-  onChange: (
-    value: string,
-  ) => void;
-
-  type?: string;
-}
+    error?: string;
+  };
 
 export function MetricsInput({
   label,
   unit,
-  value,
-  onChange,
-  type = "number",
-}: Props) {
+  error,
+  ...props
+}: MetricsInputProps) {
   return (
-    <div className="space-y-2">
-
-      <label className="text-sm text-zinc-400">
+    <div>
+      <label className="mb-2 block text-sm font-medium text-zinc-300">
         {label}
       </label>
 
       <div className="relative">
-
         <input
-          type={type}
-          value={value}
-          onChange={(e) =>
-            onChange(
-              e.target.value,
-            )
-          }
-          className="h-14 w-full rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 text-white outline-none transition-all focus:border-violet-500/40"
+          {...props}
+          className="
+            h-12
+            w-full
+            rounded-2xl
+            border
+            border-white/10
+            bg-black/20
+            px-4
+            pr-16
+            text-white
+            outline-none
+            transition
+            placeholder:text-zinc-500
+            focus:border-violet-500
+          "
         />
 
         {unit && (
@@ -45,6 +47,12 @@ export function MetricsInput({
           </span>
         )}
       </div>
+
+      {error && (
+        <p className="mt-2 text-sm text-red-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
