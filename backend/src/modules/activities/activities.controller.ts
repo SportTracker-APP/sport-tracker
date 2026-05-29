@@ -6,11 +6,12 @@ import {
   Param,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from "@nestjs/common";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 
 import { ActivitiesService } from "./activities.service";
 
@@ -27,64 +28,71 @@ export class ActivitiesController {
 
   @Post()
   create(
-    @Req() req: any,
+    @CurrentUser("id")
+    userId: string,
 
     @Body()
     dto: CreateActivityDto,
   ) {
     return this.activitiesService.create(
-      req.user.id,
+      userId,
       dto,
     );
   }
 
   @Get()
-  findAll(@Req() req: any) {
+  findAll(
+    @CurrentUser("id")
+    userId: string,
+  ) {
     return this.activitiesService.findAll(
-      req.user.id,
+      userId,
     );
   }
 
   @Get(":id")
   findOne(
-    @Req() req: any,
+    @CurrentUser("id")
+    userId: string,
 
     @Param("id")
-    id: string,
+    activityId: string,
   ) {
     return this.activitiesService.findOne(
-      req.user.id,
-      id,
+      userId,
+      activityId,
     );
   }
 
   @Patch(":id")
   update(
-    @Req() req: any,
+    @CurrentUser("id")
+    userId: string,
 
     @Param("id")
-    id: string,
+    activityId: string,
 
     @Body()
     dto: UpdateActivityDto,
   ) {
     return this.activitiesService.update(
-      req.user.id,
-      id,
+      userId,
+      activityId,
       dto,
     );
   }
 
   @Delete(":id")
   remove(
-    @Req() req: any,
+    @CurrentUser("id")
+    userId: string,
 
     @Param("id")
-    id: string,
+    activityId: string,
   ) {
     return this.activitiesService.remove(
-      req.user.id,
-      id,
+      userId,
+      activityId,
     );
   }
 }

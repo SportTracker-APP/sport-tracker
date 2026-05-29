@@ -23,17 +23,11 @@ export class ActivitiesService {
       data: {
         ...dto,
 
-        title:
-          dto.title?.trim() ||
-          "Séance sportive",
-
         startedAt: new Date(
           dto.startedAt,
         ),
 
         userId,
-
-        type: "TRAINING",
       },
     });
   }
@@ -58,7 +52,6 @@ export class ActivitiesService {
       await this.prisma.activity.findFirst({
         where: {
           id: activityId,
-
           userId,
         },
       });
@@ -90,12 +83,6 @@ export class ActivitiesService {
       data: {
         ...dto,
 
-        ...(dto.title !== undefined && {
-          title:
-            dto.title.trim() ||
-            "Séance sportive",
-        }),
-
         ...(dto.startedAt && {
           startedAt: new Date(
             dto.startedAt,
@@ -114,15 +101,10 @@ export class ActivitiesService {
       activityId,
     );
 
-    await this.prisma.activity.delete({
+    return this.prisma.activity.delete({
       where: {
         id: activityId,
       },
     });
-
-    return {
-      message:
-        "Activité supprimée",
-    };
   }
 }

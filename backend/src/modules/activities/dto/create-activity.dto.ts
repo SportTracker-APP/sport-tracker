@@ -16,7 +16,17 @@ export enum SportType {
   WALKING = "WALKING",
 }
 
+export enum ActivityType {
+  TRAINING = "TRAINING",
+  RACE = "RACE",
+  RECOVERY = "RECOVERY",
+  WALK = "WALK",
+}
+
 export class CreateActivityDto {
+  @IsEnum(ActivityType)
+  type: ActivityType;
+
   @IsEnum(SportType)
   sport: SportType;
 
