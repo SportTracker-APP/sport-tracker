@@ -45,6 +45,9 @@ model User {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  stravaConnection StravaConnection?
+  
 }
 
 model Activity {
@@ -181,4 +184,24 @@ enum WeatherType {
   SNOWY
   WINDY
   FOGGY
+}
+
+model StravaConnection {
+  id String @id @default(cuid())
+
+  userId String @unique
+
+  athleteId String
+
+  accessToken String
+
+  refreshToken String
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

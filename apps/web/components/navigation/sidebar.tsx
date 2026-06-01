@@ -10,10 +10,19 @@ import {
   ChartColumn,
   Goal,
   LayoutDashboard,
+  Link2,
   Settings,
   Trophy,
   Zap,
 } from "lucide-react";
+
+const integrationItems = [
+  {
+    title: "Strava",
+    href: "/integrations/strava",
+    icon: Link2,
+  },
+];
 
 const navigationItems = [
   {
@@ -65,7 +74,10 @@ export function Sidebar() {
     const current = normalizePath(pathname);
     const target = normalizePath(href);
 
-    return current === target || current.startsWith(target + "/");
+    return (
+      current === target ||
+      current.startsWith(`${target}/`)
+    );
   };
 
   return (
@@ -131,8 +143,9 @@ export function Sidebar() {
           {navigationItems.map((item) => {
             const Icon = item.icon;
 
-            const isActive =
-              pathname === item.href;
+            const isActive = isActiveRoute(
+              item.href,
+            );
 
             return (
               <Link
@@ -189,8 +202,9 @@ export function Sidebar() {
             {secondaryItems.map((item) => {
               const Icon = item.icon;
 
-              const isActive =
-                pathname === item.href;
+              const isActive = isActiveRoute(
+                item.href,
+              );
 
               return (
                 <Link
@@ -237,7 +251,102 @@ export function Sidebar() {
           </nav>
         </div>
 
+       {/* INTEGRATIONS */}
+<div className="mt-8 border-t border-white/[0.05] pt-6">
+  <div className="mb-4 px-4 text-xs font-medium uppercase tracking-[0.22em] text-zinc-600">
+    Intégrations
+  </div>
+
+  <nav className="space-y-1">
+    {integrationItems.map((item) => {
+      const Icon = item.icon;
+
+    const isActive = isActiveRoute(
+      item.href,
+    );
+
+      return (
+        <Link
+          key={item.title}
+          href={item.href}
+          className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
+            isActive
+              ? "border border-orange-500/20 bg-orange-500/10 text-white"
+              : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+          }`}
+        >
+          {isActive && (
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(249,115,22,0.12),transparent_45%)]" />
+          )}
+
+          <div
+            className={`relative h-5 w-1 rounded-full transition-all ${
+              isActive
+                ? "bg-orange-400 opacity-100"
+                : "opacity-0"
+            }`}
+          />
+
+          <Icon
+            size={18}
+            className={`relative transition-all duration-200 ${
+              isActive
+                ? "text-orange-300"
+                : "text-zinc-500 group-hover:text-zinc-300"
+            }`}
+          />
+
+          <span className="relative text-sm font-medium">
+            {item.title}
+          </span>
+        </Link>
+      );
+    })}
+  </nav>
+
+  {/* STRAVA CTA */}
+  <Link
+    href="/integrations/strava"
+    className="
+      mt-5
+      block
+      overflow-hidden
+      rounded-[24px]
+      border
+      border-orange-500/15
+      bg-gradient-to-br
+      from-orange-500/10
+      to-orange-500/5
+      p-4
+      transition-all
+      duration-300
+      hover:border-orange-500/25
+      hover:from-orange-500/15
+      hover:to-orange-500/10
+    "
+  >
+    <div className="flex items-center gap-3">
+    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FC4C02]/15">
+      <Link2
+        className="h-5 w-5 text-[#FC4C02]"
+      />
+    </div>
+
+      <div>
+        <p className="text-sm font-semibold text-white">
+          Connecter Strava
+        </p>
+
+        <p className="text-xs text-zinc-400">
+          Synchronisation automatique
+        </p>
+      </div>
+    </div>
+  </Link>
+</div>
+
         {/* SPACER */}
+        
         <div className="flex-1" />
 
       </div>
