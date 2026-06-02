@@ -89,20 +89,32 @@ export class StravaService {
   ) {}
 
   async getStatus(userId: string) {
-    const connection = await this.prisma.stravaConnection.findUnique({
-      where: {
-        userId,
-      },
-      select: {
-        athleteId: true,
-        expiresAt: true,
-        updatedAt: true,
-      },
-    });
+    const [connection, syncedActivitiesCount] = await Promise.all([
+      this.prisma.stravaConnection.findUnique({
+        where: {
+          userId,
+        },
+        select: {
+          athleteId: true,
+          expiresAt: true,
+          updatedAt: true,
+        },
+      }),
+      this.prisma.activity.count({
+        where: {
+          userId,
+          stravaActivityId: {
+            not: null,
+          },
+        },
+      }),
+    ]);
 
     if (!connection) {
       return {
         connected: false,
+        syncedActivitiesCount,
+        hasSyncedActivities: syncedActivitiesCount > 0,
       };
     }
 
@@ -111,9 +123,10 @@ export class StravaService {
       athleteId: connection.athleteId,
       expiresAt: connection.expiresAt,
       lastUpdatedAt: connection.updatedAt,
+      syncedActivitiesCount,
+      hasSyncedActivities: syncedActivitiesCount > 0,
     };
   }
-
   getAuthorizationUrl(userId: string) {
     const clientId = this.getRequiredConfig('STRAVA_CLIENT_ID');
 

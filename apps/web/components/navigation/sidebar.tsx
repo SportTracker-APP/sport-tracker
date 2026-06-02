@@ -10,6 +10,7 @@ import {
   Activity,
   Calendar,
   ChartColumn,
+  CheckCircle2,
   Goal,
   LayoutDashboard,
   Link2,
@@ -22,6 +23,8 @@ import { api } from "@/lib/api";
 
 interface StravaStatus {
   connected: boolean;
+  hasSyncedActivities?: boolean;
+  syncedActivitiesCount?: number;
 }
 
 const integrationItems = [
@@ -79,6 +82,9 @@ export function Sidebar() {
   const pathname = usePathname();
 
   const [isStravaConnected, setIsStravaConnected] = useState(false);
+  const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
+  const [hasSyncedStravaActivities, setHasSyncedStravaActivities] =
+    useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -89,10 +95,14 @@ export function Sidebar() {
 
         if (isMounted) {
           setIsStravaConnected(data.connected);
+          setHasSyncedStravaActivities(Boolean(data.hasSyncedActivities));
+          setIsLoadingStravaStatus(false);
         }
       } catch {
         if (isMounted) {
           setIsStravaConnected(false);
+          setHasSyncedStravaActivities(false);
+          setIsLoadingStravaStatus(false);
         }
       }
     }
@@ -275,6 +285,8 @@ export function Sidebar() {
               const Icon = item.icon;
 
               const isActive = isActiveRoute(item.href);
+              const isConnectedIntegration =
+                item.title === "Strava" && hasSyncedStravaActivities;
 
               return (
                 <Link
@@ -283,16 +295,26 @@ export function Sidebar() {
                   className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                     isActive
                       ? "border border-orange-500/20 bg-orange-500/10 text-white"
-                      : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+                      : isConnectedIntegration
+                        ? "border border-emerald-500/10 bg-emerald-500/[0.055] text-emerald-100/80 hover:border-emerald-500/18 hover:bg-emerald-500/[0.085] hover:text-emerald-100"
+                        : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
                   }`}
                 >
                   {isActive && (
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(249,115,22,0.12),transparent_45%)]" />
                   )}
 
+                  {isConnectedIntegration && !isActive && (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(16,185,129,0.08),transparent_45%)]" />
+                  )}
+
                   <div
                     className={`relative h-5 w-1 rounded-full transition-all ${
-                      isActive ? "bg-orange-400 opacity-100" : "opacity-0"
+                      isActive
+                        ? "bg-orange-400 opacity-100"
+                        : isConnectedIntegration
+                          ? "bg-emerald-400/70 opacity-100"
+                          : "opacity-0"
                     }`}
                   />
 
@@ -301,41 +323,49 @@ export function Sidebar() {
                     className={`relative transition-all duration-200 ${
                       isActive
                         ? "text-orange-300"
-                        : "text-zinc-500 group-hover:text-zinc-300"
+                        : isConnectedIntegration
+                          ? "text-emerald-300/75 group-hover:text-emerald-300"
+                          : "text-zinc-500 group-hover:text-zinc-300"
                     }`}
                   />
 
                   <span className="relative text-sm font-medium">
                     {item.title}
                   </span>
+
+                  {isConnectedIntegration && (
+                    <CheckCircle2 className="relative ml-auto h-4 w-4 text-emerald-300/70 group-hover:text-emerald-300" />
+                  )}
                 </Link>
               );
             })}
           </nav>
 
           {/* STRAVA CTA */}
-          <Link
-            href="/integrations/strava"
-            className="mt-5 block overflow-hidden rounded-[24px] border border-orange-500/15 bg-gradient-to-br from-orange-500/10 to-orange-500/5 p-4 transition-all duration-300 hover:border-orange-500/25 hover:from-orange-500/15 hover:to-orange-500/10"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FC4C02]/15">
-                <Link2 className="h-5 w-5 text-[#FC4C02]" />
-              </div>
+          {!isLoadingStravaStatus && !hasSyncedStravaActivities && (
+            <Link
+              href="/integrations/strava"
+              className="mt-5 block overflow-hidden rounded-[24px] border border-orange-500/15 bg-gradient-to-br from-orange-500/10 to-orange-500/5 p-4 transition-all duration-300 hover:border-orange-500/25 hover:from-orange-500/15 hover:to-orange-500/10"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FC4C02]/15">
+                  <Link2 className="h-5 w-5 text-[#FC4C02]" />
+                </div>
 
-              <div>
-                <p className="text-sm font-semibold text-white">
-                  {isStravaConnected ? "Strava connecté" : "Connecter Strava"}
-                </p>
+                <div>
+                  <p className="text-sm font-semibold text-white">
+                    {isStravaConnected ? "Strava connecté" : "Connecter Strava"}
+                  </p>
 
-                <p className="text-xs text-zinc-400">
-                  {isStravaConnected
-                    ? "Synchronisation disponible"
-                    : "Synchronisation automatique"}
-                </p>
+                  <p className="text-xs text-zinc-400">
+                    {isStravaConnected
+                      ? "Prêt à synchroniser"
+                      : "Synchronisation automatique"}
+                  </p>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          )}
         </div>
 
         {/* SPACER */}

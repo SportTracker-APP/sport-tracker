@@ -1,651 +1,570 @@
-  "use client";
+"use client";
 
-  import {
-    Bike,
-    CalendarDays,
-    ChevronLeft,
-    ChevronRight,
-    Dumbbell,
-    Flame,
-    PersonStanding,
-    Plus,
-    Sparkles,
-    Target,
-    TrendingUp,
-    Zap,
-  } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
-  import { DashboardLayout } from "@/components/layout/dashboard-layout";
-  import { FadeIn } from "@/components/ui/fade-in";
-  import { Button } from "@/components/ui/button";
-  import Link from "next/link";
+import {
+  Activity as ActivityIcon,
+  Bike,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Clock3,
+  Dumbbell,
+  Flame,
+  Footprints,
+  Mountain,
+  Plus,
+  Route,
+  Sparkles,
+  Target,
+} from "lucide-react";
 
-  const days = [
-    {
-      day: "Lun",
-      date: "26",
-      intensity: "high",
-      completed: true,
-      workouts: [
-        {
-          title: "Endurance Run",
-          time: "07:00",
-          duration: "1h20",
-          type: "run",
-        },
-      ],
-    },
-    {
-      day: "Mar",
-      date: "27",
-      intensity: "medium",
-      completed: true,
-      workouts: [
-        {
-          title: "Upper Body",
-          time: "18:30",
-          duration: "55min",
-          type: "gym",
-        },
-      ],
-    },
-    {
-      day: "Mer",
-      date: "28",
-      intensity: "high",
-      current: true,
-      workouts: [
-        {
-          title: "Intervals Bike",
-          time: "06:45",
-          duration: "1h45",
-          type: "bike",
-        },
-      ],
-    },
-    {
-      day: "Jeu",
-      date: "29",
-      intensity: "rest",
-      upcoming: true,
-      workouts: [],
-    },
-    {
-      day: "Ven",
-      date: "30",
-      intensity: "medium",
-      upcoming: true,
-      workouts: [
-        {
-          title: "Tempo Run",
-          time: "19:00",
-          duration: "50min",
-          type: "run",
-        },
-      ],
-    },
-    {
-      day: "Sam",
-      date: "31",
-      intensity: "rest",
-      upcoming: true,
-      workouts: [],
-    },
-    {
-      day: "Dim",
-      date: "01",
-      intensity: "rest",
-      upcoming: true,
-      workouts: [],
-    },
-  ];
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { FadeIn } from "@/components/ui/fade-in";
+import { Button } from "@/components/ui/button";
+import { useActivities } from "@/hooks/use-activities";
+import type { Activity } from "@/lib/activities";
 
-  const getWorkoutIcon = (
-    type: string,
-  ) => {
-    switch (type) {
-      case "run":
-        return (
-          <PersonStanding className="h-4 w-4" />
-        );
+const dayFormatter = new Intl.DateTimeFormat("fr-FR", {
+  weekday: "short",
+});
 
-      case "bike":
-        return (
-          <Bike className="h-4 w-4" />
-        );
+const monthFormatter = new Intl.DateTimeFormat("fr-FR", {
+  day: "2-digit",
+  month: "long",
+});
 
-      default:
-        return (
-          <Dumbbell className="h-4 w-4" />
-        );
+const compactDateFormatter = new Intl.DateTimeFormat("fr-FR", {
+  day: "2-digit",
+  month: "2-digit",
+});
+
+const timeFormatter = new Intl.DateTimeFormat("fr-FR", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+const sportLabels: Record<string, string> = {
+  RUNNING: "Course",
+  ROAD_CYCLING: "Cyclisme",
+  GRAVEL: "Gravel",
+  MTB: "VTT",
+  TRAIL: "Trail",
+  HIKING: "Randonnée",
+  WALKING: "Marche",
+  GYM: "Musculation",
+  FITNESS: "Fitness",
+  SWIMMING: "Natation",
+};
+
+function startOfWeek(date: Date) {
+  const nextDate = new Date(date);
+  const day = nextDate.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+
+  nextDate.setDate(nextDate.getDate() + diff);
+  nextDate.setHours(0, 0, 0, 0);
+
+  return nextDate;
+}
+
+function addDays(date: Date, days: number) {
+  const nextDate = new Date(date);
+
+  nextDate.setDate(nextDate.getDate() + days);
+
+  return nextDate;
+}
+
+function isSameDay(firstDate: Date, secondDate: Date) {
+  return (
+    firstDate.getFullYear() === secondDate.getFullYear() &&
+    firstDate.getMonth() === secondDate.getMonth() &&
+    firstDate.getDate() === secondDate.getDate()
+  );
+}
+
+function isSameOrAfterDay(firstDate: Date, secondDate: Date) {
+  const first = new Date(firstDate);
+  const second = new Date(secondDate);
+
+  first.setHours(0, 0, 0, 0);
+  second.setHours(0, 0, 0, 0);
+
+  return first >= second;
+}
+
+function formatDateInput(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatDuration(minutes: number) {
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+function formatDistance(distance: number | null) {
+  if (distance === null) {
+    return "—";
+  }
+
+  return new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 1,
+  }).format(distance);
+}
+
+function getSportIcon(sport: string) {
+  if (["ROAD_CYCLING", "GRAVEL", "MTB"].includes(sport)) {
+    return Bike;
+  }
+
+  if (["HIKING", "WALKING"].includes(sport)) {
+    return Footprints;
+  }
+
+  if (["GYM", "FITNESS"].includes(sport)) {
+    return Dumbbell;
+  }
+
+  return ActivityIcon;
+}
+
+function getDayTone(activities: Activity[], isToday: boolean) {
+  if (isToday) {
+    return "border-violet-500/30 bg-violet-500/[0.085] ring-1 ring-violet-500/25";
+  }
+
+  if (activities.length >= 2) {
+    return "border-emerald-500/20 bg-emerald-500/[0.055]";
+  }
+
+  if (activities.length === 1) {
+    return "border-sky-500/16 bg-sky-500/[0.045]";
+  }
+
+  return "border-white/[0.07] bg-white/[0.025]";
+}
+
+export default function CalendarPage() {
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  const [hasSelectedInitialWeek, setHasSelectedInitialWeek] = useState(false);
+  const { data: activities = [], isLoading, error } = useActivities();
+
+  const today = useMemo(() => new Date(), []);
+  const weekDays = useMemo(
+    () =>
+      Array.from({
+        length: 7,
+      }).map((_, index) => addDays(weekStart, index)),
+    [weekStart],
+  );
+  const weekEnd = weekDays[6];
+
+  useEffect(() => {
+    if (hasSelectedInitialWeek || activities.length === 0) {
+      return;
     }
-  };
 
-  const getIntensityStyles = (
-    intensity: string,
-  ) => {
-    switch (intensity) {
-      case "high":
-        return `
-          border-violet-500/20
-          bg-gradient-to-b
-          from-violet-500/[0.16]
-          via-violet-500/[0.08]
-          to-fuchsia-500/[0.04]
-        `;
+    const currentWeekStart = startOfWeek(new Date());
+    const currentWeekEnd = addDays(currentWeekStart, 6);
+    const hasCurrentWeekActivity = activities.some((activity) => {
+      const startedAt = new Date(activity.startedAt);
 
-      case "medium":
-        return `
-          border-white/[0.08]
-          bg-white/[0.035]
-        `;
+      return startedAt >= currentWeekStart && startedAt <= currentWeekEnd;
+    });
 
-      default:
-        return `
-          border-white/[0.06]
-          bg-white/[0.02]
-        `;
-    }
-  };
+    if (!hasCurrentWeekActivity) {
+      const latestActivity = activities.reduce((latest, activity) =>
+        new Date(activity.startedAt) > new Date(latest.startedAt)
+          ? activity
+          : latest,
+      );
 
-  const getWorkoutStatus = (
-    day: {
-      completed?: boolean;
-      current?: boolean;
-    },
-  ) => {
-    if (day.completed) {
-      return {
-        label: "Effectué",
-        container:
-          "border-emerald-500/20 bg-emerald-500/10",
-        dot: "bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]",
-        text: "text-emerald-300",
-      };
+      setWeekStart(startOfWeek(new Date(latestActivity.startedAt)));
     }
 
-    if (day.current) {
-      return {
-        label: "Aujourd’hui",
-        container:
-          "border-violet-500/20 bg-violet-500/10",
-        dot: "bg-violet-400 shadow-[0_0_12px_rgba(168,85,247,0.9)]",
-        text: "text-violet-200",
-      };
-    }
+    setHasSelectedInitialWeek(true);
+  }, [activities, hasSelectedInitialWeek]);
 
-    return {
-      label: "À venir",
-      container:
-        "border-white/[0.08] bg-white/[0.04]",
-      dot: "bg-zinc-500",
-      text: "text-zinc-400",
-    };
-  };
+  const activitiesByDay = useMemo(
+    () =>
+      weekDays.map((day) =>
+        activities
+          .filter((activity) => isSameDay(new Date(activity.startedAt), day))
+          .sort(
+            (firstActivity, secondActivity) =>
+              new Date(firstActivity.startedAt).getTime() -
+              new Date(secondActivity.startedAt).getTime(),
+          ),
+      ),
+    [activities, weekDays],
+  );
 
-  export default function CalendarPage() {
-    return (
-      <DashboardLayout>
-        <div className="space-y-8">
+  const weekActivities = useMemo(
+    () => activitiesByDay.flat(),
+    [activitiesByDay],
+  );
+  const completedWeekActivities = useMemo(
+    () => weekActivities.filter((activity) => activity.status !== "PLANNED"),
+    [weekActivities],
+  );
 
-          {/* HERO */}
-          <FadeIn delay={0.1}>
-            <section className="relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[#111218]/95 px-6 py-7 md:px-8 md:py-8">
+  const weeklyDistance = useMemo(
+    () =>
+      completedWeekActivities.reduce(
+        (total, activity) => total + (activity.distance || 0),
+        0,
+      ),
+    [completedWeekActivities],
+  );
 
-              {/* GRID */}
-              <div className="pointer-events-none absolute inset-0 opacity-[0.07]">
-                <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:80px_80px]" />
-              </div>
+  const weeklyDuration = useMemo(
+    () =>
+      completedWeekActivities.reduce(
+        (total, activity) => total + activity.duration,
+        0,
+      ),
+    [completedWeekActivities],
+  );
 
-              {/* LIGHTS */}
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+  const weeklyCalories = useMemo(
+    () =>
+      completedWeekActivities.reduce(
+        (total, activity) => total + (activity.calories || 0),
+        0,
+      ),
+    [completedWeekActivities],
+  );
 
-                <div className="absolute left-[-8%] top-[-30%] h-[320px] w-[320px] rounded-full bg-violet-500/12 blur-3xl" />
+  function goToPreviousWeek() {
+    setHasSelectedInitialWeek(true);
+    setWeekStart((current) => addDays(current, -7));
+  }
 
-                <div className="absolute bottom-[-40%] right-[-10%] h-[280px] w-[280px] rounded-full bg-fuchsia-500/10 blur-3xl" />
+  function goToNextWeek() {
+    setHasSelectedInitialWeek(true);
+    setWeekStart((current) => addDays(current, 7));
+  }
 
-                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_30%)]" />
-              </div>
+  function goToCurrentWeek() {
+    setHasSelectedInitialWeek(true);
+    setWeekStart(startOfWeek(new Date()));
+  }
 
-              <div className="relative flex flex-col gap-10 xl:flex-row xl:items-end xl:justify-between">
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        <FadeIn>
+          <section className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-[#161821]/95 p-6 backdrop-blur-xl lg:p-7">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.18),transparent_34%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.10),transparent_34%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:84px_84px] opacity-50" />
 
-                {/* LEFT */}
-                <div className="max-w-3xl">
-
-                  <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3.5 py-1.5 text-[11px] font-medium text-violet-300 backdrop-blur-xl">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Planning intelligent
-                  </div>
-
-                  <h1 className="max-w-[780px] text-[38px] font-black leading-[0.92] tracking-[-0.065em] text-white sm:text-[50px] md:text-[64px] xl:text-[74px]">
-                    Organisez votre
-                    <br />
-
-                    <span className="bg-gradient-to-r from-violet-200 via-violet-300 to-fuchsia-300 bg-clip-text text-transparent">
-                      semaine sportive.
-                    </span>
-                  </h1>
-
-                  <p className="mt-5 max-w-2xl text-sm leading-relaxed text-zinc-400 md:text-[15px]">
-                    Visualisez vos entraînements,
-                    équilibrez votre charge et
-                    gardez une progression constante
-                    tout au long de la semaine.
-                  </p>
-
-                  {/* INSIGHTS */}
-                  <div className="mt-7 flex flex-wrap gap-3">
-
-                    <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.08] px-4 py-3">
-
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10">
-                        <TrendingUp className="h-4 w-4 text-emerald-400" />
-                      </div>
-
-                      <div>
-                        <p className="text-xs font-semibold text-white">
-                          +12% progression
-                        </p>
-
-                        <p className="text-[11px] text-zinc-400">
-                          vs semaine dernière
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 rounded-2xl border border-orange-500/10 bg-orange-500/[0.07] px-4 py-3">
-
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
-                        <Flame className="h-4 w-4 text-orange-400" />
-                      </div>
-
-                      <div>
-                        <p className="text-xs font-semibold text-white">
-                          4 jours actifs
-                        </p>
-
-                        <p className="text-[11px] text-zinc-400">
-                          série en cours
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 rounded-2xl border border-violet-500/10 bg-violet-500/[0.07] px-4 py-3">
-
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/10">
-                        <Target className="h-4 w-4 text-violet-300" />
-                      </div>
-
-                      <div>
-                        <p className="text-xs font-semibold text-white">
-                          Objectif 82%
-                        </p>
-
-                        <p className="text-[11px] text-zinc-400">
-                          charge optimisée
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+            <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-200">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Calendrier semaine
                 </div>
 
-                {/* STATS */}
-                <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3 xl:max-w-[520px]">
+                <h1 className="mt-5 max-w-3xl text-4xl leading-tight font-bold tracking-tight text-white lg:text-5xl">
+                  Votre semaine sportive, jour par jour.
+                </h1>
 
-                  <div className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.04] px-5 py-5 backdrop-blur-xl">
-
-                    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_50%)]" />
-
-                    <div className="relative">
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-                        Séances
-                      </p>
-
-                      <p className="mt-3 text-4xl font-black tracking-tight text-white">
-                        4
-                      </p>
-
-                      <p className="mt-2 text-xs text-emerald-400">
-                        +1 cette semaine
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.04] px-5 py-5 backdrop-blur-xl">
-
-                    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_50%)]" />
-
-                    <div className="relative">
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-                        Temps
-                      </p>
-
-                      <p className="mt-3 text-4xl font-black tracking-tight text-white">
-                        5h
-                      </p>
-
-                      <p className="mt-2 text-xs text-zinc-500">
-                        302 minutes
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="relative overflow-hidden rounded-[28px] border border-violet-500/20 bg-violet-500/10 px-5 py-5 backdrop-blur-xl">
-
-                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10" />
-
-                    <div className="relative">
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-violet-300">
-                        Charge
-                      </p>
-
-                      <p className="mt-3 flex items-center gap-2 text-4xl font-black tracking-tight text-white">
-                        <Zap className="h-5 w-5 text-violet-300" />
-                        82
-                      </p>
-
-                      <p className="mt-2 text-xs text-violet-200">
-                        équilibre optimal
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+                  Les activités Strava et les séances créées dans Sport Tracker
+                  apparaissent automatiquement dans leur journée.
+                </p>
               </div>
-            </section>
-          </FadeIn>
 
-          {/* TOP BAR */}
-          <FadeIn delay={0.2}>
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-              <div className="flex items-center gap-3">
-
-                <button
-                  className="
-                    flex
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-                    rounded-2xl
-                    border
-                    border-white/[0.08]
-                    bg-white/[0.03]
-                    transition-all
-                    duration-300
-                    hover:border-violet-500/20
-                    hover:bg-violet-500/10
-                  "
-                >
-                  <ChevronLeft className="h-5 w-5 text-zinc-300" />
-                </button>
-
-                <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] px-5 py-3 backdrop-blur-xl">
-
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-                    Semaine actuelle
-                  </p>
-
-                  <p className="mt-1 text-lg font-semibold text-white">
-                    26 Mai → 1 Juin
+              <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[520px]">
+                <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-4">
+                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                    <Route className="h-4 w-4 text-sky-300" />
+                    Distance semaine
+                  </div>
+                  <p className="mt-2 text-2xl font-semibold text-white">
+                    {formatDistance(weeklyDistance)} km
                   </p>
                 </div>
 
-                <button
-                  className="
-                    flex
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-                    rounded-2xl
-                    border
-                    border-white/[0.08]
-                    bg-white/[0.03]
-                    transition-all
-                    duration-300
-                    hover:border-violet-500/20
-                    hover:bg-violet-500/10
-                  "
-                >
-                  <ChevronRight className="h-5 w-5 text-zinc-300" />
-                </button>
-              </div>
+                <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-4">
+                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                    <Clock3 className="h-4 w-4 text-violet-300" />
+                    Temps semaine
+                  </div>
+                  <p className="mt-2 text-2xl font-semibold text-white">
+                    {formatDuration(weeklyDuration)}
+                  </p>
+                </div>
 
-              <Button
-                asChild
-                className="
-                  h-12
-                  rounded-2xl
-                  border
-                  border-violet-500/20
-                  bg-gradient-to-r
-                  from-violet-500
-                  to-fuchsia-500
-                  px-6
-                  text-sm
-                  font-semibold
-                  text-white
-                  shadow-[0_0_40px_rgba(168,85,247,0.35)]
-                "
-              >
-                <Link href="/activites/nouvelle">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nouvelle séance
-                </Link>
-              </Button>
+                <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-4">
+                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                    <Flame className="h-4 w-4 text-orange-300" />
+                    Calories
+                  </div>
+                  <p className="mt-2 text-2xl font-semibold text-white">
+                    {new Intl.NumberFormat("fr-FR").format(weeklyCalories)}
+                  </p>
+                </div>
+              </div>
             </div>
-          </FadeIn>
+          </section>
+        </FadeIn>
 
-          {/* CALENDAR */}
-          <FadeIn delay={0.3}>
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-7">
+        <FadeIn delay={0.08}>
+          <section className="flex flex-col gap-4 rounded-[28px] border border-white/[0.08] bg-[#11131a]/92 p-4 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={goToPreviousWeek}
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.035] text-zinc-300 transition-colors hover:border-violet-500/25 hover:bg-violet-500/10 hover:text-white"
+                aria-label="Semaine précédente"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
 
-              {days.map((day) => {
-                const status =
-                  getWorkoutStatus(day);
+              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
+                <p className="text-[10px] font-medium tracking-[0.18em] text-zinc-500 uppercase">
+                  Semaine affichée
+                </p>
+                <p className="mt-1 text-sm font-semibold text-white">
+                  {monthFormatter.format(weekStart)} →{" "}
+                  {monthFormatter.format(weekEnd)}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={goToNextWeek}
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.035] text-zinc-300 transition-colors hover:border-violet-500/25 hover:bg-violet-500/10 hover:text-white"
+                aria-label="Semaine suivante"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={goToCurrentWeek}
+                className="hidden h-11 rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 text-sm font-medium text-zinc-300 transition-colors hover:border-violet-500/25 hover:bg-violet-500/10 hover:text-white sm:block"
+              >
+                Aujourd'hui
+              </button>
+            </div>
+
+            <Button
+              asChild
+              className="h-11 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-5 text-sm font-semibold text-white shadow-[0_0_30px_rgba(168,85,247,0.28)]"
+            >
+              <Link href="/activites/nouvelle">
+                <Plus className="mr-2 h-4 w-4" />
+                Ajouter une séance
+              </Link>
+            </Button>
+          </section>
+        </FadeIn>
+
+        {isLoading && (
+          <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-8 text-center text-zinc-400">
+            Chargement du calendrier...
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-[28px] border border-red-500/20 bg-red-500/10 p-8 text-center text-red-300">
+            Impossible de charger les activités du calendrier.
+          </div>
+        )}
+
+        {!isLoading && !error && (
+          <FadeIn delay={0.12}>
+            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+              {weekDays.map((day, index) => {
+                const dayActivities = activitiesByDay[index];
+                const isToday = isSameDay(day, today);
+                const canPlanActivity = isSameOrAfterDay(day, today);
+                const activeMinutes = dayActivities.reduce(
+                  (total, activity) => total + activity.duration,
+                  0,
+                );
+                const planHref = `/activites/nouvelle?date=${formatDateInput(
+                  day,
+                )}&status=PLANNED&returnTo=/calendrier`;
 
                 return (
-                  <div
-                    key={day.day}
-                    className={`
-                      relative
-                      min-h-[320px]
-                      overflow-hidden
-                      rounded-[32px]
-                      border
-                      p-5
-                      backdrop-blur-xl
-                      transition-all
-                      duration-300
-                      hover:-translate-y-1.5
-                      hover:border-violet-500/20
-
-                      ${getIntensityStyles(
-                        day.intensity,
-                      )}
-
-                      ${
-                        day.current
-                          ? "ring-1 ring-violet-500/30"
-                          : ""
-                      }
-                    `}
+                  <article
+                    key={day.toISOString()}
+                    className={`relative min-h-[360px] overflow-hidden rounded-[28px] border p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/25 ${getDayTone(
+                      dayActivities,
+                      isToday,
+                    )}`}
                   >
-
-                    {day.current && (
+                    {isToday && (
                       <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-violet-400 to-fuchsia-400" />
                     )}
 
-                    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_30%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.045),transparent_34%)]" />
 
                     <div className="relative flex h-full flex-col">
-
-                      {/* HEADER */}
-                      <div className="flex items-start justify-between gap-3">
-
+                      <header className="flex items-start justify-between gap-3">
                         <div>
-
                           <div className="flex items-center gap-2">
-
-                            <p className="text-sm font-medium text-zinc-400">
-                              {day.day}
+                            <p className="text-sm font-medium text-zinc-400 capitalize">
+                              {dayFormatter.format(day)}
                             </p>
 
-                            {day.completed && (
-                              <div className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
-                            )}
-
-                            {day.current && (
-                              <div
-                                className="
-                                  rounded-full
-                                  border
-                                  border-violet-500/20
-                                  bg-violet-500/10
-                                  px-2.5
-                                  py-1
-                                  text-[10px]
-                                  font-semibold
-                                  uppercase
-                                  tracking-[0.12em]
-                                  text-violet-300
-                                "
-                              >
-                                Today
-                              </div>
+                            {isToday && (
+                              <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-[0.12em] text-violet-200 uppercase">
+                                Aujourd'hui
+                              </span>
                             )}
                           </div>
 
-                          <p className="mt-3 text-[56px] font-black leading-none tracking-tight text-white">
-                            {day.date}
+                          <p className="mt-3 text-5xl leading-none font-black tracking-tight text-white">
+                            {day.getDate()}
+                          </p>
+
+                          <p className="mt-1 text-xs text-zinc-500">
+                            {compactDateFormatter.format(day)}
                           </p>
                         </div>
 
-                        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.05] p-2.5 text-violet-300 backdrop-blur-xl">
+                        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-2.5 text-violet-300">
                           <CalendarDays className="h-4 w-4" />
                         </div>
+                      </header>
+
+                      <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/[0.06] bg-black/10 px-3 py-2 text-xs text-zinc-400">
+                        <span>
+                          {dayActivities.length} activité
+                          {dayActivities.length > 1 ? "s" : ""}
+                        </span>
+                        <span>
+                          {activeMinutes
+                            ? formatDuration(activeMinutes)
+                            : "Repos"}
+                        </span>
                       </div>
 
-                      {/* WORKOUT */}
-                      <div className="mt-8 flex flex-1 flex-col">
-
-                        {day.workouts.length === 0 ? (
-                          <div className="flex flex-1 flex-col items-center justify-center rounded-[24px] border border-dashed border-white/[0.08] bg-black/10 p-6 text-center">
-
-                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04]">
-                              <CalendarDays className="h-5 w-5 text-zinc-500" />
+                      <div className="mt-4 flex flex-1 flex-col gap-3">
+                        {dayActivities.length === 0 ? (
+                          canPlanActivity ? (
+                            <Link
+                              href={planHref}
+                              className="group flex flex-1 flex-col items-center justify-center rounded-[22px] border border-dashed border-violet-500/20 bg-violet-500/[0.035] px-4 py-6 text-center transition-colors hover:border-violet-400/35 hover:bg-violet-500/[0.075]"
+                            >
+                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-200 transition-colors group-hover:bg-violet-500/20 group-hover:text-white">
+                                <Plus className="h-5 w-5" />
+                              </div>
+                              <p className="text-sm font-semibold text-white">
+                                Planifier une séance
+                              </p>
+                              <p className="mt-1 text-xs text-zinc-500">
+                                Ajouter une activité à faire.
+                              </p>
+                            </Link>
+                          ) : (
+                            <div className="flex flex-1 flex-col items-center justify-center rounded-[22px] border border-dashed border-white/[0.08] bg-black/10 px-4 py-6 text-center">
+                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] text-zinc-500">
+                                <Target className="h-5 w-5" />
+                              </div>
+                              <p className="text-sm font-semibold text-zinc-300">
+                                Journée libre
+                              </p>
+                              <p className="mt-1 text-xs text-zinc-500">
+                                Aucun entraînement.
+                              </p>
                             </div>
-
-                            <p className="text-lg font-semibold text-zinc-300">
-                              Recovery day
-                            </p>
-
-                            <p className="mt-1 text-sm text-zinc-500">
-                              Aucun entraînement
-                            </p>
-                          </div>
+                          )
                         ) : (
-                          <>
-                            {day.workouts.map(
-                              (workout) => (
-                                <div
-                                  key={
-                                    workout.title
-                                  }
-                                  className="flex h-full flex-col"
-                                >
+                          dayActivities.map((activity) => {
+                            const Icon = getSportIcon(activity.sport);
+                            const isPlanned = activity.status === "PLANNED";
 
-                                  {/* TOP */}
-                                  <div className="flex items-start gap-3">
+                            return (
+                              <Link
+                                key={activity.id}
+                                href={`/activites/${activity.id}`}
+                                className="group rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-3 transition-colors hover:border-violet-500/25 hover:bg-violet-500/10"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/15 text-violet-200">
+                                    <Icon className="h-4 w-4" />
+                                  </div>
 
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300">
-                                      {getWorkoutIcon(
-                                        workout.type,
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2 text-[11px] text-zinc-500">
+                                      <span>
+                                        {timeFormatter.format(
+                                          new Date(activity.startedAt),
+                                        )}
+                                      </span>
+                                      <span>•</span>
+                                      <span>
+                                        {sportLabels[activity.sport] ||
+                                          activity.sport}
+                                      </span>
+                                      {isPlanned && (
+                                        <>
+                                          <span>•</span>
+                                          <span className="font-medium text-violet-200">
+                                            Prévu
+                                          </span>
+                                        </>
                                       )}
                                     </div>
 
-                                    <div className="min-w-0 flex-1">
-
-                                      <p className="text-[15px] font-semibold leading-tight text-white">
-                                        {
-                                          workout.title
-                                        }
-                                      </p>
-
-                                      <p className="mt-1 text-sm text-zinc-400">
-                                        {
-                                          workout.time
-                                        }
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  {/* SPACER */}
-                                  <div className="flex-1" />
-
-                                  {/* FOOTER */}
-                                  <div className="flex flex-col items-start gap-3">
-
-                                    <div className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-[11px] font-medium text-zinc-300">
-                                      {
-                                        workout.duration
-                                      }
-                                    </div>
-
-                                    <div
-                                      className={`
-                                        inline-flex
-                                        items-center
-                                        gap-2
-                                        rounded-2xl
-                                        border
-                                        px-3
-                                        py-2
-
-                                        ${status.container}
-                                      `}
-                                    >
-
-                                      <div
-                                        className={`
-                                          h-2.5
-                                          w-2.5
-                                          rounded-full
-
-                                          ${status.dot}
-                                        `}
-                                      />
-
-                                      <span
-                                        className={`
-                                          text-[10px]
-                                          font-semibold
-                                          uppercase
-                                          tracking-[0.12em]
-
-                                          ${status.text}
-                                        `}
-                                      >
-                                        {
-                                          status.label
-                                        }
-                                      </span>
-                                    </div>
+                                    <p className="mt-1 text-sm font-semibold text-white">
+                                      {isPlanned
+                                        ? "À faire"
+                                        : sportLabels[activity.sport] ||
+                                          activity.sport}
+                                    </p>
                                   </div>
                                 </div>
-                              ),
-                            )}
-                          </>
+
+                                <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] text-zinc-400">
+                                  <span className="rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
+                                    {formatDistance(activity.distance)} km
+                                  </span>
+                                  <span className="rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
+                                    {formatDuration(activity.duration)}
+                                  </span>
+                                  <span className="inline-flex items-center justify-center gap-1 rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
+                                    {activity.elevationGain !== null ? (
+                                      <>
+                                        <Mountain className="h-3 w-3 text-emerald-300" />
+                                        {activity.elevationGain} m
+                                      </>
+                                    ) : (
+                                      "—"
+                                    )}
+                                  </span>
+                                </div>
+                              </Link>
+                            );
+                          })
                         )}
                       </div>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
-            </div>
+            </section>
           </FadeIn>
-        </div>
-      </DashboardLayout>
-    );
-  }
+        )}
+      </div>
+    </DashboardLayout>
+  );
+}

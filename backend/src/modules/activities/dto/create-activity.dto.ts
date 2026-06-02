@@ -23,12 +23,22 @@ export enum ActivityType {
   WALK = "WALK",
 }
 
+export enum ActivityStatus {
+  PLANNED = "PLANNED",
+  COMPLETED = "COMPLETED",
+  MISSED = "MISSED",
+}
+
 export class CreateActivityDto {
   @IsEnum(ActivityType)
   type: ActivityType;
 
   @IsEnum(SportType)
   sport: SportType;
+
+  @IsOptional()
+  @IsEnum(ActivityStatus)
+  status?: ActivityStatus;
 
   @IsOptional()
   @IsString()

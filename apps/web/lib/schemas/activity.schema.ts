@@ -1,58 +1,28 @@
 import { z } from "zod";
 
-export const createActivitySchema =
-  z.object({
-    sport: z.string().min(1),
+export const createActivitySchema = z.object({
+  sport: z.string().min(1),
 
-    title: z
-      .string()
-      .min(
-        2,
-        "Le titre est trop court",
-      )
-      .max(
-        80,
-        "Le titre est trop long",
-      ),
+  status: z.enum(["PLANNED", "COMPLETED"]).optional(),
 
-    distance: z
-      .number()
-      .positive(
-        "La distance doit être positive",
-      ),
+  title: z
+    .string()
+    .min(2, "Le titre est trop court")
+    .max(80, "Le titre est trop long"),
 
-    duration: z
-      .number()
-      .positive(
-        "La durée doit être positive",
-      ),
+  distance: z.number().min(0, "La distance ne peut pas être négative"),
 
-    elevationGain: z
-      .number()
-      .min(
-        0,
-        "Le dénivelé ne peut pas être négatif",
-      ),
+  duration: z.number().min(0, "La durée ne peut pas être négative"),
 
-    calories: z
-      .number()
-      .min(
-        0,
-        "Les calories ne peuvent pas être négatives",
-      ),
+  elevationGain: z.number().min(0, "Le dénivelé ne peut pas être négatif"),
 
-    startedAt: z.string(),
+  calories: z.number().min(0, "Les calories ne peuvent pas être négatives"),
 
-    notes: z
-      .string()
-      .max(
-        500,
-        "Maximum 500 caractères",
-      )
-      .optional(),
-  });
+  startedAt: z.string(),
 
-export type CreateActivityInput =
-  z.infer<
-    typeof createActivitySchema
-  >;
+  returnTo: z.string().optional(),
+
+  notes: z.string().max(500, "Maximum 500 caractères").optional(),
+});
+
+export type CreateActivityInput = z.infer<typeof createActivitySchema>;
