@@ -52,6 +52,8 @@ interface StravaActivity {
   elapsed_time: number;
   total_elevation_gain?: number;
   start_date: string;
+  start_latlng?: [number, number] | null;
+  end_latlng?: [number, number] | null;
   average_speed?: number;
   max_speed?: number;
   average_heartrate?: number;
@@ -59,6 +61,9 @@ interface StravaActivity {
   calories?: number;
   kilojoules?: number;
   description?: string;
+  map?: {
+    summary_polyline?: string;
+  };
 }
 
 type StravaCallbackFailureReason =
@@ -262,6 +267,11 @@ export class StravaService {
             duration: mappedActivity.duration,
             movingTime: mappedActivity.movingTime,
             elevationGain: mappedActivity.elevationGain,
+            startLatitude: mappedActivity.startLatitude,
+            startLongitude: mappedActivity.startLongitude,
+            endLatitude: mappedActivity.endLatitude,
+            endLongitude: mappedActivity.endLongitude,
+            routePolyline: mappedActivity.routePolyline,
             calories: mappedActivity.calories,
             averageSpeed: mappedActivity.averageSpeed,
             maxSpeed: mappedActivity.maxSpeed,
@@ -450,6 +460,11 @@ export class StravaService {
         activity.total_elevation_gain !== undefined
           ? Math.round(activity.total_elevation_gain)
           : undefined,
+      startLatitude: activity.start_latlng?.[0],
+      startLongitude: activity.start_latlng?.[1],
+      endLatitude: activity.end_latlng?.[0],
+      endLongitude: activity.end_latlng?.[1],
+      routePolyline: activity.map?.summary_polyline,
       calories: this.mapCalories(activity),
       averageSpeed: activity.average_speed,
       maxSpeed: activity.max_speed,

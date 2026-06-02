@@ -1,23 +1,54 @@
-import { Activity as ActivityIcon, LucideIcon } from "lucide-react";
+import {
+  Activity as ActivityIcon,
+  ArrowUpRight,
+  CalendarDays,
+  Flame,
+  LucideIcon,
+  MapPin,
+  Timer,
+} from "lucide-react";
+import Link from "next/link";
+
+import { MiniRouteMap } from "./mini-route-map";
 
 type ActivityCardProps = {
+  id: string;
   title: string;
   type: string;
   sport: string;
   distance: number | null;
   duration: number;
   calories: number | null;
+  routePolyline: string | null;
   date: string;
   icon?: LucideIcon;
 };
 
+const sportLabels: Record<string, string> = {
+  RUNNING: "Course",
+  ROAD_CYCLING: "Cyclisme",
+  GRAVEL: "Gravel",
+  MTB: "VTT",
+  TRAIL: "Trail",
+  HIKING: "Randonnée",
+  WALKING: "Marche",
+  GYM: "Musculation",
+  FITNESS: "Fitness",
+  SWIMMING: "Natation",
+  SKI: "Ski",
+  SNOWBOARD: "Snowboard",
+  CLIMBING: "Escalade",
+};
+
 export function ActivityCard({
+  id,
   title,
   type,
   sport,
   distance,
   duration,
   calories,
+  routePolyline,
   date,
   icon: Icon = ActivityIcon,
 }: ActivityCardProps) {
@@ -46,60 +77,94 @@ export function ActivityCard({
           maximumFractionDigits: 0,
         }).format(calories);
 
-  const sportLabel =
-    {
-      RUNNING: "Course",
-      ROAD_CYCLING: "Cyclisme",
-      GRAVEL: "Gravel",
-      MTB: "VTT",
-      TRAIL: "Trail",
-      HIKING: "Randonnée",
-      WALKING: "Marche",
-      GYM: "Musculation",
-      FITNESS: "Fitness",
-      SWIMMING: "Natation",
-      SKI: "Ski",
-      SNOWBOARD: "Snowboard",
-      CLIMBING: "Escalade",
-    }[sport] || sport;
+  const sportLabel = sportLabels[sport] || sport;
 
   return (
-    <div className="group rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700">
-      <div className="flex items-start justify-between gap-4">
-        {/* Partie gauche */}
-        <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-zinc-800 bg-black/30 text-zinc-300 transition-colors group-hover:text-white">
-            <Icon size={24} />
-          </div>
+    <Link
+      href={`/activites/${id}`}
+      className="group relative block overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#171922]/92 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14] hover:bg-[#1b1d28]/95 focus:ring-2 focus:ring-violet-400/60 focus:outline-none"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_34%)] opacity-80" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.035),transparent_30%)]" />
 
-          <div>
-            <div className="flex items-center gap-3">
-              <h3 className="text-lg font-semibold text-white">{title}</h3>
-
-              <span className="rounded-full border border-zinc-700 bg-zinc-800 px-3 py-1 text-xs text-zinc-300">
-                {sportLabel}
-              </span>
-
-              {type !== "TRAINING" && (
-                <span className="rounded-full border border-zinc-800 bg-black/20 px-3 py-1 text-xs text-zinc-500">
-                  {type}
-                </span>
-              )}
+      <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-stretch">
+        <div className="min-w-0">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-violet-300 transition-colors group-hover:text-white">
+              <Icon size={22} />
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-zinc-400">
-              <span>{formattedDistance} km</span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-200">
+                  {sportLabel}
+                </span>
 
-              <span>{formattedDuration}</span>
+                {type !== "TRAINING" && (
+                  <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-zinc-400">
+                    {type}
+                  </span>
+                )}
+              </div>
 
-              <span>{formattedCalories} Calories</span>
+              <h3 className="mt-3 line-clamp-2 text-lg leading-snug font-semibold tracking-tight text-white">
+                {title}
+              </h3>
+
+              <div className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-zinc-500 transition-colors group-hover:text-violet-200">
+                Voir le détail
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                <MapPin className="h-3.5 w-3.5 text-sky-300" />
+                Distance
+              </div>
+              <p className="mt-1 text-sm font-semibold text-white">
+                {formattedDistance} km
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                <Timer className="h-3.5 w-3.5 text-violet-300" />
+                Durée
+              </div>
+              <p className="mt-1 text-sm font-semibold text-white">
+                {formattedDuration}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                <Flame className="h-3.5 w-3.5 text-orange-300" />
+                Calories
+              </div>
+              <p className="mt-1 text-sm font-semibold text-white">
+                {formattedCalories}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                <CalendarDays className="h-3.5 w-3.5 text-emerald-300" />
+                Date
+              </div>
+              <p className="mt-1 text-sm font-semibold text-white">
+                {formattedDate}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Date */}
-        <span className="text-sm text-zinc-500">{formattedDate}</span>
+        <div className="flex items-center">
+          <MiniRouteMap polyline={routePolyline} />
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
