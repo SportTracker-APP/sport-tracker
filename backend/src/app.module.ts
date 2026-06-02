@@ -8,9 +8,11 @@ import { AuthModule } from './modules/auth/auth.module';
 
 import { UsersModule } from './modules/users/users.module';
 
-import { UploadModule } from "./modules/upload/upload.module";
+import { UploadModule } from './modules/upload/upload.module';
 
-import { ActivitiesModule } from "./modules/activities/activities.module";
+import { ActivitiesModule } from './modules/activities/activities.module';
+
+import { StravaModule } from './modules/strava/strava.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { ActivitiesModule } from "./modules/activities/activities.module";
     UploadModule,
 
     ActivitiesModule,
+
+    StravaModule,
   ],
 })
 export class AppModule {}

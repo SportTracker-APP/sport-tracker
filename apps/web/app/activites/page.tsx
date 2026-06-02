@@ -3,10 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import {
-  Activity,
-  Plus,
-} from "lucide-react";
+import { Activity, Plus } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { ActivityCard } from "@/components/activities/activity-card";
@@ -16,28 +13,29 @@ import { Button } from "@/components/ui/button";
 
 import { useActivities } from "@/hooks/use-activities";
 
+const sportFilters: Record<string, string[]> = {
+  Course: ["RUNNING"],
+  Cyclisme: ["ROAD_CYCLING", "GRAVEL"],
+  VTT: ["MTB"],
+  Trail: ["TRAIL"],
+  Musculation: ["GYM", "FITNESS"],
+  Randonnée: ["HIKING", "WALKING"],
+};
+
 export default function ActivitiesPage() {
-  const [activeFilter, setActiveFilter] =
-    useState("Tous");
+  const [activeFilter, setActiveFilter] = useState("Tous");
 
-  const {
-    data: activities = [],
-    isLoading,
-    error,
-  } = useActivities();
-
-  console.table(activities);
-  console.log("loading", isLoading);
-  console.log("error", error);
+  const { data: activities = [], isLoading, error } = useActivities();
 
   const filteredActivities = useMemo(() => {
     if (activeFilter === "Tous") {
       return activities;
     }
 
-    return activities.filter(
-      (activity) =>
-        activity.type === activeFilter,
+    const matchingSports = sportFilters[activeFilter] || [];
+
+    return activities.filter((activity) =>
+      matchingSports.includes(activity.sport),
     );
   }, [activeFilter, activities]);
 
@@ -52,8 +50,7 @@ export default function ActivitiesPage() {
             </h1>
 
             <p className="mt-2 text-zinc-400">
-              Retrouvez l’ensemble de vos
-              entraînements récents.
+              Retrouvez l’ensemble de vos entraînements récents.
             </p>
           </div>
 
@@ -100,44 +97,24 @@ export default function ActivitiesPage() {
                   </h3>
 
                   <p className="mt-2 text-zinc-400">
-                    Commencez par créer votre
-                    première activité.
+                    Commencez par créer votre première activité.
                   </p>
                 </div>
               ) : (
-                filteredActivities.map(
-                  (activity, index) => (
-                    <FadeIn
-                      key={activity.id}
-                      delay={
-                        0.1 *
-                        (index + 1)
-                      }
-                    >
-                      <ActivityCard
-                        title={
-                          activity.title ??
-                          "Sans titre"
-                        }
-                        type={activity.type}
-                        distance={`${activity.distance ?? 0} km`}
-                        duration={`${Math.round(
-                          activity.duration / 60,
-                        )} min`}
-                        calories={
-                          activity.calories ??
-                          0
-                        }
-                        date={new Date(
-                          activity.startedAt,
-                        ).toLocaleDateString(
-                          "fr-FR",
-                        )}
-                        icon={Activity}
-                      />
-                    </FadeIn>
-                  ),
-                )
+                filteredActivities.map((activity, index) => (
+                  <FadeIn key={activity.id} delay={0.1 * (index + 1)}>
+                    <ActivityCard
+                      title={activity.title ?? "Sans titre"}
+                      type={activity.type}
+                      sport={activity.sport}
+                      distance={activity.distance}
+                      duration={activity.duration}
+                      calories={activity.calories}
+                      date={activity.startedAt}
+                      icon={Activity}
+                    />
+                  </FadeIn>
+                ))
               )}
             </div>
           </>

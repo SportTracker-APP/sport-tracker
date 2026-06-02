@@ -5,17 +5,16 @@ import Link from "next/link";
 import {
   Activity,
   Calendar,
-  Dumbbell,
+  ChartColumn,
   Goal,
   LayoutDashboard,
+  Link2,
   Menu,
+  Settings,
+  Trophy,
 } from "lucide-react";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const links = [
   {
@@ -25,23 +24,38 @@ const links = [
   },
   {
     label: "Activités",
-    href: "/activities",
+    href: "/activites",
     icon: Activity,
   },
   {
     label: "Calendrier",
-    href: "/calendar",
+    href: "/calendrier",
     icon: Calendar,
   },
   {
+    label: "Statistiques",
+    href: "/statistiques",
+    icon: ChartColumn,
+  },
+  {
     label: "Objectifs",
-    href: "/goals",
+    href: "/objectifs",
     icon: Goal,
   },
   {
-    label: "Entraînements",
-    href: "/workouts",
-    icon: Dumbbell,
+    label: "Performances",
+    href: "/performances",
+    icon: Trophy,
+  },
+  {
+    label: "Strava",
+    href: "/integrations/strava",
+    icon: Link2,
+  },
+  {
+    label: "Paramètres",
+    href: "/parametres",
+    icon: Settings,
   },
 ];
 
@@ -54,20 +68,13 @@ export function MobileSidebar() {
         </button>
       </SheetTrigger>
 
-      <SheetContent
-        side="left"
-        className="border-zinc-800 bg-black p-0"
-      >
+      <SheetContent side="left" className="border-zinc-800 bg-black p-0">
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="border-b border-zinc-800 p-6">
-            <h2 className="text-xl font-bold text-white">
-              Sport Tracker
-            </h2>
+            <h2 className="text-xl font-bold text-white">Sport Tracker</h2>
 
-            <p className="mt-1 text-sm text-zinc-500">
-              Dashboard sportif
-            </p>
+            <p className="mt-1 text-sm text-zinc-500">Dashboard sportif</p>
           </div>
 
           {/* Navigation */}
