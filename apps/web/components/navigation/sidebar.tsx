@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 import { api } from "@/lib/api";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 interface StravaStatus {
   connected: boolean;
@@ -126,7 +127,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="relative hidden w-[270px] shrink-0 overflow-hidden border-r border-white/[0.06] bg-[#0D0E14]/95 backdrop-blur-2xl lg:flex lg:flex-col">
+    <aside className="app-sidebar relative hidden w-[270px] shrink-0 overflow-hidden border-r border-white/[0.06] bg-[#0D0E14]/95 backdrop-blur-2xl lg:flex lg:flex-col">
       {/* GLOBAL BACKGROUND */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* MAIN GRADIENT */}
@@ -183,6 +184,7 @@ export function Sidebar() {
               <Link
                 key={item.title}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                   isActive
                     ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
@@ -236,6 +238,7 @@ export function Sidebar() {
                 <Link
                   key={item.title}
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                     isActive
                       ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
@@ -292,6 +295,7 @@ export function Sidebar() {
                 <Link
                   key={item.title}
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                     isActive
                       ? "border border-orange-500/20 bg-orange-500/10 text-white"
@@ -366,6 +370,8 @@ export function Sidebar() {
               </div>
             </Link>
           )}
+
+          <ThemeSwitcher />
         </div>
 
         {/* SPACER */}

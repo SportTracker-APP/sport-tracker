@@ -10,24 +10,13 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  Mail,
-  User,
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 
 import { registerUser } from "@/lib/auth";
 
 import { useAuthStore } from "@/store/auth-store";
 
-import {
-  registerSchema,
-  RegisterSchema,
-} from "@/lib/schemas/auth.schema";
+import { registerSchema, RegisterSchema } from "@/lib/schemas/auth.schema";
 
 import { Button } from "@/components/ui/button";
 
@@ -60,25 +49,17 @@ function getPasswordStrength(password: string) {
 export function RegisterForm() {
   const router = useRouter();
 
-  const setAuth = useAuthStore(
-  (state) => state.setAuth,
-);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [serverError, setServerError] =
-    useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register: formRegister,
     handleSubmit,
     watch,
-    formState: {
-      errors,
-      isSubmitting,
-      isValid,
-    },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
@@ -91,40 +72,36 @@ export function RegisterForm() {
     [password],
   );
 
- async function onSubmit(data: RegisterSchema) {
-  console.log("SUBMIT OK");
+  async function onSubmit(data: RegisterSchema) {
+    console.log("SUBMIT OK");
 
-  console.log(data);
+    console.log(data);
 
-  try {
-    setServerError(null);
+    try {
+      setServerError(null);
 
-    const response = await registerUser(
-      data.firstName,
-      data.email,
-      data.password,
-    );
+      const response = await registerUser(
+        data.firstName,
+        data.email,
+        data.password,
+      );
 
-    console.log(response);
+      console.log(response);
 
-    setAuth(
-      response.accessToken,
-      response.user,
-    );
+      setAuth(response.accessToken, response.user);
 
-    window.location.href = "/";
-  } catch (error: any) {
-    console.log(error);
+      window.location.href = "/";
+    } catch (error: any) {
+      console.log(error);
 
-    setServerError(
-      error?.response?.data?.message ||
-        "Une erreur est survenue",
-    );
+      setServerError(
+        error?.response?.data?.message || "Une erreur est survenue",
+      );
+    }
   }
-}
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
+    <div className="app-auth-card rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
       <div className="mb-8 space-y-3 text-center">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-violet-500/20">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500">
@@ -136,24 +113,16 @@ export function RegisterForm() {
           Créer un compte
         </h2>
 
-        <p className="text-zinc-400">
-          Commence gratuitement dès aujourd’hui.
-        </p>
+        <p className="text-zinc-400">Commence gratuitement dès aujourd’hui.</p>
       </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-5"
-      >
-
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* FIRST NAME */}
         <div className="space-y-2">
-          <label className="text-sm text-zinc-300">
-            Prénom
-          </label>
+          <label className="text-sm text-zinc-300">Prénom</label>
 
           <div className="relative">
-            <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-500" />
+            <User className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
 
             <Input
               type="text"
@@ -165,19 +134,15 @@ export function RegisterForm() {
           </div>
 
           {errors.firstName && (
-            <p className="text-sm text-red-400">
-              {errors.firstName.message}
-            </p>
+            <p className="text-sm text-red-400">{errors.firstName.message}</p>
           )}
         </div>
         {/* EMAIL */}
         <div className="space-y-2">
-          <label className="text-sm text-zinc-300">
-            Email
-          </label>
+          <label className="text-sm text-zinc-300">Email</label>
 
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-500" />
+            <Mail className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
 
             <Input
               type="email"
@@ -189,36 +154,30 @@ export function RegisterForm() {
           </div>
 
           {errors.email && (
-            <p className="text-sm text-red-400">
-              {errors.email.message}
-            </p>
+            <p className="text-sm text-red-400">{errors.email.message}</p>
           )}
         </div>
 
         {/* PASSWORD */}
         <div className="space-y-3">
           <div className="space-y-2">
-            <label className="text-sm text-zinc-300">
-              Mot de passe
-            </label>
+            <label className="text-sm text-zinc-300">Mot de passe</label>
 
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-500" />
+              <Lock className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
 
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Minimum 6 caractères"
                 autoComplete="new-password"
-                className="h-12 border-white/10 bg-black/30 pl-12 pr-12 text-white placeholder:text-zinc-500"
+                className="h-12 border-white/10 bg-black/30 pr-12 pl-12 text-white placeholder:text-zinc-500"
                 {...formRegister("password")}
               />
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition hover:text-white"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-zinc-500 transition hover:text-white"
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5" />
@@ -229,9 +188,7 @@ export function RegisterForm() {
             </div>
 
             {errors.password && (
-              <p className="text-sm text-red-400">
-                {errors.password.message}
-              </p>
+              <p className="text-sm text-red-400">{errors.password.message}</p>
             )}
           </div>
 
@@ -248,9 +205,7 @@ export function RegisterForm() {
 
               <p className="text-xs text-zinc-400">
                 Sécurité :{" "}
-                <span className="text-white">
-                  {passwordStrength.label}
-                </span>
+                <span className="text-white">{passwordStrength.label}</span>
               </p>
             </div>
           )}
@@ -282,7 +237,6 @@ export function RegisterForm() {
         {/* FOOTER */}
         <p className="pt-4 text-center text-sm text-zinc-500">
           Déjà un compte ?{" "}
-
           <Link
             href="/login"
             className="text-violet-400 transition hover:text-violet-300"

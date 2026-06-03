@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 const links = [
   {
@@ -63,12 +64,16 @@ export function MobileSidebar() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="rounded-2xl border border-zinc-800 bg-zinc-900 p-3 text-zinc-300 transition-colors hover:bg-zinc-800 lg:hidden">
+        <button className="app-mobile-menu-trigger rounded-2xl border border-zinc-800 bg-zinc-900 p-3 text-zinc-300 transition-colors hover:bg-zinc-800 lg:hidden">
+          <span className="sr-only">Ouvrir le menu</span>
           <Menu size={20} />
         </button>
       </SheetTrigger>
 
-      <SheetContent side="left" className="border-zinc-800 bg-black p-0">
+      <SheetContent
+        side="left"
+        className="app-mobile-sidebar border-zinc-800 bg-black p-0"
+      >
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="border-b border-zinc-800 p-6">
@@ -95,6 +100,10 @@ export function MobileSidebar() {
               );
             })}
           </nav>
+
+          <div className="border-t border-zinc-800 p-4">
+            <ThemeSwitcher />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

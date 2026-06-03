@@ -22,7 +22,7 @@ export function Topbar() {
   const logout = useAuthStore((state) => state.logout);
 
   return (
-    <header className="relative flex h-20 items-center justify-between overflow-hidden border-b border-white/[0.05] bg-[#0b0b0f]/95 px-4 backdrop-blur-2xl sm:px-8">
+    <header className="app-topbar relative flex h-20 items-center justify-between overflow-hidden border-b border-white/[0.05] bg-[#0b0b0f]/95 px-4 backdrop-blur-2xl sm:px-8">
       {/* BACKGROUND */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-[-120px] left-[10%] h-[220px] w-[220px] rounded-full bg-violet-500/5 blur-3xl" />

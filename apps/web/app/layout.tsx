@@ -18,22 +18,30 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({
-  children,
-}: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                localStorage.removeItem("sport-tracker-theme");
+
+                if (localStorage.getItem("sport-tracker-theme-v2") === "nature") {
+                  document.documentElement.classList.add("sport-theme-nature");
+                } else {
+                  document.documentElement.classList.remove("sport-theme-nature");
+                }
+              } catch {}
+            `,
+          }}
+        />
         <ThemeProvider>
           <QueryProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </QueryProvider>
-      </ThemeProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

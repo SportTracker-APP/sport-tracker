@@ -82,7 +82,7 @@ export function ActivityCard({
   return (
     <Link
       href={`/activites/${id}`}
-      className="group relative block overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#171922]/92 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14] hover:bg-[#1b1d28]/95 focus:ring-2 focus:ring-violet-400/60 focus:outline-none"
+      className="app-activity-card group relative block overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#171922]/92 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14] hover:bg-[#1b1d28]/95 focus:ring-2 focus:ring-violet-400/60 focus:outline-none"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_34%)] opacity-80" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.035),transparent_30%)]" />
@@ -90,13 +90,13 @@ export function ActivityCard({
       <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-stretch">
         <div className="min-w-0">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-violet-300 transition-colors group-hover:text-white">
+            <div className="app-activity-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-violet-300 transition-colors group-hover:text-white">
               <Icon size={22} />
             </div>
 
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-200">
+                <span className="app-activity-badge rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-200">
                   {sportLabel}
                 </span>
 
@@ -111,15 +111,22 @@ export function ActivityCard({
                 {title}
               </h3>
 
-              <div className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-zinc-500 transition-colors group-hover:text-violet-200">
-                Voir le détail
-                <ArrowUpRight className="h-3.5 w-3.5" />
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs font-medium">
+                <span className="inline-flex items-center gap-1.5 text-zinc-500">
+                  <CalendarDays className="h-3.5 w-3.5 text-emerald-300" />
+                  {formattedDate}
+                </span>
+
+                <span className="inline-flex items-center gap-2 text-zinc-500 transition-colors group-hover:text-violet-200">
+                  Voir le détail
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="app-activity-metric rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
               <div className="flex items-center gap-2 text-xs text-zinc-500">
                 <MapPin className="h-3.5 w-3.5 text-sky-300" />
                 Distance
@@ -129,7 +136,7 @@ export function ActivityCard({
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+            <div className="app-activity-metric rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
               <div className="flex items-center gap-2 text-xs text-zinc-500">
                 <Timer className="h-3.5 w-3.5 text-violet-300" />
                 Durée
@@ -139,23 +146,13 @@ export function ActivityCard({
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
+            <div className="app-activity-metric rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
               <div className="flex items-center gap-2 text-xs text-zinc-500">
                 <Flame className="h-3.5 w-3.5 text-orange-300" />
                 Calories
               </div>
               <p className="mt-1 text-sm font-semibold text-white">
                 {formattedCalories}
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
-              <div className="flex items-center gap-2 text-xs text-zinc-500">
-                <CalendarDays className="h-3.5 w-3.5 text-emerald-300" />
-                Date
-              </div>
-              <p className="mt-1 text-sm font-semibold text-white">
-                {formattedDate}
               </p>
             </div>
           </div>

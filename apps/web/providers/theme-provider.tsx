@@ -7,17 +7,19 @@ type ThemeProviderProps = {
   children: React.ReactNode;
 };
 
-export function ThemeProvider({
-  children,
-}: ThemeProviderProps) {
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const Provider = NextThemesProvider as React.ComponentType<
+    React.PropsWithChildren<Record<string, unknown>>
+  >;
+
   return (
-    <NextThemesProvider
+    <Provider
       attribute="class"
       defaultTheme="dark"
       enableSystem
       disableTransitionOnChange
     >
       {children}
-    </NextThemesProvider>
+    </Provider>
   );
 }

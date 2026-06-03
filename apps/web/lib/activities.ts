@@ -7,6 +7,8 @@ export interface Activity {
 
   description: string | null;
 
+  stravaActivityId?: string | null;
+
   type: string;
 
   sport: string;
