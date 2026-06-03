@@ -1,10 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 
-import { ActivitiesController } from "./activities.controller";
+import { ActivitiesController } from './activities.controller';
 
-import { ActivitiesService } from "./activities.service";
+import { ActivitiesService } from './activities.service';
 
-import { PrismaModule } from "../../prisma/prisma.module";
+import { PrismaModule } from '../../prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],

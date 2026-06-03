@@ -1,0 +1,13 @@
+{
+  "name": "sport-tracker-workspace",
+  "private": true,
+  "scripts": {
+    "dev:backend": "npm --prefix backend run start:dev",
+    "dev:web": "npm --prefix apps/web run dev",
+    "check": "npm --prefix backend run build && npm --prefix apps/web run typecheck",
+    "check:backend": "npm --prefix backend run build",
+    "check:web": "npm --prefix apps/web run typecheck",
+    "db:generate": "npm --prefix backend exec prisma generate",
+    "db:migrate": "npm --prefix backend exec prisma migrate deploy"
+  }
+}

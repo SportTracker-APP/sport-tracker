@@ -22,16 +22,16 @@ export class AuthService {
   private async generateAccessToken(
     userId: string,
     email: string,
+    role: string,
   ) {
     return this.jwtService.signAsync(
       {
         sub: userId,
         email,
+        role,
       },
       {
-        secret:
-          process.env.JWT_ACCESS_SECRET ||
-          'access-secret',
+        secret: process.env.JWT_ACCESS_SECRET || 'access-secret',
 
         expiresIn: '15m',
       },
@@ -41,28 +41,24 @@ export class AuthService {
   private async generateRefreshToken(
     userId: string,
     email: string,
+    role: string,
   ) {
     return this.jwtService.signAsync(
       {
         sub: userId,
         email,
+        role,
       },
       {
-        secret:
-          process.env.JWT_REFRESH_SECRET ||
-          'refresh-secret',
+        secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
 
         expiresIn: '7d',
       },
     );
   }
 
-  private async updateRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ) {
-    const hashedRefreshToken =
-      await bcrypt.hash(refreshToken, 10);
+  private async updateRefreshToken(userId: string, refreshToken: string) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
     await this.prisma.user.update({
       where: {
@@ -70,56 +66,47 @@ export class AuthService {
       },
 
       data: {
-        refreshToken:
-          hashedRefreshToken,
+        refreshToken: hashedRefreshToken,
       },
     });
   }
 
   async register(dto: RegisterDto) {
-    const existingUser =
-      await this.prisma.user.findUnique({
-        where: {
-          email: dto.email,
-        },
-      });
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
 
     if (existingUser) {
-      throw new BadRequestException(
-        'Email already used',
-      );
+      throw new BadRequestException('Email already used');
     }
 
-    const hashedPassword =
-      await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user =
-      await this.prisma.user.create({
-        data: {
-          firstName: dto.firstName,
+    const user = await this.prisma.user.create({
+      data: {
+        firstName: dto.firstName,
 
-          email: dto.email,
+        email: dto.email,
 
-          password: hashedPassword,
-        },
-      });
+        password: hashedPassword,
+      },
+    });
 
-    const accessToken =
-      await this.generateAccessToken(
-        user.id,
-        user.email,
-      );
-
-    const refreshToken =
-      await this.generateRefreshToken(
-        user.id,
-        user.email,
-      );
-
-    await this.updateRefreshToken(
+    const accessToken = await this.generateAccessToken(
       user.id,
-      refreshToken,
+      user.email,
+      user.role,
     );
+
+    const refreshToken = await this.generateRefreshToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+
+    await this.updateRefreshToken(user.id, refreshToken);
 
     return {
       accessToken,
@@ -132,55 +119,46 @@ export class AuthService {
         firstName: user.firstName,
 
         email: user.email,
+
+        role: user.role,
       },
     };
   }
 
-  async login(
-    email: string,
-    password: string,
-  ) {
-    const user =
-      await this.prisma.user.findUnique({
-        where: {
-          email,
-        },
-      });
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
     if (!user) {
-      throw new UnauthorizedException(
-        'Email ou mot de passe incorrect',
-      );
+      throw new UnauthorizedException('Email ou mot de passe incorrect');
     }
 
-    const passwordMatches =
-      await bcrypt.compare(
-        password,
-        user.password,
-      );
+    if (user.isBlocked) {
+      throw new UnauthorizedException('Compte bloqué');
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password);
 
     if (!passwordMatches) {
-      throw new UnauthorizedException(
-        'Email ou mot de passe incorrect',
-      );
+      throw new UnauthorizedException('Email ou mot de passe incorrect');
     }
 
-    const accessToken =
-      await this.generateAccessToken(
-        user.id,
-        user.email,
-      );
-
-    const refreshToken =
-      await this.generateRefreshToken(
-        user.id,
-        user.email,
-      );
-
-    await this.updateRefreshToken(
+    const accessToken = await this.generateAccessToken(
       user.id,
-      refreshToken,
+      user.email,
+      user.role,
     );
+
+    const refreshToken = await this.generateRefreshToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+
+    await this.updateRefreshToken(user.id, refreshToken);
 
     return {
       accessToken,
@@ -193,17 +171,18 @@ export class AuthService {
         firstName: user.firstName,
 
         email: user.email,
+
+        role: user.role,
       },
     };
   }
 
   async me(userId: string) {
-    const user =
-      await this.prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
 
     if (!user) {
       throw new UnauthorizedException();
@@ -215,6 +194,8 @@ export class AuthService {
       firstName: user.firstName,
 
       email: user.email,
+
+      role: user.role,
     };
   }
 }

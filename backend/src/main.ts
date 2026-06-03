@@ -1,19 +1,17 @@
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe } from '@nestjs/common';
 
-import { NestFactory } from "@nestjs/core";
+import { NestFactory } from '@nestjs/core';
 
-import cookieParser from "cookie-parser";
+import cookieParser from 'cookie-parser';
 
-import { AppModule } from "./app.module";
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(
-    AppModule,
-  );
+  const app = await NestFactory.create(AppModule);
 
   const allowedOrigins = [
-    "http://localhost:3000",
-    "http://localhost:3001",
+    'http://localhost:3000',
+    'http://localhost:3001',
     process.env.FRONTEND_URL,
   ].filter(Boolean);
 

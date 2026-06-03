@@ -35,6 +35,10 @@ model User {
 
   refreshToken String?
 
+  role UserRole @default(USER)
+
+  isBlocked Boolean @default(false)
+
   // SETTINGS
   isProfilePublic Boolean @default(false)
 
@@ -181,6 +185,11 @@ enum WeatherType {
   SNOWY
   WINDY
   FOGGY
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model StravaConnection {

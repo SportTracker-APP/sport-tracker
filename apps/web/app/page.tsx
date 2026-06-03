@@ -5,12 +5,19 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   Activity,
+  AlertTriangle,
   ArrowUpRight,
   CalendarDays,
+  CheckCircle2,
+  Compass,
   Flame,
+  Gauge,
   Link2,
+  MapPinned,
   Plus,
   Route,
+  ShieldCheck,
+  Timer,
   Trophy,
   Zap,
 } from "lucide-react";
@@ -96,8 +103,42 @@ function formatSignedDistance(distance: number) {
   return `${prefix}${formatDistance(Math.abs(distance), 1)} vs semaine passée`;
 }
 
+function formatShortDate(date: string) {
+  return new Intl.DateTimeFormat("fr-FR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+  }).format(new Date(date));
+}
+
+function getSportLabel(activity: SportActivity | null) {
+  if (!activity) {
+    return "Aucune sortie";
+  }
+
+  const labels: Record<string, string> = {
+    FITNESS: "Fitness",
+    GRAVEL: "Gravel",
+    GYM: "Musculation",
+    HIKING: "Randonnée",
+    MTB: "VTT",
+    ROAD_CYCLING: "Cyclisme",
+    RUNNING: "Course",
+    TRAIL: "Trail",
+    WALKING: "Marche",
+  };
+
+  return labels[activity.sport] ?? "Sport";
+}
+
 function getCompletedActivities(activities: SportActivity[]) {
-  return activities.filter((activity) => activity.status !== "PLANNED");
+  return activities
+    .filter((activity) => activity.status !== "PLANNED")
+    .sort(
+      (firstActivity, secondActivity) =>
+        new Date(secondActivity.startedAt).getTime() -
+        new Date(firstActivity.startedAt).getTime(),
+    );
 }
 
 function getActivitiesBetween(
@@ -277,9 +318,30 @@ export default function HomePage() {
       (total, activity) => total + (activity.calories || 0),
       0,
     );
+    const activeDays = new Set(
+      rollingActivities.map((activity) =>
+        new Date(activity.startedAt).toDateString(),
+      ),
+    ).size;
+    const bestActivity = rollingActivities.reduce<SportActivity | null>(
+      (bestActivityCandidate, activity) => {
+        if (!bestActivityCandidate) {
+          return activity;
+        }
+
+        return (activity.distance || 0) > (bestActivityCandidate.distance || 0)
+          ? activity
+          : bestActivityCandidate;
+      },
+      null,
+    );
     const rollingProgress = Math.min(
       100,
       Math.round((rollingDistance / rollingTargetDistance) * 100),
+    );
+    const remainingDistance = Math.max(
+      0,
+      rollingTargetDistance - rollingDistance,
     );
     const rollingChartData = Array.from({
       length: 31,
@@ -304,12 +366,16 @@ export default function HomePage() {
 
     return {
       completedActivities,
+      activeDays,
+      bestActivity,
+      latestActivity: completedActivities[0] ?? null,
       weekActivities,
       rollingActivities,
       rollingCalories,
       rollingDistance,
       rollingDuration,
       rollingProgress,
+      remainingDistance,
       previousWeeklyDistance,
       recentActivities: completedActivities.slice(0, 4),
       rollingChartData,
@@ -354,6 +420,77 @@ export default function HomePage() {
     },
   ];
 
+  const weeklyDelta =
+    dashboardData.weeklyDistance - dashboardData.previousWeeklyDistance;
+
+  const insightCards = [
+    {
+      label: "Cap restant",
+      value: formatDistance(dashboardData.remainingDistance, 1),
+      description: "Pour boucler l’objectif 30 jours",
+      icon: Compass,
+      tone: "from-violet-500/18 to-fuchsia-500/8",
+    },
+    {
+      label: "Jours actifs",
+      value: `${dashboardData.activeDays}/30`,
+      description: "Régularité sur la période",
+      icon: Gauge,
+      tone: "from-emerald-500/16 to-lime-500/8",
+    },
+    {
+      label: "Meilleure sortie",
+      value: dashboardData.bestActivity
+        ? formatDistance(dashboardData.bestActivity.distance || 0, 1)
+        : "Aucune",
+      description: dashboardData.bestActivity?.title ?? "En attente de données",
+      icon: Trophy,
+      tone: "from-amber-500/16 to-orange-500/8",
+    },
+    {
+      label: "Signal semaine",
+      value: formatSignedDistance(weeklyDelta),
+      description: "Comparé à la semaine précédente",
+      icon: Timer,
+      tone: "from-sky-500/16 to-cyan-500/8",
+    },
+  ];
+
+  const watchItems = [
+    {
+      icon: hasSyncedStrava ? CheckCircle2 : AlertTriangle,
+      title: hasSyncedStrava ? "Strava synchronisé" : "Strava à connecter",
+      description: hasSyncedStrava
+        ? "Les données du dashboard sont alimentées automatiquement."
+        : "Le dashboard utilise encore vos activités manuelles.",
+      tone: hasSyncedStrava ? "text-emerald-300" : "text-orange-300",
+    },
+    {
+      icon: dashboardData.remainingDistance <= 80 ? CheckCircle2 : Compass,
+      title:
+        dashboardData.remainingDistance <= 80
+          ? "Objectif à portée"
+          : "Cap encore ouvert",
+      description:
+        dashboardData.remainingDistance <= 80
+          ? "Vous êtes dans la dernière ligne droite des 30 jours."
+          : `${formatDistance(dashboardData.remainingDistance, 1)} restent à parcourir.`,
+      tone:
+        dashboardData.remainingDistance <= 80
+          ? "text-emerald-300"
+          : "text-violet-300",
+    },
+    {
+      icon: weeklyDelta >= 0 ? ArrowUpRight : AlertTriangle,
+      title: weeklyDelta >= 0 ? "Semaine solide" : "Semaine plus calme",
+      description:
+        weeklyDelta >= 0
+          ? formatSignedDistance(weeklyDelta)
+          : "Une sortie courte peut relancer le rythme.",
+      tone: weeklyDelta >= 0 ? "text-emerald-300" : "text-orange-300",
+    },
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -393,16 +530,26 @@ export default function HomePage() {
             )}
 
             <FadeIn delay={0.1}>
-              <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.025] px-6 py-6 md:px-8 md:py-7">
+              <section
+                className="app-dashboard-hero relative overflow-hidden rounded-[30px] border border-white/[0.055] bg-zinc-950 px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_26px_90px_rgba(0,0,0,0.24)] md:px-8 md:py-7"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1800&q=82')",
+                  backgroundPosition: "center 42%",
+                  backgroundSize: "cover",
+                }}
+              >
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  <div className="absolute top-[-20%] left-[-10%] h-[320px] w-[320px] rounded-full bg-violet-500/10 blur-3xl" />
-                  <div className="absolute right-[-10%] bottom-[-20%] h-[260px] w-[260px] rounded-full bg-fuchsia-500/10 blur-3xl" />
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_35%)]" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/82 via-[#11121c]/68 to-black/38" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f1018]/88 via-transparent to-black/28" />
+                  <div className="absolute top-[-20%] left-[-10%] h-[320px] w-[320px] rounded-full bg-violet-500/18 blur-3xl" />
+                  <div className="absolute right-[-10%] bottom-[-20%] h-[280px] w-[280px] rounded-full bg-fuchsia-500/18 blur-3xl" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.13),transparent_34%)]" />
                 </div>
 
-                <div className="relative grid items-start gap-6 xl:grid-cols-[1.7fr_260px]">
+                <div className="relative grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
                   <div>
-                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
+                    <div className="app-dashboard-glass mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                       <Zap size={14} />
                       Données réelles
                     </div>
@@ -446,7 +593,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="mt-6 flex flex-wrap gap-3">
-                      <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
+                      <div className="app-dashboard-glass rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
                         <div className="flex items-center gap-2 text-xs text-zinc-500">
                           <Flame size={14} className="text-orange-400" />
                           Calories 30j
@@ -457,7 +604,7 @@ export default function HomePage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
+                      <div className="app-dashboard-glass rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
                         <div className="flex items-center gap-2 text-xs text-zinc-500">
                           <Trophy size={14} className="text-yellow-400" />
                           Objectif
@@ -468,7 +615,7 @@ export default function HomePage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
+                      <div className="app-dashboard-glass rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
                         <div className="flex items-center gap-2 text-xs text-zinc-500">
                           <ArrowUpRight
                             size={14}
@@ -484,41 +631,82 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className="relative h-fit overflow-hidden rounded-3xl border border-violet-500/15 bg-gradient-to-br from-violet-500/10 via-violet-500/[0.03] to-fuchsia-500/10 p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-500/15 ring-1 ring-violet-500/20">
+                  <div className="app-dashboard-glass relative h-fit overflow-hidden rounded-3xl border border-white/15 bg-black/30 p-5 shadow-[0_22px_70px_rgba(0,0,0,0.24)] backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-violet-500/10" />
+                    <div className="relative flex items-center justify-between">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/14 ring-1 ring-white/20 backdrop-blur-xl">
                         <Trophy size={18} className="text-violet-300" />
                       </div>
 
-                      <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 text-[11px] font-medium text-emerald-400">
+                      <div className="rounded-full border border-emerald-300/25 bg-emerald-500/18 px-2 py-1 text-[11px] font-semibold text-emerald-200 backdrop-blur-xl">
                         {hasSyncedStrava ? "Strava OK" : "Manuel"}
                       </div>
                     </div>
 
-                    <div className="mt-4">
-                      <h2 className="text-base font-semibold text-white">
+                    <div className="relative mt-5">
+                      <p className="text-xs font-medium tracking-[0.18em] text-zinc-300 uppercase">
+                        Focus du mois
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
                         Objectif 30 jours
                       </h2>
 
-                      <p className="mt-1.5 text-xs leading-relaxed text-zinc-400">
-                        {formatDistance(dashboardData.rollingDistance, 1)} sur{" "}
+                      <p className="mt-2 text-sm leading-relaxed text-zinc-200/86 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]">
+                        Encore{" "}
+                        {formatDistance(dashboardData.remainingDistance, 1)} à
+                        parcourir pour atteindre{" "}
                         {formatDistance(rollingTargetDistance, 0)}.
                       </p>
                     </div>
 
-                    <div className="mt-5">
-                      <div className="mb-2 flex items-center justify-between text-[11px] text-zinc-500">
+                    <div className="relative mt-5">
+                      <div className="mb-2 flex items-center justify-between text-[11px] font-medium text-zinc-200/78">
                         <span>Progression</span>
                         <span>{dashboardData.rollingProgress}%</span>
                       </div>
 
-                      <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-white/22">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+                          className="h-full rounded-full bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-300 shadow-[0_0_20px_rgba(255,255,255,0.42)]"
                           style={{
                             width: `${dashboardData.rollingProgress}%`,
                           }}
                         />
+                      </div>
+                    </div>
+
+                    <div className="relative mt-5 rounded-2xl border border-white/10 bg-black/22 p-4">
+                      <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
+                        <MapPinned className="h-4 w-4 text-sky-300" />
+                        Dernière sortie
+                      </div>
+
+                      <p className="mt-2 line-clamp-2 text-sm font-semibold text-white">
+                        {dashboardData.latestActivity?.title ??
+                          "Aucune sortie récente"}
+                      </p>
+
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs text-zinc-300">
+                        <span>
+                          {getSportLabel(dashboardData.latestActivity)}
+                        </span>
+                        {dashboardData.latestActivity && (
+                          <>
+                            <span>•</span>
+                            <span>
+                              {formatDistance(
+                                dashboardData.latestActivity.distance || 0,
+                                1,
+                              )}
+                            </span>
+                            <span>•</span>
+                            <span>
+                              {formatShortDate(
+                                dashboardData.latestActivity.startedAt,
+                              )}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -566,6 +754,99 @@ export default function HomePage() {
                 />
               </FadeIn>
             </div>
+
+            <FadeIn delay={0.85}>
+              <section className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-5 backdrop-blur-xl">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.12),transparent_30%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.10),transparent_34%)]" />
+
+                <div className="relative grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+                  <div>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                      <div>
+                        <h2 className="text-xl font-semibold text-white">
+                          Lecture rapide
+                        </h2>
+                        <p className="mt-1 text-sm text-zinc-400">
+                          Les signaux utiles pour décider quoi faire ensuite.
+                        </p>
+                      </div>
+
+                      <div className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        Dashboard live
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
+                      {insightCards.map((insight) => {
+                        const Icon = insight.icon;
+
+                        return (
+                          <div
+                            key={insight.label}
+                            className={`relative overflow-hidden rounded-[22px] border border-white/[0.08] bg-gradient-to-br ${insight.tone} p-4`}
+                          >
+                            <div className="absolute inset-0 bg-black/18" />
+                            <div className="relative flex items-start justify-between gap-4">
+                              <div className="min-w-0">
+                                <p className="text-xs font-medium text-zinc-500">
+                                  {insight.label}
+                                </p>
+                                <p className="mt-2 truncate text-xl font-semibold text-white">
+                                  {insight.value}
+                                </p>
+                                <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-400">
+                                  {insight.description}
+                                </p>
+                              </div>
+
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.05] text-violet-300">
+                                <Icon className="h-4 w-4" />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <aside className="rounded-[24px] border border-white/[0.08] bg-black/18 p-4">
+                    <h3 className="text-base font-semibold text-white">
+                      À surveiller
+                    </h3>
+
+                    <div className="mt-4 space-y-3">
+                      {watchItems.map((item) => {
+                        const Icon = item.icon;
+
+                        return (
+                          <div
+                            key={item.title}
+                            className="flex gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.035] p-3"
+                          >
+                            <div
+                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] ${item.tone}`}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+
+                            <div>
+                              <p className="text-sm font-semibold text-white">
+                                {item.title}
+                              </p>
+                              <p className="mt-1 text-xs leading-5 text-zinc-400">
+                                {item.description}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </aside>
+                </div>
+              </section>
+            </FadeIn>
           </>
         )}
       </div>

@@ -6,27 +6,27 @@ import {
   IsString,
   MaxLength,
   Min,
-} from "class-validator";
+} from 'class-validator';
 
 export enum SportType {
-  TRAIL = "TRAIL",
-  RUNNING = "RUNNING",
-  HIKING = "HIKING",
-  MTB = "MTB",
-  WALKING = "WALKING",
+  TRAIL = 'TRAIL',
+  RUNNING = 'RUNNING',
+  HIKING = 'HIKING',
+  MTB = 'MTB',
+  WALKING = 'WALKING',
 }
 
 export enum ActivityType {
-  TRAINING = "TRAINING",
-  RACE = "RACE",
-  RECOVERY = "RECOVERY",
-  WALK = "WALK",
+  TRAINING = 'TRAINING',
+  RACE = 'RACE',
+  RECOVERY = 'RECOVERY',
+  WALK = 'WALK',
 }
 
 export enum ActivityStatus {
-  PLANNED = "PLANNED",
-  COMPLETED = "COMPLETED",
-  MISSED = "MISSED",
+  PLANNED = 'PLANNED',
+  COMPLETED = 'COMPLETED',
+  MISSED = 'MISSED',
 }
 
 export class CreateActivityDto {

@@ -14,10 +14,13 @@ import { ActivitiesModule } from './modules/activities/activities.module';
 
 import { StravaModule } from './modules/strava/strava.module';
 
+import { AdminModule } from './modules/admin/admin.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
     }),
 
     PrismaModule,
@@ -31,6 +34,8 @@ import { StravaModule } from './modules/strava/strava.module';
     ActivitiesModule,
 
     StravaModule,
+
+    AdminModule,
   ],
 })
 export class AppModule {}

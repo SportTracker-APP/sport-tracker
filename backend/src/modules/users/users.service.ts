@@ -2,21 +2,19 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
-} from "@nestjs/common";
+} from '@nestjs/common';
 
-import * as bcrypt from "bcrypt";
+import * as bcrypt from 'bcrypt';
 
-import { PrismaService } from "../../prisma/prisma.service";
+import { PrismaService } from '../../prisma/prisma.service';
 
-import { UpdateProfileDto } from "./dto/update-profile.dto";
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
-import { UpdatePasswordDto } from "./dto/update-password.dto";
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getProfile(userId: string) {
     return this.prisma.user.findUnique({
@@ -28,16 +26,14 @@ export class UsersService {
         id: true,
         firstName: true,
         email: true,
+        role: true,
         avatarUrl: true,
         createdAt: true,
       },
     });
   }
 
-  async updateProfile(
-    userId: string,
-    dto: UpdateProfileDto,
-  ) {
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
     return this.prisma.user.update({
       where: {
         id: userId,
@@ -57,43 +53,33 @@ export class UsersService {
         id: true,
         firstName: true,
         email: true,
+        role: true,
         avatarUrl: true,
       },
     });
   }
 
-  async updatePassword(
-    userId: string,
-    dto: UpdatePasswordDto,
-  ) {
-    const user =
-      await this.prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
-      });
+  async updatePassword(userId: string, dto: UpdatePasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
 
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    const passwordMatch =
-      await bcrypt.compare(
-        dto.currentPassword,
-        user.password,
-      );
+    const passwordMatch = await bcrypt.compare(
+      dto.currentPassword,
+      user.password,
+    );
 
     if (!passwordMatch) {
-      throw new BadRequestException(
-        "Mot de passe actuel incorrect",
-      );
+      throw new BadRequestException('Mot de passe actuel incorrect');
     }
 
-    const hashedPassword =
-      await bcrypt.hash(
-        dto.newPassword,
-        10,
-      );
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
 
     await this.prisma.user.update({
       where: {
@@ -106,8 +92,7 @@ export class UsersService {
     });
 
     return {
-      message:
-        "Mot de passe mis à jour",
+      message: 'Mot de passe mis à jour',
     };
   }
 }

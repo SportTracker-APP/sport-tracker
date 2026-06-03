@@ -5,41 +5,33 @@ import {
   UseGuards,
   UseInterceptors,
   Req,
-} from "@nestjs/common";
+} from '@nestjs/common';
 
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileInterceptor } from '@nestjs/platform-express';
 
-import { memoryStorage } from "multer";
+import { memoryStorage } from 'multer';
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-import * as Express from "express";
+import * as Express from 'express';
 
-import { UploadService } from "./upload.service";
+import { UploadService } from './upload.service';
 
-@Controller("upload")
+@Controller('upload')
 export class UploadController {
-  constructor(
-    private readonly uploadService: UploadService,
-  ) {}
+  constructor(private readonly uploadService: UploadService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post("avatar")
+  @Post('avatar')
   @UseInterceptors(
-    FileInterceptor("file", {
+    FileInterceptor('file', {
       storage: memoryStorage(),
       limits: {
         fileSize: 5 * 1024 * 1024,
       },
     }),
   )
-  async uploadAvatar(
-    @Req() req,
-    @UploadedFile() file: any,
-  ) {
-    return this.uploadService.uploadAvatar(
-      req.user.id,
-      file,
-    );
+  async uploadAvatar(@Req() req, @UploadedFile() file: any) {
+    return this.uploadService.uploadAvatar(req.user.id, file);
   }
 }

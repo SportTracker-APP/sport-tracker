@@ -800,3 +800,107 @@ html.sport-theme-nature .app-mobile-sidebar a:hover {
   background: rgba(236, 253, 245, 0.92) !important;
   color: var(--nature-green-dark) !important;
 }
+
+html.sport-theme-nature .app-shell main [class*="backdrop-blur"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.sport-theme-nature .app-shell main [class*="transition-all"] {
+  transition-duration: 160ms !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero {
+  border-color: rgba(255, 255, 255, 0.34) !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 24, 18, 0.78),
+      rgba(15, 35, 26, 0.58),
+      rgba(4, 19, 15, 0.34)
+    ),
+    linear-gradient(to top, rgba(5, 16, 12, 0.76), transparent 58%),
+    url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1800&q=82") !important;
+  background-position: center 42% !important;
+  background-size: cover !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 28px 82px rgba(21, 128, 61, 0.18) !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero h1,
+html.sport-theme-nature .app-shell main section.app-dashboard-hero h2,
+html.sport-theme-nature .app-shell main section.app-dashboard-hero h3,
+html.sport-theme-nature .app-shell main section.app-dashboard-hero .text-white {
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero p,
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  [class*="text-zinc"] {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  .app-dashboard-glass,
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  [class*="bg-black/"],
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  [class*="bg-white/"] {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(6, 18, 14, 0.42) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  > .pointer-events-none
+  .absolute {
+  opacity: 1 !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  a[class*="from-violet"] {
+  background-image: linear-gradient(135deg, #10b981, #84cc16) !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 24, 18, 0.78),
+      rgba(15, 35, 26, 0.54),
+      rgba(4, 19, 15, 0.28)
+    ),
+    url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1800&q=82");
+  background-position: center 42%;
+  background-size: cover;
+  opacity: 1;
+  z-index: 0;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero > * {
+  position: relative;
+  z-index: 1;
+}

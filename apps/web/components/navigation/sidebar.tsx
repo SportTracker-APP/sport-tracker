@@ -14,6 +14,7 @@ import {
   Goal,
   LayoutDashboard,
   Link2,
+  ShieldCheck,
   Settings,
   Trophy,
   Zap,
@@ -21,6 +22,7 @@ import {
 
 import { api } from "@/lib/api";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import { useAuthStore } from "@/store/auth-store";
 
 interface StravaStatus {
   connected: boolean;
@@ -75,12 +77,19 @@ const secondaryItems = [
     href: "/parametres",
     icon: Settings,
   },
+  {
+    title: "Admin",
+    href: "/admin",
+    icon: ShieldCheck,
+    adminOnly: true,
+  },
 ];
 
 const normalizePath = (path: string) => path.replace(/\/$/, "");
 
 export function Sidebar() {
   const pathname = usePathname();
+  const user = useAuthStore((state) => state.user);
 
   const [isStravaConnected, setIsStravaConnected] = useState(false);
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
@@ -229,51 +238,53 @@ export function Sidebar() {
           </div>
 
           <nav className="space-y-1">
-            {secondaryItems.map((item) => {
-              const Icon = item.icon;
+            {secondaryItems
+              .filter((item) => !item.adminOnly || user?.role === "ADMIN")
+              .map((item) => {
+                const Icon = item.icon;
 
-              const isActive = isActiveRoute(item.href);
+                const isActive = isActiveRoute(item.href);
 
-              return (
-                <Link
-                  key={item.title}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
-                    isActive
-                      ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
-                      : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
-                  }`}
-                >
-                  {/* ACTIVE BG */}
-                  {isActive && (
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
-                  )}
-
-                  {/* ACTIVE BAR */}
-                  <div
-                    className={`relative h-5 w-1 rounded-full transition-all ${
-                      isActive ? "bg-violet-400 opacity-100" : "opacity-0"
-                    }`}
-                  />
-
-                  {/* ICON */}
-                  <Icon
-                    size={18}
-                    className={`relative transition-all duration-200 ${
+                return (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
                       isActive
-                        ? "text-violet-300"
-                        : "text-zinc-500 group-hover:text-zinc-300"
+                        ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
+                        : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
                     }`}
-                  />
+                  >
+                    {/* ACTIVE BG */}
+                    {isActive && (
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
+                    )}
 
-                  {/* LABEL */}
-                  <span className="relative text-sm font-medium">
-                    {item.title}
-                  </span>
-                </Link>
-              );
-            })}
+                    {/* ACTIVE BAR */}
+                    <div
+                      className={`relative h-5 w-1 rounded-full transition-all ${
+                        isActive ? "bg-violet-400 opacity-100" : "opacity-0"
+                      }`}
+                    />
+
+                    {/* ICON */}
+                    <Icon
+                      size={18}
+                      className={`relative transition-all duration-200 ${
+                        isActive
+                          ? "text-violet-300"
+                          : "text-zinc-500 group-hover:text-zinc-300"
+                      }`}
+                    />
+
+                    {/* LABEL */}
+                    <span className="relative text-sm font-medium">
+                      {item.title}
+                    </span>
+                  </Link>
+                );
+              })}
           </nav>
         </div>
 

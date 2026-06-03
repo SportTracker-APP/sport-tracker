@@ -7,6 +7,8 @@ export interface AuthUser {
 
   email: string;
 
+  role?: "USER" | "ADMIN";
+
   avatarUrl?: string | null;
 }
 
@@ -23,15 +25,11 @@ export async function registerUser(
   email: string,
   password: string,
 ): Promise<AuthResponse> {
-  const { data } =
-    await api.post<AuthResponse>(
-      "/auth/register",
-      {
-        firstName,
-        email,
-        password,
-      },
-    );
+  const { data } = await api.post<AuthResponse>("/auth/register", {
+    firstName,
+    email,
+    password,
+  });
 
   return data;
 }
@@ -40,23 +38,16 @@ export async function login(
   email: string,
   password: string,
 ): Promise<AuthResponse> {
-  const { data } =
-    await api.post<AuthResponse>(
-      "/auth/login",
-      {
-        email,
-        password,
-      },
-    );
+  const { data } = await api.post<AuthResponse>("/auth/login", {
+    email,
+    password,
+  });
 
   return data;
 }
 
 export async function getMe(): Promise<AuthUser> {
-  const { data } =
-    await api.get<AuthUser>(
-      "/users/me",
-    );
+  const { data } = await api.get<AuthUser>("/users/me");
 
   return data;
 }

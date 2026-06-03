@@ -7,6 +7,8 @@ interface User {
 
   email: string;
 
+  role?: "USER" | "ADMIN";
+
   avatarUrl?: string | null;
 }
 
@@ -15,68 +17,48 @@ interface AuthState {
 
   user: User | null;
 
-  setAuth: (
-    accessToken: string,
-    user: User,
-  ) => void;
+  setAuth: (accessToken: string, user: User) => void;
 
-  hydrateAuth: (
-    accessToken: string,
-    user: User,
-  ) => void;
+  hydrateAuth: (accessToken: string, user: User) => void;
 
-  setUser: (
-    user: User | null,
-  ) => void;
+  setUser: (user: User | null) => void;
 
   logout: () => void;
 }
 
-export const useAuthStore =
-  create<AuthState>((set) => ({
-    accessToken: null,
+export const useAuthStore = create<AuthState>((set) => ({
+  accessToken: null,
 
-    user: null,
+  user: null,
 
-    setAuth: (
+  setAuth: (accessToken, user) => {
+    localStorage.setItem("accessToken", accessToken);
+
+    set({
       accessToken,
       user,
-    ) => {
-      localStorage.setItem(
-        "accessToken",
-        accessToken,
-      );
+    });
+  },
 
-      set({
-        accessToken,
-        user,
-      });
-    },
-
-    hydrateAuth: (
+  hydrateAuth: (accessToken, user) => {
+    set({
       accessToken,
       user,
-    ) => {
-      set({
-        accessToken,
-        user,
-      });
-    },
+    });
+  },
 
-    setUser: (user) => {
-      set({
-        user,
-      });
-    },
+  setUser: (user) => {
+    set({
+      user,
+    });
+  },
 
-    logout: () => {
-      localStorage.removeItem(
-        "accessToken",
-      );
+  logout: () => {
+    localStorage.removeItem("accessToken");
 
-      set({
-        accessToken: null,
-        user: null,
-      });
-    },
-  }));
+    set({
+      accessToken: null,
+      user: null,
+    });
+  },
+}));

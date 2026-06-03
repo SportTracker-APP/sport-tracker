@@ -10,12 +10,14 @@ import {
   LayoutDashboard,
   Link2,
   Menu,
+  ShieldCheck,
   Settings,
   Trophy,
 } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import { useAuthStore } from "@/store/auth-store";
 
 const links = [
   {
@@ -58,9 +60,17 @@ const links = [
     href: "/parametres",
     icon: Settings,
   },
+  {
+    label: "Admin",
+    href: "/admin",
+    icon: ShieldCheck,
+    adminOnly: true,
+  },
 ];
 
 export function MobileSidebar() {
+  const user = useAuthStore((state) => state.user);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -84,21 +94,23 @@ export function MobileSidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 space-y-2 p-4">
-            {links.map((link) => {
-              const Icon = link.icon;
+            {links
+              .filter((link) => !link.adminOnly || user?.role === "ADMIN")
+              .map((link) => {
+                const Icon = link.icon;
 
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="flex items-center gap-3 rounded-2xl px-4 py-3 text-zinc-400 transition-all hover:bg-zinc-900 hover:text-white"
-                >
-                  <Icon size={20} />
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="flex items-center gap-3 rounded-2xl px-4 py-3 text-zinc-400 transition-all hover:bg-zinc-900 hover:text-white"
+                  >
+                    <Icon size={20} />
 
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
+                    <span>{link.label}</span>
+                  </Link>
+                );
+              })}
           </nav>
 
           <div className="border-t border-zinc-800 p-4">
