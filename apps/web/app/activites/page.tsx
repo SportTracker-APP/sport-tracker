@@ -139,7 +139,7 @@ export default function ActivitiesPage() {
         {!isLoading && !error && (
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
             <div className="space-y-4">
-              <div className="sticky top-0 z-10 rounded-[24px] border border-white/[0.08] bg-[#11131a]/90 p-4 backdrop-blur-xl">
+              <div className="app-filter-shell sticky top-0 z-10 rounded-[24px] border border-white/[0.08] bg-[#11131a]/90 p-4 backdrop-blur-xl">
                 <ActivityFilters
                   activeFilter={activeFilter}
                   onFilterChange={setActiveFilter}

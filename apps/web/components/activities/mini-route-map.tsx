@@ -376,7 +376,7 @@ export function MiniRouteMap({
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-2xl border border-white/[0.08] bg-[#11140f] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] ${
+      className={`app-mini-route-map relative w-full overflow-hidden rounded-2xl border border-white/[0.08] bg-[#11140f] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] ${
         isSquare
           ? "aspect-square rounded-[28px]"
           : isLarge
@@ -403,6 +403,7 @@ export function MiniRouteMap({
           {route.tiles.map((tile) => (
             <image
               key={tile.key}
+              className="app-map-tile"
               href={tile.url}
               height={TILE_SIZE}
               opacity="0.95"
@@ -415,8 +416,8 @@ export function MiniRouteMap({
         </svg>
       )}
 
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,10,14,0.16),rgba(7,10,14,0.36))]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_42%,rgba(0,0,0,0.46)_100%)]" />
+      <div className="app-map-shade absolute inset-0 bg-[linear-gradient(180deg,rgba(7,10,14,0.16),rgba(7,10,14,0.36))]" />
+      <div className="app-map-vignette absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_42%,rgba(0,0,0,0.46)_100%)]" />
 
       {route ? (
         <svg
@@ -481,10 +482,10 @@ export function MiniRouteMap({
 
       {route && isLarge && (
         <>
-          <div className="absolute top-4 left-4 rounded-full border border-white/[0.10] bg-black/45 px-3 py-1.5 text-[11px] font-medium text-white/80 backdrop-blur-xl">
+          <div className="app-map-chip absolute top-4 left-4 rounded-full border border-white/[0.10] bg-black/45 px-3 py-1.5 text-[11px] font-medium text-white/80 backdrop-blur-xl">
             Carte topo
           </div>
-          <div className="absolute top-4 right-4 flex overflow-hidden rounded-2xl border border-white/[0.10] bg-black/55 backdrop-blur-xl">
+          <div className="app-map-controls absolute top-4 right-4 flex overflow-hidden rounded-2xl border border-white/[0.10] bg-black/55 backdrop-blur-xl">
             <button
               type="button"
               aria-label="Agrandir la carte"
@@ -516,7 +517,7 @@ export function MiniRouteMap({
               <LocateFixed className="h-4 w-4" />
             </button>
           </div>
-          <div className="absolute right-4 bottom-4 left-4 flex items-center justify-between rounded-2xl border border-white/[0.08] bg-black/55 px-4 py-3 text-xs text-zinc-200 backdrop-blur-xl">
+          <div className="app-map-legend absolute right-4 bottom-4 left-4 flex items-center justify-between rounded-2xl border border-white/[0.08] bg-black/55 px-4 py-3 text-xs text-zinc-200 backdrop-blur-xl">
             <span className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
               Départ

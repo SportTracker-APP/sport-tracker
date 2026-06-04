@@ -54,7 +54,7 @@ function SneakerMascot() {
   );
 }
 
-function MountainMascot() {
+export function MountainMascot() {
   return (
     <div className="app-mascot-option app-mountain-mascot" title="Montagne">
       <svg viewBox="0 0 78 34" fill="none" xmlns="http://www.w3.org/2000/svg">

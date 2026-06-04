@@ -324,7 +324,7 @@ export default function CalendarPage() {
         </FadeIn>
 
         <FadeIn delay={0.08}>
-          <section className="flex flex-col gap-4 rounded-[28px] border border-white/[0.08] bg-[#11131a]/92 p-4 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
+          <section className="app-calendar-toolbar flex flex-col gap-4 rounded-[28px] border border-white/[0.08] bg-[#11131a]/92 p-4 backdrop-blur-xl lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -389,7 +389,7 @@ export default function CalendarPage() {
 
         {!isLoading && !error && (
           <FadeIn delay={0.12}>
-            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+            <section className="app-calendar-grid grid gap-4 md:grid-cols-2 xl:grid-cols-7">
               {weekDays.map((day, index) => {
                 const dayActivities = activitiesByDay[index];
                 const isToday = isSameDay(day, today);
@@ -405,7 +405,7 @@ export default function CalendarPage() {
                 return (
                   <article
                     key={day.toISOString()}
-                    className={`relative min-h-[360px] overflow-hidden rounded-[28px] border p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/25 ${getDayTone(
+                    className={`app-calendar-day relative min-h-[360px] overflow-hidden rounded-[28px] border p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/25 ${getDayTone(
                       dayActivities,
                       isToday,
                     )}`}
@@ -445,7 +445,7 @@ export default function CalendarPage() {
                         </div>
                       </header>
 
-                      <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/[0.06] bg-black/10 px-3 py-2 text-xs text-zinc-400">
+                      <div className="app-calendar-pill mt-5 flex items-center justify-between rounded-2xl border border-white/[0.06] bg-black/10 px-3 py-2 text-xs text-zinc-400">
                         <span>
                           {dayActivities.length} activité
                           {dayActivities.length > 1 ? "s" : ""}
@@ -462,7 +462,7 @@ export default function CalendarPage() {
                           canPlanActivity ? (
                             <Link
                               href={planHref}
-                              className="group flex flex-1 flex-col items-center justify-center rounded-[22px] border border-dashed border-violet-500/20 bg-violet-500/[0.035] px-4 py-6 text-center transition-colors hover:border-violet-400/35 hover:bg-violet-500/[0.075]"
+                              className="app-calendar-empty group flex flex-1 flex-col items-center justify-center rounded-[22px] border border-dashed border-violet-500/20 bg-violet-500/[0.035] px-4 py-6 text-center transition-colors hover:border-violet-400/35 hover:bg-violet-500/[0.075]"
                             >
                               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-200 transition-colors group-hover:bg-violet-500/20 group-hover:text-white">
                                 <Plus className="h-5 w-5" />
@@ -475,7 +475,7 @@ export default function CalendarPage() {
                               </p>
                             </Link>
                           ) : (
-                            <div className="flex flex-1 flex-col items-center justify-center rounded-[22px] border border-dashed border-white/[0.08] bg-black/10 px-4 py-6 text-center">
+                            <div className="app-calendar-empty flex flex-1 flex-col items-center justify-center rounded-[22px] border border-dashed border-white/[0.08] bg-black/10 px-4 py-6 text-center">
                               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] text-zinc-500">
                                 <Target className="h-5 w-5" />
                               </div>
@@ -496,10 +496,10 @@ export default function CalendarPage() {
                               <Link
                                 key={activity.id}
                                 href={`/activites/${activity.id}`}
-                                className="group rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-3 transition-colors hover:border-violet-500/25 hover:bg-violet-500/10"
+                                className="app-calendar-activity group rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-3 transition-colors hover:border-violet-500/25 hover:bg-violet-500/10"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/15 text-violet-200">
+                                  <div className="app-calendar-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/15 text-violet-200">
                                     <Icon className="h-4 w-4" />
                                   </div>
 
@@ -535,13 +535,13 @@ export default function CalendarPage() {
                                 </div>
 
                                 <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] text-zinc-400">
-                                  <span className="rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
+                                  <span className="app-calendar-mini-stat rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
                                     {formatDistance(activity.distance)} km
                                   </span>
-                                  <span className="rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
+                                  <span className="app-calendar-mini-stat rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
                                     {formatDuration(activity.duration)}
                                   </span>
-                                  <span className="inline-flex items-center justify-center gap-1 rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
+                                  <span className="app-calendar-mini-stat inline-flex items-center justify-center gap-1 rounded-2xl border border-white/[0.07] bg-black/10 px-2 py-2 text-center">
                                     {activity.elevationGain !== null ? (
                                       <>
                                         <Mountain className="h-3 w-3 text-emerald-300" />

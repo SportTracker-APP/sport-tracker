@@ -2,8 +2,6 @@
 
 import { useMemo, useState } from "react";
 
-import { useRouter } from "next/navigation";
-
 import Link from "next/link";
 
 import { useForm } from "react-hook-form";
@@ -47,8 +45,6 @@ function getPasswordStrength(password: string) {
 }
 
 export function RegisterForm() {
-  const router = useRouter();
-
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -113,7 +109,7 @@ export function RegisterForm() {
           Créer un compte
         </h2>
 
-        <p className="text-zinc-400">Commence gratuitement dès aujourd’hui.</p>
+        <p className="text-zinc-400">Commence gratuitement dès aujourd'hui.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

@@ -17,7 +17,6 @@ import {
   ShieldCheck,
   Settings,
   Trophy,
-  Zap,
 } from "lucide-react";
 
 import { api } from "@/lib/api";
@@ -162,11 +161,8 @@ export function Sidebar() {
       <div className="relative px-7 py-8">
         <div className="flex items-center gap-4">
           {/* LOGO */}
-          <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_10px_40px_rgba(168,85,247,0.35)]">
-            {/* LIGHT */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.18),transparent_45%)]" />
-
-            <Zap size={20} className="relative text-white" />
+          <div className="app-brand-logo relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-emerald-500 via-green-400 to-lime-400 shadow-[0_16px_42px_rgba(16,185,129,0.30)]">
+            <Activity size={21} className="relative text-white" strokeWidth={2.4} />
           </div>
 
           {/* BRAND */}

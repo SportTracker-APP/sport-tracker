@@ -4,8 +4,6 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import { useRouter } from "next/navigation";
-
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,8 +29,6 @@ const loginSchema = z.object({
 type LoginSchema = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
-
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const [showPassword, setShowPassword] = useState(false);

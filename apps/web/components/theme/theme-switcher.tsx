@@ -20,7 +20,7 @@ function applyTheme(theme: AppTheme) {
 }
 
 export function ThemeSwitcher() {
-  const [theme, setTheme] = useState<AppTheme>("violet");
+  const [theme, setTheme] = useState<AppTheme>("nature");
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);
@@ -28,7 +28,7 @@ export function ThemeSwitcher() {
     const savedTheme = localStorage.getItem(
       THEME_STORAGE_KEY,
     ) as AppTheme | null;
-    const initialTheme = savedTheme === "nature" ? "nature" : "violet";
+    const initialTheme = savedTheme === "violet" ? "violet" : "nature";
 
     setTheme(initialTheme);
     applyTheme(initialTheme);

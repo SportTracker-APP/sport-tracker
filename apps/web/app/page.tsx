@@ -29,6 +29,7 @@ import { RecentActivities } from "@/components/dashboard/recent-activities";
 import { MonthlyGoalCard } from "@/components/dashboard/monthly-goal-card";
 import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 import { FadeIn } from "@/components/ui/fade-in";
+import { MountainMascot } from "@/components/layout/topbar-runner";
 import { useActivities } from "@/hooks/use-activities";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
@@ -532,12 +533,6 @@ export default function HomePage() {
             <FadeIn delay={0.1}>
               <section
                 className="app-dashboard-hero relative overflow-hidden rounded-[30px] border border-white/[0.055] bg-zinc-950 px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_26px_90px_rgba(0,0,0,0.24)] md:px-8 md:py-7"
-                style={{
-                  backgroundImage:
-                    "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1800&q=82')",
-                  backgroundPosition: "center 42%",
-                  backgroundSize: "cover",
-                }}
               >
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-black/82 via-[#11121c]/68 to-black/38" />
@@ -638,9 +633,7 @@ export default function HomePage() {
                         <Trophy size={18} className="text-violet-300" />
                       </div>
 
-                      <div className="rounded-full border border-emerald-300/25 bg-emerald-500/18 px-2 py-1 text-[11px] font-semibold text-emerald-200 backdrop-blur-xl">
-                        {hasSyncedStrava ? "Strava OK" : "Manuel"}
-                      </div>
+                      <MountainMascot />
                     </div>
 
                     <div className="relative mt-5">

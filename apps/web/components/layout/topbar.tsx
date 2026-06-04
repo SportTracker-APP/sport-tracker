@@ -4,20 +4,15 @@ import Image from "next/image";
 
 import Link from "next/link";
 
-import { usePathname } from "next/navigation";
-
 import { Bell } from "lucide-react";
 
 import { MobileSidebar } from "./mobile-sidebar";
-import { TopbarRunner } from "./topbar-runner";
 
 import { useAuthStore } from "@/store/auth-store";
 
 import { Button } from "@/components/ui/button";
 
 export function Topbar() {
-  const pathname = usePathname();
-
   const user = useAuthStore((state) => state.user);
 
   const logout = useAuthStore((state) => state.logout);
@@ -34,26 +29,6 @@ export function Topbar() {
       {/* LEFT */}
       <div className="relative z-10 flex items-center gap-4">
         <MobileSidebar />
-
-        <div>
-          <div className="flex items-center gap-4">
-            <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
-              {pathname === "/"
-                ? "Tableau de bord"
-                : pathname === "/activites"
-                  ? "Activités"
-                  : pathname === "/parametres"
-                    ? "Paramètres"
-                    : "Sport Tracker"}
-            </h2>
-
-            <TopbarRunner />
-          </div>
-
-          <p className="mt-0.5 hidden text-xs text-zinc-500 sm:block">
-            Performance dashboard
-          </p>
-        </div>
       </div>
 
       {/* RIGHT */}

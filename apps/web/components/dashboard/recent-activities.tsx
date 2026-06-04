@@ -92,7 +92,7 @@ export function RecentActivities({ activities }: RecentActivitiesProps) {
             </p>
           </div>
 
-          <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-[16px] border border-white/[0.08] bg-white/[0.04]">
+          <div className="app-dashboard-green-icon relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-[16px] border border-white/[0.08] bg-white/[0.04]">
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/16 to-transparent" />
             <Timer size={18} className="relative text-violet-300" />
           </div>
