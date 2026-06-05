@@ -1312,9 +1312,25 @@ html.sport-theme-nature .app-auth-page {
     );
 }
 
-.app-auth-photo-panel > * {
+.app-auth-photo-panel > .relative.z-10 {
   position: relative;
   z-index: 2;
+}
+
+.app-auth-photo-panel > .absolute {
+  position: absolute !important;
+}
+
+html:not(.sport-theme-nature) .app-auth-right > .relative.z-10 {
+  max-width: 28rem !important;
+}
+
+html:not(.sport-theme-nature) .app-auth-card {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(28, 27, 39, 0.66) !important;
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
 }
 
 html.sport-theme-nature .app-auth-page::before {
