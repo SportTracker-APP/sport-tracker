@@ -381,8 +381,8 @@ export default function AdminPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <section className="relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[#151720]/92 p-6 backdrop-blur-xl md:p-8">
+      <div className="app-admin-page space-y-6">
+        <section className="app-premium-surface relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[#151720]/92 p-6 backdrop-blur-xl md:p-8">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(139,92,246,0.24),transparent_34%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_16%,rgba(14,165,233,0.16),transparent_34%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_92%,rgba(16,185,129,0.18),transparent_34%)]" />
@@ -490,7 +490,7 @@ export default function AdminPage() {
                 return (
                   <div
                     key={card.label}
-                    className={`group relative min-h-[164px] overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br ${card.tone} p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14]`}
+                    className={`app-premium-surface group relative min-h-[164px] overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br ${card.tone} p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14]`}
                   >
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_42%)]" />
 
@@ -522,7 +522,7 @@ export default function AdminPage() {
             </section>
 
             <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,0.92fr)_380px]">
-              <div className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
+              <div className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.14),transparent_34%)]" />
 
                 <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -581,7 +581,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <aside className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
+              <aside className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.16),transparent_38%)]" />
 
                 <div className="relative">
@@ -628,7 +628,7 @@ export default function AdminPage() {
               >
                 <form
                   onSubmit={handleCreateUser}
-                  className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl"
+                  className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl"
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_38%)]" />
 
@@ -726,7 +726,7 @@ export default function AdminPage() {
                   </div>
                 </form>
 
-                <div className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
+                <div className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_38%)]" />
 
                   <div className="relative">

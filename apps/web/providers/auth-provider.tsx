@@ -66,8 +66,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
+      <div className="app-auth-loading flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="app-auth-loading-logo mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-current border-t-transparent" />
+          </div>
+          <p className="mt-4 text-sm font-semibold">Sport Tracker</p>
+          <p className="mt-1 text-xs">Préparation de votre espace...</p>
+        </div>
       </div>
     );
   }

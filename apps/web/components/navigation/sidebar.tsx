@@ -14,6 +14,7 @@ import {
   Goal,
   LayoutDashboard,
   Link2,
+  Map,
   ShieldCheck,
   Settings,
   Trophy,
@@ -62,6 +63,11 @@ const navigationItems = [
     title: "Objectifs",
     href: "/objectifs",
     icon: Goal,
+  },
+  {
+    title: "Carte",
+    href: "/carte",
+    icon: Map,
   },
 ];
 

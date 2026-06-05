@@ -38,17 +38,25 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isSubmitted, touchedFields },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
 
-    mode: "all",
+    mode: "onBlur",
+
+    reValidateMode: "onBlur",
 
     defaultValues: {
       email: "",
       password: "",
     },
   });
+  const showEmailError = Boolean(
+    errors.email && (touchedFields.email || isSubmitted),
+  );
+  const showPasswordError = Boolean(
+    errors.password && (touchedFields.password || isSubmitted),
+  );
 
   async function onSubmit(data: LoginSchema) {
     try {
@@ -107,8 +115,8 @@ export function LoginForm() {
             />
           </div>
 
-          {errors.email && (
-            <p className="text-sm text-red-400">{errors.email.message}</p>
+          {showEmailError && (
+            <p className="text-sm text-red-400">{errors.email?.message}</p>
           )}
         </div>
 
@@ -140,8 +148,8 @@ export function LoginForm() {
             </button>
           </div>
 
-          {errors.password && (
-            <p className="text-sm text-red-400">{errors.password.message}</p>
+          {showPasswordError && (
+            <p className="text-sm text-red-400">{errors.password?.message}</p>
           )}
         </div>
 

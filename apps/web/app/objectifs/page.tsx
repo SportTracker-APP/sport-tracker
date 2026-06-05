@@ -42,8 +42,8 @@ const milestones = [
 export default function GoalsPage() {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <section className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
+      <div className="app-goals-page space-y-6">
+        <section className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.16),transparent_34%)]" />
 
           <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
@@ -77,7 +77,7 @@ export default function GoalsPage() {
             return (
               <div
                 key={goal.title}
-                className="rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 backdrop-blur-xl"
+                className="app-premium-surface rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 backdrop-blur-xl"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div
@@ -114,7 +114,7 @@ export default function GoalsPage() {
           })}
         </section>
 
-        <section className="rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 backdrop-blur-xl">
+        <section className="app-premium-surface rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 backdrop-blur-xl">
           <h2 className="text-xl font-semibold text-white">
             Prochaines actions
           </h2>

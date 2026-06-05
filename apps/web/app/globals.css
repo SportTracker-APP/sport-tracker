@@ -1664,3 +1664,131 @@ html.sport-theme-nature .app-shell main .app-dashboard-green-icon svg {
   color: #ffffff !important;
   stroke: #ffffff !important;
 }
+
+html.sport-theme-nature .app-goal-progress-card,
+html.sport-theme-nature .app-heatmap-momentum-card {
+  border-color: rgba(255, 255, 255, 0.62) !important;
+  background:
+    linear-gradient(135deg, #06b981, #35d45b 58%, #8be324) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 24px 54px rgba(16, 185, 129, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36) !important;
+}
+
+html.sport-theme-nature .app-goal-progress-card > div,
+html.sport-theme-nature .app-heatmap-momentum-card > div {
+  opacity: 0 !important;
+}
+
+html.sport-theme-nature .app-goal-progress-card p,
+html.sport-theme-nature .app-heatmap-momentum-card p {
+  color: #ffffff !important;
+  text-shadow: 0 1px 12px rgba(6, 78, 59, 0.26);
+}
+
+html.sport-theme-nature .app-goal-progress-card p:first-of-type,
+html.sport-theme-nature .app-heatmap-momentum-card p:first-of-type {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+html .app-auth-loading {
+  background:
+    radial-gradient(circle at center, rgba(139, 92, 246, 0.16), transparent 32%),
+    linear-gradient(135deg, #050509, #0b0b12 46%, #09070f);
+  color: #ffffff;
+}
+
+html .app-auth-loading-logo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(139, 92, 246, 0.16);
+  color: #a78bfa;
+  box-shadow: 0 18px 50px rgba(139, 92, 246, 0.2);
+}
+
+html .app-auth-loading p:last-child {
+  color: rgba(212, 212, 216, 0.62);
+}
+
+html.sport-theme-nature .app-auth-loading {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(16, 185, 129, 0.16), transparent 30%),
+    linear-gradient(135deg, #f8fffb, #eefbf2 48%, #e5f8db);
+  color: #0f172a;
+}
+
+html.sport-theme-nature .app-auth-loading-logo {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, #10b981, #84cc16);
+  color: #ffffff;
+  box-shadow: 0 18px 46px rgba(16, 185, 129, 0.18);
+}
+
+html.sport-theme-nature .app-auth-loading p:last-child {
+  color: #64748b;
+}
+
+html.sport-theme-nature .app-admin-page .app-premium-surface,
+html.sport-theme-nature .app-performance-page .app-premium-surface,
+html.sport-theme-nature .app-goals-page .app-premium-surface,
+html.sport-theme-nature .app-map-page .app-premium-surface {
+  border-color: rgba(16, 185, 129, 0.16) !important;
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    0 22px 64px rgba(15, 118, 110, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+
+html.sport-theme-nature .app-admin-page > section.grid,
+html.sport-theme-nature .app-admin-page section.grid,
+html.sport-theme-nature .app-performance-page > section.grid,
+html.sport-theme-nature .app-performance-page section.grid,
+html.sport-theme-nature .app-goals-page > section.grid,
+html.sport-theme-nature .app-goals-page section.grid,
+html.sport-theme-nature .app-map-page > section.grid,
+html.sport-theme-nature .app-map-page section.grid {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature .app-admin-page section.grid[class*="grid-cols"],
+html.sport-theme-nature .app-performance-page section.grid[class*="grid-cols"],
+html.sport-theme-nature .app-goals-page section.grid[class*="grid-cols"],
+html.sport-theme-nature .app-map-page section.grid[class*="grid-cols"] {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature .app-activity-card .app-mini-route-map {
+  border-color: rgba(15, 118, 110, 0.24) !important;
+  background: #dff3d6 !important;
+  box-shadow:
+    0 18px 42px rgba(15, 118, 110, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.72) inset !important;
+}
+
+html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-tile {
+  opacity: 1 !important;
+  filter: brightness(1.02) contrast(1.12) saturate(1.18) !important;
+}
+
+html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-shade {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0),
+    rgba(15, 23, 42, 0.08)
+  ) !important;
+}
+
+html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-vignette {
+  background: radial-gradient(
+    circle at center,
+    transparent 66%,
+    rgba(15, 23, 42, 0.18) 100%
+  ) !important;
+}

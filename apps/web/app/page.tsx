@@ -112,6 +112,14 @@ function formatShortDate(date: string) {
   }).format(new Date(date));
 }
 
+function formatMonthName(date: Date) {
+  const month = new Intl.DateTimeFormat("fr-FR", {
+    month: "long",
+  }).format(date);
+
+  return month.charAt(0).toUpperCase() + month.slice(1);
+}
+
 function getSportLabel(activity: SportActivity | null) {
   if (!activity) {
     return "Aucune sortie";
@@ -169,13 +177,14 @@ function EmptyStravaDashboard() {
             </div>
 
             <h1 className="mt-5 max-w-3xl text-4xl leading-tight font-bold tracking-tight text-white">
-              Connectez Strava pour remplir votre dashboard automatiquement.
+              Connectez Strava et laissez Sport Tracker devenir votre cockpit
+              de progression.
             </h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400">
-              Une fois la première synchronisation lancée, vos sorties,
-              distances, temps, calories et dernières activités apparaîtront ici
-              avec vos vraies données.
+              L’app ne se contente pas de lister vos sorties : elle transforme
+              votre historique en objectifs lisibles, rythme à tenir, signaux de
+              régularité et prochaines actions concrètes.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
@@ -204,9 +213,9 @@ function EmptyStravaDashboard() {
 
             <div className="mt-5 space-y-3">
               {[
-                "Stats réelles de la semaine et des 30 derniers jours",
-                "Graphique hebdomadaire basé sur vos sorties",
-                "Dernières activités Strava importées",
+                "Objectifs motivants basés sur vos vraies sorties",
+                "Conseils simples pour savoir quoi faire ensuite",
+                "Historique Strava transformé en tendances utiles",
               ].map((item) => (
                 <div
                   key={item}
@@ -393,6 +402,10 @@ export default function HomePage() {
   const hasAnyActivity = dashboardData.completedActivities.length > 0;
   const showEmptyStravaState =
     !isLoading && !isLoadingStravaStatus && !hasSyncedStrava && !hasAnyActivity;
+  const focusDate = dashboardData.latestActivity
+    ? new Date(dashboardData.latestActivity.startedAt)
+    : new Date();
+  const focusMonthLabel = formatMonthName(focusDate);
 
   const statsData = [
     {
@@ -416,19 +429,30 @@ export default function HomePage() {
     {
       title: "Objectif",
       value: `${dashboardData.rollingProgress}%`,
-      description: `${formatDistance(dashboardData.rollingDistance, 1)} sur ${formatDistance(rollingTargetDistance, 0)}`,
+      description: `Cap ${focusMonthLabel.toLowerCase()}`,
       icon: Trophy,
     },
   ];
 
   const weeklyDelta =
     dashboardData.weeklyDistance - dashboardData.previousWeeklyDistance;
+  const suggestedActiveDays = Math.max(1, 30 - dashboardData.activeDays);
+  const suggestedSessionDistance =
+    dashboardData.remainingDistance > 0
+      ? dashboardData.remainingDistance / suggestedActiveDays
+      : 0;
+  const coachAdvice =
+    dashboardData.remainingDistance <= 0
+      ? "Objectif atteint. Le prochain cap peut être relevé dans vos objectifs."
+      : `Plan simple : ${suggestedActiveDays} sortie${
+          suggestedActiveDays > 1 ? "s" : ""
+        } d’environ ${formatDistance(suggestedSessionDistance, 1)} pour tenir le cap.`;
 
   const insightCards = [
     {
       label: "Cap restant",
       value: formatDistance(dashboardData.remainingDistance, 1),
-      description: "Pour boucler l’objectif 30 jours",
+      description: `Objectif ${focusMonthLabel.toLowerCase()}`,
       icon: Compass,
       tone: "from-violet-500/18 to-fuchsia-500/8",
     },
@@ -475,7 +499,7 @@ export default function HomePage() {
       description:
         dashboardData.remainingDistance <= 80
           ? "Vous êtes dans la dernière ligne droite des 30 jours."
-          : `${formatDistance(dashboardData.remainingDistance, 1)} restent à parcourir.`,
+          : `${formatDistance(dashboardData.remainingDistance, 1)} restent à parcourir pour garder le cap.`,
       tone:
         dashboardData.remainingDistance <= 80
           ? "text-emerald-300"
@@ -516,7 +540,8 @@ export default function HomePage() {
                 <div className="flex flex-col gap-3 rounded-[24px] border border-orange-500/16 bg-orange-500/[0.07] p-4 text-sm text-orange-100 md:flex-row md:items-center md:justify-between">
                   <span>
                     Votre dashboard utilise vos activités manuelles. Connectez
-                    Strava pour importer automatiquement tout votre historique.
+                    Strava pour transformer automatiquement vos sorties en
+                    objectifs, tendances et conseils d’action.
                   </span>
 
                   <Link
@@ -546,19 +571,23 @@ export default function HomePage() {
                   <div>
                     <div className="app-dashboard-glass mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                       <Zap size={14} />
-                      Données réelles
+                      Coach sportif personnel
                     </div>
 
                     <h1 className="max-w-2xl text-3xl leading-tight font-bold tracking-tight text-white md:text-[38px]">
-                      Continuez votre progression.
+                      Votre prochain cap est clair.
                     </h1>
 
                     <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 md:text-base">
-                      30 derniers jours :{" "}
+                      Sport Tracker transforme vos sorties en plan d’action :
+                      progression, régularité et prochaine décision à prendre.
+                      Sur vos 30 derniers jours, vous avez déjà parcouru{" "}
                       {formatDistance(dashboardData.rollingDistance, 1)} en{" "}
-                      {formatDuration(dashboardData.rollingDuration)} sur{" "}
-                      {dashboardData.rollingActivities.length} activité
-                      {dashboardData.rollingActivities.length > 1 ? "s" : ""}.
+                      {formatDuration(dashboardData.rollingDuration)}.
+                    </p>
+
+                    <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-emerald-300 md:text-base">
+                      {coachAdvice}
                     </p>
 
                     <div className="mt-6 flex flex-wrap gap-3">
@@ -616,11 +645,13 @@ export default function HomePage() {
                             size={14}
                             className="text-emerald-400"
                           />
-                          Semaine
+                          Rythme cible
                         </div>
 
                         <p className="mt-1.5 text-xl font-semibold text-emerald-400">
-                          {formatDistance(dashboardData.weeklyDistance, 1)}
+                          {dashboardData.remainingDistance > 0
+                            ? formatDistance(suggestedSessionDistance, 1)
+                            : "Validé"}
                         </p>
                       </div>
                     </div>
@@ -638,17 +669,18 @@ export default function HomePage() {
 
                     <div className="relative mt-5">
                       <p className="text-xs font-medium tracking-[0.18em] text-zinc-300 uppercase">
-                        Focus du mois
+                        Cap motivant
                       </p>
                       <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
-                        Objectif 30 jours
+                        Objectif {focusMonthLabel}
                       </h2>
 
                       <p className="mt-2 text-sm leading-relaxed text-zinc-200/86 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]">
-                        Encore{" "}
+                        {formatDistance(dashboardData.rollingDistance, 1)} déjà
+                        validés sur votre cap de{" "}
+                        {formatDistance(rollingTargetDistance, 0)}. Encore{" "}
                         {formatDistance(dashboardData.remainingDistance, 1)} à
-                        parcourir pour atteindre{" "}
-                        {formatDistance(rollingTargetDistance, 0)}.
+                        aller chercher.
                       </p>
                     </div>
 
@@ -738,6 +770,12 @@ export default function HomePage() {
                 <MonthlyGoalCard
                   current={dashboardData.rollingDistance}
                   target={rollingTargetDistance}
+                  title={`Objectif ${focusMonthLabel}`}
+                  periodLabel="à tenir sur votre période active"
+                  footerText={`${formatDistance(
+                    dashboardData.remainingDistance,
+                    1,
+                  )} restent à aller chercher. Sport Tracker vous aide à transformer ce cap en sorties concrètes.`}
                 />
               </FadeIn>
 

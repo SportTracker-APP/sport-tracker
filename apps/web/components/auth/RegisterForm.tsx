@@ -55,13 +55,23 @@ export function RegisterForm() {
     register: formRegister,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isSubmitted, isValid, touchedFields },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
-    mode: "onChange",
+    mode: "onBlur",
+    reValidateMode: "onBlur",
   });
 
   const password = watch("password") || "";
+  const showFirstNameError = Boolean(
+    errors.firstName && (touchedFields.firstName || isSubmitted),
+  );
+  const showEmailError = Boolean(
+    errors.email && (touchedFields.email || isSubmitted),
+  );
+  const showPasswordError = Boolean(
+    errors.password && (touchedFields.password || isSubmitted),
+  );
 
   const passwordStrength = useMemo(
     () => getPasswordStrength(password),
@@ -129,8 +139,8 @@ export function RegisterForm() {
             />
           </div>
 
-          {errors.firstName && (
-            <p className="text-sm text-red-400">{errors.firstName.message}</p>
+          {showFirstNameError && (
+            <p className="text-sm text-red-400">{errors.firstName?.message}</p>
           )}
         </div>
         {/* EMAIL */}
@@ -149,8 +159,8 @@ export function RegisterForm() {
             />
           </div>
 
-          {errors.email && (
-            <p className="text-sm text-red-400">{errors.email.message}</p>
+          {showEmailError && (
+            <p className="text-sm text-red-400">{errors.email?.message}</p>
           )}
         </div>
 
@@ -183,8 +193,10 @@ export function RegisterForm() {
               </button>
             </div>
 
-            {errors.password && (
-              <p className="text-sm text-red-400">{errors.password.message}</p>
+            {showPasswordError && (
+              <p className="text-sm text-red-400">
+                {errors.password?.message}
+              </p>
             )}
           </div>
 

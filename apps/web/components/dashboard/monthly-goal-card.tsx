@@ -1,6 +1,9 @@
 type MonthlyGoalCardProps = {
   current: number;
   target: number;
+  title?: string;
+  periodLabel?: string;
+  footerText?: string;
 };
 
 function formatDistance(distance: number) {
@@ -9,7 +12,13 @@ function formatDistance(distance: number) {
   }).format(distance);
 }
 
-export function MonthlyGoalCard({ current, target }: MonthlyGoalCardProps) {
+export function MonthlyGoalCard({
+  current,
+  target,
+  title = "Objectif du moment",
+  periodLabel = "sur votre cap actuel",
+  footerText,
+}: MonthlyGoalCardProps) {
   const progress =
     target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
   const remaining = Math.max(0, target - current);
@@ -34,7 +43,7 @@ export function MonthlyGoalCard({ current, target }: MonthlyGoalCardProps) {
           {/* LEFT */}
           <div>
             <p className="text-sm font-medium text-zinc-400">
-              Objectif 30 jours
+              {title}
             </p>
 
             <h3 className="mt-4 text-[44px] font-bold tracking-tight text-white">
@@ -42,12 +51,12 @@ export function MonthlyGoalCard({ current, target }: MonthlyGoalCardProps) {
             </h3>
 
             <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-              sur {formatDistance(target)} km en 30 jours
+              sur {formatDistance(target)} km {periodLabel}
             </p>
           </div>
 
           {/* RIGHT CARD */}
-          <div className="relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-5 py-4">
+          <div className="app-goal-progress-card relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-5 py-4">
             {/* LIGHT */}
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_45%)]" />
 
@@ -103,11 +112,15 @@ export function MonthlyGoalCard({ current, target }: MonthlyGoalCardProps) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.10),transparent_40%)]" />
 
           <p className="relative text-sm leading-relaxed text-zinc-300">
-            Encore{" "}
-            <span className="font-semibold text-white">
-              {formatDistance(remaining)} km
-            </span>{" "}
-            pour atteindre votre objectif des 30 derniers jours.
+            {footerText ?? (
+              <>
+                Encore{" "}
+                <span className="font-semibold text-white">
+                  {formatDistance(remaining)} km
+                </span>{" "}
+                pour atteindre votre objectif.
+              </>
+            )}
           </p>
         </div>
       </div>

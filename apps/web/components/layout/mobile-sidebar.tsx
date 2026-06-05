@@ -9,6 +9,7 @@ import {
   Goal,
   LayoutDashboard,
   Link2,
+  Map,
   Menu,
   ShieldCheck,
   Settings,
@@ -44,6 +45,11 @@ const links = [
     label: "Objectifs",
     href: "/objectifs",
     icon: Goal,
+  },
+  {
+    label: "Carte",
+    href: "/carte",
+    icon: Map,
   },
   {
     label: "Performances",

@@ -83,11 +83,45 @@ function getCurrentStreak(activities: SportActivity[]) {
   return streak;
 }
 
+function getDaysSinceLastActivity(activities: SportActivity[]) {
+  if (activities.length === 0) {
+    return null;
+  }
+
+  const latestActivity = activities.reduce((latest, activity) =>
+    new Date(activity.startedAt).getTime() > new Date(latest.startedAt).getTime()
+      ? activity
+      : latest,
+  );
+  const today = new Date();
+  const latestDate = new Date(latestActivity.startedAt);
+
+  today.setHours(0, 0, 0, 0);
+  latestDate.setHours(0, 0, 0, 0);
+
+  return Math.max(
+    0,
+    Math.floor((today.getTime() - latestDate.getTime()) / 86_400_000),
+  );
+}
+
 export function ActivityHeatmap({ activities = [] }: ActivityHeatmapProps) {
   const today = new Date();
   const currentWeekStart = startOfWeek(today);
   const heatmapStart = addDays(currentWeekStart, -21);
   const currentStreak = getCurrentStreak(activities);
+  const daysSinceLastActivity = getDaysSinceLastActivity(activities);
+  const momentumLabel = currentStreak > 0 ? "Série actuelle" : "Dernière sortie";
+  const momentumValue =
+    currentStreak > 0
+      ? `${currentStreak} jour${currentStreak > 1 ? "s" : ""}`
+      : daysSinceLastActivity === null
+        ? "À lancer"
+        : daysSinceLastActivity === 0
+          ? "Aujourd’hui"
+          : `Il y a ${daysSinceLastActivity} jour${
+              daysSinceLastActivity > 1 ? "s" : ""
+            }`;
 
   const rows = Array.from({
     length: 4,
@@ -140,16 +174,16 @@ export function ActivityHeatmap({ activities = [] }: ActivityHeatmapProps) {
             </p>
           </div>
 
-          <div className="relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-5 py-4">
+          <div className="app-heatmap-momentum-card relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-5 py-4">
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_45%)]" />
             <div className="absolute inset-0 bg-gradient-to-br from-violet-500/16 to-transparent" />
 
             <p className="relative text-[11px] tracking-[0.18em] text-zinc-500 uppercase">
-              Série actuelle
+              {momentumLabel}
             </p>
 
             <p className="relative mt-2 text-3xl font-bold tracking-tight text-white">
-              {currentStreak} jour{currentStreak > 1 ? "s" : ""}
+              {momentumValue}
             </p>
           </div>
         </div>
