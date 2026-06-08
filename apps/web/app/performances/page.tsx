@@ -3,8 +3,8 @@
 import {
   Activity,
   Gauge,
-  HeartPulse,
   Medal,
+  Mountain,
   TrendingUp,
   Trophy,
 } from "lucide-react";
@@ -111,10 +111,6 @@ export default function PerformancesPage() {
           0,
         ) / paceActivities.length
       : null;
-  const maxHeartRate = completedActivities.reduce(
-    (max, activity) => Math.max(max, activity.maxHeartRate ?? 0),
-    0,
-  );
   const totalDistance = completedActivities.reduce(
     (total, activity) => total + (activity.distance ?? 0),
     0,
@@ -141,10 +137,13 @@ export default function PerformancesPage() {
       icon: Gauge,
     },
     {
-      label: "Fréquence max",
-      value: maxHeartRate > 0 ? formatNumber(maxHeartRate) : "—",
-      detail: maxHeartRate > 0 ? "bpm importés" : "Donnée non disponible",
-      icon: HeartPulse,
+      label: "Dénivelé total",
+      value: `${formatNumber(totalElevation)} m`,
+      detail:
+        totalElevation > 0
+          ? "Ascension cumulée importée"
+          : "Ajoutez des sorties avec dénivelé",
+      icon: Mountain,
     },
   ];
   const records = [

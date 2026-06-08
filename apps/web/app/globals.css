@@ -16,7 +16,7 @@ body {
 }
 
 .app-auth-page {
-  --auth-photo-position: 58% center;
+  --auth-photo-position: right center;
 }
 
 .app-dashboard-hero {
@@ -1281,14 +1281,15 @@ html.sport-theme-nature .app-auth-page {
 .app-auth-photo-panel::before {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: -73%;
+  bottom: 0;
+  left: -6%;
   z-index: 0;
   background-image: url("https://images.pexels.com/photos/33874841/pexels-photo-33874841.jpeg?auto=compress&cs=tinysrgb&w=1800");
   background-position: var(--auth-photo-position);
   background-repeat: no-repeat;
   background-size: cover;
-  transform: scale(1.01);
-  transform-origin: center;
 }
 
 .app-auth-photo-panel::after {
@@ -1319,10 +1320,6 @@ html.sport-theme-nature .app-auth-page {
 
 .app-auth-photo-panel > .absolute {
   position: absolute !important;
-}
-
-html:not(.sport-theme-nature) .app-auth-right > .relative.z-10 {
-  max-width: 28rem !important;
 }
 
 html:not(.sport-theme-nature) .app-auth-card {
@@ -1766,29 +1763,34 @@ html.sport-theme-nature .app-map-page section.grid[class*="grid-cols"] {
 
 html.sport-theme-nature .app-activity-card .app-mini-route-map {
   border-color: rgba(15, 118, 110, 0.24) !important;
-  background: #dff3d6 !important;
+  background: #d7edcf !important;
   box-shadow:
-    0 18px 42px rgba(15, 118, 110, 0.18),
+    0 20px 46px rgba(15, 118, 110, 0.22),
     0 0 0 1px rgba(255, 255, 255, 0.72) inset !important;
+}
+
+html.sport-theme-nature .app-activity-card .app-mini-route-map .absolute.inset-0,
+html.sport-theme-nature .app-activity-card .app-mini-route-map svg.absolute.inset-0 {
+  opacity: 1 !important;
 }
 
 html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-tile {
   opacity: 1 !important;
-  filter: brightness(1.02) contrast(1.12) saturate(1.18) !important;
+  filter: brightness(0.98) contrast(1.28) saturate(1.28) !important;
 }
 
 html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-shade {
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0),
-    rgba(15, 23, 42, 0.08)
+    rgba(15, 23, 42, 0.04)
   ) !important;
 }
 
 html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-vignette {
   background: radial-gradient(
     circle at center,
-    transparent 66%,
-    rgba(15, 23, 42, 0.18) 100%
+    transparent 72%,
+    rgba(15, 23, 42, 0.12) 100%
   ) !important;
 }

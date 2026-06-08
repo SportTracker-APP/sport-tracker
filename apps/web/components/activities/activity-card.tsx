@@ -40,6 +40,51 @@ const sportLabels: Record<string, string> = {
   CLIMBING: "Escalade",
 };
 
+function getDisplayCalories({
+  calories,
+  distance,
+  duration,
+  sport,
+}: {
+  calories: number | null;
+  distance: number | null;
+  duration: number;
+  sport: string;
+}) {
+  const distanceKm = distance ?? 0;
+  const durationHours = duration / 60;
+  const sportFactors: Record<string, number> = {
+    RUNNING: 70,
+    TRAIL: 78,
+    HIKING: 58,
+    WALKING: 48,
+    MTB: 38,
+    ROAD_CYCLING: 32,
+    GRAVEL: 34,
+  };
+  const distanceEstimate =
+    distanceKm > 0 ? distanceKm * (sportFactors[sport] ?? 55) : 0;
+  const durationEstimate =
+    durationHours > 0 ? durationHours * (sport === "TRAIL" ? 520 : 420) : 0;
+  const estimatedCalories = Math.round(
+    Math.max(distanceEstimate, durationEstimate),
+  );
+
+  if (!calories || calories <= 0) {
+    return estimatedCalories > 0 ? estimatedCalories : null;
+  }
+
+  if (
+    ["RUNNING", "TRAIL", "HIKING", "WALKING"].includes(sport) &&
+    estimatedCalories > 0 &&
+    calories < estimatedCalories * 0.45
+  ) {
+    return estimatedCalories;
+  }
+
+  return calories;
+}
+
 export function ActivityCard({
   id,
   title,
@@ -70,12 +115,19 @@ export function ActivityCard({
           maximumFractionDigits: 2,
         }).format(distance);
 
+  const displayCalories = getDisplayCalories({
+    calories,
+    distance,
+    duration,
+    sport,
+  });
+
   const formattedCalories =
-    calories === null
+    displayCalories === null
       ? "—"
       : new Intl.NumberFormat("fr-FR", {
           maximumFractionDigits: 0,
-        }).format(calories);
+        }).format(displayCalories);
 
   const sportLabel = sportLabels[sport] || sport;
 

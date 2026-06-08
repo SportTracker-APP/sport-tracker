@@ -478,7 +478,7 @@ export class StravaService {
       endLatitude: activity.end_latlng?.[0],
       endLongitude: activity.end_latlng?.[1],
       routePolyline: activity.map?.summary_polyline,
-      calories: this.mapCalories(activity),
+      calories: this.mapCalories(activity, sport, distanceKm, durationMinutes),
       averageSpeed: activity.average_speed,
       maxSpeed: activity.max_speed,
       averageHeartRate:
@@ -513,16 +513,87 @@ export class StravaService {
     return sportMap[stravaType] || SportType.RUNNING;
   }
 
-  private mapCalories(activity: StravaActivity) {
+  private mapCalories(
+    activity: StravaActivity,
+    sport: SportType,
+    distanceKm: number | undefined,
+    durationMinutes: number,
+  ) {
+    const estimatedCalories = this.estimateCalories(
+      sport,
+      distanceKm,
+      durationMinutes,
+    );
+
     if (activity.calories !== undefined) {
-      return Math.round(activity.calories);
+      const calories = Math.round(activity.calories);
+
+      if (
+        this.shouldUseEstimatedCalories(sport) &&
+        estimatedCalories !== undefined &&
+        calories < estimatedCalories * 0.45
+      ) {
+        return estimatedCalories;
+      }
+
+      return calories;
     }
 
     if (activity.kilojoules !== undefined) {
-      return Math.round(activity.kilojoules * 0.239006);
+      const caloriesFromKilojoules = Math.round(activity.kilojoules * 0.239006);
+
+      if (
+        this.shouldUseEstimatedCalories(sport) &&
+        estimatedCalories !== undefined &&
+        caloriesFromKilojoules < estimatedCalories * 0.45
+      ) {
+        return estimatedCalories;
+      }
+
+      return caloriesFromKilojoules;
     }
 
-    return undefined;
+    return estimatedCalories;
+  }
+
+  private shouldUseEstimatedCalories(sport: SportType) {
+    const estimatedSports: SportType[] = [
+      SportType.RUNNING,
+      SportType.TRAIL,
+      SportType.HIKING,
+      SportType.WALKING,
+    ];
+
+    return estimatedSports.includes(sport);
+  }
+
+  private estimateCalories(
+    sport: SportType,
+    distanceKm: number | undefined,
+    durationMinutes: number,
+  ) {
+    const distanceFactors: Partial<Record<SportType, number>> = {
+      [SportType.RUNNING]: 70,
+      [SportType.TRAIL]: 78,
+      [SportType.HIKING]: 58,
+      [SportType.WALKING]: 48,
+      [SportType.MTB]: 38,
+      [SportType.ROAD_CYCLING]: 32,
+      [SportType.GRAVEL]: 34,
+    };
+    const distanceEstimate =
+      distanceKm && distanceKm > 0
+        ? distanceKm * (distanceFactors[sport] ?? 55)
+        : 0;
+    const durationEstimate =
+      durationMinutes > 0
+        ? (durationMinutes / 60) * (sport === SportType.TRAIL ? 520 : 420)
+        : 0;
+    const estimatedCalories = Math.round(
+      Math.max(distanceEstimate, durationEstimate),
+    );
+
+    return estimatedCalories > 0 ? estimatedCalories : undefined;
   }
 
   private createState(userId: string) {
