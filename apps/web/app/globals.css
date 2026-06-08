@@ -28,6 +28,13 @@ body {
   background-size: cover;
 }
 
+html:not(.sport-theme-nature) .app-dashboard-hero {
+  border-color: rgba(139, 92, 246, 0.18) !important;
+  box-shadow:
+    0 26px 90px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.035) inset !important;
+}
+
 .app-mascot-choices {
   display: none;
   transform: translateY(4px);
@@ -1793,4 +1800,44 @@ html.sport-theme-nature .app-activity-card .app-mini-route-map .app-map-vignette
     transparent 72%,
     rgba(15, 23, 42, 0.12) 100%
   ) !important;
+}
+
+html.sport-theme-nature .app-new-activity-stat-card,
+html.sport-theme-nature .app-activity-mode-card[data-selected="true"],
+html.sport-theme-nature .app-sport-option-card[data-selected="true"] {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 34%),
+    linear-gradient(135deg, #10b981 0%, #22c55e 54%, #84cc16 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 22px 52px rgba(16, 185, 129, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+html.sport-theme-nature .app-new-activity-stat-card p,
+html.sport-theme-nature .app-activity-mode-card[data-selected="true"] p,
+html.sport-theme-nature .app-activity-mode-card[data-selected="true"] span,
+html.sport-theme-nature .app-sport-option-card[data-selected="true"] span {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+html.sport-theme-nature .app-new-activity-stat-card p:last-child,
+html.sport-theme-nature .app-activity-mode-card[data-selected="true"] span.text-sm,
+html.sport-theme-nature .app-sport-option-card[data-selected="true"] span {
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature .app-new-activity-stat-card svg,
+html.sport-theme-nature .app-activity-mode-card[data-selected="true"] svg,
+html.sport-theme-nature .app-sport-option-card[data-selected="true"] svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+html.sport-theme-nature .app-new-activity-stat-card [class*="bg-black"],
+html.sport-theme-nature .app-activity-mode-card[data-selected="true"] [class*="bg-violet"],
+html.sport-theme-nature .app-sport-option-card[data-selected="true"] [class*="bg-violet"] {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: rgba(255, 255, 255, 0.16) !important;
 }

@@ -2,6 +2,7 @@ import {
   Activity,
   Flame,
   LucideIcon,
+  Mountain,
   Route,
   Trophy,
 } from "lucide-react";
@@ -27,6 +28,8 @@ export function StatsCard({
 
   const isFlame = Icon === Flame;
 
+  const isMountain = Icon === Mountain;
+
   const isTrophy = Icon === Trophy;
 
   return (
@@ -40,7 +43,7 @@ export function StatsCard({
         isRoute &&
           "shadow-[0_10px_45px_rgba(56,189,248,0.08)]",
 
-        isFlame &&
+        (isFlame || isMountain) &&
           "shadow-[0_10px_45px_rgba(251,146,60,0.08)]",
 
         isTrophy &&
@@ -61,6 +64,9 @@ export function StatsCard({
           isFlame &&
             "bg-[radial-gradient(circle_at_top_right,rgba(251,146,60,0.14),transparent_40%)]",
 
+          isMountain &&
+            "bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.16),transparent_40%)]",
+
           isTrophy &&
             "bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.14),transparent_40%)]"
         )}
@@ -79,6 +85,9 @@ export function StatsCard({
 
           isFlame &&
             "bg-[radial-gradient(circle_at_bottom_left,rgba(251,146,60,0.06),transparent_35%)]",
+
+          isMountain &&
+            "bg-[radial-gradient(circle_at_bottom_left,rgba(132,204,22,0.08),transparent_35%)]",
 
           isTrophy &&
             "bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.06),transparent_35%)]"
@@ -133,6 +142,9 @@ export function StatsCard({
             isFlame &&
               "text-orange-300",
 
+            isMountain &&
+              "text-emerald-300",
+
             isTrophy &&
               "text-emerald-300"
           )}
@@ -150,6 +162,9 @@ export function StatsCard({
 
               isFlame &&
                 "bg-gradient-to-br from-orange-500/25 via-orange-500/8 to-transparent",
+
+              isMountain &&
+                "bg-gradient-to-br from-emerald-500/25 via-lime-500/10 to-transparent",
 
               isTrophy &&
                 "bg-gradient-to-br from-emerald-500/25 via-emerald-500/8 to-transparent"

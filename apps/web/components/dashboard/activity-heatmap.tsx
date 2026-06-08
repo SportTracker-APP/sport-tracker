@@ -111,7 +111,7 @@ export function ActivityHeatmap({ activities = [] }: ActivityHeatmapProps) {
   const heatmapStart = addDays(currentWeekStart, -21);
   const currentStreak = getCurrentStreak(activities);
   const daysSinceLastActivity = getDaysSinceLastActivity(activities);
-  const momentumLabel = currentStreak > 0 ? "Série actuelle" : "Dernière sortie";
+  const momentumLabel = currentStreak > 0 ? "Série en cours" : "Chaussures";
   const momentumValue =
     currentStreak > 0
       ? `${currentStreak} jour${currentStreak > 1 ? "s" : ""}`
@@ -119,6 +119,8 @@ export function ActivityHeatmap({ activities = [] }: ActivityHeatmapProps) {
         ? "À lancer"
         : daysSinceLastActivity === 0
           ? "Aujourd’hui"
+          : daysSinceLastActivity >= 5
+            ? "Poussière"
           : `Il y a ${daysSinceLastActivity} jour${
               daysSinceLastActivity > 1 ? "s" : ""
             }`;
@@ -166,11 +168,11 @@ export function ActivityHeatmap({ activities = [] }: ActivityHeatmapProps) {
         <div className="mb-8 flex items-start justify-between">
           <div>
             <h3 className="text-xl font-semibold tracking-tight text-white">
-              Heatmap activité
+              Rythme d’exploration
             </h3>
 
             <p className="mt-1 text-sm text-zinc-400">
-              Activité réelle des 28 derniers jours
+              Run, trail, lac et montagne sur les 28 derniers jours
             </p>
           </div>
 
@@ -252,7 +254,7 @@ export function ActivityHeatmap({ activities = [] }: ActivityHeatmapProps) {
         </div>
 
         <div className="mt-8 flex items-center justify-between">
-          <p className="text-sm text-zinc-500">Intensité des entraînements</p>
+          <p className="text-sm text-zinc-500">Intensité des sorties</p>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">

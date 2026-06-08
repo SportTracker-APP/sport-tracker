@@ -48,10 +48,10 @@ function formatDuration(minutes: number) {
   }
 
   if (remainingMinutes === 0) {
-    return `${hours}h`;
+    return `${hours}H`;
   }
 
-  return `${hours}h ${remainingMinutes.toString().padStart(2, "0")}`;
+  return `${hours}H${remainingMinutes.toString().padStart(2, "0")}`;
 }
 
 function formatCompactNumber(value: number) {
@@ -182,7 +182,7 @@ export default function NewActivityPage() {
                   return (
                     <div
                       key={stat.label}
-                      className={`relative overflow-hidden rounded-[22px] border border-white/[0.08] bg-gradient-to-br ${stat.color} p-5`}
+                      className={`app-new-activity-stat-card relative overflow-hidden rounded-[22px] border border-white/[0.08] bg-gradient-to-br ${stat.color} p-5`}
                     >
                       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.05),transparent_45%)]" />
 

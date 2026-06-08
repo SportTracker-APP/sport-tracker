@@ -16,6 +16,8 @@ import { StravaModule } from './modules/strava/strava.module';
 
 import { AdminModule } from './modules/admin/admin.module';
 
+import { GoalsModule } from './modules/goals/goals.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,6 +38,8 @@ import { AdminModule } from './modules/admin/admin.module';
     StravaModule,
 
     AdminModule,
+
+    GoalsModule,
   ],
 })
 export class AppModule {}

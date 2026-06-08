@@ -108,7 +108,7 @@ function formatDuration(minutes: number) {
     return `${minutes} min`;
   }
 
-  return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(
+  return `${Math.floor(minutes / 60)}H${String(minutes % 60).padStart(
     2,
     "0",
   )}`;

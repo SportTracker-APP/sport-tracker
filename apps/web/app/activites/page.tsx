@@ -212,7 +212,7 @@ export default function ActivitiesPage() {
                     Temps annuel
                   </div>
                   <p className="mt-2 text-xl font-semibold text-white">
-                    {Math.floor(yearlyDuration / 60)}h {yearlyDuration % 60}
+                    {Math.floor(yearlyDuration / 60)}H{String(yearlyDuration % 60).padStart(2, "0")}
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     D'entraînement en {currentYear}

@@ -45,6 +45,8 @@ model User {
   // RELATIONS
   activities Activity[]
 
+  goals Goal[]
+
   // DATES
   createdAt DateTime @default(now())
 
@@ -149,6 +151,38 @@ model Activity {
   @@index([createdAt])
 }
 
+model Goal {
+  id String @id @default(cuid())
+
+  title String
+
+  type GoalType
+
+  target Float
+
+  period GoalPeriod @default(MONTHLY)
+
+  startDate DateTime
+
+  endDate DateTime
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([isActive])
+  @@index([startDate])
+  @@index([endDate])
+}
+
 enum ActivityType {
   TRAINING
   RACE
@@ -190,6 +224,20 @@ enum WeatherType {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum GoalType {
+  DISTANCE_KM
+  ACTIVITY_COUNT
+  ELEVATION_M
+  CALORIES
+  DURATION_MIN
+}
+
+enum GoalPeriod {
+  WEEKLY
+  MONTHLY
+  CUSTOM
 }
 
 model StravaConnection {

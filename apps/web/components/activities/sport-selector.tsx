@@ -2,9 +2,9 @@
 
 import {
   Bike,
+  Dumbbell,
   Footprints,
   Mountain,
-  PersonStanding,
   Trees,
 } from "lucide-react";
 
@@ -30,9 +30,9 @@ const sports = [
     icon: Bike,
   },
   {
-    value: "WALKING",
-    label: "Marche",
-    icon: PersonStanding,
+    value: "GYM",
+    label: "Muscu",
+    icon: Dumbbell,
   },
 ];
 
@@ -63,8 +63,9 @@ export function SportSelector({
             onClick={() =>
               onChange(sport.value)
             }
+            data-selected={active}
             className={`
-              group relative overflow-hidden rounded-[24px] border p-5 transition-all duration-300
+              app-sport-option-card group relative overflow-hidden rounded-[24px] border p-5 transition-all duration-300
 
               ${
                 active

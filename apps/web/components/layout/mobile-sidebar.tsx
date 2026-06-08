@@ -22,27 +22,27 @@ import { useAuthStore } from "@/store/auth-store";
 
 const links = [
   {
-    label: "Dashboard",
+    label: "Refuge",
     href: "/",
     icon: LayoutDashboard,
   },
   {
-    label: "Activités",
+    label: "Sorties",
     href: "/activites",
     icon: Activity,
   },
   {
-    label: "Calendrier",
+    label: "Planning",
     href: "/calendrier",
     icon: Calendar,
   },
   {
-    label: "Statistiques",
+    label: "Stats",
     href: "/statistiques",
     icon: ChartColumn,
   },
   {
-    label: "Objectifs",
+    label: "Caps",
     href: "/objectifs",
     icon: Goal,
   },
@@ -52,7 +52,7 @@ const links = [
     icon: Map,
   },
   {
-    label: "Performances",
+    label: "Progression",
     href: "/performances",
     icon: Trophy,
   },
@@ -95,7 +95,7 @@ export function MobileSidebar() {
           <div className="border-b border-zinc-800 p-6">
             <h2 className="text-xl font-bold text-white">Sport Tracker</h2>
 
-            <p className="mt-1 text-sm text-zinc-500">Dashboard sportif</p>
+            <p className="mt-1 text-sm text-zinc-500">Outdoor performance</p>
           </div>
 
           {/* Navigation */}

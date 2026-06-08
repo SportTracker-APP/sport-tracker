@@ -4,12 +4,15 @@ type MonthlyGoalCardProps = {
   title?: string;
   periodLabel?: string;
   footerText?: string;
+  unit?: string;
+  currentLabel?: string;
+  targetLabel?: string;
 };
 
-function formatDistance(distance: number) {
+function formatValue(value: number) {
   return new Intl.NumberFormat("fr-FR", {
     maximumFractionDigits: 1,
-  }).format(distance);
+  }).format(value);
 }
 
 export function MonthlyGoalCard({
@@ -18,10 +21,16 @@ export function MonthlyGoalCard({
   title = "Objectif du moment",
   periodLabel = "sur votre cap actuel",
   footerText,
+  unit = "km",
+  currentLabel,
+  targetLabel,
 }: MonthlyGoalCardProps) {
   const progress =
     target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
   const remaining = Math.max(0, target - current);
+  const displayCurrent = currentLabel ?? `${formatValue(current)} ${unit}`;
+  const displayTarget = targetLabel ?? `${formatValue(target)} ${unit}`;
+  const displayRemaining = `${formatValue(remaining)} ${unit}`;
 
   return (
     <div className="group relative h-full min-h-[320px] overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
@@ -47,11 +56,11 @@ export function MonthlyGoalCard({
             </p>
 
             <h3 className="mt-4 text-[44px] font-bold tracking-tight text-white">
-              {formatDistance(current)} km
+              {displayCurrent}
             </h3>
 
             <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-              sur {formatDistance(target)} km {periodLabel}
+              sur {displayTarget} {periodLabel}
             </p>
           </div>
 
@@ -79,7 +88,7 @@ export function MonthlyGoalCard({
           <div className="mb-3 flex items-center justify-between text-sm">
             <span className="text-zinc-500">0 km</span>
 
-            <span className="text-zinc-400">{formatDistance(target)} km</span>
+            <span className="text-zinc-400">{displayTarget}</span>
           </div>
 
           {/* BAR */}
@@ -116,7 +125,7 @@ export function MonthlyGoalCard({
               <>
                 Encore{" "}
                 <span className="font-semibold text-white">
-                  {formatDistance(remaining)} km
+                  {displayRemaining}
                 </span>{" "}
                 pour atteindre votre objectif.
               </>

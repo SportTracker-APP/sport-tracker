@@ -10,10 +10,10 @@ import {
   CalendarDays,
   CheckCircle2,
   Compass,
-  Flame,
   Gauge,
   Link2,
   MapPinned,
+  Mountain,
   Plus,
   Route,
   ShieldCheck,
@@ -31,16 +31,20 @@ import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
 import { FadeIn } from "@/components/ui/fade-in";
 import { MountainMascot } from "@/components/layout/topbar-runner";
 import { useActivities } from "@/hooks/use-activities";
+import { useGoals } from "@/hooks/use-goals";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
+import {
+  calculateGoalProgress,
+  formatGoalValue,
+  selectPrimaryGoal,
+} from "@/lib/goal-progress";
 
 type StravaStatus = {
   connected: boolean;
   hasSyncedActivities?: boolean;
   syncedActivitiesCount?: number;
 };
-
-const rollingTargetDistance = 420;
 
 function startOfWeek(date: Date) {
   const nextDate = new Date(date);
@@ -88,10 +92,10 @@ function formatDuration(minutes: number) {
   const remainingMinutes = minutes % 60;
 
   if (remainingMinutes === 0) {
-    return `${hours}h`;
+    return `${hours}H`;
   }
 
-  return `${hours}h ${String(remainingMinutes).padStart(2, "0")}`;
+  return `${hours}H${String(remainingMinutes).padStart(2, "0")}`;
 }
 
 function formatSignedDistance(distance: number) {
@@ -110,14 +114,6 @@ function formatShortDate(date: string) {
     day: "2-digit",
     month: "long",
   }).format(new Date(date));
-}
-
-function formatMonthName(date: Date) {
-  const month = new Intl.DateTimeFormat("fr-FR", {
-    month: "long",
-  }).format(date);
-
-  return month.charAt(0).toUpperCase() + month.slice(1);
 }
 
 function getSportLabel(activity: SportActivity | null) {
@@ -162,6 +158,176 @@ function getActivitiesBetween(
   });
 }
 
+function getElevationTotal(activities: SportActivity[]) {
+  return activities.reduce(
+    (total, activity) => total + (activity.elevationGain || 0),
+    0,
+  );
+}
+
+function isOutdoorActivity(activity: SportActivity) {
+  return ["RUNNING", "TRAIL", "HIKING", "MTB", "ROAD_CYCLING", "GRAVEL"].includes(
+    activity.sport,
+  );
+}
+
+function getDaysSinceLastActivity(activity: SportActivity | null) {
+  if (!activity) {
+    return null;
+  }
+
+  const today = new Date();
+  const lastDate = new Date(activity.startedAt);
+
+  today.setHours(0, 0, 0, 0);
+  lastDate.setHours(0, 0, 0, 0);
+
+  return Math.max(
+    0,
+    Math.floor((today.getTime() - lastDate.getTime()) / 86_400_000),
+  );
+}
+
+function getAdventureName(activities: SportActivity[]) {
+  const lastOutdoor = activities.find(isOutdoorActivity);
+
+  if (!lastOutdoor) {
+    return "un tour du lac ou une montée aux Aravis";
+  }
+
+  if (lastOutdoor.sport === "RUNNING") {
+    return "la prochaine boucle autour du lac";
+  }
+
+  if (["TRAIL", "HIKING"].includes(lastOutdoor.sport)) {
+    return "la prochaine ligne de crête";
+  }
+
+  return "la prochaine trace à explorer";
+}
+
+function getExplorerMood({
+  daysSinceLastActivity,
+  weeklyDistance,
+  rollingElevation,
+  bestActivity,
+}: {
+  daysSinceLastActivity: number | null;
+  weeklyDistance: number;
+  rollingElevation: number;
+  bestActivity: SportActivity | null;
+}) {
+  if (daysSinceLastActivity !== null && daysSinceLastActivity >= 5) {
+    return {
+      title: "Les chaussures prennent la poussière.",
+      body: "Une petite sortie suffit à leur redonner une raison d’exister.",
+      icon: "👀",
+    };
+  }
+
+  if (weeklyDistance >= 45) {
+    return {
+      title: "Les bords du lac commencent à te reconnaître.",
+      body: "Belle semaine. Le GPS, lui, fait semblant d’être calme.",
+      icon: "🔥",
+    };
+  }
+
+  if (rollingElevation >= 2_500) {
+    return {
+      title: "Les mollets remercient.",
+      body: "Enfin... ils remercieront demain. Aujourd’hui ils négocient.",
+      icon: "⛰️",
+    };
+  }
+
+  if ((bestActivity?.distance || 0) >= 25) {
+    return {
+      title: "Le GPS a demandé une pause.",
+      body: "Longue sortie validée. Ça commence à sentir la vraie aventure.",
+      icon: "🏃",
+    };
+  }
+
+  return {
+    title: "Bienvenue explorateur.",
+    body: "Course, trail, lac ou montagne : chaque sortie ajoute un morceau de carte.",
+    icon: "🏔️",
+  };
+}
+
+function getUnlockedBadges(activities: SportActivity[], rollingActivities: SportActivity[]) {
+  const hasSummit = activities.some(
+    (activity) =>
+      ["TRAIL", "HIKING"].includes(activity.sport) &&
+      (activity.elevationGain || 0) >= 300,
+  );
+  const rollingDistance = rollingActivities.reduce(
+    (total, activity) => total + (activity.distance || 0),
+    0,
+  );
+  const hasSunrise = activities.some((activity) => {
+    const hour = new Date(activity.startedAt).getHours();
+
+    return hour >= 4 && hour <= 8;
+  });
+  const hasWinter = activities.some((activity) => {
+    const month = new Date(activity.startedAt).getMonth();
+
+    return month === 11 || month <= 1;
+  });
+  const hasRain = activities.some((activity) =>
+    `${activity.title ?? ""} ${activity.description ?? ""}`
+      .toLowerCase()
+      .includes("pluie"),
+  );
+
+  return [
+    {
+      title: "Premier sommet",
+      icon: "🏔️",
+      unlocked: hasSummit,
+      hint: "Une sortie trail/rando avec du D+.",
+      unlockedText: "La première bosse est cochée.",
+    },
+    {
+      title: "100 km",
+      icon: "🔥",
+      unlocked: rollingDistance >= 100,
+      hint: "100 km sur 30 jours.",
+      unlockedText: "Le compteur commence à chauffer.",
+    },
+    {
+      title: "10 sorties en 30j",
+      icon: "⚡",
+      unlocked: rollingActivities.length >= 10,
+      hint: "La régularité qui paie.",
+      unlockedText: "La discipline fait son petit effet.",
+    },
+    {
+      title: "Lever de soleil",
+      icon: "🌄",
+      unlocked: hasSunrise,
+      hint: "Sortie lancée entre 4H et 8H.",
+      unlockedText: "Parti avant que la ville se réveille.",
+    },
+    {
+      title: "Sortie hivernale",
+      icon: "❄️",
+      unlocked: hasWinter,
+      hint: "Décembre, janvier ou février.",
+      unlockedText: "Le froid n’a pas gagné.",
+    },
+    {
+      title: "Sous la pluie",
+      icon: "🌧️",
+      unlocked: hasRain,
+      hint: "La sortie où le mental signe aussi.",
+      unlockedText: "Sortie validée, météo vexée.",
+    },
+  ];
+}
+
 function EmptyStravaDashboard() {
   return (
     <FadeIn delay={0.1}>
@@ -177,14 +343,14 @@ function EmptyStravaDashboard() {
             </div>
 
             <h1 className="mt-5 max-w-3xl text-4xl leading-tight font-bold tracking-tight text-white">
-              Connectez Strava et laissez Sport Tracker devenir votre cockpit
-              de progression.
+              Connectez Strava et transformez vos sorties en carnet
+              d’exploration.
             </h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400">
-              L’app ne se contente pas de lister vos sorties : elle transforme
-              votre historique en objectifs lisibles, rythme à tenir, signaux de
-              régularité et prochaines actions concrètes.
+              Course au bord du lac, trail dans les Aravis, boucle du soir ou
+              sortie longue : Sport Tracker transforme votre historique en caps,
+              badges, régularité et prochaines aventures.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
@@ -213,9 +379,9 @@ function EmptyStravaDashboard() {
 
             <div className="mt-5 space-y-3">
               {[
-                "Objectifs motivants basés sur vos vraies sorties",
-                "Conseils simples pour savoir quoi faire ensuite",
-                "Historique Strava transformé en tendances utiles",
+                "Caps motivants basés sur vos vraies sorties",
+                "Badges qui donnent envie de repartir",
+                "Historique Strava transformé en carte de progression",
               ].map((item) => (
                 <div
                   key={item}
@@ -235,6 +401,7 @@ function EmptyStravaDashboard() {
 
 export default function HomePage() {
   const { data: activities = [], isLoading, error } = useActivities();
+  const { data: goals = [] } = useGoals();
   const [stravaStatus, setStravaStatus] = useState<StravaStatus | null>(null);
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
 
@@ -328,6 +495,14 @@ export default function HomePage() {
       (total, activity) => total + (activity.calories || 0),
       0,
     );
+    const rollingElevation = getElevationTotal(rollingActivities);
+    const weeklyElevation = getElevationTotal(weekActivities);
+    const exploredSectors = completedActivities.filter(
+      (activity) =>
+        isOutdoorActivity(activity) &&
+        ((activity.elevationGain || 0) >= 250 ||
+          ["RUNNING", "TRAIL", "HIKING"].includes(activity.sport)),
+    ).length;
     const activeDays = new Set(
       rollingActivities.map((activity) =>
         new Date(activity.startedAt).toDateString(),
@@ -344,14 +519,6 @@ export default function HomePage() {
           : bestActivityCandidate;
       },
       null,
-    );
-    const rollingProgress = Math.min(
-      100,
-      Math.round((rollingDistance / rollingTargetDistance) * 100),
-    );
-    const remainingDistance = Math.max(
-      0,
-      rollingTargetDistance - rollingDistance,
     );
     const rollingChartData = Array.from({
       length: 31,
@@ -380,17 +547,18 @@ export default function HomePage() {
       bestActivity,
       latestActivity: completedActivities[0] ?? null,
       weekActivities,
+      exploredSectors,
       rollingActivities,
       rollingCalories,
       rollingDistance,
       rollingDuration,
-      rollingProgress,
-      remainingDistance,
+      rollingElevation,
       previousWeeklyDistance,
       recentActivities: completedActivities.slice(0, 4),
       rollingChartData,
       weeklyDistance,
       weeklyDuration,
+      weeklyElevation,
     };
   }, [activities]);
 
@@ -402,14 +570,25 @@ export default function HomePage() {
   const hasAnyActivity = dashboardData.completedActivities.length > 0;
   const showEmptyStravaState =
     !isLoading && !isLoadingStravaStatus && !hasSyncedStrava && !hasAnyActivity;
-  const focusDate = dashboardData.latestActivity
-    ? new Date(dashboardData.latestActivity.startedAt)
-    : new Date();
-  const focusMonthLabel = formatMonthName(focusDate);
+  const primaryGoal = useMemo(() => selectPrimaryGoal(goals), [goals]);
+  const goalProgress = useMemo(
+    () =>
+      calculateGoalProgress(primaryGoal, dashboardData.completedActivities),
+    [dashboardData.completedActivities, primaryGoal],
+  );
+  const goalCurrentLabel = formatGoalValue(
+    goalProgress.current,
+    primaryGoal.type,
+  );
+  const goalTargetLabel = formatGoalValue(goalProgress.target, primaryGoal.type);
+  const goalRemainingLabel = formatGoalValue(
+    goalProgress.remaining,
+    primaryGoal.type,
+  );
 
   const statsData = [
     {
-      title: "Activités",
+      title: "Sorties",
       value: formatNumber(dashboardData.rollingActivities.length),
       description: "30 derniers jours",
       icon: Activity,
@@ -421,15 +600,15 @@ export default function HomePage() {
       icon: Route,
     },
     {
-      title: "Calories",
-      value: formatNumber(dashboardData.rollingCalories),
+      title: "D+",
+      value: `${formatNumber(dashboardData.rollingElevation)} m`,
       description: "30 derniers jours",
-      icon: Flame,
+      icon: Mountain,
     },
     {
-      title: "Objectif",
-      value: `${dashboardData.rollingProgress}%`,
-      description: `Cap ${focusMonthLabel.toLowerCase()}`,
+      title: "Cap",
+      value: `${goalProgress.progress}%`,
+      description: primaryGoal.title,
       icon: Trophy,
     },
   ];
@@ -438,21 +617,41 @@ export default function HomePage() {
     dashboardData.weeklyDistance - dashboardData.previousWeeklyDistance;
   const suggestedActiveDays = Math.max(1, 30 - dashboardData.activeDays);
   const suggestedSessionDistance =
-    dashboardData.remainingDistance > 0
-      ? dashboardData.remainingDistance / suggestedActiveDays
+    primaryGoal.type === "DISTANCE_KM" && goalProgress.remaining > 0
+      ? goalProgress.remaining / suggestedActiveDays
       : 0;
   const coachAdvice =
-    dashboardData.remainingDistance <= 0
+    goalProgress.remaining <= 0
       ? "Objectif atteint. Le prochain cap peut être relevé dans vos objectifs."
+      : primaryGoal.type === "DISTANCE_KM"
+        ? `Plan simple : ${suggestedActiveDays} sortie${
+            suggestedActiveDays > 1 ? "s" : ""
+          } d’environ ${formatDistance(suggestedSessionDistance, 1)} pour tenir le cap.`
       : `Plan simple : ${suggestedActiveDays} sortie${
           suggestedActiveDays > 1 ? "s" : ""
-        } d’environ ${formatDistance(suggestedSessionDistance, 1)} pour tenir le cap.`;
+        } à planifier pour avancer sur “${primaryGoal.title}”.`;
+  const daysSinceLastActivity = getDaysSinceLastActivity(
+    dashboardData.latestActivity,
+  );
+  const explorerMood = getExplorerMood({
+    daysSinceLastActivity,
+    weeklyDistance: dashboardData.weeklyDistance,
+    rollingElevation: dashboardData.rollingElevation,
+    bestActivity: dashboardData.bestActivity,
+  });
+  const unlockedBadges = getUnlockedBadges(
+    dashboardData.completedActivities,
+    dashboardData.rollingActivities,
+  );
+  const unlockedBadgesCount = unlockedBadges.filter((badge) => badge.unlocked)
+    .length;
+  const nextAdventure = getAdventureName(dashboardData.completedActivities);
 
   const insightCards = [
     {
       label: "Cap restant",
-      value: formatDistance(dashboardData.remainingDistance, 1),
-      description: `Objectif ${focusMonthLabel.toLowerCase()}`,
+      value: goalRemainingLabel,
+      description: primaryGoal.title,
       icon: Compass,
       tone: "from-violet-500/18 to-fuchsia-500/8",
     },
@@ -464,7 +663,7 @@ export default function HomePage() {
       tone: "from-emerald-500/16 to-lime-500/8",
     },
     {
-      label: "Meilleure sortie",
+      label: "Plus belle trace",
       value: dashboardData.bestActivity
         ? formatDistance(dashboardData.bestActivity.distance || 0, 1)
         : "Aucune",
@@ -491,17 +690,17 @@ export default function HomePage() {
       tone: hasSyncedStrava ? "text-emerald-300" : "text-orange-300",
     },
     {
-      icon: dashboardData.remainingDistance <= 80 ? CheckCircle2 : Compass,
+      icon: goalProgress.progress >= 80 ? CheckCircle2 : Compass,
       title:
-        dashboardData.remainingDistance <= 80
+        goalProgress.progress >= 80
           ? "Objectif à portée"
           : "Cap encore ouvert",
       description:
-        dashboardData.remainingDistance <= 80
+        goalProgress.progress >= 80
           ? "Vous êtes dans la dernière ligne droite des 30 jours."
-          : `${formatDistance(dashboardData.remainingDistance, 1)} restent à parcourir pour garder le cap.`,
+          : coachAdvice,
       tone:
-        dashboardData.remainingDistance <= 80
+        goalProgress.progress >= 80
           ? "text-emerald-300"
           : "text-violet-300",
     },
@@ -571,23 +770,25 @@ export default function HomePage() {
                   <div>
                     <div className="app-dashboard-glass mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                       <Zap size={14} />
-                      Coach sportif personnel
+                      Carnet d’exploration
                     </div>
 
                     <h1 className="max-w-2xl text-3xl leading-tight font-bold tracking-tight text-white md:text-[38px]">
-                      Votre prochain cap est clair.
+                      {explorerMood.icon} {explorerMood.title}
                     </h1>
 
                     <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 md:text-base">
-                      Sport Tracker transforme vos sorties en plan d’action :
-                      progression, régularité et prochaine décision à prendre.
-                      Sur vos 30 derniers jours, vous avez déjà parcouru{" "}
-                      {formatDistance(dashboardData.rollingDistance, 1)} en{" "}
-                      {formatDuration(dashboardData.rollingDuration)}.
+                      {formatNumber(dashboardData.exploredSectors)} secteurs
+                      run, trail ou montagne découverts.{" "}
+                      {formatDistance(dashboardData.rollingDistance, 1)}{" "}
+                      parcourus et{" "}
+                      {formatNumber(dashboardData.rollingElevation)} m D+
+                      gravis sur vos 30 derniers jours.
                     </p>
 
                     <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-emerald-300 md:text-base">
-                      {coachAdvice}
+                      Prochaine aventure : {nextAdventure}.{" "}
+                      {explorerMood.body}
                     </p>
 
                     <div className="mt-6 flex flex-wrap gap-3">
@@ -596,7 +797,7 @@ export default function HomePage() {
                         className="inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.30)] transition hover:scale-[1.02]"
                       >
                         <Plus className="h-4 w-4" />
-                        Nouvelle activité
+                        Tracer une sortie
                       </Link>
 
                       <Link
@@ -612,19 +813,19 @@ export default function HomePage() {
                         className="inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-zinc-200 transition hover:border-white/15 hover:bg-white/[0.06]"
                       >
                         <CalendarDays className="h-4 w-4" />
-                        Calendrier
+                        Planifier
                       </Link>
                     </div>
 
                     <div className="mt-6 flex flex-wrap gap-3">
                       <div className="app-dashboard-glass rounded-2xl border border-white/10 bg-black/20 px-4 py-3 backdrop-blur-xl">
                         <div className="flex items-center gap-2 text-xs text-zinc-500">
-                          <Flame size={14} className="text-orange-400" />
-                          Calories 30j
+                          <Mountain size={14} className="text-emerald-400" />
+                          D+ 30j
                         </div>
 
                         <p className="mt-1.5 text-xl font-semibold text-white">
-                          {formatNumber(dashboardData.rollingCalories)}
+                          {formatNumber(dashboardData.rollingElevation)} m
                         </p>
                       </div>
 
@@ -635,7 +836,7 @@ export default function HomePage() {
                         </div>
 
                         <p className="mt-1.5 text-xl font-semibold text-white">
-                          {dashboardData.rollingProgress}%
+                          {goalProgress.progress}%
                         </p>
                       </div>
 
@@ -645,12 +846,14 @@ export default function HomePage() {
                             size={14}
                             className="text-emerald-400"
                           />
-                          Rythme cible
+                          Sortie cible
                         </div>
 
                         <p className="mt-1.5 text-xl font-semibold text-emerald-400">
-                          {dashboardData.remainingDistance > 0
-                            ? formatDistance(suggestedSessionDistance, 1)
+                          {goalProgress.remaining > 0
+                            ? primaryGoal.type === "DISTANCE_KM"
+                              ? formatDistance(suggestedSessionDistance, 1)
+                              : goalRemainingLabel
                             : "Validé"}
                         </p>
                       </div>
@@ -669,32 +872,30 @@ export default function HomePage() {
 
                     <div className="relative mt-5">
                       <p className="text-xs font-medium tracking-[0.18em] text-zinc-300 uppercase">
-                        Cap motivant
+                        Cap en cours
                       </p>
                       <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
-                        Objectif {focusMonthLabel}
+                        {primaryGoal.title}
                       </h2>
 
                       <p className="mt-2 text-sm leading-relaxed text-zinc-200/86 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]">
-                        {formatDistance(dashboardData.rollingDistance, 1)} déjà
-                        validés sur votre cap de{" "}
-                        {formatDistance(rollingTargetDistance, 0)}. Encore{" "}
-                        {formatDistance(dashboardData.remainingDistance, 1)} à
-                        aller chercher.
+                        {goalCurrentLabel} déjà validés sur {goalTargetLabel}.
+                        Encore {goalRemainingLabel} à aller chercher sans
+                        dramatiser. Enfin... un peu.
                       </p>
                     </div>
 
                     <div className="relative mt-5">
                       <div className="mb-2 flex items-center justify-between text-[11px] font-medium text-zinc-200/78">
                         <span>Progression</span>
-                        <span>{dashboardData.rollingProgress}%</span>
+                        <span>{goalProgress.progress}%</span>
                       </div>
 
                       <div className="h-1.5 overflow-hidden rounded-full bg-white/22">
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-300 shadow-[0_0_20px_rgba(255,255,255,0.42)]"
                           style={{
-                            width: `${dashboardData.rollingProgress}%`,
+                            width: `${goalProgress.progress}%`,
                           }}
                         />
                       </div>
@@ -703,7 +904,7 @@ export default function HomePage() {
                     <div className="relative mt-5 rounded-2xl border border-white/10 bg-black/22 p-4">
                       <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
                         <MapPinned className="h-4 w-4 text-sky-300" />
-                        Dernière sortie
+                        Dernière trace
                       </div>
 
                       <p className="mt-2 line-clamp-2 text-sm font-semibold text-white">
@@ -768,14 +969,13 @@ export default function HomePage() {
             <div className="grid gap-4 xl:grid-cols-2">
               <FadeIn delay={0.7}>
                 <MonthlyGoalCard
-                  current={dashboardData.rollingDistance}
-                  target={rollingTargetDistance}
-                  title={`Objectif ${focusMonthLabel}`}
+                  current={goalProgress.current}
+                  target={goalProgress.target}
+                  title={primaryGoal.title}
                   periodLabel="à tenir sur votre période active"
-                  footerText={`${formatDistance(
-                    dashboardData.remainingDistance,
-                    1,
-                  )} restent à aller chercher. Sport Tracker vous aide à transformer ce cap en sorties concrètes.`}
+                  currentLabel={goalCurrentLabel}
+                  targetLabel={goalTargetLabel}
+                  footerText={`${goalRemainingLabel} restent à aller chercher. Sport Tracker vous aide à transformer ce cap en sorties concrètes.`}
                 />
               </FadeIn>
 
@@ -796,17 +996,52 @@ export default function HomePage() {
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                       <div>
                         <h2 className="text-xl font-semibold text-white">
-                          Lecture rapide
+                          Badges & signaux d’aventure
                         </h2>
                         <p className="mt-1 text-sm text-zinc-400">
-                          Les signaux utiles pour décider quoi faire ensuite.
+                          Quelques repères pour transformer vos sorties en
+                          histoire à suivre.
                         </p>
                       </div>
 
                       <div className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300">
                         <ShieldCheck className="h-3.5 w-3.5" />
-                        Dashboard live
+                        {unlockedBadgesCount}/6 débloqués
                       </div>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+                      {unlockedBadges.map((badge) => (
+                        <div
+                          key={badge.title}
+                          className={`relative overflow-hidden rounded-[20px] border p-4 transition ${
+                            badge.unlocked
+                              ? "border-emerald-400/22 bg-emerald-400/10 text-white"
+                              : "border-white/[0.07] bg-white/[0.025] text-zinc-500"
+                          }`}
+                        >
+                          <div
+                            className={`absolute inset-0 ${
+                              badge.unlocked
+                                ? "bg-[radial-gradient(circle_at_top_right,rgba(132,204,22,0.18),transparent_48%)]"
+                                : "bg-[linear-gradient(to_bottom,rgba(255,255,255,0.025),transparent)]"
+                            }`}
+                          />
+                          <div className="relative flex items-start gap-3">
+                            <span className="text-2xl">{badge.icon}</span>
+                            <div>
+                              <p className="text-sm font-semibold">
+                                {badge.title}
+                              </p>
+                              <p className="mt-1 text-xs leading-5 text-current/70">
+                                {badge.unlocked
+                                  ? badge.unlockedText
+                                  : badge.hint}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="mt-5 grid gap-3 md:grid-cols-2 2xl:grid-cols-4">

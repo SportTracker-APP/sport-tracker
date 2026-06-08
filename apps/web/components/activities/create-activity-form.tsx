@@ -78,7 +78,7 @@ export function CreateActivityForm() {
 
   const durationPreview =
     totalDuration > 0
-      ? `${hours} h ${minutes.toString().padStart(2, "0")}`
+      ? `${hours}H${minutes.toString().padStart(2, "0")}`
       : "Non renseignée";
 
   useEffect(() => {
@@ -160,9 +160,10 @@ export function CreateActivityForm() {
               key={mode.value}
               type="button"
               onClick={() => setActivityMode(mode.value)}
+              data-selected={isSelected}
               className={`rounded-[18px] border p-4 text-left transition ${
                 isSelected
-                  ? "border-violet-500/45 bg-violet-500/16 text-white shadow-[0_0_28px_rgba(139,92,246,0.20)]"
+                  ? "app-activity-mode-card border-violet-500/45 bg-violet-500/16 text-white shadow-[0_0_28px_rgba(139,92,246,0.20)]"
                   : "border-white/[0.06] bg-white/[0.025] text-zinc-400 hover:border-white/15 hover:bg-white/[0.045]"
               }`}
             >

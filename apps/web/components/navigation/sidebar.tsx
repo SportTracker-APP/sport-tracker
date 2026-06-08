@@ -40,27 +40,27 @@ const integrationItems = [
 
 const navigationItems = [
   {
-    title: "Dashboard",
+    title: "Refuge",
     href: "/",
     icon: LayoutDashboard,
   },
   {
-    title: "Activités",
+    title: "Sorties",
     href: "/activites",
     icon: Activity,
   },
   {
-    title: "Calendrier",
+    title: "Planning",
     href: "/calendrier",
     icon: Calendar,
   },
   {
-    title: "Statistiques",
+    title: "Stats",
     href: "/statistiques",
     icon: ChartColumn,
   },
   {
-    title: "Objectifs",
+    title: "Caps",
     href: "/objectifs",
     icon: Goal,
   },
@@ -73,7 +73,7 @@ const navigationItems = [
 
 const secondaryItems = [
   {
-    title: "Performances",
+    title: "Progression",
     href: "/performances",
     icon: Trophy,
   },
@@ -177,7 +177,9 @@ export function Sidebar() {
               Sport Tracker
             </h1>
 
-            <p className="mt-0.5 text-sm text-zinc-500">Performance Platform</p>
+            <p className="mt-0.5 text-sm text-zinc-500">
+              Outdoor performance
+            </p>
           </div>
         </div>
       </div>
@@ -236,7 +238,7 @@ export function Sidebar() {
         {/* SECONDARY */}
         <div className="mt-8 border-t border-white/[0.05] pt-6">
           <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-            Général
+            Atelier
           </div>
 
           <nav className="space-y-1">

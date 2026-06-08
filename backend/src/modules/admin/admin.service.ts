@@ -10,6 +10,8 @@ import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
+import { buildDefaultGoals } from '../goals/default-goals';
+
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { UpdateAdminUserPasswordDto } from './dto/update-admin-user-password.dto';
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
@@ -144,6 +146,9 @@ export class AdminService {
         email: dto.email,
         password: hashedPassword,
         role: dto.role ?? UserRole.USER,
+        goals: {
+          create: buildDefaultGoals(),
+        },
       },
       select: {
         id: true,

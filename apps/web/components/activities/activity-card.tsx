@@ -99,7 +99,7 @@ export function ActivityCard({
 }: ActivityCardProps) {
   const formattedDuration =
     duration >= 60
-      ? `${Math.floor(duration / 60)}h ${duration % 60}`
+      ? `${Math.floor(duration / 60)}H${String(duration % 60).padStart(2, "0")}`
       : `${duration} min`;
 
   const formattedDate = new Date(date).toLocaleDateString("fr-FR", {

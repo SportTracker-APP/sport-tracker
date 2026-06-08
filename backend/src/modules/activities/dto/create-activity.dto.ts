@@ -14,6 +14,7 @@ export enum SportType {
   HIKING = 'HIKING',
   MTB = 'MTB',
   WALKING = 'WALKING',
+  GYM = 'GYM',
 }
 
 export enum ActivityType {

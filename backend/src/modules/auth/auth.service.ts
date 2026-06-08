@@ -10,6 +10,8 @@ import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
+import { buildDefaultGoals } from '../goals/default-goals';
+
 import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
@@ -91,6 +93,10 @@ export class AuthService {
         email: dto.email,
 
         password: hashedPassword,
+
+        goals: {
+          create: buildDefaultGoals(),
+        },
       },
     });
 

@@ -59,7 +59,7 @@ function formatDuration(minutes: number) {
     return `${minutes} min`;
   }
 
-  return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(
+  return `${Math.floor(minutes / 60)}H${String(minutes % 60).padStart(
     2,
     "0",
   )}`;
@@ -84,11 +84,11 @@ export function RecentActivities({ activities }: RecentActivitiesProps) {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h3 className="text-xl font-semibold tracking-tight text-white">
-              Activités récentes
+              Dernières traces
             </h3>
 
             <p className="mt-1 text-sm text-zinc-400">
-              Vos derniers entraînements réels
+              Les sorties qui construisent votre terrain de jeu
             </p>
           </div>
 

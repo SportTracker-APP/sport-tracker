@@ -37,7 +37,9 @@ export function Topbar() {
         <div className="hidden items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-xs text-zinc-300 backdrop-blur-xl lg:flex">
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
 
-          <span>{user ? `Bonjour ${user.firstName} 👋` : "Non connecté"}</span>
+          <span>
+            {user ? `Bienvenue ${user.firstName}, mode outdoor activé` : "Non connecté"}
+          </span>
         </div>
 
         {/* NOTIFICATION */}
