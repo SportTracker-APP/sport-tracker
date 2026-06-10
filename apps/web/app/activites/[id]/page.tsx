@@ -185,7 +185,7 @@ type MetricCardProps = {
 
 function MetricCard({ label, value, unit, icon: Icon, tone }: MetricCardProps) {
   return (
-    <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
+    <div className="app-activity-detail-metric rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
       <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
         <Icon className={`h-4 w-4 ${tone}`} />
         {label}
@@ -237,19 +237,21 @@ export default function ActivityDetailsPage() {
 
         {activity && (
           <FadeIn>
-            <section className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-[#171922]/95 p-5 backdrop-blur-xl lg:p-7">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.20),transparent_34%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.12),transparent_35%)]" />
+            <section className="app-activity-detail-hero relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-[#171922]/95 p-5 backdrop-blur-xl lg:p-7">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.22),transparent_34%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.16),transparent_34%)]" />
+              <div className="absolute top-10 left-12 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
+              <div className="absolute right-16 bottom-16 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl" />
 
-              <div className="relative grid gap-7 xl:grid-cols-[minmax(0,0.92fr)_minmax(440px,0.78fr)] xl:items-stretch">
+              <div className="relative grid gap-7 xl:grid-cols-[minmax(0,0.86fr)_minmax(460px,0.78fr)] xl:items-stretch">
                 <div className="flex min-w-0 flex-col justify-between gap-8">
                   <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200">
+                    <div className="app-activity-detail-badge inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-semibold text-violet-200">
                       <Activity className="h-3.5 w-3.5" />
                       {sportLabel}
                     </div>
 
-                    <h1 className="mt-6 max-w-3xl text-4xl leading-tight font-bold tracking-tight text-white lg:text-5xl xl:text-6xl">
+                    <h1 className="app-activity-detail-title mt-5 max-w-3xl text-3xl leading-[1.08] font-bold tracking-tight text-white lg:text-4xl xl:text-5xl">
                       {activity.title || "Activité sans titre"}
                     </h1>
 
@@ -302,7 +304,7 @@ export default function ActivityDetailsPage() {
                   </div>
                 </div>
 
-                <div className="flex w-full items-center justify-end">
+                <div className="app-activity-detail-map flex w-full items-center justify-end">
                   <MiniRouteMap
                     display="square"
                     polyline={activity.routePolyline}

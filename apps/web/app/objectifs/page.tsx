@@ -6,6 +6,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock,
+  Edit3,
   Flame,
   Footprints,
   Mountain,
@@ -140,12 +141,14 @@ function GoalCard({
   activities,
   onToggle,
   onDelete,
+  onEdit,
   isBusy,
 }: {
   goal: Goal;
   activities: SportActivity[];
   onToggle: (goal: Goal) => void;
   onDelete: (goal: Goal) => void;
+  onEdit: (goal: Goal) => void;
   isBusy: boolean;
 }) {
   const progress = calculateGoalProgress(goal, activities ?? []);
@@ -220,6 +223,16 @@ function GoalCard({
         <div className="mt-6 flex flex-wrap gap-3">
           <button
             type="button"
+            onClick={() => onEdit(goal)}
+            disabled={isBusy}
+            className="inline-flex h-10 items-center gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-500/15 disabled:opacity-50"
+          >
+            <Edit3 className="h-4 w-4" />
+            Modifier
+          </button>
+
+          <button
+            type="button"
             onClick={() => onToggle(goal)}
             disabled={isBusy}
             className="inline-flex h-10 items-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm font-semibold text-zinc-200 transition hover:bg-white/[0.07] disabled:opacity-50"
@@ -244,11 +257,12 @@ function GoalCard({
 }
 
 export default function GoalsPage() {
-  const { data: goals = [], isLoading } = useGoals();
+  const { data: goals = [], isLoading, isError, error } = useGoals();
   const { data: activities = [] } = useActivities();
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();
   const deleteGoalMutation = useDeleteGoal();
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [type, setType] = useState<GoalType>("DISTANCE_KM");
   const [period, setPeriod] = useState<GoalPeriod>("WEEKLY");
   const [title, setTitle] = useState("");
@@ -279,6 +293,86 @@ export default function GoalsPage() {
     createGoalMutation.isPending ||
     updateGoalMutation.isPending ||
     deleteGoalMutation.isPending;
+  const mutationError =
+    createGoalMutation.error ||
+    updateGoalMutation.error ||
+    deleteGoalMutation.error ||
+    null;
+
+  function getErrorMessage(unknownError: unknown) {
+    if (
+      unknownError &&
+      typeof unknownError === "object" &&
+      "response" in unknownError
+    ) {
+      const response = (
+        unknownError as {
+          response?: { data?: { message?: string | string[] } };
+        }
+      ).response;
+      const message = response?.data?.message;
+
+      if (Array.isArray(message)) {
+        return message.join(" ");
+      }
+
+      if (message) {
+        return message;
+      }
+    }
+
+    if (unknownError instanceof Error) {
+      return unknownError.message;
+    }
+
+    return "Une erreur est survenue. Vérifiez que le backend est lancé et que la base est à jour.";
+  }
+
+  function resetForm() {
+    setEditingGoal(null);
+    setType("DISTANCE_KM");
+    setPeriod("WEEKLY");
+    setTitle("");
+    setTarget("30");
+    setCustomStartDate(toDateInputValue(new Date()));
+    setCustomEndDate(toDateInputValue(endOfMonth(new Date())));
+  }
+
+  function handleEdit(goal: Goal) {
+    setEditingGoal(goal);
+    setType(goal.type);
+    setPeriod(goal.period);
+    setTitle(goal.title);
+    setTarget(String(goal.target).replace(".", ","));
+    setCustomStartDate(toDateInputValue(new Date(goal.startDate)));
+    setCustomEndDate(toDateInputValue(new Date(goal.endDate)));
+  }
+
+  async function createStarterGoals() {
+    const now = new Date();
+    const weekDates = {
+      startDate: startOfWeek(now).toISOString(),
+      endDate: endOfWeek(now).toISOString(),
+    };
+
+    await createGoalMutation.mutateAsync({
+      title: "30 km cette semaine",
+      type: "DISTANCE_KM",
+      target: 30,
+      period: "WEEKLY",
+      ...weekDates,
+      isActive: true,
+    });
+
+    await createGoalMutation.mutateAsync({
+      title: "3 sorties cette semaine",
+      type: "ACTIVITY_COUNT",
+      target: 3,
+      period: "WEEKLY",
+      ...weekDates,
+      isActive: true,
+    });
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -292,16 +386,25 @@ export default function GoalsPage() {
 
     const dates = getPeriodDates(period, customStartDate, customEndDate);
 
-    await createGoalMutation.mutateAsync({
+    const payload = {
       title: title.trim() || getDefaultTitle(type, period),
       type,
       target: parsedTarget,
       period,
       ...dates,
       isActive: true,
-    });
+    };
 
-    setTitle("");
+    if (editingGoal) {
+      await updateGoalMutation.mutateAsync({
+        id: editingGoal.id,
+        input: payload,
+      });
+    } else {
+      await createGoalMutation.mutateAsync(payload);
+    }
+
+    resetForm();
   }
 
   async function handleToggle(goal: Goal) {
@@ -331,24 +434,24 @@ export default function GoalsPage() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                 <Target className="h-3.5 w-3.5" />
-                Caps d’exploration
+                Défis outdoor
               </div>
 
               <h1 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight text-white">
-                Fixez vos propres caps outdoor, Sport Tracker vous garde dans
+                Fixez vos propres défis outdoor, Sport Tracker vous garde dans
                 le rythme.
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
-                Deux caps de départ sont proposés automatiquement : 30 km cette
+                Deux défis de départ sont proposés automatiquement : 30 km cette
                 semaine et 3 sorties cette semaine. Modifiez-les, mettez-les en
-                pause ou créez vos propres défis selon votre terrain du moment :
+                pause ou créez vos propres caps selon votre terrain du moment :
                 lac, route, sentier ou montagne.
               </p>
             </div>
 
             <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-5">
-              <p className="text-sm text-zinc-400">Cap prioritaire</p>
+              <p className="text-sm text-zinc-400">Défi prioritaire</p>
               <p className="mt-2 text-2xl font-bold text-white">
                 {primaryGoal.title}
               </p>
@@ -367,6 +470,19 @@ export default function GoalsPage() {
 
         <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_430px]">
           <div className="space-y-4">
+            {isError && (
+              <div className="app-premium-surface rounded-[24px] border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+                Impossible de charger vos défis : {getErrorMessage(error)}
+              </div>
+            )}
+
+            {mutationError && (
+              <div className="app-premium-surface rounded-[24px] border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
+                Impossible d’enregistrer le défi :{" "}
+                {getErrorMessage(mutationError)}
+              </div>
+            )}
+
             {isLoading && (
               <div className="app-premium-surface rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 text-sm text-zinc-400">
                 Chargement des objectifs...
@@ -389,6 +505,15 @@ export default function GoalsPage() {
                         Vous pourrez ensuite les ajuster ou créer un cap plus
                         personnel.
                       </p>
+                      <button
+                        type="button"
+                        onClick={createStarterGoals}
+                        disabled={isBusy}
+                        className="mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-lime-400 px-5 text-sm font-semibold text-white shadow-[0_18px_42px_rgba(16,185,129,0.18)] transition hover:scale-[1.01] disabled:opacity-60"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Créer mes deux défis de départ
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -403,6 +528,7 @@ export default function GoalsPage() {
                     activities={activities}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
+                    onEdit={handleEdit}
                     isBusy={isBusy}
                   />
                 </FadeIn>
@@ -417,10 +543,12 @@ export default function GoalsPage() {
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-white">
-                  Créer un objectif
+                  {editingGoal ? "Modifier le défi" : "Créer un objectif"}
                 </h2>
                 <p className="mt-1 text-sm text-zinc-400">
-                  Simple, mesurable, visible sur le dashboard.
+                  {editingGoal
+                    ? "Ajustez la cible, la période ou le nom."
+                    : "Simple, mesurable, visible sur le dashboard."}
                 </p>
               </div>
             </div>
@@ -520,8 +648,19 @@ export default function GoalsPage() {
                 className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.28)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Plus className="h-4 w-4" />
-                Ajouter l’objectif
+                {editingGoal ? "Enregistrer les modifications" : "Ajouter l’objectif"}
               </button>
+
+              {editingGoal && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  disabled={isBusy}
+                  className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-sm font-semibold text-zinc-200 transition hover:bg-white/[0.07] disabled:opacity-50"
+                >
+                  Annuler la modification
+                </button>
+              )}
             </form>
 
             <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">

@@ -11,13 +11,13 @@ import {
   Calendar,
   ChartColumn,
   CheckCircle2,
+  BookOpen,
   Goal,
   LayoutDashboard,
   Link2,
   Map,
   ShieldCheck,
   Settings,
-  Trophy,
 } from "lucide-react";
 
 import { api } from "@/lib/api";
@@ -50,32 +50,32 @@ const navigationItems = [
     icon: Activity,
   },
   {
-    title: "Planning",
-    href: "/calendrier",
-    icon: Calendar,
-  },
-  {
-    title: "Stats",
+    title: "Statistiques",
     href: "/statistiques",
     icon: ChartColumn,
   },
   {
-    title: "Caps",
-    href: "/objectifs",
-    icon: Goal,
-  },
-  {
-    title: "Carte",
+    title: "Exploration",
     href: "/carte",
     icon: Map,
+  },
+  {
+    title: "Défis",
+    href: "/objectifs",
+    icon: Goal,
   },
 ];
 
 const secondaryItems = [
   {
-    title: "Progression",
-    href: "/performances",
-    icon: Trophy,
+    title: "Planning",
+    href: "/calendrier",
+    icon: Calendar,
+  },
+  {
+    title: "Journal",
+    href: "/journal",
+    icon: BookOpen,
   },
   {
     title: "Paramètres",
@@ -187,6 +187,10 @@ export function Sidebar() {
       {/* CONTENT */}
       <div className="relative flex flex-1 flex-col px-4">
         {/* MAIN NAV */}
+        <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
+          Refuge
+        </div>
+
         <nav className="space-y-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
@@ -238,7 +242,7 @@ export function Sidebar() {
         {/* SECONDARY */}
         <div className="mt-8 border-t border-white/[0.05] pt-6">
           <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-            Atelier
+            Carnet
           </div>
 
           <nav className="space-y-1">
@@ -295,7 +299,7 @@ export function Sidebar() {
         {/* INTEGRATIONS */}
         <div className="mt-8 border-t border-white/[0.05] pt-6">
           <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-            Intégrations
+            Connexions
           </div>
 
           <nav className="space-y-1">

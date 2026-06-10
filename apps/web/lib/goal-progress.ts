@@ -141,9 +141,17 @@ export function selectPrimaryGoal(goals: Goal[]) {
         return firstGoal.type === "DISTANCE_KM" ? -1 : 1;
       }
 
-      return (
+      const endDateDiff =
         new Date(firstGoal.endDate).getTime() -
-        new Date(secondGoal.endDate).getTime()
+        new Date(secondGoal.endDate).getTime();
+
+      if (endDateDiff !== 0) {
+        return endDateDiff;
+      }
+
+      return (
+        new Date(secondGoal.createdAt).getTime() -
+        new Date(firstGoal.createdAt).getTime()
       );
     });
 

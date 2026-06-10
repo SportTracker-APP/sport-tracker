@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import {
   Activity,
+  BookOpen,
   Calendar,
   ChartColumn,
   Goal,
@@ -13,7 +14,6 @@ import {
   Menu,
   ShieldCheck,
   Settings,
-  Trophy,
 } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -32,29 +32,29 @@ const links = [
     icon: Activity,
   },
   {
+    label: "Statistiques",
+    href: "/statistiques",
+    icon: ChartColumn,
+  },
+  {
+    label: "Exploration",
+    href: "/carte",
+    icon: Map,
+  },
+  {
+    label: "Défis",
+    href: "/objectifs",
+    icon: Goal,
+  },
+  {
     label: "Planning",
     href: "/calendrier",
     icon: Calendar,
   },
   {
-    label: "Stats",
-    href: "/statistiques",
-    icon: ChartColumn,
-  },
-  {
-    label: "Caps",
-    href: "/objectifs",
-    icon: Goal,
-  },
-  {
-    label: "Carte",
-    href: "/carte",
-    icon: Map,
-  },
-  {
-    label: "Progression",
-    href: "/performances",
-    icon: Trophy,
+    label: "Journal",
+    href: "/journal",
+    icon: BookOpen,
   },
   {
     label: "Strava",

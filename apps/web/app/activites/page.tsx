@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Activity,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   Flame,
   Plus,
   Route,
@@ -30,9 +32,11 @@ const sportFilters: Record<string, string[]> = {
 };
 
 const currentYear = new Date().getFullYear();
+const ACTIVITIES_PER_PAGE = 10;
 
 export default function ActivitiesPage() {
   const [activeFilter, setActiveFilter] = useState("Tous");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: activities = [], isLoading, error } = useActivities();
 
@@ -47,6 +51,36 @@ export default function ActivitiesPage() {
       matchingSports.includes(activity.sport),
     );
   }, [activeFilter, activities]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredActivities.length / ACTIVITIES_PER_PAGE),
+  );
+  const visibleActivities = useMemo(() => {
+    const startIndex = (currentPage - 1) * ACTIVITIES_PER_PAGE;
+
+    return filteredActivities.slice(
+      startIndex,
+      startIndex + ACTIVITIES_PER_PAGE,
+    );
+  }, [currentPage, filteredActivities]);
+  const firstVisibleActivity =
+    filteredActivities.length === 0
+      ? 0
+      : (currentPage - 1) * ACTIVITIES_PER_PAGE + 1;
+  const lastVisibleActivity = Math.min(
+    currentPage * ACTIVITIES_PER_PAGE,
+    filteredActivities.length,
+  );
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
+
+  function handleFilterChange(filter: string) {
+    setActiveFilter(filter);
+    setCurrentPage(1);
+  }
 
   const yearlyActivities = useMemo(
     () =>
@@ -142,7 +176,7 @@ export default function ActivitiesPage() {
               <div className="app-filter-shell sticky top-0 z-10 rounded-[24px] border border-white/[0.08] bg-[#11131a]/90 p-4 backdrop-blur-xl">
                 <ActivityFilters
                   activeFilter={activeFilter}
-                  onFilterChange={setActiveFilter}
+                  onFilterChange={handleFilterChange}
                 />
               </div>
 
@@ -158,7 +192,7 @@ export default function ActivitiesPage() {
                     </p>
                   </div>
                 ) : (
-                  filteredActivities.map((activity, index) => (
+                  visibleActivities.map((activity, index) => (
                     <FadeIn key={activity.id} delay={0.04 * (index + 1)}>
                       <ActivityCard
                         id={activity.id}
@@ -176,6 +210,47 @@ export default function ActivitiesPage() {
                   ))
                 )}
               </div>
+
+              {filteredActivities.length > ACTIVITIES_PER_PAGE && (
+                <div className="app-pagination-shell flex flex-col gap-3 rounded-[24px] border border-white/[0.08] bg-[#11131a]/90 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-zinc-400">
+                    {firstVisibleActivity} à {lastVisibleActivity} sur{" "}
+                    {filteredActivities.length} sorties
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCurrentPage((page) => Math.max(1, page - 1))
+                      }
+                      disabled={currentPage === 1}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-zinc-300 transition hover:border-white/15 hover:bg-white/[0.07] disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Page précédente"
+                      title="Page précédente"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+
+                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white">
+                      {currentPage} / {totalPages}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCurrentPage((page) => Math.min(totalPages, page + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-zinc-300 transition hover:border-white/15 hover:bg-white/[0.07] disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Page suivante"
+                      title="Page suivante"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <aside className="space-y-4 xl:sticky xl:top-0 xl:h-fit">

@@ -349,7 +349,7 @@ function EmptyStravaDashboard() {
 
             <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400">
               Course au bord du lac, trail dans les Aravis, boucle du soir ou
-              sortie longue : Sport Tracker transforme votre historique en caps,
+              sortie longue : Sport Tracker transforme votre historique en défis,
               badges, régularité et prochaines aventures.
             </p>
 
@@ -379,7 +379,7 @@ function EmptyStravaDashboard() {
 
             <div className="mt-5 space-y-3">
               {[
-                "Caps motivants basés sur vos vraies sorties",
+                "Défis motivants basés sur vos vraies sorties",
                 "Badges qui donnent envie de repartir",
                 "Historique Strava transformé en carte de progression",
               ].map((item) => (
@@ -774,7 +774,7 @@ export default function HomePage() {
                     </div>
 
                     <h1 className="max-w-2xl text-3xl leading-tight font-bold tracking-tight text-white md:text-[38px]">
-                      {explorerMood.icon} {explorerMood.title}
+                      Bienvenue dans votre refuge outdoor.
                     </h1>
 
                     <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400 md:text-base">
@@ -787,8 +787,8 @@ export default function HomePage() {
                     </p>
 
                     <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-emerald-300 md:text-base">
-                      Prochaine aventure : {nextAdventure}.{" "}
-                      {explorerMood.body}
+                      Prochaine aventure : {nextAdventure}. Un terrain de jeu
+                      pour courir, grimper, rouler, marcher, et garder le fil.
                     </p>
 
                     <div className="mt-6 flex flex-wrap gap-3">
@@ -996,11 +996,11 @@ export default function HomePage() {
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                       <div>
                         <h2 className="text-xl font-semibold text-white">
-                          Badges & signaux d’aventure
+                          Badges & message du refuge
                         </h2>
                         <p className="mt-1 text-sm text-zinc-400">
-                          Quelques repères pour transformer vos sorties en
-                          histoire à suivre.
+                          Un peu de progression, un peu d'âme outdoor, mais
+                          sans transformer l'app en carnaval.
                         </p>
                       </div>
 
@@ -1042,6 +1042,18 @@ export default function HomePage() {
                           </div>
                         </div>
                       ))}
+                    </div>
+
+                    <div className="mt-5 rounded-[22px] border border-emerald-400/18 bg-emerald-400/10 p-4">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-emerald-300 uppercase">
+                        Message du refuge
+                      </p>
+                      <p className="mt-2 text-lg font-semibold text-white">
+                        {explorerMood.icon} {explorerMood.title}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-zinc-300">
+                        {explorerMood.body}
+                      </p>
                     </div>
 
                     <div className="mt-5 grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
