@@ -35,12 +35,16 @@ export class GoalsService {
     });
 
     if (existingGoalsCount === 0) {
-      await this.prisma.goal.createMany({
-        data: buildDefaultGoals().map((goal) => ({
-          ...goal,
-          userId,
-        })),
-      });
+      await this.prisma.$transaction(
+        buildDefaultGoals().map((goal) =>
+          this.prisma.goal.create({
+            data: {
+              ...goal,
+              userId,
+            },
+          }),
+        ),
+      );
     }
 
     return this.prisma.goal.findMany({

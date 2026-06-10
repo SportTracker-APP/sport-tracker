@@ -427,30 +427,29 @@ export default function GoalsPage() {
   return (
     <DashboardLayout>
       <div className="app-goals-page space-y-6">
-        <section className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.16),transparent_34%)]" />
+        <section className="app-goals-hero app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
+          <div className="app-goals-hero-photo absolute inset-0 bg-[url('https://images.pexels.com/photos/26382487/pexels-photo-26382487.jpeg')] bg-cover bg-center" />
+          <div className="app-goals-hero-wash absolute inset-0" />
 
           <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px] xl:items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
+              <div className="app-goals-kicker inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                 <Target className="h-3.5 w-3.5" />
                 Défis outdoor
               </div>
 
-              <h1 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight text-white">
-                Fixez vos propres défis outdoor, Sport Tracker vous garde dans
-                le rythme.
+              <h1 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight text-white md:text-4xl">
+                Fixez le cap, on garde le rythme.
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
-                Deux défis de départ sont proposés automatiquement : 30 km cette
-                semaine et 3 sorties cette semaine. Modifiez-les, mettez-les en
-                pause ou créez vos propres caps selon votre terrain du moment :
-                lac, route, sentier ou montagne.
+                Distance, sorties, D+ ou temps sportif : créez vos défis selon
+                votre terrain du moment. Lac, route, sentier ou montagne,
+                l’objectif doit donner envie de chausser les baskets.
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-5">
+            <div className="app-goals-priority-card rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-5">
               <p className="text-sm text-zinc-400">Défi prioritaire</p>
               <p className="mt-2 text-2xl font-bold text-white">
                 {primaryGoal.title}
@@ -509,7 +508,7 @@ export default function GoalsPage() {
                         type="button"
                         onClick={createStarterGoals}
                         disabled={isBusy}
-                        className="mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-lime-400 px-5 text-sm font-semibold text-white shadow-[0_18px_42px_rgba(16,185,129,0.18)] transition hover:scale-[1.01] disabled:opacity-60"
+                        className="app-goals-starter-button mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.28)] transition hover:scale-[1.01] disabled:opacity-60"
                       >
                         <Plus className="h-4 w-4" />
                         Créer mes deux défis de départ
