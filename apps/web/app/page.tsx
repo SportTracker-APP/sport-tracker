@@ -349,7 +349,7 @@ function EmptyStravaDashboard() {
 
             <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400">
               Course au bord du lac, trail dans les Aravis, boucle du soir ou
-              sortie longue : Sport Tracker transforme votre historique en défis,
+              sortie longue : Montaro transforme votre historique en défis,
               badges, régularité et prochaines aventures.
             </p>
 
@@ -975,7 +975,7 @@ export default function HomePage() {
                   periodLabel="à tenir sur votre période active"
                   currentLabel={goalCurrentLabel}
                   targetLabel={goalTargetLabel}
-                  footerText={`${goalRemainingLabel} restent à aller chercher. Sport Tracker vous aide à transformer ce cap en sorties concrètes.`}
+                  footerText={`${goalRemainingLabel} restent à aller chercher. Montaro vous aide à transformer ce cap en sorties concrètes.`}
                 />
               </FadeIn>
 

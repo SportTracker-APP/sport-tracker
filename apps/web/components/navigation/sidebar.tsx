@@ -174,7 +174,7 @@ export function Sidebar() {
           {/* BRAND */}
           <div>
             <h1 className="text-lg font-semibold tracking-tight text-white">
-              Sport Tracker
+              Montaro
             </h1>
 
             <p className="mt-0.5 text-sm text-zinc-500">

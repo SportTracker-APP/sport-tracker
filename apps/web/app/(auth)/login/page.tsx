@@ -26,7 +26,7 @@ export default function LoginPage() {
               <Activity className="h-6 w-6 text-violet-400" />
             </div>
             <span className="text-3xl font-semibold tracking-tight">
-              Sport Tracker
+              Montaro
             </span>
           </div>
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
           </div>
 
           <div className="absolute right-16 bottom-10 left-16 flex items-center justify-between text-sm text-zinc-600">
-            <span>© 2026 Sport Tracker</span>
+            <span>© 2026 Montaro</span>
             <div className="flex items-center gap-8">
               <button className="transition hover:text-zinc-400">
                 Confidentialité
@@ -92,7 +92,7 @@ export default function LoginPage() {
               <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
                 <Activity className="h-5 w-5 text-violet-400" />
               </div>
-              <span className="text-2xl font-semibold">Sport Tracker</span>
+              <span className="text-2xl font-semibold">Montaro</span>
             </div>
 
             <LoginForm />
