@@ -89,11 +89,11 @@ export function LoginForm() {
 
         {/* TITLE */}
         <h2 className="text-4xl font-bold tracking-tight text-white">
-          Bon retour
+          Prêt à repartir ?
         </h2>
 
         <p className="text-zinc-400">
-          Connecte-toi pour retrouver ton dashboard.
+          Retrouve tes sorties, sommets et explorations.
         </p>
       </div>
 

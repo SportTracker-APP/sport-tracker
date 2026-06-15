@@ -38,7 +38,7 @@ export function Topbar() {
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
 
           <span>
-            {user ? `Bienvenue ${user.firstName}, mode outdoor activé` : "Non connecté"}
+            {user ? `Bienvenue ${user.firstName}` : "Non connecté"}
           </span>
         </div>
 

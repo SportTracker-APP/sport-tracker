@@ -26,29 +26,28 @@ export default function RegisterPage() {
               <Activity className="h-6 w-6 text-violet-400" />
             </div>
             <span className="text-3xl font-semibold tracking-tight">
-              Sport Tracker
+              Montaro
             </span>
           </div>
 
           <div className="relative z-10 mx-auto max-w-xl">
             <div className="space-y-10">
               <div className="inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
-                Performance • Discipline • Progression
+                Outdoor • Exploration • Aventure
               </div>
 
               <div className="space-y-7">
                 <h1 className="max-w-[700px] text-7xl leading-[0.95] font-bold tracking-[-0.05em]">
-                  Progresse{" "}
+                  Commence ton{" "}
                   <span className="bg-gradient-to-r from-pink-300 via-fuchsia-400 to-violet-500 bg-clip-text text-transparent">
-                    chaque jour.
+                    aventure.
                   </span>
                 </h1>
 
                 <p className="max-w-sm text-lg leading-relaxed text-zinc-400">
                   <span className="font-medium text-zinc-200">
-                    Sport Tracker
                   </span>{" "}
-                  transforme tes données en progression concrète.
+                 Retrouve tes sorties, sommets et explorations au même endroit.
                 </p>
               </div>
 
@@ -73,7 +72,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="absolute right-16 bottom-10 left-16 flex items-center justify-between text-sm text-zinc-600">
-            <span>© 2026 Sport Tracker</span>
+            <span>© 2026 Montaro</span>
             <div className="flex items-center gap-8">
               <button className="transition hover:text-zinc-400">
                 Confidentialité
@@ -94,7 +93,7 @@ export default function RegisterPage() {
               <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
                 <Activity className="h-5 w-5 text-violet-400" />
               </div>
-              <span className="text-2xl font-semibold">Sport Tracker</span>
+              <span className="text-2xl font-semibold">Montaro</span>
             </div>
 
             <RegisterForm />

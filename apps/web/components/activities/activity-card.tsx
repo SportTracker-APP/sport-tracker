@@ -139,7 +139,7 @@ export function ActivityCard({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_34%)] opacity-80" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.035),transparent_30%)]" />
 
-      <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-stretch">
+      <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_260px] xl:items-center">
         <div className="min-w-0">
           <div className="flex items-start gap-4">
             <div className="app-activity-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-violet-300 transition-colors group-hover:text-white">
@@ -210,7 +210,7 @@ export function ActivityCard({
           </div>
         </div>
 
-        <div className="flex items-center">
+        <div className="app-activity-map-frame relative flex items-center">
           <MiniRouteMap polyline={routePolyline} />
         </div>
       </div>

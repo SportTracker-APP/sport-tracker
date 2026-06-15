@@ -40,17 +40,22 @@ export default function ActivitiesPage() {
 
   const { data: activities = [], isLoading, error } = useActivities();
 
+  const completedActivities = useMemo(
+    () => activities.filter((activity) => activity.status !== "PLANNED"),
+    [activities],
+  );
+
   const filteredActivities = useMemo(() => {
     if (activeFilter === "Tous") {
-      return activities;
+      return completedActivities;
     }
 
     const matchingSports = sportFilters[activeFilter] || [];
 
-    return activities.filter((activity) =>
+    return completedActivities.filter((activity) =>
       matchingSports.includes(activity.sport),
     );
-  }, [activeFilter, activities]);
+  }, [activeFilter, completedActivities]);
 
   const totalPages = Math.max(
     1,
@@ -84,11 +89,11 @@ export default function ActivitiesPage() {
 
   const yearlyActivities = useMemo(
     () =>
-      activities.filter(
+      completedActivities.filter(
         (activity) =>
           new Date(activity.startedAt).getFullYear() === currentYear,
       ),
-    [activities],
+    [completedActivities],
   );
 
   const yearlyDistance = useMemo(
@@ -120,15 +125,15 @@ export default function ActivitiesPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="app-activities-page space-y-6">
         {/* HEADER */}
-        <section className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),transparent_34%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.10),transparent_36%)]" />
+        <section className="app-activities-hero relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
+          <div className="app-activities-hero-photo absolute inset-0 bg-cover bg-center" />
+          <div className="app-activities-hero-wash absolute inset-0" />
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
+              <div className="app-activities-hero-kicker inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
                 <TrendingUp className="h-3.5 w-3.5" />
                 Historique sportif
               </div>
@@ -138,14 +143,26 @@ export default function ActivitiesPage() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
-                Parcourez vos activités importées depuis Strava avec une vue
-                plus visuelle des parcours et des métriques clés.
+                Route, sentier, lac ou montagne : chaque sortie garde sa trace
+                et raconte un bout de terrain. Ici, votre carnet reste rapide,
+                lisible et prêt à donner envie de repartir.
               </p>
+
+              <div className="app-activities-hero-chips mt-6 flex flex-wrap gap-2">
+                <span>{filteredActivities.length} sorties affichées</span>
+                <span>
+                  {new Intl.NumberFormat("fr-FR", {
+                    maximumFractionDigits: 1,
+                  }).format(yearlyDistance)}{" "}
+                  km en {currentYear}
+                </span>
+                <span>Traces GPS</span>
+              </div>
             </div>
 
             <Button
               asChild
-              className="h-12 w-fit rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-6 text-sm font-semibold text-white shadow-[0_0_30px_rgba(168,85,247,0.35)] transition-all duration-300 hover:scale-[1.02] hover:from-violet-400 hover:to-fuchsia-400"
+              className="app-activities-hero-cta h-12 w-fit rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-6 text-sm font-semibold text-white shadow-[0_0_30px_rgba(168,85,247,0.35)] transition-all duration-300 hover:scale-[1.02] hover:from-violet-400 hover:to-fuchsia-400"
             >
               <Link href="/activites/nouvelle">
                 <Plus className="mr-2 h-4 w-4" />
@@ -254,7 +271,7 @@ export default function ActivitiesPage() {
             </div>
 
             <aside className="space-y-4 xl:sticky xl:top-0 xl:h-fit">
-              <div className="rounded-[24px] border border-white/[0.08] bg-[#181922]/92 p-5 backdrop-blur-xl">
+              <div className="app-activities-summary-card rounded-[24px] border border-white/[0.08] bg-[#181922]/92 p-5 backdrop-blur-xl">
                 <p className="text-sm text-zinc-400">Vue filtrée</p>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">
                   {filteredActivities.length}
@@ -265,7 +282,7 @@ export default function ActivitiesPage() {
               </div>
 
               <div className="grid gap-3">
-                <div className="rounded-[20px] border border-white/[0.08] bg-white/[0.035] p-4">
+                <div className="app-activities-summary-stat rounded-[20px] border border-white/[0.08] bg-white/[0.035] p-4">
                   <div className="flex items-center gap-2 text-xs text-zinc-500">
                     <Route className="h-4 w-4 text-sky-300" />
                     Distance annuelle
@@ -281,20 +298,21 @@ export default function ActivitiesPage() {
                   </p>
                 </div>
 
-                <div className="rounded-[20px] border border-white/[0.08] bg-white/[0.035] p-4">
+                <div className="app-activities-summary-stat rounded-[20px] border border-white/[0.08] bg-white/[0.035] p-4">
                   <div className="flex items-center gap-2 text-xs text-zinc-500">
                     <CalendarDays className="h-4 w-4 text-violet-300" />
                     Temps annuel
                   </div>
                   <p className="mt-2 text-xl font-semibold text-white">
-                    {Math.floor(yearlyDuration / 60)}H{String(yearlyDuration % 60).padStart(2, "0")}
+                    {Math.floor(yearlyDuration / 60)}H
+                    {String(yearlyDuration % 60).padStart(2, "0")}
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     D'entraînement en {currentYear}
                   </p>
                 </div>
 
-                <div className="rounded-[20px] border border-white/[0.08] bg-white/[0.035] p-4">
+                <div className="app-activities-summary-stat rounded-[20px] border border-white/[0.08] bg-white/[0.035] p-4">
                   <div className="flex items-center gap-2 text-xs text-zinc-500">
                     <Flame className="h-4 w-4 text-orange-300" />
                     Calories annuelles

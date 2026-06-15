@@ -1,4 +1,4 @@
-import { Activity, ArrowRight, Shield, Zap } from "lucide-react";
+import { Activity, ArrowRight, Shield, Zap, BookOpen, Mountain, Map, TrendingUp, Trophy, Award } from "lucide-react";
 
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthThemeToggle } from "@/components/theme/auth-theme-toggle";
@@ -33,38 +33,45 @@ export default function LoginPage() {
           <div className="relative z-10 mx-auto max-w-xl">
             <div className="space-y-10">
               <div className="inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
-                Discipline • Progression • Performance
+                Outdoor • Exploration • Aventure
               </div>
 
               <div className="space-y-7">
                 <h1 className="max-w-[700px] text-7xl leading-[0.95] font-bold tracking-[-0.05em]">
-                  Retrouve{" "}
+                  Continue ton{" "}
                   <span className="bg-gradient-to-r from-pink-300 via-fuchsia-400 to-violet-500 bg-clip-text text-transparent">
-                    tes performances.
+                    aventure.
                   </span>
                 </h1>
 
                 <p className="max-w-sm text-lg leading-relaxed text-zinc-400">
-                  Reconnecte-toi à ton espace et continue ta progression
-                  sportive.
+                  Retrouve tes sorties, tes sommets et les sentiers qui construisent ton histoire outdoor.
                 </p>
               </div>
 
               <div className="space-y-6 pt-4">
                 <FeatureItem
-                  icon={<Zap className="h-5 w-5" />}
-                  title="Accès instantané"
-                  description="Retrouve immédiatement ton dashboard et tes statistiques."
+                  icon={<BookOpen className="h-5 w-5" />}
+                  title="Carnet d'aventure"
+                  description="Retrouve chaque sortie, sommet et souvenir enregistrés."
                 />
+
                 <FeatureItem
-                  icon={<Shield className="h-5 w-5" />}
-                  title="Connexion sécurisée"
-                  description="Infrastructure moderne sécurisée par JWT."
+                  icon={<Map className="h-5 w-5" />}
+                  title="Exploration"
+                  description="Découvre les territoires parcourus et ceux qu'il reste à explorer."
                 />
+
                 <FeatureItem
-                  icon={<ArrowRight className="h-5 w-5" />}
-                  title="Progression continue"
-                  description="Continue là où tu t'étais arrêté."
+                  icon={<TrendingUp className="h-5 w-5" />}
+                  title="Progression outdoor"
+                  description="Distance, D+, volume et progression.."
+                />
+
+                <FeatureItem
+                  icon={<Trophy className="h-5 w-5" />}
+                  title="Sommets & badges"
+                  description="Débloque des sommets, défis et récompenses outdoor."
                 />
               </div>
             </div>
