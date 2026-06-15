@@ -82,6 +82,8 @@ model Activity {
 
   elevationLoss Int? // mètres -
 
+  maxAltitude Int? // mètres, point le plus haut atteint
+
   calories Int?
 
   steps Int?

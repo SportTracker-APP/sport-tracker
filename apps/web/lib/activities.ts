@@ -25,6 +25,8 @@ export interface Activity {
 
   elevationLoss: number | null;
 
+  maxAltitude: number | null;
+
   calories: number | null;
 
   averageSpeed: number | null;

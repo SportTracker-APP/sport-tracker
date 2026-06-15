@@ -81,11 +81,12 @@ export function Topbar() {
           <div className="relative h-12 w-12 overflow-hidden rounded-full border border-white/[0.08] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(139,92,246,0.25)]">
             {user?.avatarUrl ? (
               <Image
-                src={`${user.avatarUrl}?t=${Date.now()}`}
+                src={user.avatarUrl}
                 alt="Avatar"
                 fill
                 sizes="48px"
                 className="object-cover"
+                 priority
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-sm font-bold text-white">

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Activity,
   BarChart3,
   CalendarDays,
   Clock3,
@@ -317,13 +316,24 @@ export default function StatisticsPage() {
   const bestDay = getBestDay(chartData);
   const sportDistribution = getSportDistribution(last30Activities);
   const topSport = sportDistribution[0] ?? null;
-  const bestElevationActivity = last30Activities.reduce<SportActivity | null>(
-    (best, activity) =>
-      !best || (activity.elevationGain ?? 0) > (best.elevationGain ?? 0)
-        ? activity
-        : best,
-    null,
-  );
+  const historicalBestElevationActivity =
+    completedActivities.reduce<SportActivity | null>(
+      (best, activity) =>
+        !best || (activity.elevationGain ?? 0) > (best.elevationGain ?? 0)
+          ? activity
+          : best,
+      null,
+    );
+  const highestAltitudeActivity =
+    completedActivities.reduce<SportActivity | null>(
+      (highest, activity) =>
+        activity.maxAltitude !== null &&
+        activity.maxAltitude !== undefined &&
+        (!highest || activity.maxAltitude > (highest.maxAltitude ?? 0))
+          ? activity
+          : highest,
+      null,
+    );
   const distanceTrend = getTrend(totals30.distance, previousTotals.distance);
   const TrendIcon = distanceTrend.isPositive ? TrendingUp : TrendingDown;
   const latestActivity = sortedActivities[0] ?? null;
@@ -343,7 +353,7 @@ export default function StatisticsPage() {
       value: formatDuration(totals30.duration),
     },
     {
-      detail: "Relief cumulé",
+      detail: "D+ sur 30 jours",
       icon: Mountain,
       label: "D+",
       value: `${formatInteger(totals30.elevation)} m`,
@@ -355,6 +365,44 @@ export default function StatisticsPage() {
       value: formatInteger(totals30.calories),
     },
   ];
+  const refugeInsights = [
+    {
+      label: "Rythme",
+      value:
+        activeDays >= 15
+          ? "Très régulier"
+          : activeDays >= 8
+            ? "Installé"
+            : "À relancer",
+    },
+    {
+      label: "Semaine",
+      value: `${weekTotals.count} sortie${weekTotals.count > 1 ? "s" : ""}`,
+    },
+    {
+      label: "Signal",
+      value: distanceTrend.isPositive ? "Progression" : "À surveiller",
+    },
+  ];
+  const topSportPercent =
+    topSport && totals30.distance > 0
+      ? Math.round((topSport.distance / totals30.distance) * 100)
+      : 0;
+  const secondarySport = sportDistribution[1] ?? null;
+  const outdoorProfileLabel =
+    topSportPercent >= 70
+      ? "Terrain favori très marqué"
+      : sportDistribution.length >= 4
+        ? "Profil bien varié"
+        : topSport
+          ? "Base outdoor en construction"
+          : "Profil à dessiner";
+  const outdoorProfileDetail =
+    topSport && secondarySport
+      ? `${topSport.label} devant ${secondarySport.label}, avec ${sportDistribution.length} sports actifs.`
+      : topSport
+        ? `${topSport.label} porte l'essentiel du volume récent.`
+        : "Ajoutez quelques sorties pour faire apparaître votre mix.";
 
   return (
     <DashboardLayout>
@@ -395,14 +443,14 @@ export default function StatisticsPage() {
 
               <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(300px,420px)] lg:items-center">
                 <div className="app-statistics-forest-copy">
-                  <div className="app-statistics-forest-chip inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/12 px-3 py-1.5 text-xs font-bold text-emerald-100">
+                  <div className="app-statistics-forest-chip inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/12 px-3 py-1.5 text-xs font-medium text-emerald-100">
                     <BarChart3 className="h-3.5 w-3.5" />
                     Statistiques réelles
                   </div>
-                  <h2 className="mt-4 max-w-2xl text-3xl font-black tracking-tight text-white">
+                  <h2 className="mt-5 max-w-3xl text-4xl leading-tight font-bold tracking-tight text-white xl:text-[44px]">
                     Vos sorties racontent votre progression.
                   </h2>
-                  <p className="mt-3 max-w-2xl text-sm leading-7 font-medium text-emerald-50/68">
+                  <p className="mt-5 max-w-2xl text-sm leading-7 text-emerald-50/68">
                     Distance, D+, régularité et terrain préféré sont calculés
                     depuis vos vraies activités. Le but : savoir où vous
                     progressez, et où le prochain sentier vous attend.
@@ -412,15 +460,15 @@ export default function StatisticsPage() {
                 <aside className="app-statistics-forest-summary rounded-[28px] border border-white/10 bg-white/[0.08] p-5 backdrop-blur-xl lg:justify-self-end">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-[11px] font-bold tracking-[0.22em] text-emerald-100/62 uppercase">
+                      <p className="text-xs font-medium text-emerald-100/62">
                         30 derniers jours
                       </p>
-                      <p className="app-statistics-forest-distance mt-3 text-3xl font-black text-white">
+                      <p className="app-statistics-forest-distance mt-2 text-3xl font-bold text-white">
                         {formatDistance(totals30.distance)} km
                       </p>
-                      <p className="mt-2 text-sm font-semibold text-emerald-50/62">
-                        {formatDuration(totals30.duration)} sur{" "}
-                        {totals30.count} sortie{totals30.count > 1 ? "s" : ""}
+                      <p className="mt-2 text-sm text-emerald-50/62">
+                        {formatDuration(totals30.duration)} sur {totals30.count}{" "}
+                        sortie{totals30.count > 1 ? "s" : ""}
                       </p>
                     </div>
 
@@ -429,8 +477,8 @@ export default function StatisticsPage() {
                     </div>
                   </div>
 
-                  <div className="app-statistics-forest-note mt-5 max-w-[400px] rounded-[20px] border border-white/10 bg-black/20 p-4">
-                    <div className="flex items-center gap-2 text-sm font-bold text-emerald-100">
+                  <div className="app-statistics-forest-note mt-5 max-w-[400px] rounded-[20px] border border-emerald-200/15 bg-emerald-950/75 p-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-emerald-100">
                       <TrendIcon className="h-4 w-4" />
                       {distanceTrend.label} vs période précédente
                     </div>
@@ -446,19 +494,19 @@ export default function StatisticsPage() {
               <div className="app-statistics-insight-card app-statistics-terrain-card app-premium-surface rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[11px] font-bold tracking-[0.22em] text-emerald-300 uppercase">
+                    <p className="text-xs font-medium text-emerald-300">
                       Lecture du terrain
                     </p>
-                    <h2 className="mt-2 text-2xl font-bold text-white">
+                    <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
                       Ce que vos sorties disent de vous.
                     </h2>
                   </div>
 
                   <div className="app-statistics-year-pill hidden rounded-[18px] border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-right sm:block">
-                    <p className="text-xs font-semibold text-zinc-500">
+                    <p className="text-xs text-zinc-500">
                       Année {today.getFullYear()}
                     </p>
-                    <p className="mt-1 text-xl font-black text-white">
+                    <p className="mt-1 text-xl font-bold text-white">
                       {formatDistance(yearTotals.distance)} km
                     </p>
                   </div>
@@ -478,16 +526,16 @@ export default function StatisticsPage() {
                             <Icon className="h-5 w-5" />
                           </span>
                           <div>
-                            <p className="app-statistics-stat-label text-sm font-bold text-white">
+                            <p className="app-statistics-stat-label text-sm font-semibold text-white">
                               {tile.label}
                             </p>
-                            <p className="app-statistics-stat-detail mt-0.5 text-sm font-medium text-zinc-500">
+                            <p className="app-statistics-stat-detail mt-0.5 text-sm text-zinc-500">
                               {tile.detail}
                             </p>
                           </div>
                         </div>
 
-                        <div className="app-statistics-stat-value text-2xl font-black tracking-tight text-emerald-300 sm:text-right">
+                        <div className="app-statistics-stat-value text-2xl font-bold tracking-tight text-emerald-300 sm:text-right">
                           {tile.value}
                         </div>
                       </div>
@@ -497,24 +545,8 @@ export default function StatisticsPage() {
 
                 <div className="mt-6 grid gap-3 md:grid-cols-3">
                   <div className="app-statistics-mini-fact rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
-                    <p className="text-xs font-semibold text-zinc-500">
-                      Sport dominant
-                    </p>
-                    <p className="mt-2 text-2xl font-black text-white">
-                      {topSport?.label ?? "—"}
-                    </p>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {topSport
-                        ? `${formatDistance(topSport.distance)} km`
-                        : "Pas assez de données"}
-                    </p>
-                  </div>
-
-                  <div className="app-statistics-mini-fact rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
-                    <p className="text-xs font-semibold text-zinc-500">
-                      Meilleure journée
-                    </p>
-                    <p className="mt-2 text-2xl font-black text-white">
+                    <p className="text-xs text-zinc-500">Meilleure journée</p>
+                    <p className="mt-2 text-2xl font-bold text-white">
                       {bestDay && bestDay.km > 0
                         ? `${formatDistance(bestDay.km)} km`
                         : "—"}
@@ -525,28 +557,53 @@ export default function StatisticsPage() {
                   </div>
 
                   <div className="app-statistics-mini-fact rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
-                    <p className="text-xs font-semibold text-zinc-500">
-                      Sortie la plus verticale
-                    </p>
-                    <p className="mt-2 text-2xl font-black text-white">
-                      {bestElevationActivity
-                        ? `${formatInteger(bestElevationActivity.elevationGain)} m`
+                    <p className="text-xs text-zinc-500">Plus gros D+ sortie</p>
+                    <p className="mt-2 text-2xl font-bold text-white">
+                      {historicalBestElevationActivity
+                        ? `${formatInteger(
+                            historicalBestElevationActivity.elevationGain,
+                          )} m`
                         : "—"}
                     </p>
                     <p className="mt-1 line-clamp-1 text-sm text-zinc-500">
-                      {bestElevationActivity?.title ?? "D+ à aller chercher"}
+                      {historicalBestElevationActivity
+                        ? (historicalBestElevationActivity.title ??
+                          "Sortie sans titre")
+                        : "D+ à aller chercher"}
+                    </p>
+                  </div>
+
+                  <div className="app-statistics-mini-fact rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
+                    <p className="text-xs text-zinc-500">
+                      Point le plus haut atteint
+                    </p>
+                    <p className="mt-2 text-2xl font-bold text-white">
+                      {highestAltitudeActivity
+                        ? `${formatInteger(highestAltitudeActivity.maxAltitude)} m`
+                        : "—"}
+                    </p>
+                    <p className="mt-1 line-clamp-1 text-sm text-zinc-500">
+                      {highestAltitudeActivity
+                        ? `${highestAltitudeActivity.title ?? "Sortie sans titre"} · ${formatDate(
+                            new Date(highestAltitudeActivity.startedAt),
+                          )}`
+                        : historicalBestElevationActivity
+                          ? `Altitude max absente · record D+ ${formatInteger(
+                              historicalBestElevationActivity.elevationGain,
+                            )} m`
+                          : "Altitude max à synchroniser"}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="app-statistics-insight-card app-statistics-mix-card app-premium-surface rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
+              <div className="app-statistics-insight-card app-statistics-mix-card app-premium-surface flex flex-col rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] font-bold tracking-[0.22em] text-emerald-300 uppercase">
+                    <p className="text-xs font-medium text-emerald-300">
                       Répartition
                     </p>
-                    <h2 className="mt-2 text-2xl font-bold text-white">
+                    <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
                       Votre mix outdoor.
                     </h2>
                   </div>
@@ -570,10 +627,10 @@ export default function StatisticsPage() {
                       return (
                         <div key={item.sport}>
                           <div className="mb-2 flex items-center justify-between gap-3">
-                            <span className="font-semibold text-white">
+                            <span className="text-sm font-semibold text-white">
                               {item.label}
                             </span>
-                            <span className="text-sm font-bold text-zinc-400">
+                            <span className="text-sm font-semibold text-zinc-400">
                               {formatDistance(item.distance)} km · {percent}%
                             </span>
                           </div>
@@ -588,6 +645,41 @@ export default function StatisticsPage() {
                     })
                   )}
                 </div>
+
+                <div className="mt-8 border-t border-white/[0.08] pt-5 lg:mt-auto">
+                  <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.035] p-4">
+                    <p className="text-xs font-medium text-emerald-300">
+                      Profil outdoor
+                    </p>
+                    <h3 className="mt-2 text-xl font-semibold tracking-tight text-white">
+                      {outdoorProfileLabel}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-zinc-500">
+                      {outdoorProfileDetail}
+                    </p>
+
+                    <div className="mt-5 grid grid-cols-3 gap-2">
+                      <div className="rounded-[16px] border border-white/[0.08] bg-black/15 p-3">
+                        <p className="text-[11px] text-zinc-500">Dominant</p>
+                        <p className="mt-1 text-sm font-semibold text-white">
+                          {topSportPercent}%
+                        </p>
+                      </div>
+                      <div className="rounded-[16px] border border-white/[0.08] bg-black/15 p-3">
+                        <p className="text-[11px] text-zinc-500">Variété</p>
+                        <p className="mt-1 text-sm font-semibold text-white">
+                          {sportDistribution.length}
+                        </p>
+                      </div>
+                      <div className="rounded-[16px] border border-white/[0.08] bg-black/15 p-3">
+                        <p className="text-[11px] text-zinc-500">Sorties</p>
+                        <p className="mt-1 text-sm font-semibold text-white">
+                          {totals30.count}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -600,23 +692,58 @@ export default function StatisticsPage() {
             </section>
 
             <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
-              <div className="app-statistics-insight-card app-premium-surface rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-emerald-400/14 text-emerald-300">
-                    <Activity className="h-5 w-5" />
+              <div className="app-statistics-refuge-card app-statistics-insight-card relative overflow-hidden rounded-[28px] border border-white/[0.1] bg-[#10140f] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
+                <div
+                  className="absolute inset-0 bg-cover bg-center opacity-45"
+                  style={{
+                    backgroundImage:
+                      "url('https://images.pexels.com/photos/1365425/pexels-photo-1365425.jpeg?auto=compress&cs=tinysrgb&w=1400')",
+                  }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(3,7,18,0.92),rgba(6,78,59,0.72)_52%,rgba(3,7,18,0.45))]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_88%_18%,rgba(132,204,22,0.24),transparent_30%)]" />
+
+                <div className="relative flex flex-col gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-[18px] border border-emerald-200/20 bg-emerald-300/15 text-emerald-100 backdrop-blur-md">
+                      <Mountain className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-semibold text-white">
+                        Message du refuge
+                      </h2>
+                      <p className="mt-1 text-sm text-emerald-50/70">
+                        Lecture rapide de vos 30 derniers jours.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-white">
-                      Message du refuge
-                    </h2>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      Une seule phrase, basée sur vos 30 derniers jours.
+
+                  <div className="max-w-3xl">
+                    <p className="text-2xl leading-snug font-bold text-white md:text-3xl">
+                      {getCoachMessage(totals30, activeDays)}
+                    </p>
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/72">
+                      Le résumé mélange volume, régularité et dénivelé pour
+                      donner une humeur à votre bloc récent.
                     </p>
                   </div>
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {refugeInsights.map((insight) => (
+                      <div
+                        key={insight.label}
+                        className="rounded-[18px] border border-white/10 bg-black/22 px-4 py-3 backdrop-blur-md"
+                      >
+                        <p className="text-xs text-emerald-50/62">
+                          {insight.label}
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-white">
+                          {insight.value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p className="mt-6 text-2xl leading-snug font-black text-white">
-                  {getCoachMessage(totals30, activeDays)}
-                </p>
               </div>
 
               <aside className="app-statistics-insight-card app-premium-surface rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
@@ -625,7 +752,7 @@ export default function StatisticsPage() {
                     <CalendarDays className="h-5 w-5" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white">
+                    <h2 className="text-sm font-semibold text-white">
                       Dernière trace
                     </h2>
                     <p className="mt-1 text-sm text-zinc-500">
@@ -636,10 +763,10 @@ export default function StatisticsPage() {
 
                 {latestActivity ? (
                   <div className="mt-6 rounded-[22px] border border-white/[0.08] bg-white/[0.04] p-4">
-                    <p className="line-clamp-2 text-lg font-bold text-white">
+                    <p className="line-clamp-2 text-lg font-semibold text-white">
                       {latestActivity.title ?? "Sortie sans titre"}
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-zinc-400">
+                    <p className="mt-2 text-sm text-zinc-400">
                       {getSportLabel(latestActivity.sport)} ·{" "}
                       {formatDistance(latestActivity.distance)} km ·{" "}
                       {formatDate(new Date(latestActivity.startedAt))}

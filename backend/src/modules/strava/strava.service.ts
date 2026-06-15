@@ -51,6 +51,7 @@ interface StravaActivity {
   moving_time?: number;
   elapsed_time: number;
   total_elevation_gain?: number;
+  elev_high?: number;
   start_date: string;
   start_latlng?: [number, number] | null;
   end_latlng?: [number, number] | null;
@@ -280,6 +281,7 @@ export class StravaService {
             duration: mappedActivity.duration,
             movingTime: mappedActivity.movingTime,
             elevationGain: mappedActivity.elevationGain,
+            maxAltitude: mappedActivity.maxAltitude,
             startLatitude: mappedActivity.startLatitude,
             startLongitude: mappedActivity.startLongitude,
             endLatitude: mappedActivity.endLatitude,
@@ -475,6 +477,10 @@ export class StravaService {
       elevationGain:
         activity.total_elevation_gain !== undefined
           ? Math.round(activity.total_elevation_gain)
+          : undefined,
+      maxAltitude:
+        activity.elev_high !== undefined
+          ? Math.round(activity.elev_high)
           : undefined,
       startLatitude: activity.start_latlng?.[0],
       startLongitude: activity.start_latlng?.[1],

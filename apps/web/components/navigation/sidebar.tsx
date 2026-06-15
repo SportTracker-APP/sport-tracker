@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   Link2,
   Map,
+  Mountain,
   ShieldCheck,
   Settings,
 } from "lucide-react";
@@ -168,7 +169,11 @@ export function Sidebar() {
         <div className="flex items-center gap-4">
           {/* LOGO */}
           <div className="app-brand-logo relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-emerald-500 via-green-400 to-lime-400 shadow-[0_16px_42px_rgba(16,185,129,0.30)]">
-            <Activity size={21} className="relative text-white" strokeWidth={2.4} />
+            <Mountain
+              size={22}
+              className="relative text-white"
+              strokeWidth={2.35}
+            />
           </div>
 
           {/* BRAND */}

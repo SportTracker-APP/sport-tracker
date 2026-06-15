@@ -2,6 +2,8 @@
 
 import { PropsWithChildren, useEffect, useState } from "react";
 
+import { Mountain } from "lucide-react";
+
 import { usePathname, useRouter } from "next/navigation";
 
 import { getMe } from "@/lib/auth";
@@ -68,10 +70,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return (
       <div className="app-auth-loading flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="app-auth-loading-logo mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-current border-t-transparent" />
+          <div className="app-auth-loading-logo relative mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl">
+            <div className="absolute inset-2 animate-pulse rounded-2xl border border-current opacity-30" />
+            <Mountain className="relative h-8 w-8" strokeWidth={2.35} />
           </div>
-          <p className="mt-4 text-sm font-semibold">Sport Tracker</p>
+          <p className="mt-4 text-sm font-semibold">Montaro</p>
           <p className="mt-1 text-xs">Préparation de votre espace...</p>
         </div>
       </div>

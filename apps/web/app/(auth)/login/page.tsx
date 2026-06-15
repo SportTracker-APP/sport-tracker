@@ -1,4 +1,4 @@
-import { Activity, ArrowRight, Shield, Zap, BookOpen, Mountain, Map, TrendingUp, Trophy, Award } from "lucide-react";
+import { ArrowRight, Shield, Zap, BookOpen, Mountain, Map, TrendingUp, Trophy, Award } from "lucide-react";
 
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthThemeToggle } from "@/components/theme/auth-theme-toggle";
@@ -23,7 +23,7 @@ export default function LoginPage() {
         <div className="app-auth-left relative hidden flex-col justify-center overflow-hidden border-r border-white/5 px-16 py-12 lg:flex">
           <div className="absolute top-12 left-16 flex items-center gap-4">
             <div className="app-auth-logo app-brand-logo flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10 backdrop-blur-xl">
-              <Activity className="h-6 w-6 text-violet-400" />
+              <Mountain className="h-6 w-6 text-violet-400" />
             </div>
             <span className="text-3xl font-semibold tracking-tight">
               Montaro
@@ -97,7 +97,7 @@ export default function LoginPage() {
           <div className="relative z-10 w-full max-w-md">
             <div className="mb-12 flex items-center justify-center gap-4 lg:hidden">
               <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
-                <Activity className="h-5 w-5 text-violet-400" />
+                <Mountain className="h-5 w-5 text-violet-400" />
               </div>
               <span className="text-2xl font-semibold">Montaro</span>
             </div>

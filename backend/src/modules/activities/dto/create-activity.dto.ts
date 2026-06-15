@@ -68,6 +68,11 @@ export class CreateActivityDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
+  maxAltitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   calories?: number;
 
   @IsOptional()

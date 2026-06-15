@@ -133,7 +133,7 @@ export default function ActivitiesPage() {
 
           <div className="relative flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
             <div>
-              <div className="app-activities-hero-kicker inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
+              <div className="app-activities-hero-kicker inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/12 px-3 py-1.5 text-xs font-medium text-emerald-100">
                 <TrendingUp className="h-3.5 w-3.5" />
                 Historique sportif
               </div>

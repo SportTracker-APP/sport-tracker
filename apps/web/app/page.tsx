@@ -166,9 +166,14 @@ function getElevationTotal(activities: SportActivity[]) {
 }
 
 function isOutdoorActivity(activity: SportActivity) {
-  return ["RUNNING", "TRAIL", "HIKING", "MTB", "ROAD_CYCLING", "GRAVEL"].includes(
-    activity.sport,
-  );
+  return [
+    "RUNNING",
+    "TRAIL",
+    "HIKING",
+    "MTB",
+    "ROAD_CYCLING",
+    "GRAVEL",
+  ].includes(activity.sport);
 }
 
 function getDaysSinceLastActivity(activity: SportActivity | null) {
@@ -256,7 +261,10 @@ function getExplorerMood({
   };
 }
 
-function getUnlockedBadges(activities: SportActivity[], rollingActivities: SportActivity[]) {
+function getUnlockedBadges(
+  activities: SportActivity[],
+  rollingActivities: SportActivity[],
+) {
   const hasSummit = activities.some(
     (activity) =>
       ["TRAIL", "HIKING"].includes(activity.sport) &&
@@ -572,15 +580,17 @@ export default function HomePage() {
     !isLoading && !isLoadingStravaStatus && !hasSyncedStrava && !hasAnyActivity;
   const primaryGoal = useMemo(() => selectPrimaryGoal(goals), [goals]);
   const goalProgress = useMemo(
-    () =>
-      calculateGoalProgress(primaryGoal, dashboardData.completedActivities),
+    () => calculateGoalProgress(primaryGoal, dashboardData.completedActivities),
     [dashboardData.completedActivities, primaryGoal],
   );
   const goalCurrentLabel = formatGoalValue(
     goalProgress.current,
     primaryGoal.type,
   );
-  const goalTargetLabel = formatGoalValue(goalProgress.target, primaryGoal.type);
+  const goalTargetLabel = formatGoalValue(
+    goalProgress.target,
+    primaryGoal.type,
+  );
   const goalRemainingLabel = formatGoalValue(
     goalProgress.remaining,
     primaryGoal.type,
@@ -627,9 +637,9 @@ export default function HomePage() {
         ? `Plan simple : ${suggestedActiveDays} sortie${
             suggestedActiveDays > 1 ? "s" : ""
           } d’environ ${formatDistance(suggestedSessionDistance, 1)} pour tenir le cap.`
-      : `Plan simple : ${suggestedActiveDays} sortie${
-          suggestedActiveDays > 1 ? "s" : ""
-        } à planifier pour avancer sur “${primaryGoal.title}”.`;
+        : `Plan simple : ${suggestedActiveDays} sortie${
+            suggestedActiveDays > 1 ? "s" : ""
+          } à planifier pour avancer sur “${primaryGoal.title}”.`;
   const daysSinceLastActivity = getDaysSinceLastActivity(
     dashboardData.latestActivity,
   );
@@ -643,8 +653,9 @@ export default function HomePage() {
     dashboardData.completedActivities,
     dashboardData.rollingActivities,
   );
-  const unlockedBadgesCount = unlockedBadges.filter((badge) => badge.unlocked)
-    .length;
+  const unlockedBadgesCount = unlockedBadges.filter(
+    (badge) => badge.unlocked,
+  ).length;
   const nextAdventure = getAdventureName(dashboardData.completedActivities);
 
   const insightCards = [
@@ -692,17 +703,13 @@ export default function HomePage() {
     {
       icon: goalProgress.progress >= 80 ? CheckCircle2 : Compass,
       title:
-        goalProgress.progress >= 80
-          ? "Objectif à portée"
-          : "Cap encore ouvert",
+        goalProgress.progress >= 80 ? "Objectif à portée" : "Cap encore ouvert",
       description:
         goalProgress.progress >= 80
           ? "Vous êtes dans la dernière ligne droite des 30 jours."
           : coachAdvice,
       tone:
-        goalProgress.progress >= 80
-          ? "text-emerald-300"
-          : "text-violet-300",
+        goalProgress.progress >= 80 ? "text-emerald-300" : "text-violet-300",
     },
     {
       icon: weeklyDelta >= 0 ? ArrowUpRight : AlertTriangle,
@@ -755,9 +762,7 @@ export default function HomePage() {
             )}
 
             <FadeIn delay={0.1}>
-              <section
-                className="app-dashboard-hero relative overflow-hidden rounded-[30px] border border-white/[0.055] bg-zinc-950 px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_26px_90px_rgba(0,0,0,0.24)] md:px-8 md:py-7"
-              >
+              <section className="app-dashboard-hero relative overflow-hidden rounded-[30px] border border-white/[0.055] bg-zinc-950 px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_26px_90px_rgba(0,0,0,0.24)] md:px-8 md:py-7">
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-black/82 via-[#11121c]/68 to-black/38" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0f1018]/88 via-transparent to-black/28" />
@@ -782,11 +787,11 @@ export default function HomePage() {
                       run, trail ou montagne découverts.{" "}
                       {formatDistance(dashboardData.rollingDistance, 1)}{" "}
                       parcourus et{" "}
-                      {formatNumber(dashboardData.rollingElevation)} m D+
-                      gravis sur vos 30 derniers jours.
+                      {formatNumber(dashboardData.rollingElevation)} m D+ gravis
+                      sur vos 30 derniers jours.
                     </p>
 
-                    <p className="mt-3 max-w-2xl text-sm font-medium leading-relaxed text-emerald-300 md:text-base">
+                    <p className="mt-3 max-w-2xl text-sm leading-relaxed font-medium text-emerald-300 md:text-base">
                       Prochaine aventure : {nextAdventure}. Un terrain de jeu
                       pour courir, grimper, rouler, marcher, et garder le fil.
                     </p>
@@ -794,7 +799,7 @@ export default function HomePage() {
                     <div className="mt-6 flex flex-wrap gap-3">
                       <Link
                         href="/activites/nouvelle"
-                        className="inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.30)] transition hover:scale-[1.02]"
+                        className="app-trace-activity-cta inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.30)] transition hover:scale-[1.02]"
                       >
                         <Plus className="h-4 w-4" />
                         Tracer une sortie
@@ -999,8 +1004,8 @@ export default function HomePage() {
                           Badges & message du refuge
                         </h2>
                         <p className="mt-1 text-sm text-zinc-400">
-                          Un peu de progression, un peu d'âme outdoor, mais
-                          sans transformer l'app en carnaval.
+                          Un peu de progression, un peu d'âme outdoor, mais sans
+                          transformer l'app en carnaval.
                         </p>
                       </div>
 

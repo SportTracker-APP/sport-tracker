@@ -12,6 +12,7 @@ import {
   Link2,
   Map,
   Menu,
+  Mountain,
   ShieldCheck,
   Settings,
 } from "lucide-react";
@@ -93,9 +94,19 @@ export function MobileSidebar() {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="border-b border-zinc-800 p-6">
-            <h2 className="text-xl font-bold text-white">Sport Tracker</h2>
+            <div className="flex items-center gap-3">
+              <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
+                <Mountain className="h-5 w-5 text-white" />
+              </div>
 
-            <p className="mt-1 text-sm text-zinc-500">Outdoor performance</p>
+              <div>
+                <h2 className="text-xl font-bold text-white">Montaro</h2>
+
+                <p className="mt-1 text-sm text-zinc-500">
+                  Outdoor performance
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Navigation */}
