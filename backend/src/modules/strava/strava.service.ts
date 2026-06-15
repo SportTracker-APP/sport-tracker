@@ -452,7 +452,10 @@ export class StravaService {
   ): Prisma.ActivityCreateManyInput {
     const sport = this.mapSportType(activity.sport_type || activity.type);
 
-    const durationMinutes = Math.max(1, Math.round(activity.elapsed_time / 60));
+    const durationMinutes = Math.max(
+      1,
+      Math.round((activity.moving_time ?? activity.elapsed_time) / 60),
+    );
 
     const distanceKm =
       activity.distance > 0 ? activity.distance / 1000 : undefined;

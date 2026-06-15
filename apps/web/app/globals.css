@@ -3732,3 +3732,143 @@ html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
   background: linear-gradient(90deg, #10b981, #84cc16) !important;
   box-shadow: 0 0 18px rgba(16, 185, 129, 0.22) !important;
 }
+
+/* Intégration Strava: correction nature ciblée.
+   On neutralise les fonds génériques pour éviter les rectangles blancs parasites. */
+html.sport-theme-nature .app-shell main .app-strava-page {
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+html.sport-theme-nature .app-shell main .app-strava-page > section,
+html.sport-theme-nature .app-shell main .app-strava-page > div,
+html.sport-theme-nature .app-shell main .app-strava-feature-grid {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-hero {
+  border-color: rgba(251, 146, 60, 0.18) !important;
+  background:
+    radial-gradient(circle at 94% 26%, rgba(252, 76, 2, 0.14), transparent 34%),
+    radial-gradient(circle at 8% 12%, rgba(16, 185, 129, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(244, 253, 247, 0.82) 54%, rgba(255, 247, 237, 0.72)) !important;
+  box-shadow:
+    0 28px 70px rgba(6, 78, 59, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-hero h1 {
+  color: #0f172a !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-hero p {
+  color: #5f7087 !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-message {
+  box-shadow:
+    0 18px 44px rgba(6, 78, 59, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-message-success {
+  border-color: rgba(16, 185, 129, 0.34) !important;
+  background:
+    linear-gradient(135deg, rgba(5, 95, 70, 0.88), rgba(16, 185, 129, 0.76)) !important;
+  color: #ecfdf5 !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-message-warning {
+  border-color: rgba(245, 158, 11, 0.34) !important;
+  background:
+    linear-gradient(135deg, rgba(120, 53, 15, 0.88), rgba(217, 119, 6, 0.74)) !important;
+  color: #fffbeb !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-message-error {
+  border-color: rgba(248, 113, 113, 0.34) !important;
+  background:
+    linear-gradient(135deg, rgba(127, 29, 29, 0.88), rgba(220, 38, 38, 0.72)) !important;
+  color: #fef2f2 !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-message-neutral {
+  border-color: rgba(6, 95, 70, 0.18) !important;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(6, 78, 59, 0.72)) !important;
+  color: #ecfdf5 !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-message svg {
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-feature-card,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-info-section {
+  border-color: rgba(6, 95, 70, 0.16) !important;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(132, 204, 22, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(241, 253, 246, 0.78)) !important;
+  color: #0f172a !important;
+  box-shadow:
+    0 20px 46px rgba(6, 78, 59, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-feature-icon {
+  background:
+    linear-gradient(135deg, rgba(255, 237, 213, 0.9), rgba(254, 215, 170, 0.76)) !important;
+  color: #ea580c !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-feature-icon svg {
+  color: #ea580c !important;
+  stroke: #ea580c !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-feature-card h3,
+html.sport-theme-nature .app-strava-page .app-strava-info-section h2,
+html.sport-theme-nature .app-strava-page .app-strava-status-card p:first-child,
+html.sport-theme-nature .app-strava-page .app-strava-workflow-card p {
+  color: #0f172a !important;
+}
+
+html.sport-theme-nature .app-strava-page .app-strava-feature-card p,
+html.sport-theme-nature .app-strava-page .app-strava-status-card p,
+html.sport-theme-nature .app-strava-page .app-strava-info-section .text-zinc-400 {
+  color: #62748c !important;
+}
+
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-workflow-card,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-status-card {
+  border-color: rgba(6, 95, 70, 0.14) !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+
+/* Strava sync message - final contrast fix */
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-message-success {
+  border: 1px solid rgba(6, 95, 70, 0.28) !important;
+  background: rgba(236, 253, 245, 0.96) !important;
+  color: #064e3b !important;
+  box-shadow:
+    0 18px 44px rgba(6, 78, 59, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-message-success *,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-message-success p,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-message-success span,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-message-success div {
+  color: #064e3b !important;
+  opacity: 1 !important;
+}
+
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-message-success svg {
+  color: #059669 !important;
+  stroke: #059669 !important;
+}

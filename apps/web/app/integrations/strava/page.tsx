@@ -35,6 +35,27 @@ interface SyncResult {
   fetched: number;
 }
 
+interface LastSyncedActivity {
+  id: string;
+  title?: string;
+  name?: string;
+  sport?: string;
+  distance?: number;
+  duration?: number;
+  elevationGain?: number;
+  startedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+type ActivitiesApiResponse =
+  | LastSyncedActivity[]
+  | {
+      activities?: LastSyncedActivity[];
+      data?: LastSyncedActivity[];
+      items?: LastSyncedActivity[];
+    };
+
 type FeedbackVariant = "success" | "warning" | "error" | "neutral";
 
 interface FeedbackMessage {
@@ -109,6 +130,87 @@ function getErrorMessage(error: unknown) {
   return data?.message;
 }
 
+function extractActivities(response: ActivitiesApiResponse) {
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  return response.activities || response.data || response.items || [];
+}
+
+function getActivityDate(activity: LastSyncedActivity) {
+  return activity.startedAt || activity.createdAt || activity.updatedAt || "";
+}
+
+function isCompletedActivity(activity: LastSyncedActivity) {
+  if (!activity.startedAt) {
+    return false;
+  }
+
+  const startedAt = new Date(activity.startedAt).getTime();
+
+  if (Number.isNaN(startedAt)) {
+    return false;
+  }
+
+  return (
+    startedAt <= Date.now() &&
+    typeof activity.duration === "number" &&
+    activity.duration > 0
+  );
+}
+
+function getActivityTitle(activity: LastSyncedActivity) {
+  return activity.title || activity.name || "Activité Strava";
+}
+
+function formatActivityDate(value?: string) {
+  if (!value) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+function formatDistance(distance?: number) {
+  if (typeof distance !== "number") {
+    return null;
+  }
+
+  const kilometers = distance > 1000 ? distance / 1000 : distance;
+
+  return `${kilometers.toLocaleString("fr-FR", {
+    maximumFractionDigits: 2,
+  })} km`;
+}
+
+function formatDuration(duration?: number) {
+  if (typeof duration !== "number") {
+    return null;
+  }
+
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % 60;
+
+  if (hours === 0) {
+    return `${minutes} min`;
+  }
+
+  return `${hours}h${minutes.toString().padStart(2, "0")}`;
+}
+
+function formatElevation(elevationGain?: number) {
+  if (typeof elevationGain !== "number") {
+    return null;
+  }
+
+  return `${Math.round(elevationGain).toLocaleString("fr-FR")} m D+`;
+}
+
 export default function StravaIntegrationPage() {
   const [status, setStatus] = useState<StravaStatus>({
     connected: false,
@@ -123,6 +225,9 @@ export default function StravaIntegrationPage() {
   const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
+
+  const [lastSyncedActivity, setLastSyncedActivity] =
+    useState<LastSyncedActivity | null>(null);
 
   const [message, setMessage] = useState<FeedbackMessage | null>(null);
 
@@ -171,6 +276,7 @@ export default function StravaIntegrationPage() {
 
   useEffect(() => {
     void refreshStatus();
+    void refreshLastSyncedActivity();
   }, []);
 
   useEffect(() => {
@@ -178,6 +284,25 @@ export default function StravaIntegrationPage() {
       setMessage(callbackMessage);
     }
   }, [callbackMessage]);
+
+  async function refreshLastSyncedActivity() {
+    try {
+      const { data } = await api.get<ActivitiesApiResponse>("/activities");
+
+      const activities = extractActivities(data)
+        .filter(isCompletedActivity)
+        .sort(
+          (activityA, activityB) =>
+            new Date(activityB.startedAt || "").getTime() -
+            new Date(activityA.startedAt || "").getTime(),
+        );
+
+      setLastSyncedActivity(activities[0] || null);
+    } catch (error) {
+      console.error(error);
+      setLastSyncedActivity(null);
+    }
+  }
 
   async function refreshStatus() {
     try {
@@ -253,6 +378,7 @@ export default function StravaIntegrationPage() {
       });
 
       await refreshStatus();
+      await refreshLastSyncedActivity();
     } catch (error) {
       console.error(error);
 
@@ -303,8 +429,8 @@ export default function StravaIntegrationPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        <section className="relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-[#11131A]/80 p-8 backdrop-blur-xl">
+      <div className="app-strava-page space-y-8">
+        <section className="app-strava-hero relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-[#11131A]/80 p-8 backdrop-blur-xl">
           <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#FC4C02]/15 blur-[120px]" />
           <div className="absolute top-0 left-0 h-full w-full bg-[radial-gradient(circle_at_top_right,rgba(252,76,2,0.12),transparent_35%)]" />
 
@@ -362,7 +488,7 @@ export default function StravaIntegrationPage() {
 
         {message && (
           <div
-            className={`flex items-center gap-3 rounded-2xl border px-5 py-4 text-sm font-medium ${
+            className={`app-strava-message app-strava-message-${message.variant} flex items-center gap-3 rounded-2xl border px-5 py-4 text-sm font-medium ${
               message.variant === "success"
                 ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-200"
                 : message.variant === "warning"
@@ -379,16 +505,16 @@ export default function StravaIntegrationPage() {
           </div>
         )}
 
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="app-strava-feature-grid grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {importedData.map((item) => {
             const Icon = item.icon;
 
             return (
               <div
                 key={item.title}
-                className="rounded-[28px] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur-xl"
+                className="app-strava-feature-card rounded-[28px] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur-xl"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10">
+                <div className="app-strava-feature-icon mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10">
                   <Icon className="h-5 w-5 text-orange-300" />
                 </div>
 
@@ -400,7 +526,7 @@ export default function StravaIntegrationPage() {
           })}
         </section>
 
-        <section className="rounded-[32px] border border-white/[0.06] bg-[#11131A]/70 p-8">
+        <section className="app-strava-info-section rounded-[32px] border border-white/[0.06] bg-[#11131A]/70 p-8">
           <h2 className="text-xl font-semibold text-white">
             Comment fonctionne la synchronisation ?
           </h2>
@@ -409,7 +535,7 @@ export default function StravaIntegrationPage() {
             {workflowSteps.map((step, index) => (
               <div
                 key={step}
-                className="rounded-2xl border border-white/[0.05] bg-white/[0.03] p-5"
+                className="app-strava-workflow-card rounded-2xl border border-white/[0.05] bg-white/[0.03] p-5"
               >
                 <div className="mb-3 text-2xl font-bold text-orange-300">
                   0{index + 1}
@@ -421,17 +547,43 @@ export default function StravaIntegrationPage() {
           </div>
         </section>
 
-        <section className="rounded-[32px] border border-white/[0.06] bg-[#11131A]/70 p-8">
+        <section className="app-strava-info-section rounded-[32px] border border-white/[0.06] bg-[#11131A]/70 p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-white">
                 Statut de synchronisation
               </h2>
 
-              {syncResult && (
+              {lastSyncedActivity ? (
+                <div className="mt-3 space-y-1">
+                  <p className="text-sm font-semibold text-zinc-300">
+                    Dernière activité synchronisée :
+                  </p>
+
+                  <p className="text-base font-semibold text-white">
+                    {getActivityTitle(lastSyncedActivity)}
+                  </p>
+
+                  <p className="text-sm text-zinc-400">
+                    {[
+                      formatActivityDate(lastSyncedActivity.startedAt),
+                      lastSyncedActivity.sport,
+                      formatDistance(lastSyncedActivity.distance),
+                      formatDuration(lastSyncedActivity.duration),
+                      formatElevation(lastSyncedActivity.elevationGain),
+                    ]
+                      .filter(Boolean)
+                      .join(" • ")}
+                  </p>
+                </div>
+              ) : syncResult ? (
                 <p className="mt-2 text-sm text-zinc-400">
-                  Dernier import : {syncResult.imported} nouvelle(s)
-                  activité(s).
+                  Synchronisation terminée. Aucune nouvelle activité à afficher.
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-zinc-400">
+                  Synchronisez Strava pour afficher votre dernière activité
+                  importée.
                 </p>
               )}
             </div>
@@ -453,7 +605,7 @@ export default function StravaIntegrationPage() {
             )}
           </div>
 
-          <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-white/[0.05] bg-white/[0.03] p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="app-strava-status-card mt-6 flex flex-col gap-4 rounded-2xl border border-white/[0.05] bg-white/[0.03] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-medium text-white">
                 {isLoadingStatus
