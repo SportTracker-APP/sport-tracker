@@ -468,27 +468,9 @@ html.sport-theme-nature .app-activity-card [class*="text-zinc"] {
   color: #64748b !important;
 }
 
-html.sport-theme-nature .app-activity-card .group-hover\:text-violet-200 {
-  align-items: center;
-  border-radius: 999px;
-  color: #047857 !important;
-  padding: 0.35rem 0.62rem;
-  transition:
-    background 180ms ease,
-    box-shadow 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-}
-
 html.sport-theme-nature .app-activity-card .group-hover\:text-violet-200:hover,
 html.sport-theme-nature .app-activity-card:hover .group-hover\:text-violet-200 {
-  color: #ecfdf5 !important;
-  background: linear-gradient(135deg, #064e3b, #0f766e);
-  border-radius: 999px;
-  box-shadow:
-    0 10px 24px rgba(6, 78, 59, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transform: translateX(2px);
+  color: #059669 !important;
 }
 
 html.sport-theme-nature .app-activity-icon {
@@ -1724,23 +1706,17 @@ html.sport-theme-nature .app-mobile-sidebar .app-brand-logo svg {
 }
 
 html.sport-theme-nature .app-stats-icon-activity {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: linear-gradient(135deg, #059669, #22c55e 62%, #84cc16) !important;
+  color: #ffffff !important;
   box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    0 18px 38px rgba(16, 185, 129, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
 }
 
 html.sport-theme-nature .app-stats-icon-activity svg {
-  color: #ecfdf5 !important;
-  stroke: #ecfdf5 !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 html.sport-theme-nature .app-stats-icon-activity > div {
@@ -1748,43 +1724,31 @@ html.sport-theme-nature .app-stats-icon-activity > div {
 }
 
 html.sport-theme-nature .app-shell main .app-stats-icon-activity {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: linear-gradient(135deg, #059669, #22c55e 62%, #84cc16) !important;
+  color: #ffffff !important;
   box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    0 18px 38px rgba(16, 185, 129, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
 }
 
 html.sport-theme-nature .app-shell main .app-stats-icon-activity svg {
-  color: #ecfdf5 !important;
-  stroke: #ecfdf5 !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 html.sport-theme-nature .app-dashboard-green-icon {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: linear-gradient(135deg, #059669, #22c55e 62%, #84cc16) !important;
+  color: #ffffff !important;
   box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    0 18px 38px rgba(16, 185, 129, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
 }
 
 html.sport-theme-nature .app-dashboard-green-icon svg {
-  color: #ecfdf5 !important;
-  stroke: #ecfdf5 !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 html.sport-theme-nature .app-dashboard-green-icon > div {
@@ -1792,23 +1756,17 @@ html.sport-theme-nature .app-dashboard-green-icon > div {
 }
 
 html.sport-theme-nature .app-shell main .app-dashboard-green-icon {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: linear-gradient(135deg, #059669, #22c55e 62%, #84cc16) !important;
+  color: #ffffff !important;
   box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    0 18px 38px rgba(16, 185, 129, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
 }
 
 html.sport-theme-nature .app-shell main .app-dashboard-green-icon svg {
-  color: #ecfdf5 !important;
-  stroke: #ecfdf5 !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 html.sport-theme-nature .app-goal-progress-card,
@@ -2259,36 +2217,22 @@ html.sport-theme-nature .app-activities-page .app-activities-hero-chips span {
 }
 
 html.sport-theme-nature .app-activities-page .app-activities-hero-cta {
-  border: 1px solid rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 28% 18%,
-      rgba(236, 253, 245, 0.2),
-      transparent 34%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
+  border: 1px solid rgba(204, 251, 241, 0.86) !important;
+  background: linear-gradient(135deg, #f0fdfa, #ccfbf1 58%, #a7f3d0) !important;
   box-shadow:
-    0 18px 44px rgba(4, 47, 46, 0.3),
-    0 10px 28px rgba(6, 78, 59, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-  color: #ecfdf5 !important;
+    0 18px 44px rgba(204, 251, 241, 0.24),
+    0 10px 28px rgba(15, 118, 110, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  color: #134e4a !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-activities-hero-cta:hover {
-  border-color: rgba(204, 251, 241, 0.48) !important;
-  background:
-    radial-gradient(
-      circle at 30% 16%,
-      rgba(236, 253, 245, 0.28),
-      transparent 36%
-    ),
-    linear-gradient(135deg, #064e3b, #0f766e 58%, #065f46) !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #ffffff, #ccfbf1 56%, #99f6e4) !important;
+  color: #0f3f3c !important;
   box-shadow:
-    0 20px 48px rgba(4, 47, 46, 0.34),
-    0 12px 30px rgba(15, 118, 110, 0.28),
-    0 0 28px rgba(204, 251, 241, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+    0 20px 48px rgba(204, 251, 241, 0.3),
+    0 12px 30px rgba(15, 118, 110, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-filter-shell {
@@ -2358,35 +2302,34 @@ html.sport-theme-nature .app-activities-page .app-activity-card {
     0 14px 30px rgba(4, 47, 46, 0.16),
     0 0 0 1px rgba(255, 255, 255, 0.82),
     inset 0 1px 0 rgba(255, 255, 255, 0.96),
-    inset 6px 0 0 rgba(13, 148, 136, 0.42) !important;
+    inset 6px 0 0 rgba(16, 185, 129, 0.72) !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-activity-card:hover {
-  border-color: rgba(167, 243, 208, 0.78) !important;
+  border-color: rgba(4, 120, 87, 0.56) !important;
   background:
     radial-gradient(
       circle at 86% 14%,
-      rgba(236, 253, 245, 0.44),
+      rgba(132, 204, 22, 0.24),
       transparent 28%
     ),
     radial-gradient(
       circle at 12% 100%,
-      rgba(153, 246, 228, 0.24),
+      rgba(20, 184, 166, 0.2),
       transparent 36%
     ),
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.99),
-      rgba(236, 253, 245, 0.94) 54%,
-      rgba(204, 251, 241, 0.82)
+      rgba(236, 253, 245, 0.98),
+      rgba(209, 250, 229, 0.78) 56%,
+      rgba(247, 254, 231, 0.92)
     ) !important;
   box-shadow:
-    0 38px 92px rgba(6, 78, 59, 0.22),
-    0 18px 38px rgba(4, 47, 46, 0.14),
-    0 0 0 1px rgba(236, 253, 245, 0.92),
-    0 0 36px rgba(209, 250, 229, 0.5),
+    0 38px 92px rgba(6, 78, 59, 0.26),
+    0 18px 38px rgba(4, 47, 46, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.9),
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 6px 0 0 rgba(236, 253, 245, 0.92) !important;
+    inset 6px 0 0 rgba(132, 204, 22, 0.82) !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-activity-card::after {
@@ -2566,7 +2509,7 @@ html.sport-theme-nature
     0 14px 30px rgba(4, 47, 46, 0.16),
     0 0 0 1px rgba(255, 255, 255, 0.82),
     inset 0 1px 0 rgba(255, 255, 255, 0.96),
-    inset 6px 0 0 rgba(13, 148, 136, 0.42) !important;
+    inset 6px 0 0 rgba(16, 185, 129, 0.72) !important;
 }
 
 html.sport-theme-nature
@@ -2574,31 +2517,13 @@ html.sport-theme-nature
   main
   .app-activities-page
   .app-activity-card:hover {
-  border-color: rgba(167, 243, 208, 0.78) !important;
-  background:
-    radial-gradient(
-      circle at 86% 14%,
-      rgba(236, 253, 245, 0.44),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 12% 100%,
-      rgba(153, 246, 228, 0.24),
-      transparent 36%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.99),
-      rgba(236, 253, 245, 0.94) 54%,
-      rgba(204, 251, 241, 0.82)
-    ) !important;
+  border-color: rgba(4, 120, 87, 0.56) !important;
   box-shadow:
-    0 38px 92px rgba(6, 78, 59, 0.22),
-    0 18px 38px rgba(4, 47, 46, 0.14),
-    0 0 0 1px rgba(236, 253, 245, 0.92),
-    0 0 36px rgba(209, 250, 229, 0.5),
+    0 38px 92px rgba(6, 78, 59, 0.26),
+    0 18px 38px rgba(4, 47, 46, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.9),
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 6px 0 0 rgba(236, 253, 245, 0.92) !important;
+    inset 6px 0 0 rgba(132, 204, 22, 0.82) !important;
 }
 
 html.sport-theme-nature
@@ -4068,8 +3993,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
   box-shadow: 0 0 18px rgba(16, 185, 129, 0.22) !important;
 }
 
-/* IntÃ©gration Strava: correction nature ciblÃ©e.
-   On neutralise les fonds gÃ©nÃ©riques pour Ã©viter les rectangles blancs parasites. */
+/* Intégration Strava: correction nature ciblée.
+   On neutralise les fonds génériques pour éviter les rectangles blancs parasites. */
 html.sport-theme-nature .app-shell main .app-strava-page {
   background: transparent !important;
   color: #0f172a !important;
@@ -4287,213 +4212,4 @@ html.sport-theme-nature
   stroke: #059669 !important;
 }
 
-/* Calendar page V2 â€” clean premium outdoor */
-html .app-calendar-page-v2 {
-  --calendar-ink: #102033;
-  --calendar-muted: #66758d;
-  --calendar-border: rgba(6, 95, 70, 0.12);
-}
 
-html .app-calendar-hero-v2 {
-  min-height: 300px;
-  background: #071610;
-}
-
-html .app-calendar-hero-photo-v2 {
-  background-image: url("https://images.pexels.com/photos/18193574/pexels-photo-18193574.jpeg?auto=compress&cs=tinysrgb&w=1800");
-  background-position: center 46%;
-  background-size: cover;
-  opacity: 0.78;
-  filter: saturate(1.05) contrast(1.04) brightness(0.78);
-  transform: scale(1.015);
-}
-
-html .app-calendar-hero-overlay-v2 {
-  background:
-    linear-gradient(
-      100deg,
-      rgba(3, 18, 13, 0.94) 0%,
-      rgba(4, 31, 23, 0.78) 48%,
-      rgba(3, 18, 13, 0.44) 100%
-    ),
-    radial-gradient(circle at 88% 18%, rgba(132, 204, 22, 0.2), transparent 34%);
-}
-
-html .app-calendar-hero-grid-v2 {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 80px 80px;
-  opacity: 0.32;
-}
-
-html .app-calendar-hero-kicker-v2 {
-  border-color: rgba(187, 247, 208, 0.22);
-  background: rgba(6, 78, 59, 0.48);
-  color: #d1fae5;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-html .app-calendar-hero-title-v2,
-html.sport-theme-nature .app-shell main .app-calendar-hero-title-v2 {
-  color: #ffffff !important;
-  text-shadow: 0 10px 36px rgba(0, 0, 0, 0.32);
-}
-
-html .app-calendar-hero-copy-v2,
-html.sport-theme-nature .app-shell main .app-calendar-hero-copy-v2 {
-  color: rgba(236, 253, 245, 0.78) !important;
-}
-
-html .app-calendar-hero-metric-v2 {
-  border-color: rgba(255, 255, 255, 0.14);
-  background: rgba(5, 24, 18, 0.48);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-html .app-calendar-next-card-v2 {
-  border-color: rgba(255, 255, 255, 0.16);
-  background: rgba(3, 18, 14, 0.58);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
-}
-
-html.sport-theme-nature .app-shell main .app-calendar-toolbar-v2,
-html.sport-theme-nature .app-shell main .app-calendar-week-shell-v2 {
-  border-color: var(--calendar-border) !important;
-  background: rgba(255, 255, 255, 0.78) !important;
-  box-shadow:
-    0 20px 60px rgba(15, 118, 110, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-}
-
-html .app-calendar-icon-button-v2,
-html.sport-theme-nature .app-shell main .app-calendar-icon-button-v2 {
-  border-color: rgba(6, 95, 70, 0.12) !important;
-  background: rgba(255, 255, 255, 0.82) !important;
-  color: #047857 !important;
-}
-
-html .app-calendar-icon-button-v2:hover,
-html.sport-theme-nature .app-shell main .app-calendar-icon-button-v2:hover {
-  border-color: rgba(16, 185, 129, 0.28) !important;
-  background: #ecfdf5 !important;
-}
-
-html .app-calendar-today-button-v2,
-html.sport-theme-nature .app-shell main .app-calendar-today-button-v2 {
-  border-color: rgba(6, 95, 70, 0.14) !important;
-  background: rgba(236, 253, 245, 0.92) !important;
-  color: #047857 !important;
-}
-
-html .app-calendar-primary-button-v2,
-html.sport-theme-nature .app-shell main .app-calendar-primary-button-v2 {
-  border-color: rgba(187, 247, 208, 0.26) !important;
-  background: linear-gradient(135deg, #065f46, #059669 58%, #65a30d) !important;
-  color: #ffffff !important;
-  box-shadow:
-    0 16px 34px rgba(6, 95, 70, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
-}
-
-html .app-calendar-day-v2,
-html.sport-theme-nature .app-shell main .app-calendar-day-v2 {
-  border-color: rgba(6, 95, 70, 0.11) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.92),
-    rgba(247, 253, 249, 0.82)
-  ) !important;
-  box-shadow:
-    0 12px 30px rgba(6, 78, 59, 0.065),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
-}
-
-html .app-calendar-day-v2:hover,
-html.sport-theme-nature .app-shell main .app-calendar-day-v2:hover {
-  border-color: rgba(16, 185, 129, 0.22) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.98),
-    rgba(240, 253, 244, 0.9)
-  ) !important;
-  box-shadow:
-    0 18px 44px rgba(6, 78, 59, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-}
-
-html .app-calendar-day-today-v2,
-html.sport-theme-nature .app-shell main .app-calendar-day-today-v2 {
-  border-color: rgba(16, 185, 129, 0.3) !important;
-  background:
-    radial-gradient(
-      circle at 90% 0%,
-      rgba(167, 243, 208, 0.28),
-      transparent 34%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(247, 255, 250, 0.98),
-      rgba(236, 253, 245, 0.92)
-    ) !important;
-  box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.12),
-    inset 4px 0 0 rgba(16, 185, 129, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-}
-
-html .app-calendar-day-add-v2,
-html.sport-theme-nature .app-shell main .app-calendar-day-add-v2 {
-  border-color: rgba(16, 185, 129, 0.14) !important;
-  background: rgba(236, 253, 245, 0.88) !important;
-  color: #047857 !important;
-}
-
-html .app-calendar-activity-v2,
-html.sport-theme-nature .app-shell main .app-calendar-activity-v2 {
-  border-color: rgba(15, 23, 42, 0.08) !important;
-  background: rgba(255, 255, 255, 0.86) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-}
-
-html .app-calendar-activity-v2:hover,
-html.sport-theme-nature .app-shell main .app-calendar-activity-v2:hover {
-  border-color: rgba(16, 185, 129, 0.2) !important;
-  background: rgba(248, 255, 251, 0.98) !important;
-  box-shadow: 0 10px 24px rgba(6, 78, 59, 0.08) !important;
-}
-
-html .app-calendar-activity-planned-v2,
-html.sport-theme-nature .app-shell main .app-calendar-activity-planned-v2 {
-  border-color: rgba(16, 185, 129, 0.18) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(236, 253, 245, 0.94),
-    rgba(240, 253, 244, 0.82)
-  ) !important;
-}
-
-html .app-calendar-activity-icon-v2,
-html.sport-theme-nature .app-shell main .app-calendar-activity-icon-v2 {
-  border-color: rgba(16, 185, 129, 0.14) !important;
-  background: rgba(236, 253, 245, 0.9) !important;
-  color: #047857 !important;
-}
-
-@media (max-width: 1023px) {
-  html .app-calendar-hero-v2 {
-    min-height: auto;
-  }
-
-  html .app-calendar-hero-photo-v2 {
-    background-position: 62% center;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html .app-calendar-page-v2 * {
-    scroll-behavior: auto !important;
-  }
-}

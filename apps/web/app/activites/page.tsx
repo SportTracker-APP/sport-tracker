@@ -162,7 +162,7 @@ export default function ActivitiesPage() {
 
             <Button
               asChild
-              className="app-activities-hero-cta h-12 w-fit rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-6 text-sm font-semibold text-white shadow-[0_0_30px_rgba(168,85,247,0.35)] transition-all duration-300 hover:scale-[1.02] hover:from-violet-400 hover:to-fuchsia-400"
+              className="app-activities-hero-cta h-12 w-fit rounded-2xl px-6 text-sm font-semibold transition-all duration-300 hover:scale-[1.02]"
             >
               <Link href="/activites/nouvelle">
                 <Plus className="mr-2 h-4 w-4" />
