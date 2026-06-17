@@ -765,19 +765,19 @@ function ActivityChart({
     distance: {
       dataKey: "distance",
       label: "Distance (km)",
-      color: "#047857",
+      color: "var(--chart-distance)",
       gradientId: "distanceGradient",
     },
     elevation: {
       dataKey: "elevation",
       label: "Dénivelé positif (m)",
-      color: "#65a30d",
+      color: "var(--chart-elevation)",
       gradientId: "elevationGradient",
     },
     duration: {
       dataKey: "duration",
       label: "Durée (h)",
-      color: "#d97706",
+      color: "var(--chart-duration)",
       gradientId: "durationGradient",
     },
   } as const;
@@ -789,20 +789,20 @@ function ActivityChart({
         <ComposedChart data={data} margin={{ top: 18, right: 8, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="distanceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#047857" stopOpacity={0.95} />
-              <stop offset="100%" stopColor="#34d399" stopOpacity={0.58} />
+              <stop offset="0%" stopColor="var(--chart-distance-start)" stopOpacity={0.95} />
+              <stop offset="100%" stopColor="var(--chart-distance-end)" stopOpacity={0.58} />
             </linearGradient>
             <linearGradient id="elevationGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#65a30d" stopOpacity={0.94} />
-              <stop offset="100%" stopColor="#bef264" stopOpacity={0.56} />
+              <stop offset="0%" stopColor="var(--chart-elevation-start)" stopOpacity={0.94} />
+              <stop offset="100%" stopColor="var(--chart-elevation-end)" stopOpacity={0.56} />
             </linearGradient>
             <linearGradient id="durationGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.34} />
-              <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.02} />
+              <stop offset="0%" stopColor="var(--chart-duration-start)" stopOpacity={0.34} />
+              <stop offset="100%" stopColor="var(--chart-duration-end)" stopOpacity={0.02} />
             </linearGradient>
           </defs>
           <CartesianGrid
-            stroke="rgba(15, 118, 110, 0.075)"
+            stroke="var(--chart-grid)"
             strokeDasharray="3 5"
             vertical={false}
           />
@@ -810,25 +810,25 @@ function ActivityChart({
             dataKey="day"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#718096", fontSize: 11 }}
+            tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
             interval={4}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#718096", fontSize: 11 }}
+            tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
           />
           <Tooltip
-            cursor={{ fill: "rgba(16, 185, 129, 0.045)" }}
+            cursor={{ fill: "var(--chart-cursor)" }}
             contentStyle={{
               borderRadius: 18,
-              border: "1px solid rgba(15,118,110,.12)",
-              background: "rgba(255,255,255,.98)",
-              boxShadow: "0 22px 52px rgba(6,78,59,.14)",
+              border: "1px solid var(--chart-tooltip-border)",
+              background: "var(--chart-tooltip-background)",
+              boxShadow: "var(--chart-tooltip-shadow)",
               fontSize: 12,
               padding: "10px 12px",
             }}
-            labelStyle={{ color: "#102033", fontWeight: 700 }}
+            labelStyle={{ color: "var(--chart-tooltip-title)", fontWeight: 700 }}
             itemStyle={{ color: selected.color, fontWeight: 700 }}
           />
           {metric === "duration" ? (
@@ -850,7 +850,12 @@ function ActivityChart({
                 stroke={selected.color}
                 strokeWidth={3}
                 dot={false}
-                activeDot={{ r: 5, fill: selected.color, stroke: "#fff", strokeWidth: 2 }}
+                activeDot={{
+                  r: 5,
+                  fill: selected.color,
+                  stroke: "var(--chart-active-dot-ring)",
+                  strokeWidth: 2,
+                }}
                 isAnimationActive
                 animationDuration={700}
                 animationEasing="ease-out"
@@ -905,7 +910,7 @@ function RecentTraceList({
                 style={
                   photoUrl
                     ? {
-                        backgroundImage: `linear-gradient(180deg, rgba(3, 18, 14, 0.02), rgba(3, 18, 14, 0.42)), url(${JSON.stringify(
+                        backgroundImage: `linear-gradient(180deg, var(--trace-photo-overlay-start), var(--trace-photo-overlay-end)), url(${JSON.stringify(
                           photoUrl,
                         )})`,
                       }
@@ -959,7 +964,7 @@ function GoalRing({ progress }: { progress: number }) {
       <div
         className={styles.goalRing}
         style={{
-          background: `conic-gradient(#059669 0 ${safeProgress}%, #dcefe2 ${safeProgress}% 100%)`,
+          background: `conic-gradient(var(--goal-ring-active) 0 ${safeProgress}%, var(--goal-ring-track) ${safeProgress}% 100%)`,
         }}
       >
         <div className={styles.goalRingInner}>{safeProgress}%</div>
