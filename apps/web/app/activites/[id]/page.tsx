@@ -936,11 +936,18 @@ function ElevationChart({
                 )} m`,
                 "Altitude",
               ]}
-              labelFormatter={(label: number) =>
-                distanceKm && distanceKm > 0
-                  ? `${formatNumber(label, { maximumFractionDigits: 1 })} km`
-                  : ""
-              }
+              labelFormatter={(label) => {
+                const numericLabel =
+                  typeof label === "number" ? label : Number(label);
+
+                return distanceKm &&
+                  distanceKm > 0 &&
+                  Number.isFinite(numericLabel)
+                  ? `${formatNumber(numericLabel, {
+                      maximumFractionDigits: 1,
+                    })} km`
+                  : "";
+              }}
             />
 
             <Area

@@ -684,9 +684,16 @@ html.sport-theme-nature .app-sidebar {
 }
 
 html.sport-theme-nature .app-topbar {
-  border-bottom-color: var(--nature-border) !important;
-  background: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 18px 52px rgba(21, 128, 61, 0.07) !important;
+  border-bottom-color: rgba(6, 95, 70, 0.1) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(252, 255, 252, 0.88),
+      rgba(239, 248, 243, 0.72)
+    ) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  backdrop-filter: blur(18px) saturate(1.12);
+  box-shadow: 0 10px 32px rgba(6, 78, 59, 0.05) !important;
 }
 
 html.sport-theme-nature .app-sidebar h1,
@@ -866,7 +873,30 @@ html.sport-theme-nature .app-shell main a:not([class*="FC4C02"]) {
 }
 
 html.sport-theme-nature .app-topbar a,
-html.sport-theme-nature .app-topbar button,
+html.sport-theme-nature .app-topbar button {
+  border-color: rgba(6, 95, 70, 0.12) !important;
+  background: rgba(255, 255, 255, 0.62) !important;
+  color: var(--nature-ink) !important;
+  box-shadow:
+    0 8px 24px rgba(6, 78, 59, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84) !important;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+html.sport-theme-nature .app-topbar a:hover,
+html.sport-theme-nature .app-topbar button:hover {
+  border-color: rgba(16, 185, 129, 0.24) !important;
+  background: rgba(236, 253, 245, 0.92) !important;
+  box-shadow:
+    0 10px 28px rgba(6, 78, 59, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-1px);
+}
+
 html.sport-theme-nature .app-shell main input,
 html.sport-theme-nature .app-shell main textarea,
 html.sport-theme-nature .app-shell main select,
@@ -4068,8 +4098,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
   box-shadow: 0 0 18px rgba(16, 185, 129, 0.22) !important;
 }
 
-/* IntÃ©gration Strava: correction nature ciblÃ©e.
-   On neutralise les fonds gÃ©nÃ©riques pour Ã©viter les rectangles blancs parasites. */
+/* IntÃƒÂ©gration Strava: correction nature ciblÃƒÂ©e.
+   On neutralise les fonds gÃƒÂ©nÃƒÂ©riques pour ÃƒÂ©viter les rectangles blancs parasites. */
 html.sport-theme-nature .app-shell main .app-strava-page {
   background: transparent !important;
   color: #0f172a !important;
@@ -4287,7 +4317,7 @@ html.sport-theme-nature
   stroke: #059669 !important;
 }
 
-/* Calendar page V2 â€” clean premium outdoor */
+/* Calendar page V2 Ã¢â‚¬â€ clean premium outdoor */
 html .app-calendar-page-v2 {
   --calendar-ink: #102033;
   --calendar-muted: #66758d;
