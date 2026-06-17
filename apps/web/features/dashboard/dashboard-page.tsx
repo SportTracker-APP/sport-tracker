@@ -1484,7 +1484,7 @@ export default function DashboardPage() {
             ) : null}
 
             <FadeIn delay={0.1}>
-              <div className={`${styles.hero} app-dashboard-hero`}>
+              <div className={`${styles.hero} `}>
                 <div className={styles.heroOverlay} />
                 <div className={styles.heroContent}>
                   <div className={styles.heroCopy}>
