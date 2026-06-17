@@ -1,58 +1,86 @@
-import { InputHTMLAttributes } from "react";
+"use client";
 
-type MetricsInputProps =
-  InputHTMLAttributes<HTMLInputElement> & {
-    label: string;
+import {
+  forwardRef,
+  useId,
+  type InputHTMLAttributes,
+} from "react";
 
-    unit?: string;
+import styles from "./create-activity-form.module.css";
 
-    error?: string;
-  };
+type MetricsInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+  unit?: string;
+  error?: string;
+  hint?: string;
+};
 
-export function MetricsInput({
-  label,
-  unit,
-  error,
-  ...props
-}: MetricsInputProps) {
+export const MetricsInput = forwardRef<
+  HTMLInputElement,
+  MetricsInputProps
+>(function MetricsInput(
+  {
+    label,
+    unit,
+    error,
+    hint,
+    className,
+    id,
+    ...props
+  },
+  ref,
+) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+  const errorId = `${inputId}-error`;
+  const hintId = `${inputId}-hint`;
+  const describedBy = [
+    hint ? hintId : null,
+    error ? errorId : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div>
-      <label className="mb-2 block text-sm font-medium text-zinc-300">
+    <div className={styles.field}>
+      <label htmlFor={inputId} className={styles.fieldLabel}>
         {label}
       </label>
 
-      <div className="relative">
+      <div className={styles.inputShell}>
         <input
           {...props}
-          className="
-            h-12
-            w-full
-            rounded-2xl
-            border
-            border-white/10
-            bg-black/20
-            px-4
-            pr-16
-            text-white
-            outline-none
-            transition
-            placeholder:text-zinc-500
-            focus:border-violet-500
-          "
+          ref={ref}
+          id={inputId}
+          aria-invalid={Boolean(error)}
+          aria-describedby={describedBy || undefined}
+          className={[
+            styles.input,
+            unit ? styles.inputWithUnit : "",
+            className ?? "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
         />
 
-        {unit && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-zinc-500">
+        {unit ? (
+          <span className={styles.inputUnit} aria-hidden="true">
             {unit}
           </span>
-        )}
+        ) : null}
       </div>
 
-      {error && (
-        <p className="mt-2 text-sm text-red-400">
+      {hint ? (
+        <p id={hintId} className={styles.fieldHint}>
+          {hint}
+        </p>
+      ) : null}
+
+      {error ? (
+        <p id={errorId} className={styles.fieldError}>
           {error}
         </p>
-      )}
+      ) : null}
     </div>
   );
-}
+});

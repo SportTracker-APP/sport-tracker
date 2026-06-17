@@ -1,37 +1,195 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  CalendarDays,
+  CalendarPlus,
+  CheckCircle2,
+  Clock3,
+  Dumbbell,
+  Gauge,
+  Loader2,
+  MapPin,
+  Mountain,
+  NotebookPen,
+  Route,
+  Sparkles,
+} from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import { CalendarPlus, CheckCircle2, Clock, Loader2 } from "lucide-react";
-import { api } from "@/lib/api";
 
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 import {
   createActivitySchema,
   type CreateActivityInput,
 } from "@/lib/schemas/activity.schema";
 
-import { Button } from "@/components/ui/button";
-
+import {
+  getActivitySport,
+  type ActivitySportValue,
+} from "./activity-form.constants";
 import { MetricsInput } from "./metrics-input";
-
 import { SportSelector } from "./sport-selector";
+import styles from "./create-activity-form.module.css";
+
+type ActivityMode = "COMPLETED" | "PLANNED";
+
+type FormSectionProps = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  icon: ReactNode;
+  children: ReactNode;
+};
+
+const modeOptions = [
+  {
+    value: "COMPLETED" as const,
+    label: "Activité réalisée",
+    description:
+      "Ajoutez une sortie déjà terminée avec ses résultats.",
+    icon: CheckCircle2,
+  },
+  {
+    value: "PLANNED" as const,
+    label: "Sortie à planifier",
+    description:
+      "Préparez une séance qui apparaîtra dans le calendrier.",
+    icon: CalendarPlus,
+  },
+] as const;
+
+function FormSection({
+  eyebrow,
+  title,
+  description,
+  icon,
+  children,
+}: FormSectionProps) {
+  return (
+    <section className={styles.formSection}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.sectionIcon}>{icon}</span>
+
+        <div>
+          <p>{eyebrow}</p>
+          <h2>{title}</h2>
+          <span>{description}</span>
+        </div>
+      </div>
+
+      <div className={styles.sectionContent}>{children}</div>
+    </section>
+  );
+}
+
+function getSafeReturnPath(value: string | null) {
+  if (
+    value &&
+    value.startsWith("/") &&
+    !value.startsWith("//")
+  ) {
+    return value;
+  }
+
+  return "/activites";
+}
+
+function getDefaultStartedAt(plannedDate: string | null) {
+  if (
+    plannedDate &&
+    /^\d{4}-\d{2}-\d{2}$/.test(plannedDate)
+  ) {
+    return `${plannedDate}T12:00`;
+  }
+
+  return new Date().toISOString().slice(0, 16);
+}
+
+function toSafeInteger(value: string) {
+  const parsed = Number.parseInt(value, 10);
+
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatDuration(hours: number, minutes: number) {
+  if (hours === 0 && minutes === 0) {
+    return "Non renseignée";
+  }
+
+  if (hours === 0) {
+    return `${minutes} min`;
+  }
+
+  if (minutes === 0) {
+    return `${hours} h`;
+  }
+
+  return `${hours} h ${minutes.toString().padStart(2, "0")}`;
+}
+
+function formatDateTime(value: string) {
+  if (!value) {
+    return "Date à définir";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Date à définir";
+  }
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function formatMetric(
+  value: number | undefined,
+  unit: string,
+) {
+  if (!Number.isFinite(value) || !value || value <= 0) {
+    return "—";
+  }
+
+  return `${new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 1,
+  }).format(value)} ${unit}`;
+}
 
 export function CreateActivityForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const plannedDate = searchParams.get("date");
   const requestedStatus = searchParams.get("status");
-  const returnTo = searchParams.get("returnTo");
-  const isPlannedActivity = requestedStatus === "PLANNED";
-  const defaultStartedAt = plannedDate
-    ? `${plannedDate}T12:00`
-    : new Date().toISOString().slice(0, 16);
-  const [activityMode, setActivityMode] = useState<"COMPLETED" | "PLANNED">(
-    isPlannedActivity ? "PLANNED" : "COMPLETED",
+  const safeReturnTo = getSafeReturnPath(
+    searchParams.get("returnTo"),
   );
+  const initialMode: ActivityMode =
+    requestedStatus === "PLANNED"
+      ? "PLANNED"
+      : "COMPLETED";
+
+  const [activityMode, setActivityMode] =
+    useState<ActivityMode>(initialMode);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [submitError, setSubmitError] = useState<
+    string | null
+  >(null);
 
   const {
     register,
@@ -42,44 +200,70 @@ export function CreateActivityForm() {
     formState: { errors, isSubmitting },
   } = useForm<CreateActivityInput>({
     resolver: zodResolver(createActivitySchema),
-
     defaultValues: {
       sport: "TRAIL",
-
-      status: isPlannedActivity ? "PLANNED" : "COMPLETED",
-
-      title: isPlannedActivity ? "Séance prévue" : "",
-
+      status: initialMode,
+      title:
+        initialMode === "PLANNED" ? "Séance prévue" : "",
       distance: 0,
-
       duration: 0,
-
       elevationGain: 0,
-
       calories: 0,
-
-      startedAt: defaultStartedAt,
-
+      startedAt: getDefaultStartedAt(plannedDate),
       notes: "",
-
-      returnTo: returnTo || undefined,
+      returnTo: safeReturnTo,
     },
   });
 
   const selectedSport = watch("sport");
   const title = watch("title");
-
-  const [hours, setHours] = useState(0);
-
-  const [minutes, setMinutes] = useState(0);
-
+  const startedAt = watch("startedAt");
+  const distance = watch("distance");
+  const elevationGain = watch("elevationGain");
+  const calories = watch("calories");
+  const notes = watch("notes");
   const totalDuration = hours * 60 + minutes;
   const isPlannedMode = activityMode === "PLANNED";
+  const sport = getActivitySport(selectedSport);
+  const SportIcon = sport.icon;
 
-  const durationPreview =
-    totalDuration > 0
-      ? `${hours}H${minutes.toString().padStart(2, "0")}`
-      : "Non renseignée";
+  const summary = useMemo(
+    () => [
+      {
+        label: "Statut",
+        value: isPlannedMode
+          ? "Planifiée"
+          : "Réalisée",
+        icon: isPlannedMode
+          ? CalendarDays
+          : CheckCircle2,
+      },
+      {
+        label: "Sport",
+        value: sport.label,
+        icon: sport.icon,
+      },
+      {
+        label: "Créneau",
+        value: formatDateTime(startedAt),
+        icon: Clock3,
+      },
+      {
+        label: "Durée",
+        value: isPlannedMode
+          ? "À compléter après la sortie"
+          : formatDuration(hours, minutes),
+        icon: Gauge,
+      },
+    ],
+    [
+      hours,
+      isPlannedMode,
+      minutes,
+      sport,
+      startedAt,
+    ],
+  );
 
   useEffect(() => {
     setValue("duration", totalDuration, {
@@ -94,7 +278,10 @@ export function CreateActivityForm() {
       shouldValidate: true,
     });
 
-    if (activityMode === "PLANNED" && title.trim().length === 0) {
+    if (
+      activityMode === "PLANNED" &&
+      title.trim().length === 0
+    ) {
       setValue("title", "Séance prévue", {
         shouldDirty: true,
         shouldValidate: true,
@@ -103,302 +290,465 @@ export function CreateActivityForm() {
   }, [activityMode, setValue, title]);
 
   async function onSubmit(data: CreateActivityInput) {
+    setSubmitError(null);
+
     try {
-      const { notes, returnTo: _returnTo, ...activityData } = data;
+      const {
+        notes: activityNotes,
+        returnTo: _returnTo,
+        ...activityData
+      } = data;
 
       await api.post("/activities", {
         ...activityData,
         type: "TRAINING",
-        description: notes || undefined,
-        distance: isPlannedMode ? 0 : activityData.distance,
-        duration: isPlannedMode ? 0 : totalDuration,
-        elevationGain: isPlannedMode ? 0 : activityData.elevationGain,
-        calories: isPlannedMode ? 0 : activityData.calories,
+        description: activityNotes || undefined,
+        distance: isPlannedMode
+          ? 0
+          : activityData.distance,
+        duration: isPlannedMode
+          ? 0
+          : totalDuration,
+        elevationGain: isPlannedMode
+          ? 0
+          : activityData.elevationGain,
+        calories: isPlannedMode
+          ? 0
+          : activityData.calories,
       });
 
       reset();
-
       setHours(0);
-
       setMinutes(0);
 
-      alert(isPlannedMode ? "Séance planifiée 🚀" : "Activité créée 🚀");
+      window.alert(
+        isPlannedMode
+          ? "Séance ajoutée au calendrier."
+          : "Activité enregistrée.",
+      );
 
-      router.push(returnTo || "/activites");
+      router.push(safeReturnTo);
     } catch (error) {
       console.error(error);
-
-      alert("Erreur création activité");
+      setSubmitError(
+        "Impossible d’enregistrer cette activité pour le moment. Vérifiez les informations puis réessayez.",
+      );
     }
   }
 
+  function updateMode(mode: ActivityMode) {
+    setSubmitError(null);
+    setActivityMode(mode);
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-9">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={styles.formRoot}
+      noValidate
+    >
       <input type="hidden" {...register("status")} />
       <input type="hidden" {...register("returnTo")} />
 
-      <div className="grid gap-3 rounded-[22px] border border-white/[0.08] bg-black/15 p-2 sm:grid-cols-2">
-        {[
-          {
-            label: "Déjà effectuée",
-            description: "J’ajoute une séance passée avec ses résultats.",
-            value: "COMPLETED" as const,
-            icon: CheckCircle2,
-          },
-          {
-            label: "À venir",
-            description: "Je planifie une séance dans mon calendrier.",
-            value: "PLANNED" as const,
-            icon: CalendarPlus,
-          },
-        ].map((mode) => {
-          const Icon = mode.icon;
-          const isSelected = activityMode === mode.value;
+      <div className={styles.formLayout}>
+        <div className={styles.formCard}>
+          <FormSection
+            eyebrow="Étape 1"
+            title="Quel type d’activité ajoutez-vous ?"
+            description="Distinguez une sortie terminée d’une séance à venir."
+            icon={<Route aria-hidden="true" />}
+          >
+            <div className={styles.modeGrid}>
+              {modeOptions.map((mode) => {
+                const Icon = mode.icon;
+                const isSelected =
+                  activityMode === mode.value;
 
-          return (
-            <button
-              key={mode.value}
-              type="button"
-              onClick={() => setActivityMode(mode.value)}
-              data-selected={isSelected}
-              className={`rounded-[18px] border p-4 text-left transition ${
-                isSelected
-                  ? "app-activity-mode-card border-violet-500/45 bg-violet-500/16 text-white shadow-[0_0_28px_rgba(139,92,246,0.20)]"
-                  : "border-white/[0.06] bg-white/[0.025] text-zinc-400 hover:border-white/15 hover:bg-white/[0.045]"
-              }`}
+                return (
+                  <button
+                    key={mode.value}
+                    type="button"
+                    data-selected={isSelected}
+                    aria-pressed={isSelected}
+                    onClick={() =>
+                      updateMode(mode.value)
+                    }
+                    className={styles.modeCard}
+                  >
+                    <span className={styles.modeIcon}>
+                      <Icon aria-hidden="true" />
+                    </span>
+
+                    <span className={styles.modeCopy}>
+                      <strong>{mode.label}</strong>
+                      <small>{mode.description}</small>
+                    </span>
+
+                    <span
+                      className={styles.selectionIndicator}
+                      aria-hidden="true"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </FormSection>
+
+          <FormSection
+            eyebrow="Étape 2"
+            title="Choisissez votre discipline"
+            description="Le sport sélectionné adapte la lecture de vos futures statistiques."
+            icon={<Mountain aria-hidden="true" />}
+          >
+            <SportSelector
+              value={selectedSport}
+              onChange={(value: ActivitySportValue) =>
+                setValue("sport", value, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                })
+              }
+            />
+          </FormSection>
+
+          <FormSection
+            eyebrow="Étape 3"
+            title="Informations essentielles"
+            description={
+              isPlannedMode
+                ? "Donnez un nom et un créneau à votre prochaine sortie."
+                : "Identifiez clairement la séance déjà réalisée."
+            }
+            icon={<CalendarDays aria-hidden="true" />}
+          >
+            <div className={styles.twoColumnGrid}>
+              <MetricsInput
+                label="Titre"
+                type="text"
+                placeholder={
+                  isPlannedMode
+                    ? "Ex. Sortie longue du dimanche"
+                    : "Ex. Trail du Semnoz"
+                }
+                error={errors.title?.message}
+                {...register("title")}
+              />
+
+              <MetricsInput
+                label="Date et heure"
+                type="datetime-local"
+                error={errors.startedAt?.message}
+                {...register("startedAt")}
+              />
+            </div>
+          </FormSection>
+
+          {!isPlannedMode ? (
+            <FormSection
+              eyebrow="Étape 4"
+              title="Résultats de la sortie"
+              description="Renseignez les métriques utiles à votre progression."
+              icon={<Gauge aria-hidden="true" />}
             >
-              <div className="flex items-center gap-3">
-                <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${
-                    isSelected
-                      ? "border-violet-400/30 bg-violet-500/25 text-violet-100"
-                      : "border-white/[0.07] bg-black/20 text-zinc-500"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                </span>
+              <div className={styles.performanceGrid}>
+                <MetricsInput
+                  label="Distance"
+                  unit="km"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0"
+                  error={errors.distance?.message}
+                  {...register("distance", {
+                    valueAsNumber: true,
+                  })}
+                />
 
-                <span className="text-sm font-semibold">{mode.label}</span>
+                <div className={styles.durationField}>
+                  <div className={styles.durationHeader}>
+                    <label>Durée</label>
+                    <span>
+                      <Clock3 aria-hidden="true" />
+                      {formatDuration(hours, minutes)}
+                    </span>
+                  </div>
+
+                  <div className={styles.durationGrid}>
+                    <label className={styles.durationInput}>
+                      <span>Heures</span>
+                      <div>
+                        <input
+                          type="number"
+                          min="0"
+                          inputMode="numeric"
+                          aria-label="Durée en heures"
+                          value={hours}
+                          onChange={(event) =>
+                            setHours(
+                              Math.max(
+                                0,
+                                toSafeInteger(
+                                  event.target.value,
+                                ),
+                              ),
+                            )
+                          }
+                        />
+                        <i>h</i>
+                      </div>
+                    </label>
+
+                    <label className={styles.durationInput}>
+                      <span>Minutes</span>
+                      <div>
+                        <input
+                          type="number"
+                          min="0"
+                          max="59"
+                          inputMode="numeric"
+                          aria-label="Durée en minutes"
+                          value={minutes}
+                          onChange={(event) =>
+                            setMinutes(
+                              Math.min(
+                                59,
+                                Math.max(
+                                  0,
+                                  toSafeInteger(
+                                    event.target.value,
+                                  ),
+                                ),
+                              ),
+                            )
+                          }
+                        />
+                        <i>min</i>
+                      </div>
+                    </label>
+                  </div>
+
+                  {errors.duration ? (
+                    <p className={styles.fieldError}>
+                      {errors.duration.message}
+                    </p>
+                  ) : null}
+                </div>
+
+                <MetricsInput
+                  label="Dénivelé positif"
+                  unit="m"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  hint="Particulièrement utile pour le trail, la randonnée et le VTT."
+                  error={errors.elevationGain?.message}
+                  {...register("elevationGain", {
+                    valueAsNumber: true,
+                  })}
+                />
+
+                <MetricsInput
+                  label="Calories"
+                  unit="kcal"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  error={errors.calories?.message}
+                  {...register("calories", {
+                    valueAsNumber: true,
+                  })}
+                />
+              </div>
+            </FormSection>
+          ) : (
+            <div className={styles.plannedNotice}>
+              <span>
+                <CalendarPlus aria-hidden="true" />
+              </span>
+              <div>
+                <strong>Les résultats viendront après la sortie</strong>
+                <p>
+                  La séance sera ajoutée au calendrier sans distance,
+                  durée, dénivelé ni calories. Vous pourrez compléter
+                  ces données une fois l’activité réalisée.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <FormSection
+            eyebrow={isPlannedMode ? "Étape 4" : "Étape 5"}
+            title="Carnet de séance"
+            description="Ajoutez le contexte qui donnera du sens aux chiffres."
+            icon={<NotebookPen aria-hidden="true" />}
+          >
+            <div className={styles.notesField}>
+              <label htmlFor="activity-notes">
+                Notes et sensations
+              </label>
+              <textarea
+                id="activity-notes"
+                rows={5}
+                placeholder="Terrain, météo, ressenti, points forts, difficulté rencontrée..."
+                aria-invalid={Boolean(errors.notes)}
+                {...register("notes")}
+              />
+              <div className={styles.notesMeta}>
+                <span>
+                  <MapPin aria-hidden="true" />
+                  Décrivez le terrain ou le lieu dans vos notes.
+                </span>
+                <span>
+                  {notes?.length ?? 0} caractère
+                  {(notes?.length ?? 0) > 1 ? "s" : ""}
+                </span>
               </div>
 
-              <p className="mt-3 text-xs leading-5 text-zinc-500">
-                {mode.description}
-              </p>
-            </button>
-          );
-        })}
-      </div>
+              {errors.notes ? (
+                <p className={styles.fieldError}>
+                  {errors.notes.message}
+                </p>
+              ) : null}
+            </div>
+          </FormSection>
 
-      <SportSelector
-        value={selectedSport}
-        onChange={(value) =>
-          setValue("sport", value as CreateActivityInput["sport"])
-        }
-      />
+          {submitError ? (
+            <div className={styles.submitError} role="alert">
+              {submitError}
+            </div>
+          ) : null}
 
-      <div className="border-t border-white/[0.08] pt-7">
-        <div className="mb-5">
-          <h3 className="text-lg font-semibold text-white">Informations</h3>
+          <div className={styles.formActions}>
+            <Link
+              href={safeReturnTo}
+              className={styles.cancelButton}
+            >
+              Annuler
+            </Link>
 
-          <p className="mt-1 text-sm text-zinc-500">
-            {isPlannedMode
-              ? "Le nom et le créneau prévu pour votre séance."
-              : "Le nom et le moment de votre séance."}
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <MetricsInput
-            label="Titre"
-            type="text"
-            error={errors.title?.message}
-            {...register("title")}
-          />
-
-          <MetricsInput
-            label="Date et heure"
-            type="datetime-local"
-            error={errors.startedAt?.message}
-            {...register("startedAt")}
-          />
-        </div>
-      </div>
-
-      {!isPlannedMode && (
-        <div className="border-t border-white/[0.08] pt-7">
-          <div className="mb-5">
-            <h3 className="text-lg font-semibold text-white">Performance</h3>
-
-            <p className="mt-1 text-sm text-zinc-500">
-              Les chiffres clés qui alimenteront votre progression.
-            </p>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className={styles.submitButton}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2
+                    className={styles.spinner}
+                    aria-hidden="true"
+                  />
+                  Enregistrement...
+                </>
+              ) : isPlannedMode ? (
+                <>
+                  <CalendarPlus aria-hidden="true" />
+                  Ajouter au calendrier
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 aria-hidden="true" />
+                  Enregistrer l’activité
+                </>
+              )}
+            </Button>
           </div>
+        </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <MetricsInput
-              label="Distance"
-              unit="km"
-              type="number"
-              step="0.01"
-              error={errors.distance?.message}
-              {...register("distance", {
-                valueAsNumber: true,
+        <aside className={styles.summaryColumn}>
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryHeader}>
+              <span className={styles.summarySportIcon}>
+                <SportIcon aria-hidden="true" />
+              </span>
+
+              <div>
+                <p>Aperçu de la séance</p>
+                <h2>
+                  {title?.trim() ||
+                    (isPlannedMode
+                      ? "Votre prochaine aventure"
+                      : "Nouvelle activité")}
+                </h2>
+              </div>
+            </div>
+
+            <div className={styles.summaryRows}>
+              {summary.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div key={item.label}>
+                    <span>
+                      <Icon aria-hidden="true" />
+                      {item.label}
+                    </span>
+                    <strong>{item.value}</strong>
+                  </div>
+                );
               })}
-            />
+            </div>
 
-            <div>
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <label className="block text-sm font-medium text-zinc-300">
-                  Durée
-                </label>
-
-                <div className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs font-medium text-zinc-400">
-                  <Clock className="h-3.5 w-3.5 text-violet-300" />
-                  {durationPreview}
+            {!isPlannedMode ? (
+              <div className={styles.summaryMetrics}>
+                <div>
+                  <span>Distance</span>
+                  <strong>
+                    {formatMetric(distance, "km")}
+                  </strong>
+                </div>
+                <div>
+                  <span>Dénivelé</span>
+                  <strong>
+                    {formatMetric(elevationGain, "m")}
+                  </strong>
+                </div>
+                <div>
+                  <span>Calories</span>
+                  <strong>
+                    {formatMetric(calories, "kcal")}
+                  </strong>
                 </div>
               </div>
+            ) : null}
+          </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <label className="group rounded-2xl border border-white/10 bg-black/20 px-4 py-3 transition focus-within:border-violet-500">
-                  <span className="mb-1 block text-xs font-medium tracking-wide text-zinc-500 uppercase">
-                    Heures
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min="0"
-                      inputMode="numeric"
-                      aria-label="Durée en heures"
-                      value={hours}
-                      onChange={(e) =>
-                        setHours(Math.max(0, Number(e.target.value)))
-                      }
-                      className="min-w-0 flex-1 bg-transparent text-lg font-semibold text-white outline-none"
-                    />
-
-                    <span className="text-sm font-semibold text-zinc-500">
-                      h
-                    </span>
-                  </div>
-                </label>
-
-                <label className="group rounded-2xl border border-white/10 bg-black/20 px-4 py-3 transition focus-within:border-violet-500">
-                  <span className="mb-1 block text-xs font-medium tracking-wide text-zinc-500 uppercase">
-                    Minutes
-                  </span>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min="0"
-                      max="59"
-                      inputMode="numeric"
-                      aria-label="Durée en minutes"
-                      value={minutes}
-                      onChange={(e) =>
-                        setMinutes(
-                          Math.min(59, Math.max(0, Number(e.target.value))),
-                        )
-                      }
-                      className="min-w-0 flex-1 bg-transparent text-lg font-semibold text-white outline-none"
-                    />
-
-                    <span className="text-sm font-semibold text-zinc-500">
-                      min
-                    </span>
-                  </div>
-                </label>
+          <div className={styles.trackingCard}>
+            <div className={styles.trackingHeader}>
+              <span>
+                <Sparkles aria-hidden="true" />
+              </span>
+              <div>
+                <p>Smart tracking</p>
+                <h2>Des données propres, des conseils plus utiles.</h2>
               </div>
-
-              {errors.duration && (
-                <p className="mt-2 text-sm text-red-400">
-                  {errors.duration.message}
-                </p>
-              )}
             </div>
 
-            <MetricsInput
-              label="Dénivelé"
-              unit="m"
-              type="number"
-              error={errors.elevationGain?.message}
-              {...register("elevationGain", {
-                valueAsNumber: true,
-              })}
-            />
-
-            <MetricsInput
-              label="Calories"
-              unit="kcal"
-              type="number"
-              error={errors.calories?.message}
-              {...register("calories", {
-                valueAsNumber: true,
-              })}
-            />
+            <ul>
+              <li>
+                <Mountain aria-hidden="true" />
+                <span>
+                  <strong>Dénivelé</strong>
+                  Indispensable pour analyser le trail et la montagne.
+                </span>
+              </li>
+              <li>
+                <Clock3 aria-hidden="true" />
+                <span>
+                  <strong>Durée précise</strong>
+                  Permet de suivre votre volume d’entraînement réel.
+                </span>
+              </li>
+              <li>
+                <Dumbbell aria-hidden="true" />
+                <span>
+                  <strong>Ressenti</strong>
+                  Relie la performance aux sensations de la séance.
+                </span>
+              </li>
+            </ul>
           </div>
-        </div>
-      )}
-
-      {isPlannedMode && (
-        <div className="rounded-[24px] border border-emerald-500/18 bg-emerald-500/[0.055] p-5">
-          <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/15 text-emerald-200">
-              <CalendarPlus className="h-5 w-5" />
-            </div>
-
-            <div>
-              <h3 className="text-base font-semibold text-white">
-                Séance planifiée
-              </h3>
-
-              <p className="mt-1 text-sm leading-6 text-zinc-400">
-                Les métriques seront ajoutées après la sortie. Pour l’instant,
-                cette séance apparaîtra comme prévue dans le calendrier.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="border-t border-white/[0.08] pt-7">
-        <div className="mb-5">
-          <h3 className="text-lg font-semibold text-white">Notes</h3>
-
-          <p className="mt-1 text-sm text-zinc-500">
-            Ressenti, météo, sensations, terrain...
-          </p>
-        </div>
-
-        <textarea
-          rows={5}
-          placeholder="Ajoutez des notes sur votre activité..."
-          className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-4 text-white transition outline-none placeholder:text-zinc-500 focus:border-violet-500"
-          {...register("notes")}
-        />
-
-        {errors.notes && (
-          <p className="mt-2 text-sm text-red-400">{errors.notes.message}</p>
-        )}
+        </aside>
       </div>
-
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="h-12 rounded-2xl bg-violet-500 px-8 hover:bg-violet-400"
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Création...
-          </>
-        ) : isPlannedMode ? (
-          "Planifier la séance"
-        ) : (
-          "Créer l’activité"
-        )}
-      </Button>
     </form>
   );
 }
