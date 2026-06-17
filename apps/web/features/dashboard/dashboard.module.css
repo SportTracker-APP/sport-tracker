@@ -1,4 +1,4 @@
-.dashboard2Page {
+.dashboardPage {
   --ink: #102033;
   --muted: #64748b;
   --forest: #064e3b;
@@ -17,9 +17,9 @@
   color: var(--ink);
 }
 
-.dashboard2Page *,
-.dashboard2Page *::before,
-.dashboard2Page *::after {
+.dashboardPage *,
+.dashboardPage *::before,
+.dashboardPage *::after {
   box-sizing: border-box;
 }
 
@@ -1398,7 +1398,7 @@
 }
 
 @media (max-width: 680px) {
-  .dashboard2Page {
+  .dashboardPage {
     padding-bottom: 1rem;
   }
 
@@ -1507,28 +1507,28 @@
 }
 
 /* Priority bridge against the legacy global nature selectors. */
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroCopy h1,
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroGoalCard h2,
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroLastTrace strong {
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroCopy h1,
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroGoalCard h2,
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroLastTrace strong {
   color: #ffffff !important;
 }
 
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroCopy > p,
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroGoalText,
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroGoalKicker,
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroLastTrace p,
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroLastTrace > span {
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroCopy > p,
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroGoalText,
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroGoalKicker,
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroLastTrace p,
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroLastTrace > span {
   color: rgba(240, 253, 244, 0.78) !important;
 }
 
-:global(html.sport-theme-nature) :global(.app-shell) main .dashboard2Page .hero .heroCopy h1 span {
+:global(html.sport-theme-nature) :global(.app-shell) main .dashboardPage .hero .heroCopy h1 span {
   color: #9fe7b9 !important;
 }
 /* -------------------------------------------------------------------------- */
-/* Premium++ finishing pass ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â dashboard2 only                                 */
+/* Premium++ finishing pass â€” dashboard principal                                 */
 /* -------------------------------------------------------------------------- */
 
-.dashboard2Page {
+.dashboardPage {
   --surface-ivory: rgba(255, 254, 250, 0.93);
   --surface-mint: rgba(238, 250, 242, 0.9);
   --surface-sage: rgba(229, 244, 232, 0.88);
@@ -2031,7 +2031,7 @@
   vector-effect: non-scaling-stroke;
 }
 
-/* Premium badge system ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â coherent icons, no emoji */
+/* Premium badge system â€” coherent icons, no emoji */
 .badgeCard {
   position: relative;
   min-height: 112px;
@@ -2236,7 +2236,7 @@
 }
 
 /* -------------------------------------------------------------------------- */
-/* Final green-theme polish ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â dashboard2 only                                 */
+/* Final green-theme polish â€” dashboard principal                                 */
 /* -------------------------------------------------------------------------- */
 
 /* Softer secondary focal card: still distinct, less fluorescent. */
@@ -2279,7 +2279,7 @@
 
 /* Editorial chart: slightly calmer grid and cleaner animated entrance. */
 .chartArea {
-  animation: dashboard2ChartReveal 520ms ease-out both;
+  animation: dashboardChartReveal 520ms ease-out both;
 }
 
 .chartArea :global(.recharts-cartesian-grid-horizontal line) {
@@ -2369,7 +2369,7 @@
   filter: saturate(1.08);
 }
 
-@keyframes dashboard2ChartReveal {
+@keyframes dashboardChartReveal {
   from {
     opacity: 0;
     transform: translateY(8px);
@@ -2392,9 +2392,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dashboard2Page *,
-  .dashboard2Page *::before,
-  .dashboard2Page *::after {
+  .dashboardPage *,
+  .dashboardPage *::before,
+  .dashboardPage *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -2594,7 +2594,7 @@
 }
 
 /* -------------------------------------------------------------------------- */
-/* Refuge message ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â daily rotation and anchored layout                        */
+/* Refuge message ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â daily rotation and anchored layout                        */
 /* -------------------------------------------------------------------------- */
 
 .messagePanel > .messageContent {
@@ -2723,10 +2723,10 @@
 }
 
 /* -------------------------------------------------------------------------- */
-/* Dashboard 2 â€” semantic roles, trace footer and theme token foundation      */
+/* Dashboard principal â€” semantic roles, trace footer and theme token foundation      */
 /* -------------------------------------------------------------------------- */
 
-.dashboard2Page {
+.dashboardPage {
   --d2-accent: var(--emerald);
   --d2-accent-strong: #047857;
   --d2-accent-deep: var(--forest);
@@ -2740,7 +2740,7 @@
  * The JSX stays identical: activating `sport-theme-purple` on <html>
  * only swaps tokens. The complete purple visual pass can build on this layer.
  */
-:global(html.sport-theme-purple) .dashboard2Page {
+:global(html.sport-theme-purple) .dashboardPage {
   --ink: #211936;
   --muted: #776d8d;
   --forest: #6d28d9;

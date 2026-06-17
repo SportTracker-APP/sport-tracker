@@ -1456,7 +1456,7 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className={styles.dashboard2Page} data-dashboard-theme="adaptive">
+      <div className={styles.dashboardPage} data-dashboard-theme="adaptive">
         {isLoading ? (
           <div className={styles.loadingState}>Chargement de votre dashboard…</div>
         ) : null}
@@ -1484,7 +1484,7 @@ export default function DashboardPage() {
             ) : null}
 
             <FadeIn delay={0.1}>
-              <div className={`${styles.hero} `}>
+              <div className={styles.hero}>
                 <div className={styles.heroOverlay} />
                 <div className={styles.heroContent}>
                   <div className={styles.heroCopy}>
