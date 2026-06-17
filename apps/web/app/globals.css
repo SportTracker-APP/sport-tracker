@@ -4497,3 +4497,343 @@ html.sport-theme-nature .app-shell main .app-calendar-activity-icon-v2 {
     scroll-behavior: auto !important;
   }
 }
+
+html.sport-theme-nature .app-activity-detail-page .app-mini-route-map {
+  aspect-ratio: auto !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  border-radius: 22px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-chart {
+  border: 1px solid var(--activity-detail-border) !important;
+  background:
+    linear-gradient(var(--activity-detail-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--activity-detail-grid) 1px, transparent 1px),
+    var(--activity-detail-soft) !important;
+  background-size:
+    52px 52px,
+    52px 52px,
+    auto !important;
+  color: var(--activity-detail-accent) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-chart-grid {
+  stroke: var(--activity-detail-grid);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+html .app-activity-detail-page .app-activity-detail-backlink {
+  position: relative;
+  z-index: 2;
+  margin-bottom: -0.15rem;
+  color: var(--activity-detail-accent-dark) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-backlink:hover {
+  background: var(--activity-detail-soft-strong) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-backlink svg {
+  color: inherit !important;
+}
+
+html .app-shell main .app-activity-detail-page {
+  --activity-detail-ink: #f8fafc;
+  --activity-detail-muted: rgba(226, 232, 240, 0.68);
+  --activity-detail-surface: rgba(16, 18, 25, 0.88);
+  --activity-detail-surface-strong: rgba(22, 25, 34, 0.96);
+  --activity-detail-soft: rgba(255, 255, 255, 0.055);
+  --activity-detail-soft-strong: rgba(255, 255, 255, 0.09);
+  --activity-detail-border: rgba(255, 255, 255, 0.09);
+  --activity-detail-accent: #34d399;
+  --activity-detail-accent-dark: #86efac;
+  --activity-detail-grid: rgba(110, 231, 183, 0.14);
+  --activity-detail-shadow: 0 24px 72px rgba(0, 0, 0, 0.24);
+  color: var(--activity-detail-ink) !important;
+}
+
+html.sport-theme-nature .app-shell main .app-activity-detail-page {
+  --activity-detail-ink: #102033;
+  --activity-detail-muted: #64748b;
+  --activity-detail-surface: rgba(255, 255, 255, 0.88);
+  --activity-detail-surface-strong: rgba(255, 255, 255, 0.96);
+  --activity-detail-soft: rgba(236, 253, 245, 0.7);
+  --activity-detail-soft-strong: rgba(209, 250, 229, 0.82);
+  --activity-detail-border: rgba(6, 95, 70, 0.13);
+  --activity-detail-accent: #10b981;
+  --activity-detail-accent-dark: #047857;
+  --activity-detail-grid: rgba(16, 185, 129, 0.14);
+  --activity-detail-shadow:
+    0 22px 64px rgba(6, 78, 59, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  color: var(--activity-detail-ink) !important;
+}
+
+html .app-shell main .app-activity-detail-page .app-activity-detail-surface {
+  border: 1px solid var(--activity-detail-border) !important;
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(139, 92, 246, 0.12),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 6% 100%,
+      rgba(16, 185, 129, 0.08),
+      transparent 32%
+    ),
+    var(--activity-detail-surface) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: var(--activity-detail-shadow) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-activity-detail-page
+  .app-activity-detail-surface {
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(132, 204, 22, 0.08),
+      transparent 32%
+    ),
+    var(--activity-detail-surface) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-hero {
+  overflow: hidden;
+}
+
+html .app-activity-detail-page .app-activity-detail-side-panel {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0.015)
+    ),
+    var(--activity-detail-surface-strong) !important;
+  border-left: 1px solid var(--activity-detail-border) !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-side-panel {
+  background: var(--activity-detail-surface-strong) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-map-shell {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-soft) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+html
+  .app-activity-detail-page
+  .app-activity-detail-map-shell
+  .app-mini-route-map {
+  aspect-ratio: auto !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+@media (min-width: 1024px) {
+  html:not(.sport-theme-nature)
+    .app-activity-detail-page
+    .app-activity-detail-map-shell {
+    max-height: calc(100% - 0.55rem) !important;
+  }
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-map-shell {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-photo-shell {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-tag,
+html .app-activity-detail-page .app-activity-detail-climb-pill,
+html .app-activity-detail-page .app-activity-detail-data-tile {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-soft-strong) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+html.sport-theme-nature .app-activity-detail-page .app-activity-detail-tag,
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-climb-pill,
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-data-tile {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-tag {
+  color: var(--activity-detail-accent-dark) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-action {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-soft-strong) !important;
+  color: var(--activity-detail-accent-dark) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-eyebrow,
+html .app-activity-detail-page .app-activity-detail-muted {
+  color: var(--activity-detail-muted) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-eyebrow {
+  font-size: 0.68rem !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-surface .text-slate-900,
+html .app-activity-detail-page .app-activity-detail-chart .text-slate-900 {
+  color: var(--activity-detail-ink) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-surface .text-slate-600 {
+  color: rgba(226, 232, 240, 0.78) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-surface .text-slate-500,
+html .app-activity-detail-page .app-activity-detail-chart .text-slate-500 {
+  color: var(--activity-detail-muted) !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-surface
+  .text-slate-600 {
+  color: #64748b !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-meta-row {
+  border-color: var(--activity-detail-border) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-surface > .border-t,
+html .app-activity-detail-page .app-activity-detail-surface > .border-l {
+  border-color: var(--activity-detail-border) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-hero h1,
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-hero
+  .text-white,
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-hero
+  [class*="text-white"] {
+  color: #ffffff !important;
+  text-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.34),
+    0 10px 34px rgba(0, 0, 0, 0.18);
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-hero
+  .app-activity-detail-hero-copy
+  p {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-hero
+  .app-activity-detail-hero-meta
+  span {
+  color: rgba(255, 255, 255, 0.94) !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-hero
+  .app-activity-detail-hero-meta
+  svg,
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-activity-detail-hero
+  button
+  svg {
+  color: inherit !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-mini-route-map
+  .app-map-chip {
+  top: 0.875rem !important;
+  left: 0.875rem !important;
+  padding: 0.55rem 0.9rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-mini-route-map
+  .app-map-controls {
+  top: 0.875rem !important;
+  right: 0.875rem !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-mini-route-map
+  .app-map-controls
+  button {
+  width: 2.35rem !important;
+  height: 2.35rem !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-mini-route-map
+  .app-map-legend {
+  right: 0.875rem !important;
+  bottom: 0.875rem !important;
+  left: 0.875rem !important;
+  padding: 0.8rem 1rem !important;
+  font-size: 0.72rem !important;
+}
+
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-mini-route-map
+  .app-map-legend
+  span:last-child,
+html.sport-theme-nature
+  .app-activity-detail-page
+  .app-mini-route-map
+  .app-map-legend
+  span:first-child {
+  font-weight: 700 !important;
+}
+
+@media (max-width: 1023px) {
+  html .app-activity-detail-page .app-activity-detail-side-panel {
+    border-top: 1px solid var(--activity-detail-border) !important;
+    border-left: 0 !important;
+  }
+
+  html.sport-theme-nature .app-activity-detail-page .app-mini-route-map {
+    min-height: 300px !important;
+  }
+}

@@ -57,6 +57,14 @@ function startOfWeek(date: Date) {
   return nextDate;
 }
 
+function startOfMonth(date: Date) {
+  const nextDate = new Date(date.getFullYear(), date.getMonth(), 1);
+
+  nextDate.setHours(0, 0, 0, 0);
+
+  return nextDate;
+}
+
 function addDays(date: Date, days: number) {
   const nextDate = new Date(date);
 
@@ -450,6 +458,9 @@ export default function HomePage() {
     const weekStart = startOfWeek(now);
     const weekEnd = addDays(weekStart, 6);
     weekEnd.setHours(23, 59, 59, 999);
+    const monthStart = startOfMonth(now);
+    const monthEnd = new Date(now);
+    monthEnd.setHours(23, 59, 59, 999);
 
     const previousWeekStart = addDays(weekStart, -7);
     const previousWeekEnd = addDays(weekStart, -1);
@@ -473,6 +484,11 @@ export default function HomePage() {
       previousWeekStart,
       previousWeekEnd,
     );
+    const currentMonthActivities = getActivitiesBetween(
+      completedActivities,
+      monthStart,
+      monthEnd,
+    );
     const rollingActivities = getActivitiesBetween(
       completedActivities,
       rollingPeriodStart,
@@ -484,6 +500,10 @@ export default function HomePage() {
       0,
     );
     const previousWeeklyDistance = previousWeekActivities.reduce(
+      (total, activity) => total + (activity.distance || 0),
+      0,
+    );
+    const currentMonthDistance = currentMonthActivities.reduce(
       (total, activity) => total + (activity.distance || 0),
       0,
     );
@@ -503,6 +523,7 @@ export default function HomePage() {
       (total, activity) => total + (activity.calories || 0),
       0,
     );
+    const currentMonthElevation = getElevationTotal(currentMonthActivities);
     const rollingElevation = getElevationTotal(rollingActivities);
     const weeklyElevation = getElevationTotal(weekActivities);
     const exploredSectors = completedActivities.filter(
@@ -553,6 +574,9 @@ export default function HomePage() {
       completedActivities,
       activeDays,
       bestActivity,
+      currentMonthActivities,
+      currentMonthDistance,
+      currentMonthElevation,
       latestActivity: completedActivities[0] ?? null,
       weekActivities,
       exploredSectors,
@@ -599,20 +623,20 @@ export default function HomePage() {
   const statsData = [
     {
       title: "Sorties",
-      value: formatNumber(dashboardData.rollingActivities.length),
-      description: "30 derniers jours",
+      value: formatNumber(dashboardData.currentMonthActivities.length),
+      description: "Mois actuel",
       icon: Activity,
     },
     {
       title: "Distance",
-      value: formatDistance(dashboardData.rollingDistance, 1),
-      description: "30 derniers jours",
+      value: formatDistance(dashboardData.currentMonthDistance, 1),
+      description: "Mois actuel",
       icon: Route,
     },
     {
       title: "D+",
-      value: `${formatNumber(dashboardData.rollingElevation)} m`,
-      description: "30 derniers jours",
+      value: `${formatNumber(dashboardData.currentMonthElevation)} m`,
+      description: "Mois actuel",
       icon: Mountain,
     },
     {

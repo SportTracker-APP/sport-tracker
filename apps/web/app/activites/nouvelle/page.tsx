@@ -14,10 +14,8 @@ import {
   Timer,
 } from "lucide-react";
 
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
-
 import { CreateActivityForm } from "@/components/activities/create-activity-form";
-
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useActivities } from "@/hooks/use-activities";
 
 const sports = [
@@ -123,18 +121,13 @@ export default function NewActivityPage() {
   return (
     <DashboardLayout>
       <div className="space-y-8 px-2 pb-4 [&_input[type=number]]:appearance-none [&_input[type=number]::-webkit-inner-spin-button]:appearance-none [&_input[type=number]::-webkit-outer-spin-button]:appearance-none">
-        {/* HERO */}
         <section className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#181922]/95 p-7 backdrop-blur-xl">
-          {/* AMBIENT */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.22),transparent_32%)]" />
-
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.10),transparent_32%)]" />
-
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04),transparent_24%)]" />
 
           <div className="relative">
             <div className="flex flex-col gap-8 xl:flex-row xl:items-start xl:justify-between">
-              {/* LEFT */}
               <div className="max-w-2xl pt-1">
                 <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-300">
                   <Plus className="h-3.5 w-3.5" />
@@ -155,7 +148,6 @@ export default function NewActivityPage() {
                   et votre charge d’entraînement.
                 </p>
 
-                {/* SPORT PILLS */}
                 <div className="mt-6 flex flex-wrap gap-3">
                   {sports.map((sport) => {
                     const Icon = sport.icon;
@@ -166,7 +158,6 @@ export default function NewActivityPage() {
                         className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs text-zinc-300"
                       >
                         <Icon className="h-3.5 w-3.5 text-violet-300" />
-
                         {sport.label}
                       </div>
                     );
@@ -174,7 +165,6 @@ export default function NewActivityPage() {
                 </div>
               </div>
 
-              {/* RIGHT */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 xl:w-[340px] xl:grid-cols-1 xl:pt-1">
                 {quickStats.map((stat) => {
                   const Icon = stat.icon;
@@ -189,7 +179,6 @@ export default function NewActivityPage() {
                       <div className="relative flex items-start justify-between">
                         <div>
                           <p className="text-xs text-zinc-400">{stat.label}</p>
-
                           <p className="mt-2 text-3xl font-bold text-white">
                             {stat.value}
                           </p>
@@ -207,14 +196,11 @@ export default function NewActivityPage() {
           </div>
         </section>
 
-        {/* CONTENT */}
         <section className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
-          {/* FORM */}
           <div className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#181922]/95 p-6 backdrop-blur-xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.12),transparent_30%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.035),transparent_22%)]" />
 
-            {/* HEADER */}
             <div className="relative mb-8 flex items-start justify-between">
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-white">
@@ -237,9 +223,7 @@ export default function NewActivityPage() {
             </div>
           </div>
 
-          {/* SIDE PANEL */}
           <div className="space-y-6">
-            {/* TRACKING CARD */}
             <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-[#181922]/95 p-5 backdrop-blur-xl">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-3">
@@ -283,7 +267,6 @@ export default function NewActivityPage() {
               </div>
             </div>
 
-            {/* MINI INFO */}
             <div className="rounded-[28px] border border-white/[0.08] bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 p-5">
               <p className="text-[11px] tracking-[0.18em] text-violet-300/80 uppercase">
                 Smart tracking

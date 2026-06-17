@@ -52,6 +52,7 @@ interface StravaActivity {
   elapsed_time: number;
   total_elevation_gain?: number;
   elev_high?: number;
+  elev_low?: number;
   start_date: string;
   start_latlng?: [number, number] | null;
   end_latlng?: [number, number] | null;
@@ -62,9 +63,30 @@ interface StravaActivity {
   calories?: number;
   kilojoules?: number;
   description?: string;
+  total_photo_count?: number;
+  photos?: StravaPhotos;
   map?: {
     summary_polyline?: string;
   };
+}
+
+interface StravaPhotos {
+  primary?: StravaPhoto | null;
+  use_primary_photo?: boolean;
+  count?: number;
+}
+
+interface StravaPhoto {
+  urls?: Record<string, string>;
+}
+
+interface StravaActivityStream {
+  data?: number[];
+}
+
+interface StravaActivityStreamsResponse {
+  altitude?: StravaActivityStream;
+  distance?: StravaActivityStream;
 }
 
 type StravaCallbackFailureReason =
@@ -83,6 +105,9 @@ export class StravaService {
 
   private readonly activitiesEndpoint =
     'https://www.strava.com/api/v3/athlete/activities';
+
+  private readonly activityEndpoint =
+    'https://www.strava.com/api/v3/activities';
 
   constructor(
     private readonly prisma: PrismaService,
@@ -248,6 +273,7 @@ export class StravaService {
       },
       select: {
         stravaActivityId: true,
+        coverImageUrl: true,
       },
     });
 
@@ -259,7 +285,13 @@ export class StravaService {
 
     try {
       for (const activity of activities) {
-        const mappedActivity = this.mapActivity(userId, activity);
+        const existingActivity = existingActivitiesByStravaId.get(
+          activity.id.toString(),
+        );
+        const activityWithPhotos = existingActivity?.coverImageUrl
+          ? activity
+          : await this.withStravaPhotos(activity, connection.accessToken);
+        const mappedActivity = this.mapActivity(userId, activityWithPhotos);
         const stravaActivityId = mappedActivity.stravaActivityId;
 
         if (!stravaActivityId) {
@@ -282,6 +314,8 @@ export class StravaService {
             movingTime: mappedActivity.movingTime,
             elevationGain: mappedActivity.elevationGain,
             maxAltitude: mappedActivity.maxAltitude,
+            coverImageUrl:
+              mappedActivity.coverImageUrl ?? existingActivity?.coverImageUrl,
             startLatitude: mappedActivity.startLatitude,
             startLongitude: mappedActivity.startLongitude,
             endLatitude: mappedActivity.endLatitude,
@@ -323,6 +357,32 @@ export class StravaService {
 
     return {
       connected: false,
+    };
+  }
+
+  async getActivityEnrichment(userId: string, stravaActivityId: string) {
+    const connection = await this.getValidConnection(userId);
+    const activityId = Number(stravaActivityId);
+
+    if (!Number.isFinite(activityId)) {
+      throw new BadRequestException('Identifiant Strava invalide');
+    }
+
+    const [details, streams] = await Promise.all([
+      this.fetchActivityDetails(activityId, connection.accessToken),
+      this.fetchActivityStreams(activityId, connection.accessToken),
+    ]);
+
+    return {
+      altitudeStream: streams.altitude?.data ?? null,
+      distanceStream: streams.distance?.data ?? null,
+      photoUrls: this.getPhotoUrls(details),
+      photoCount: this.getPhotoCount(details),
+      coverImageUrl: this.getPhotoUrls(details)[0] ?? null,
+      maxAltitude:
+        details.elev_high !== undefined ? Math.round(details.elev_high) : null,
+      minAltitude:
+        details.elev_low !== undefined ? Math.round(details.elev_low) : null,
     };
   }
 
@@ -431,6 +491,73 @@ export class StravaService {
     return activities;
   }
 
+  private async withStravaPhotos(
+    activity: StravaActivity,
+    accessToken: string,
+  ) {
+    if (this.getPhotoUrls(activity).length > 0) {
+      return activity;
+    }
+
+    if (!activity.total_photo_count || activity.total_photo_count <= 0) {
+      return activity;
+    }
+
+    try {
+      return await this.fetchActivityDetails(activity.id, accessToken);
+    } catch (error) {
+      console.warn('Strava activity photos skipped:', {
+        activityId: activity.id,
+        message: error instanceof Error ? error.message : String(error),
+      });
+
+      return activity;
+    }
+  }
+
+  private async fetchActivityDetails(activityId: number, accessToken: string) {
+    const url = new URL(`${this.activityEndpoint}/${activityId}`);
+
+    url.searchParams.set('include_all_efforts', 'false');
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw this.createStravaApiException(
+        response.status,
+        "Impossible de récupérer le détail d'une activité Strava.",
+      );
+    }
+
+    return response.json() as Promise<StravaActivity>;
+  }
+
+  private async fetchActivityStreams(activityId: number, accessToken: string) {
+    const url = new URL(`${this.activityEndpoint}/${activityId}/streams`);
+
+    url.searchParams.set('keys', 'altitude,distance');
+    url.searchParams.set('key_by_type', 'true');
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw this.createStravaApiException(
+        response.status,
+        "Impossible de récupérer le profil d'altitude Strava.",
+      );
+    }
+
+    return response.json() as Promise<StravaActivityStreamsResponse>;
+  }
+
   private createStravaApiException(status: number, fallbackMessage: string) {
     if (status === 429) {
       return new HttpException(
@@ -453,6 +580,7 @@ export class StravaService {
     activity: StravaActivity,
   ): Prisma.ActivityCreateManyInput {
     const sport = this.mapSportType(activity.sport_type || activity.type);
+    const photoUrls = this.getPhotoUrls(activity);
 
     const durationMinutes = Math.max(
       1,
@@ -482,6 +610,7 @@ export class StravaService {
         activity.elev_high !== undefined
           ? Math.round(activity.elev_high)
           : undefined,
+      coverImageUrl: photoUrls[0],
       startLatitude: activity.start_latlng?.[0],
       startLongitude: activity.start_latlng?.[1],
       endLatitude: activity.end_latlng?.[0],
@@ -500,6 +629,39 @@ export class StravaService {
           : undefined,
       startedAt: new Date(activity.start_date),
     };
+  }
+
+  private getPhotoUrls(activity: StravaActivity) {
+    const urls = activity.photos?.primary?.urls;
+
+    if (!urls) {
+      return [];
+    }
+
+    const bestUrl = Object.entries(urls)
+      .sort(
+        ([firstSize], [secondSize]) => Number(secondSize) - Number(firstSize),
+      )
+      .map(([, url]) => url)
+      .find((url): url is string => Boolean(url));
+
+    return bestUrl ? [bestUrl] : [];
+  }
+
+  private getPhotoCount(activity: StravaActivity) {
+    if (typeof activity.total_photo_count === 'number') {
+      return activity.total_photo_count;
+    }
+
+    if (typeof activity.photos?.count === 'number') {
+      return activity.photos.count;
+    }
+
+    if (activity.photos?.primary) {
+      return 1;
+    }
+
+    return 0;
   }
 
   private mapSportType(stravaType: string): SportType {

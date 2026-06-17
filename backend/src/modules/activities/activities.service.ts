@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { StravaService } from '../strava/strava.service';
 
 import { CreateActivityDto } from './dto/create-activity.dto';
 
@@ -8,7 +9,10 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly stravaService: StravaService,
+  ) {}
 
   async create(userId: string, dto: CreateActivityDto) {
     return this.prisma.activity.create({
@@ -44,6 +48,31 @@ export class ActivitiesService {
 
     if (!activity) {
       throw new NotFoundException('Activité introuvable');
+    }
+
+    if (!activity.stravaActivityId) {
+      return activity;
+    }
+
+    try {
+      const enrichment = await this.stravaService.getActivityEnrichment(
+        userId,
+        activity.stravaActivityId,
+      );
+
+      return {
+        ...activity,
+        ...enrichment,
+        coverImageUrl: enrichment.coverImageUrl ?? activity.coverImageUrl,
+        maxAltitude: enrichment.maxAltitude ?? activity.maxAltitude,
+        minAltitude: enrichment.minAltitude,
+      };
+    } catch (error) {
+      console.warn('Strava enrichment skipped for activity detail:', {
+        activityId,
+        stravaActivityId: activity.stravaActivityId,
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
 
     return activity;

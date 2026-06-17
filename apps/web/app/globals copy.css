@@ -243,26 +243,6 @@ html.sport-theme-nature .app-sidebar [class*="from-violet-500"] {
   box-shadow: 0 14px 36px rgba(16, 185, 129, 0.22) !important;
 }
 
-html.sport-theme-nature .app-brand-logo {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 18px 42px rgba(6, 78, 59, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html.sport-theme-nature .app-brand-logo svg {
-  color: #ecfdf5 !important;
-  stroke: #ecfdf5 !important;
-}
-
 html.sport-theme-nature .app-sidebar [class*="bg-violet-400"],
 html.sport-theme-nature .app-sidebar [class*="bg-violet-500"],
 html.sport-theme-nature .app-sidebar [class*="text-violet"] {
@@ -814,34 +794,6 @@ html.sport-theme-nature .app-auth-card button[type="submit"] {
   box-shadow: 0 18px 38px rgba(16, 185, 129, 0.24) !important;
 }
 
-html.sport-theme-nature .app-shell main .app-trace-activity-cta {
-  border: 1px solid rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 28% 16%,
-      rgba(187, 247, 208, 0.2),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 18px 38px rgba(6, 78, 59, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html.sport-theme-nature .app-shell main .app-trace-activity-cta:hover {
-  background:
-    radial-gradient(
-      circle at 28% 16%,
-      rgba(187, 247, 208, 0.24),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #064e3b, #047857 58%, #065f46) !important;
-  box-shadow:
-    0 20px 44px rgba(6, 78, 59, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
-}
-
 html.sport-theme-nature .app-shell main button:not([class*="FC4C02"]),
 html.sport-theme-nature .app-shell main a:not([class*="FC4C02"]) {
   text-decoration-color: rgba(16, 185, 129, 0.35) !important;
@@ -1292,31 +1244,7 @@ html.sport-theme-nature
   main
   section.app-dashboard-hero
   a[class*="from-violet"] {
-  background-image: linear-gradient(
-    135deg,
-    #052e2b,
-    #065f46 58%,
-    #064e3b
-  ) !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  section.app-dashboard-hero
-  .app-trace-activity-cta {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 28% 16%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 18px 38px rgba(6, 78, 59, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  background-image: linear-gradient(135deg, #10b981, #84cc16) !important;
 }
 
 html.sport-theme-nature .app-shell main section.app-dashboard-hero::before {
@@ -1659,17 +1587,14 @@ html.sport-theme-nature .app-auth-theme-toggle {
 }
 
 html.sport-theme-nature .app-brand-logo {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  box-shadow:
-    0 18px 42px rgba(6, 78, 59, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: linear-gradient(
+    135deg,
+    #059669 0%,
+    #22c55e 58%,
+    #84cc16 100%
+  ) !important;
+  box-shadow: 0 16px 34px rgba(16, 185, 129, 0.22) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
@@ -1677,17 +1602,14 @@ html.sport-theme-nature .app-brand-logo {
 html.sport-theme-nature .app-auth-page .app-brand-logo,
 html.sport-theme-nature .app-sidebar .app-brand-logo,
 html.sport-theme-nature .app-mobile-sidebar .app-brand-logo {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
-  box-shadow:
-    0 18px 42px rgba(6, 78, 59, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.72) !important;
+  background: linear-gradient(
+    135deg,
+    #059669 0%,
+    #22c55e 58%,
+    #84cc16 100%
+  ) !important;
+  box-shadow: 0 16px 34px rgba(16, 185, 129, 0.22) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
@@ -1829,18 +1751,10 @@ html.sport-theme-nature .app-auth-loading {
 }
 
 html.sport-theme-nature .app-auth-loading-logo {
-  border-color: rgba(187, 247, 208, 0.28);
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b);
-  color: #ecfdf5;
-  box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  border-color: rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, #10b981, #84cc16);
+  color: #ffffff;
+  box-shadow: 0 18px 46px rgba(16, 185, 129, 0.18);
 }
 
 html.sport-theme-nature .app-auth-loading p:last-child {
@@ -2199,14 +2113,9 @@ html.sport-theme-nature
 }
 
 html.sport-theme-nature .app-activities-page .app-activities-hero-kicker {
-  border-color: rgba(187, 247, 208, 0.3) !important;
-  background: rgba(6, 95, 70, 0.52) !important;
-  color: #d1fae5 !important;
-}
-
-html.sport-theme-nature .app-activities-page .app-activities-hero-kicker svg {
-  color: #d1fae5 !important;
-  stroke: #d1fae5 !important;
+  border-color: rgba(167, 243, 208, 0.28) !important;
+  background: rgba(6, 95, 70, 0.42) !important;
+  color: #bbf7d0 !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-activities-hero-chips span {
@@ -2217,22 +2126,11 @@ html.sport-theme-nature .app-activities-page .app-activities-hero-chips span {
 }
 
 html.sport-theme-nature .app-activities-page .app-activities-hero-cta {
-  border: 1px solid rgba(204, 251, 241, 0.86) !important;
-  background: linear-gradient(135deg, #f0fdfa, #ccfbf1 58%, #a7f3d0) !important;
+  background: linear-gradient(135deg, #10b981, #35d45b 58%, #84cc16) !important;
   box-shadow:
-    0 18px 44px rgba(204, 251, 241, 0.24),
-    0 10px 28px rgba(15, 118, 110, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  color: #134e4a !important;
-}
-
-html.sport-theme-nature .app-activities-page .app-activities-hero-cta:hover {
-  background: linear-gradient(135deg, #ffffff, #ccfbf1 56%, #99f6e4) !important;
-  color: #0f3f3c !important;
-  box-shadow:
-    0 20px 48px rgba(204, 251, 241, 0.3),
-    0 12px 30px rgba(15, 118, 110, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+    0 18px 44px rgba(16, 185, 129, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+  color: #ffffff !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-filter-shell {
@@ -2268,13 +2166,10 @@ html.sport-theme-nature
   .app-activities-page
   .app-activity-filters
   button[data-active="true"] {
-  border-color: rgba(236, 253, 245, 0.78) !important;
-  background: linear-gradient(135deg, #f7fee7, #ecfdf5 62%, #d9f99d) !important;
-  color: #064e3b !important;
-  box-shadow:
-    0 12px 28px rgba(236, 253, 245, 0.16),
-    0 8px 20px rgba(6, 78, 59, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  background: linear-gradient(135deg, #10b981, #84cc16) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 30px rgba(16, 185, 129, 0.2) !important;
 }
 
 html.sport-theme-nature .app-activities-page .app-activity-card {
@@ -3150,11 +3045,7 @@ html.sport-theme-nature .app-statistics-page::before {
   border-radius: 42px;
   background:
     radial-gradient(circle at 8% 10%, rgba(6, 95, 70, 0.32), transparent 34%),
-    radial-gradient(
-      circle at 92% 4%,
-      rgba(132, 204, 22, 0.26),
-      transparent 32%
-    ),
+    radial-gradient(circle at 92% 4%, rgba(132, 204, 22, 0.26), transparent 32%),
     radial-gradient(circle at 58% 86%, rgba(4, 120, 87, 0.34), transparent 42%),
     linear-gradient(
       135deg,
@@ -3187,16 +3078,8 @@ html .app-statistics-page .app-statistics-hero-photo {
 html .app-statistics-page .app-statistics-hero-wash {
   z-index: 1;
   background:
-    radial-gradient(
-      circle at 16% 20%,
-      rgba(139, 92, 246, 0.26),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 92% 26%,
-      rgba(16, 185, 129, 0.2),
-      transparent 34%
-    ),
+    radial-gradient(circle at 16% 20%, rgba(139, 92, 246, 0.26), transparent 30%),
+    radial-gradient(circle at 92% 26%, rgba(16, 185, 129, 0.2), transparent 34%),
     linear-gradient(
       108deg,
       rgba(7, 6, 12, 0.94),
@@ -3215,16 +3098,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-hero-photo {
 
 html.sport-theme-nature .app-statistics-page .app-statistics-hero-wash {
   background:
-    radial-gradient(
-      circle at 18% 22%,
-      rgba(16, 185, 129, 0.32),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 88% 18%,
-      rgba(132, 204, 22, 0.24),
-      transparent 32%
-    ),
+    radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.32), transparent 34%),
+    radial-gradient(circle at 88% 18%, rgba(132, 204, 22, 0.24), transparent 32%),
     linear-gradient(
       105deg,
       rgba(4, 22, 16, 0.9) 0%,
@@ -3403,11 +3278,7 @@ html.sport-theme-nature .app-statistics-page .app-statistics-metric-card svg {
 html.sport-theme-nature .app-statistics-page .app-statistics-metric-icon {
   border-color: rgba(255, 255, 255, 0.18) !important;
   background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(255, 255, 255, 0.34),
-      transparent 42%
-    ),
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.34), transparent 42%),
     linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(132, 204, 22, 0.16)) !important;
   color: #047857 !important;
   box-shadow:
@@ -3527,7 +3398,11 @@ html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary {
 html.sport-theme-nature .app-statistics-page .app-statistics-forest-note {
   border-color: rgba(187, 247, 208, 0.18) !important;
   background:
-    radial-gradient(circle at 8% 0%, rgba(132, 204, 22, 0.12), transparent 34%),
+    radial-gradient(
+      circle at 8% 0%,
+      rgba(132, 204, 22, 0.12),
+      transparent 34%
+    ),
     rgba(3, 18, 14, 0.42) !important;
   color: #ecfdf5 !important;
   box-shadow:
@@ -3617,11 +3492,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-stat-value {
 
 html.sport-theme-nature .app-statistics-page .app-statistics-stat-icon {
   border-color: rgba(16, 185, 129, 0.18) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(209, 250, 229, 0.82),
-    rgba(236, 253, 245, 0.92)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(209, 250, 229, 0.82), rgba(236, 253, 245, 0.92)) !important;
   color: #047857 !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
 }
@@ -3652,21 +3524,13 @@ html.sport-theme-nature .app-shell main .app-statistics-page {
 
 html.sport-theme-nature .app-shell main .app-statistics-page > section,
 html.sport-theme-nature .app-shell main .app-statistics-page > div,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-insights-grid {
+html.sport-theme-nature .app-shell main .app-statistics-page .app-statistics-insights-grid {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
 }
 
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-panel {
+html.sport-theme-nature .app-shell main .app-statistics-page .app-statistics-forest-panel {
   border-color: rgba(187, 247, 208, 0.2) !important;
   background: #0b2119 !important;
   padding: clamp(1.45rem, 2.4vw, 2.15rem) !important;
@@ -3683,22 +3547,9 @@ html.sport-theme-nature
   .app-statistics-forest-panel
   > .absolute:nth-child(1) {
   background:
-    radial-gradient(
-      circle at 18% 22%,
-      rgba(16, 185, 129, 0.2),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 86% 26%,
-      rgba(132, 204, 22, 0.16),
-      transparent 34%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(5, 24, 18, 0.96),
-      rgba(12, 44, 33, 0.82) 54%,
-      rgba(5, 24, 18, 0.94)
-    ) !important;
+    radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.2), transparent 30%),
+    radial-gradient(circle at 86% 26%, rgba(132, 204, 22, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(5, 24, 18, 0.96), rgba(12, 44, 33, 0.82) 54%, rgba(5, 24, 18, 0.94)) !important;
 }
 
 html.sport-theme-nature
@@ -3732,35 +3583,24 @@ html.sport-theme-nature .app-statistics-page .app-statistics-forest-chip {
 html.sport-theme-nature .app-statistics-page .app-statistics-forest-copy h2 {
   max-width: 56rem !important;
   color: #ffffff !important;
-  font-size: clamp(2.25rem, 3vw, 2.75rem) !important;
-  font-weight: 700 !important;
-  line-height: 1.08 !important;
+  font-size: clamp(2rem, 3vw, 3.2rem) !important;
+  line-height: 1.03 !important;
   text-shadow: 0 8px 34px rgba(0, 0, 0, 0.38) !important;
 }
 
 html.sport-theme-nature .app-statistics-page .app-statistics-forest-copy p {
   max-width: 48rem !important;
   color: rgba(236, 253, 245, 0.82) !important;
-  font-size: 0.875rem !important;
-  font-weight: 400 !important;
-  line-height: 1.75rem !important;
+  font-size: clamp(0.95rem, 1.15vw, 1.08rem) !important;
+  line-height: 1.8 !important;
 }
 
 html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary {
   width: min(100%, 420px) !important;
   border-color: rgba(187, 247, 208, 0.22) !important;
   background:
-    radial-gradient(
-      circle at 95% 8%,
-      rgba(132, 204, 22, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(3, 18, 14, 0.78),
-      rgba(12, 52, 38, 0.7) 58%,
-      rgba(7, 33, 27, 0.76)
-    ) !important;
+    radial-gradient(circle at 95% 8%, rgba(132, 204, 22, 0.18), transparent 38%),
+    linear-gradient(145deg, rgba(3, 18, 14, 0.78), rgba(12, 52, 38, 0.7) 58%, rgba(7, 33, 27, 0.76)) !important;
   color: #ecfdf5 !important;
   box-shadow:
     0 22px 58px rgba(0, 0, 0, 0.24),
@@ -3771,18 +3611,14 @@ html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary p {
   color: rgba(236, 253, 245, 0.78) !important;
 }
 
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .uppercase {
+html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary .uppercase {
   color: rgba(209, 250, 229, 0.76) !important;
 }
 
 html.sport-theme-nature .app-statistics-page .app-statistics-forest-distance {
   color: #ffffff !important;
-  font-size: 1.875rem !important;
-  font-weight: 700 !important;
-  line-height: 2.25rem !important;
+  font-size: clamp(1.7rem, 2.35vw, 2.45rem) !important;
+  line-height: 0.98 !important;
   text-shadow: 0 10px 32px rgba(0, 0, 0, 0.28) !important;
 }
 
@@ -3804,58 +3640,12 @@ html.sport-theme-nature .app-statistics-page .app-statistics-forest-note p {
   color: rgba(236, 253, 245, 0.76) !important;
 }
 
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .app-statistics-forest-note {
-  border-color: rgba(187, 247, 208, 0.24) !important;
-  background:
-    radial-gradient(
-      circle at 10% 0%,
-      rgba(132, 204, 22, 0.14),
-      transparent 34%
-    ),
-    linear-gradient(145deg, rgba(3, 18, 14, 0.9), rgba(6, 48, 37, 0.82)) !important;
-  color: #ecfdf5 !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .app-statistics-forest-note
-  div {
-  color: #bbf7d0 !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .app-statistics-forest-note
-  p {
-  color: rgba(236, 253, 245, 0.86) !important;
-}
-
 html.sport-theme-nature .app-statistics-page .app-statistics-insight-card {
   border-color: rgba(6, 95, 70, 0.22) !important;
   background:
-    radial-gradient(
-      circle at 90% 8%,
-      rgba(132, 204, 22, 0.16),
-      transparent 32%
-    ),
+    radial-gradient(circle at 90% 8%, rgba(132, 204, 22, 0.16), transparent 32%),
     radial-gradient(circle at 6% 92%, rgba(20, 184, 166, 0.1), transparent 36%),
-    linear-gradient(
-      145deg,
-      rgba(247, 253, 249, 0.78),
-      rgba(226, 246, 232, 0.76) 56%,
-      rgba(214, 239, 222, 0.7)
-    ) !important;
+    linear-gradient(145deg, rgba(247, 253, 249, 0.78), rgba(226, 246, 232, 0.76) 56%, rgba(214, 239, 222, 0.7)) !important;
   color: #0f172a !important;
   box-shadow:
     0 24px 66px rgba(6, 78, 59, 0.14),
@@ -3863,69 +3653,22 @@ html.sport-theme-nature .app-statistics-page .app-statistics-insight-card {
     inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
 }
 
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card::before,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card::after {
+html.sport-theme-nature .app-statistics-page .app-statistics-insight-card::before,
+html.sport-theme-nature .app-statistics-page .app-statistics-insight-card::after {
   display: none !important;
 }
 
 html.sport-theme-nature .app-statistics-page .app-statistics-insight-card h2,
 html.sport-theme-nature .app-statistics-page .app-statistics-insight-card h3,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-white {
+html.sport-theme-nature .app-statistics-page .app-statistics-insight-card .text-white {
   color: #0f172a !important;
   text-shadow: none !important;
 }
 
 html.sport-theme-nature .app-statistics-page .app-statistics-insight-card p,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-zinc-400,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-zinc-500 {
+html.sport-theme-nature .app-statistics-page .app-statistics-insight-card .text-zinc-400,
+html.sport-theme-nature .app-statistics-page .app-statistics-insight-card .text-zinc-500 {
   color: #5f7087 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-refuge-card {
-  border-color: rgba(187, 247, 208, 0.22) !important;
-  background: #071610 !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 24px 66px rgba(6, 78, 59, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-refuge-card h2,
-html.sport-theme-nature .app-statistics-page .app-statistics-refuge-card p,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-white {
-  color: #ffffff !important;
-  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.34) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-emerald-50\/70,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-emerald-50\/72,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-emerald-50\/62 {
-  color: rgba(236, 253, 245, 0.78) !important;
 }
 
 html.sport-theme-nature .app-statistics-page .app-statistics-year-pill,
@@ -3939,11 +3682,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-mini-fact {
 
 html.sport-theme-nature .app-statistics-page .app-statistics-stat-lines {
   border-color: rgba(6, 95, 70, 0.16) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.54),
-    rgba(236, 253, 245, 0.42)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.54), rgba(236, 253, 245, 0.42)) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.76),
     0 16px 34px rgba(6, 78, 59, 0.08) !important;
@@ -3975,9 +3715,9 @@ html.sport-theme-nature .app-statistics-page .app-statistics-stat-detail {
 
 html.sport-theme-nature .app-statistics-page .app-statistics-stat-value {
   color: #047857 !important;
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  line-height: 2rem !important;
+  font-size: clamp(1.05rem, 1.35vw, 1.35rem) !important;
+  font-weight: 820 !important;
+  line-height: 1 !important;
   text-shadow: none !important;
 }
 
@@ -3993,8 +3733,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
   box-shadow: 0 0 18px rgba(16, 185, 129, 0.22) !important;
 }
 
-/* Intégration Strava: correction nature ciblée.
-   On neutralise les fonds génériques pour éviter les rectangles blancs parasites. */
+/* IntÃ©gration Strava: correction nature ciblÃ©e.
+   On neutralise les fonds gÃ©nÃ©riques pour Ã©viter les rectangles blancs parasites. */
 html.sport-theme-nature .app-shell main .app-strava-page {
   background: transparent !important;
   color: #0f172a !important;
@@ -4012,17 +3752,8 @@ html.sport-theme-nature .app-shell main .app-strava-page .app-strava-hero {
   border-color: rgba(251, 146, 60, 0.18) !important;
   background:
     radial-gradient(circle at 94% 26%, rgba(252, 76, 2, 0.14), transparent 34%),
-    radial-gradient(
-      circle at 8% 12%,
-      rgba(16, 185, 129, 0.12),
-      transparent 34%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.9),
-      rgba(244, 253, 247, 0.82) 54%,
-      rgba(255, 247, 237, 0.72)
-    ) !important;
+    radial-gradient(circle at 8% 12%, rgba(16, 185, 129, 0.12), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(244, 253, 247, 0.82) 54%, rgba(255, 247, 237, 0.72)) !important;
   box-shadow:
     0 28px 70px rgba(6, 78, 59, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
@@ -4044,41 +3775,29 @@ html.sport-theme-nature .app-strava-page .app-strava-message {
 
 html.sport-theme-nature .app-strava-page .app-strava-message-success {
   border-color: rgba(16, 185, 129, 0.34) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(5, 95, 70, 0.88),
-    rgba(16, 185, 129, 0.76)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(5, 95, 70, 0.88), rgba(16, 185, 129, 0.76)) !important;
   color: #ecfdf5 !important;
 }
 
 html.sport-theme-nature .app-strava-page .app-strava-message-warning {
   border-color: rgba(245, 158, 11, 0.34) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(120, 53, 15, 0.88),
-    rgba(217, 119, 6, 0.74)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(120, 53, 15, 0.88), rgba(217, 119, 6, 0.74)) !important;
   color: #fffbeb !important;
 }
 
 html.sport-theme-nature .app-strava-page .app-strava-message-error {
   border-color: rgba(248, 113, 113, 0.34) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(127, 29, 29, 0.88),
-    rgba(220, 38, 38, 0.72)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(127, 29, 29, 0.88), rgba(220, 38, 38, 0.72)) !important;
   color: #fef2f2 !important;
 }
 
 html.sport-theme-nature .app-strava-page .app-strava-message-neutral {
   border-color: rgba(6, 95, 70, 0.18) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.86),
-    rgba(6, 78, 59, 0.72)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(6, 78, 59, 0.72)) !important;
   color: #ecfdf5 !important;
 }
 
@@ -4087,28 +3806,12 @@ html.sport-theme-nature .app-strava-page .app-strava-message svg {
   stroke: currentColor !important;
 }
 
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-feature-card,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-info-section {
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-feature-card,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-info-section {
   border-color: rgba(6, 95, 70, 0.16) !important;
   background:
-    radial-gradient(
-      circle at 92% 10%,
-      rgba(132, 204, 22, 0.12),
-      transparent 34%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.82),
-      rgba(241, 253, 246, 0.78)
-    ) !important;
+    radial-gradient(circle at 92% 10%, rgba(132, 204, 22, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(241, 253, 246, 0.78)) !important;
   color: #0f172a !important;
   box-shadow:
     0 20px 46px rgba(6, 78, 59, 0.1),
@@ -4116,11 +3819,8 @@ html.sport-theme-nature
 }
 
 html.sport-theme-nature .app-strava-page .app-strava-feature-icon {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 237, 213, 0.9),
-    rgba(254, 215, 170, 0.76)
-  ) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 237, 213, 0.9), rgba(254, 215, 170, 0.76)) !important;
   color: #ea580c !important;
 }
 
@@ -4138,78 +3838,402 @@ html.sport-theme-nature .app-strava-page .app-strava-workflow-card p {
 
 html.sport-theme-nature .app-strava-page .app-strava-feature-card p,
 html.sport-theme-nature .app-strava-page .app-strava-status-card p,
-html.sport-theme-nature
-  .app-strava-page
-  .app-strava-info-section
-  .text-zinc-400 {
+html.sport-theme-nature .app-strava-page .app-strava-info-section .text-zinc-400 {
   color: #62748c !important;
 }
 
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-workflow-card,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-status-card {
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-workflow-card,
+html.sport-theme-nature .app-shell main .app-strava-page .app-strava-status-card {
   border-color: rgba(6, 95, 70, 0.14) !important;
   background: rgba(255, 255, 255, 0.55) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Strava sync message - final contrast fix */
+/* --------------------------------------------------------------------------
+   Activity detail page V3 â€” premium outdoor, isolated from the rest of the app
+   -------------------------------------------------------------------------- */
+html .app-activity-detail-page {
+  --activity-detail-ink: #f8fafc;
+  --activity-detail-muted: rgba(226, 232, 240, 0.68);
+  --activity-detail-surface: rgba(16, 18, 25, 0.88);
+  --activity-detail-surface-strong: rgba(22, 25, 34, 0.96);
+  --activity-detail-soft: rgba(255, 255, 255, 0.055);
+  --activity-detail-soft-strong: rgba(255, 255, 255, 0.09);
+  --activity-detail-border: rgba(255, 255, 255, 0.09);
+  --activity-detail-accent: #34d399;
+  --activity-detail-accent-dark: #059669;
+  --activity-detail-shadow: 0 24px 72px rgba(0, 0, 0, 0.24);
+  color: var(--activity-detail-ink);
+}
+
+html.sport-theme-nature .app-activity-detail-page {
+  --activity-detail-ink: #102033;
+  --activity-detail-muted: #64748b;
+  --activity-detail-surface: rgba(255, 255, 255, 0.88);
+  --activity-detail-surface-strong: rgba(255, 255, 255, 0.96);
+  --activity-detail-soft: rgba(236, 253, 245, 0.7);
+  --activity-detail-soft-strong: rgba(209, 250, 229, 0.82);
+  --activity-detail-border: rgba(6, 95, 70, 0.13);
+  --activity-detail-accent: #10b981;
+  --activity-detail-accent-dark: #047857;
+  --activity-detail-shadow:
+    0 22px 64px rgba(6, 78, 59, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+html .app-shell main .app-activity-detail-page,
+html.sport-theme-nature .app-shell main .app-activity-detail-page {
+  background: transparent !important;
+  color: var(--activity-detail-ink) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-back,
+html .app-activity-detail-page .app-activity-detail-source-pill {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-soft) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-back:hover {
+  border-color: rgba(16, 185, 129, 0.28) !important;
+  background: var(--activity-detail-soft-strong) !important;
+  color: var(--activity-detail-accent-dark) !important;
+}
+
+html .app-shell main .app-activity-detail-page .app-activity-detail-surface,
 html.sport-theme-nature
   .app-shell
   main
-  .app-strava-page
-  .app-strava-message-success {
-  border: 1px solid rgba(6, 95, 70, 0.28) !important;
-  background: rgba(236, 253, 245, 0.96) !important;
-  color: #064e3b !important;
+  .app-activity-detail-page
+  .app-activity-detail-surface {
+  border: 1px solid var(--activity-detail-border) !important;
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(132, 204, 22, 0.08),
+      transparent 32%
+    ),
+    var(--activity-detail-surface) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: var(--activity-detail-shadow) !important;
+}
+
+html .app-shell main .app-activity-detail-page .app-activity-detail-hero,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-activity-detail-page
+  .app-activity-detail-hero {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-surface-strong) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: var(--activity-detail-shadow) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-cover-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 18, 14, 0.88) 0%,
+      rgba(3, 18, 14, 0.56) 52%,
+      rgba(3, 18, 14, 0.2) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(3, 18, 14, 0.9) 0%,
+      rgba(3, 18, 14, 0.42) 48%,
+      rgba(3, 18, 14, 0.12) 100%
+    ) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-cover-grid {
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 88%);
+}
+
+html .app-activity-detail-page .app-activity-detail-title,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-activity-detail-page
+  .app-activity-detail-title {
+  max-width: 18ch !important;
+  color: #ffffff !important;
+  text-wrap: balance;
+  text-shadow:
+    0 8px 34px rgba(0, 0, 0, 0.46),
+    0 2px 10px rgba(0, 0, 0, 0.28) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-hero-copy,
+html .app-activity-detail-page .app-activity-detail-hero-eyebrow,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-activity-detail-page
+  .app-activity-detail-hero-copy,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-activity-detail-page
+  .app-activity-detail-hero-eyebrow {
+  color: rgba(240, 253, 244, 0.82) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-hero-badge,
+html .app-activity-detail-page .app-activity-detail-meta,
+html .app-activity-detail-page .app-activity-detail-action {
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  background: rgba(3, 18, 14, 0.46) !important;
+  color: #ecfdf5 !important;
   box-shadow:
-    0 18px 44px rgba(6, 78, 59, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 12px 28px rgba(0, 0, 0, 0.14) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
 }
 
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-message-success
-  *,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-message-success
-  p,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-message-success
-  span,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-strava-page
-  .app-strava-message-success
-  div {
-  color: #064e3b !important;
-  opacity: 1 !important;
+html .app-activity-detail-page .app-activity-detail-action:hover {
+  border-color: rgba(187, 247, 208, 0.4) !important;
+  background: rgba(6, 78, 59, 0.7) !important;
+  transform: translateY(-1px);
 }
 
+html .app-activity-detail-page .app-activity-detail-route-panel {
+  background:
+    radial-gradient(circle at 92% 6%, rgba(132, 204, 22, 0.1), transparent 30%),
+    var(--activity-detail-surface-strong) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-route-panel h2,
 html.sport-theme-nature
   .app-shell
   main
-  .app-strava-page
-  .app-strava-message-success
-  svg {
-  color: #059669 !important;
-  stroke: #059669 !important;
+  .app-activity-detail-page
+  .app-activity-detail-route-panel
+  h2 {
+  color: var(--activity-detail-ink) !important;
 }
 
+html .app-activity-detail-page .app-activity-detail-route-status,
+html .app-activity-detail-page .app-activity-detail-tag {
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  background: var(--activity-detail-soft) !important;
+  color: var(--activity-detail-accent-dark) !important;
+}
 
+html .app-activity-detail-page .app-activity-detail-map {
+  border: 1px solid rgba(16, 185, 129, 0.16) !important;
+  background: #eaf7df !important;
+  box-shadow:
+    0 18px 46px rgba(6, 78, 59, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+html .app-activity-detail-page .app-mini-route-map {
+  aspect-ratio: auto !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  box-shadow: none !important;
+}
+
+html .app-activity-detail-page .app-mini-route-map .app-map-chip {
+  top: 0.875rem !important;
+  left: 0.875rem !important;
+  padding: 0.55rem 0.85rem !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+}
+
+html .app-activity-detail-page .app-mini-route-map .app-map-controls {
+  top: 0.875rem !important;
+  right: 0.875rem !important;
+}
+
+html .app-activity-detail-page .app-mini-route-map .app-map-controls button {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+}
+
+html .app-activity-detail-page .app-mini-route-map .app-map-legend {
+  right: 0.875rem !important;
+  bottom: 0.875rem !important;
+  left: 0.875rem !important;
+  padding: 0.72rem 0.9rem !important;
+  font-size: 0.7rem !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-metrics > * + * {
+  border-color: var(--activity-detail-border) !important;
+}
+
+@media (min-width: 640px) {
+  html .app-activity-detail-page .app-activity-detail-metrics > * + * {
+    border-left: 1px solid var(--activity-detail-border) !important;
+  }
+}
+
+html .app-activity-detail-page .app-activity-detail-stat-icon,
+html .app-activity-detail-page .app-activity-detail-summary-icon,
+html .app-activity-detail-page .app-activity-detail-empty-icon {
+  border: 1px solid rgba(16, 185, 129, 0.16) !important;
+  background: var(--activity-detail-soft) !important;
+  color: var(--activity-detail-accent-dark) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-stat-label,
+html .app-activity-detail-page .app-activity-detail-eyebrow {
+  color: var(--activity-detail-muted) !important;
+  font-size: 0.68rem !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-stat-value,
+html .app-activity-detail-page h2,
+html .app-activity-detail-page h3,
+html .app-activity-detail-page strong,
+html.sport-theme-nature .app-shell main .app-activity-detail-page h2,
+html.sport-theme-nature .app-shell main .app-activity-detail-page h3 {
+  color: var(--activity-detail-ink) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-muted,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-activity-detail-page
+  .app-activity-detail-muted {
+  color: var(--activity-detail-muted) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-climb-pill,
+html .app-activity-detail-page .app-activity-detail-data-tile,
+html .app-activity-detail-page .app-activity-detail-weather-note {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-soft) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-chart,
+html .app-activity-detail-page .app-activity-detail-chart-empty {
+  border: 1px solid rgba(16, 185, 129, 0.14) !important;
+  background:
+    linear-gradient(rgba(16, 185, 129, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.055) 1px, transparent 1px),
+    var(--activity-detail-soft) !important;
+  background-size:
+    52px 52px,
+    52px 52px,
+    auto !important;
+  color: var(--activity-detail-accent) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-chart-grid {
+  stroke: rgba(16, 185, 129, 0.14);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+html .app-activity-detail-page .app-activity-detail-row {
+  border-color: var(--activity-detail-border) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-secondary-button {
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  background: var(--activity-detail-soft) !important;
+  color: var(--activity-detail-accent-dark) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html .app-activity-detail-page .app-activity-detail-secondary-button:hover {
+  border-color: rgba(16, 185, 129, 0.34) !important;
+  background: var(--activity-detail-soft-strong) !important;
+  transform: translateY(-1px);
+}
+
+html .app-activity-detail-page .app-activity-detail-footer-note {
+  border: 1px solid var(--activity-detail-border) !important;
+  background: var(--activity-detail-soft) !important;
+  color: var(--activity-detail-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-activity-detail-page
+  .app-activity-detail-route-status,
+html:not(.sport-theme-nature)
+  .app-activity-detail-page
+  .app-activity-detail-tag,
+html:not(.sport-theme-nature)
+  .app-activity-detail-page
+  .app-activity-detail-secondary-button {
+  color: #6ee7b7 !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-activity-detail-page
+  .app-activity-detail-stat-icon,
+html:not(.sport-theme-nature)
+  .app-activity-detail-page
+  .app-activity-detail-summary-icon,
+html:not(.sport-theme-nature)
+  .app-activity-detail-page
+  .app-activity-detail-empty-icon {
+  color: #6ee7b7 !important;
+}
+
+@media (max-width: 1023px) {
+  html .app-activity-detail-page .app-activity-detail-map,
+  html .app-activity-detail-page .app-mini-route-map {
+    min-height: 310px !important;
+  }
+
+  html .app-activity-detail-page .app-activity-detail-route-panel {
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 639px) {
+  html .app-activity-detail-page {
+    padding-inline: 0.85rem !important;
+  }
+
+  html .app-activity-detail-page .app-activity-detail-cover,
+  html .app-activity-detail-page .app-activity-detail-cover > .relative {
+    min-height: 430px !important;
+  }
+
+  html .app-activity-detail-page .app-activity-detail-title {
+    max-width: 14ch !important;
+    font-size: clamp(2rem, 10vw, 2.75rem) !important;
+  }
+
+  html .app-activity-detail-page .app-activity-detail-meta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  html .app-activity-detail-page .app-activity-detail-metrics > * + * {
+    border-top: 1px solid var(--activity-detail-border) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html .app-activity-detail-page *,
+  html .app-activity-detail-page *::before,
+  html .app-activity-detail-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

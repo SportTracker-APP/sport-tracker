@@ -27,6 +27,8 @@ export interface Activity {
 
   maxAltitude: number | null;
 
+  minAltitude?: number | null;
+
   calories: number | null;
 
   averageSpeed: number | null;
@@ -38,6 +40,10 @@ export interface Activity {
   averageHeartRate: number | null;
 
   maxHeartRate: number | null;
+
+  temperature: number | null;
+
+  weather: string | null;
 
   city: string | null;
 
@@ -52,6 +58,16 @@ export interface Activity {
   endLongitude: number | null;
 
   routePolyline: string | null;
+
+  coverImageUrl: string | null;
+
+  photoUrls?: string[] | null;
+
+  photoCount?: number | null;
+
+  altitudeStream?: number[] | null;
+
+  distanceStream?: number[] | null;
 
   startedAt: string;
 

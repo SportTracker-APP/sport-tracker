@@ -92,8 +92,15 @@ export function WeeklyActivityChart({
 
         {activeDays.length > 0 ? (
           <>
-            <div className="rounded-[22px] border border-white/[0.06] bg-black/15 p-4">
-              <div className="flex h-[240px] items-end gap-1.5 sm:gap-2">
+            <div className="overflow-hidden rounded-[22px] border border-white/[0.06] bg-black/15 p-4">
+              <div
+                className="grid h-[240px] min-w-0 items-end gap-1.5 sm:gap-2"
+                style={
+                  {
+                    gridTemplateColumns: `repeat(${data.length}, minmax(0, 1fr))`,
+                  } as React.CSSProperties
+                }
+              >
                 {data.map((point, index) => {
                   const height =
                     maxDistance > 0
@@ -108,7 +115,7 @@ export function WeeklyActivityChart({
                   return (
                     <div
                       key={`${point.day}-${index}`}
-                      className="group/bar flex h-full min-w-[13px] flex-1 flex-col items-center justify-end gap-2"
+                      className="group/bar flex h-full min-w-0 flex-col items-center justify-end gap-2"
                     >
                       <div className="relative flex h-full w-full items-end justify-center">
                         {point.km > 0 && (
