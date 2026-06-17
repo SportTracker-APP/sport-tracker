@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
-import type { ElementType } from "react";
+import { useEffect, useState } from "react";
+import type { CSSProperties, ElementType } from "react";
 
 import {
   ArrowLeft,
   CalendarDays,
+  ChevronRight,
   Ellipsis,
   Flame,
   MapPin,
@@ -34,6 +35,8 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { useActivity } from "@/hooks/use-activities";
 import { pickRandomActivityFallbackImage } from "@/lib/activity-fallback-images";
 import type { Activity as ActivityModel } from "@/lib/activities";
+
+import styles from "./activity-detail.module.css";
 
 const sportLabels: Record<string, string> = {
   RUNNING: "Course",
@@ -746,29 +749,66 @@ function buildElevationChartData(
   }));
 }
 
-type StatProps = {
+
+type MetricProps = {
   icon: ElementType;
   label: string;
   value: string;
   unit?: string;
+  sparkline: "distance" | "time" | "elevation" | "calories";
 };
 
-function Stat({ icon: Icon, label, value, unit }: StatProps) {
+function MetricSparkline({
+  variant,
+}: {
+  variant: MetricProps["sparkline"];
+}) {
+  const paths: Record<MetricProps["sparkline"], string> = {
+    distance:
+      "M2 34 C18 31 28 33 43 26 C57 20 69 26 84 18 C99 9 112 27 127 20 C139 15 151 11 170 13",
+    time: "M2 30 C18 29 31 23 47 25 C62 27 78 16 93 20 C108 24 123 31 139 24 C151 20 160 21 170 18",
+    elevation:
+      "M2 30 C18 28 31 29 45 24 C61 19 75 28 89 22 C104 16 118 25 134 19 C148 15 158 24 170 21",
+    calories:
+      "M2 30 C20 34 35 25 53 28 C68 31 82 19 98 24 C114 28 128 31 143 24 C155 18 164 22 170 20",
+  };
+
+  const linePath = paths[variant];
+  const areaPath = `${linePath} L170 42 L2 42 Z`;
+
   return (
-    <div className="flex min-h-[92px] items-center gap-4 px-5 py-4 sm:px-6">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-        <Icon className="h-5 w-5" />
+    <svg
+      aria-hidden="true"
+      className={styles.metricSparkline}
+      viewBox="0 0 172 42"
+      preserveAspectRatio="none"
+    >
+      <path d={areaPath} className={styles.metricSparklineFill} />
+      <path d={linePath} className={styles.metricSparklineLine} />
+    </svg>
+  );
+}
+
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  unit,
+  sparkline,
+}: MetricProps) {
+  return (
+    <div className={styles.metricCard}>
+      <MetricSparkline variant={sparkline} />
+
+      <div className={styles.metricIcon}>
+        <Icon aria-hidden="true" />
       </div>
 
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-slate-500">{label}</p>
-        <p className="mt-1 text-2xl leading-none font-bold tracking-tight text-slate-900 xl:text-3xl">
+      <div className={styles.metricCopy}>
+        <p className={styles.metricLabel}>{label}</p>
+        <p className={styles.metricValue}>
           {value}
-          {unit && (
-            <span className="ml-1 text-base font-semibold text-slate-700">
-              {unit}
-            </span>
-          )}
+          {unit ? <span>{unit}</span> : null}
         </p>
       </div>
     </div>
@@ -786,13 +826,9 @@ function ElevationChart({
 }) {
   if (values.length < 2) {
     return (
-      <div className="app-activity-detail-chart flex min-h-[320px] items-center justify-center rounded-[22px] px-6 py-10 text-center">
-        <div>
-          <Mountain className="mx-auto h-7 w-7 text-emerald-500" />
-          <p className="app-activity-detail-muted mt-3 text-sm font-medium">
-            Le profil d’altitude n’est pas disponible pour cette activité.
-          </p>
-        </div>
+      <div className={styles.chartEmpty}>
+        <Mountain aria-hidden="true" />
+        <p>Le profil d’altitude n’est pas disponible pour cette activité.</p>
       </div>
     );
   }
@@ -810,80 +846,59 @@ function ElevationChart({
   );
 
   return (
-    <div className="app-activity-detail-chart relative overflow-hidden rounded-[22px]">
-      <div className="pointer-events-none absolute inset-x-5 top-4 z-10 flex items-start justify-between gap-4">
+    <div className={styles.chartShell}>
+      <div className={styles.chartBounds}>
         <div>
-          <p className="app-activity-detail-eyebrow">Point bas</p>
-          <strong className="mt-1 block text-2xl leading-none">
-            {formatNumber(minimum, { maximumFractionDigits: 0 })} m
-          </strong>
+          <p>Point bas</p>
+          <strong>{formatNumber(minimum, { maximumFractionDigits: 0 })} m</strong>
         </div>
-        <div className="text-right">
-          <p className="app-activity-detail-eyebrow">Point haut</p>
-          <strong className="mt-1 block text-2xl leading-none">
-            {formatNumber(maximum, { maximumFractionDigits: 0 })} m
-          </strong>
+        <div>
+          <p>Point haut</p>
+          <strong>{formatNumber(maximum, { maximumFractionDigits: 0 })} m</strong>
         </div>
       </div>
 
-      <div className="h-[320px] w-full pt-15">
+      <div className={styles.chartCanvas}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
-            margin={{
-              top: 14,
-              right: 12,
-              left: 18,
-              bottom: 10,
-            }}
+            margin={{ top: 18, right: 12, left: 12, bottom: 6 }}
           >
             <defs>
               <linearGradient
-                id="activity-elevation-area"
+                id="activity-elevation-area-v2"
                 x1="0"
                 y1="0"
                 x2="0"
                 y2="1"
               >
-                <stop offset="0%" stopColor="#34d399" stopOpacity={0.34} />
-                <stop offset="100%" stopColor="#34d399" stopOpacity={0.04} />
+                <stop
+                  offset="0%"
+                  stopColor="var(--activity-accent)"
+                  stopOpacity={0.26}
+                />
+                <stop
+                  offset="100%"
+                  stopColor="var(--activity-accent)"
+                  stopOpacity={0.02}
+                />
               </linearGradient>
-
-              <linearGradient
-                id="activity-elevation-line"
-                x1="0"
-                y1="0"
-                x2="1"
-                y2="0"
-              >
-                <stop offset="0%" stopColor="#10b981" />
-                <stop offset="62%" stopColor="#22c55e" />
-                <stop offset="100%" stopColor="#84cc16" />
-              </linearGradient>
-
-              <filter id="activity-elevation-glow">
-                <feGaussianBlur stdDeviation="7" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
 
             <CartesianGrid
-              strokeDasharray="3 3"
+              strokeDasharray="3 5"
               vertical
               horizontal
-              className="app-activity-detail-chart-grid"
+              stroke="var(--activity-chart-grid)"
             />
 
             <XAxis
               dataKey="distance"
               tickLine={false}
               axisLine={false}
-              minTickGap={28}
+              minTickGap={30}
               tick={{
-                fill: "var(--activity-detail-muted)",
+                fill: "var(--activity-muted)",
                 fontSize: 11,
                 fontWeight: 600,
               }}
@@ -893,25 +908,25 @@ function ElevationChart({
             />
 
             <YAxis
-              width={56}
+              width={54}
               tickLine={false}
               axisLine={false}
+              domain={[yMin, yMax]}
+              ticks={yTicks}
               tick={{
-                fill: "var(--activity-detail-muted)",
+                fill: "var(--activity-muted)",
                 fontSize: 11,
                 fontWeight: 600,
               }}
-              domain={[yMin, yMax]}
-              ticks={yTicks}
               tickFormatter={(value) => `${value} m`}
             />
 
             <Tooltip
-              cursor={false}
+              cursor={{ stroke: "var(--activity-accent)", strokeOpacity: 0.2 }}
               contentStyle={{
                 borderRadius: "14px",
-                border: "1px solid rgba(16, 185, 129, 0.18)",
-                background: "rgba(15, 23, 42, 0.92)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                background: "rgba(15, 23, 42, 0.94)",
                 color: "#f8fafc",
                 boxShadow: "0 18px 38px rgba(0, 0, 0, 0.22)",
               }}
@@ -931,16 +946,16 @@ function ElevationChart({
             <Area
               type="natural"
               dataKey="elevation"
-              stroke="url(#activity-elevation-line)"
-              strokeWidth={4}
-              fill="url(#activity-elevation-area)"
+              stroke="var(--activity-accent)"
+              strokeWidth={3}
+              fill="url(#activity-elevation-area-v2)"
               fillOpacity={1}
-              filter="url(#activity-elevation-glow)"
               dot={false}
               activeDot={{
                 r: 5,
-                strokeWidth: 0,
-                fill: "#ffffff",
+                strokeWidth: 2,
+                stroke: "var(--activity-surface)",
+                fill: "var(--activity-accent)",
               }}
             />
           </AreaChart>
@@ -955,18 +970,18 @@ export default function ActivityDetailsPage() {
   const activityId = params.id;
   const { data: activity, isLoading, error } = useActivity(activityId);
   const [heroPanel, setHeroPanel] = useState<"map" | "photos">("map");
-  const fallbackHeroImage = useMemo(
-    () => pickRandomActivityFallbackImage(),
-    [],
-  );
+  const [heroImage, setHeroImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setHeroImage(pickRandomActivityFallbackImage());
+  }, [activityId]);
 
   const activityPhotoUrls = activity ? getActivityPhotoUrls(activity) : [];
-  const coverImageUrl =
-    activityPhotoUrls[0] || activity?.coverImageUrl || fallbackHeroImage;
+  const coverImageUrl = activityPhotoUrls[0] || activity?.coverImageUrl || null;
   const sportLabel = getSportLabel(activity ?? null);
   const difficulty = activity ? getDifficultyLabel(activity) : "—";
   const startLabel = activity ? getStartLabel(activity) : "";
-  const hasPhoto = Boolean(activityPhotoUrls[0] || activity?.coverImageUrl);
+  const hasPhoto = Boolean(coverImageUrl);
   const reportedPhotoCount =
     activity?.photoCount && activity.photoCount > 0
       ? activity.photoCount
@@ -988,252 +1003,232 @@ export default function ActivityDetailsPage() {
     activity?.elevationGain ?? elevationTotals?.ascent ?? null;
   const negativeElevation =
     activity?.elevationLoss ?? elevationTotals?.descent ?? null;
+
+  const heroStyle = heroImage
+    ? ({
+        "--activity-hero-image": `url("${heroImage}")`,
+      } as CSSProperties)
+    : undefined;
+
+  const handleShare = async () => {
+    if (typeof window === "undefined" || !activity) {
+      return;
+    }
+
+    const shareData = {
+      title: activity.title || "Sortie Montaro",
+      text: getHeroText(activity),
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      await navigator.share(shareData).catch(() => undefined);
+      return;
+    }
+
+    await navigator.clipboard?.writeText(window.location.href);
+  };
+
   return (
     <DashboardLayout>
-      <div className="app-activity-detail-page mx-auto w-full max-w-[1480px] space-y-4 px-4 pt-2 pb-6 sm:px-6 sm:pt-3 xl:px-8">
-        <Link
-          href="/activites"
-          className="app-activity-detail-backlink inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-sm font-semibold transition"
-        >
-          <ArrowLeft className="h-4 w-4" />
+      <div className={styles.page}>
+        <Link href="/activites" className={styles.backLink}>
+          <ArrowLeft aria-hidden="true" />
           Retour aux sorties
         </Link>
 
-        {isLoading && (
-          <section className="rounded-[24px] border border-emerald-100 bg-white/90 p-10 text-center text-slate-500 shadow-[0_18px_48px_rgba(6,78,59,0.08)]">
-            Chargement de la sortie...
-          </section>
-        )}
+        {isLoading ? (
+          <div className={styles.stateCard}>Chargement de la sortie…</div>
+        ) : null}
 
-        {error && (
-          <section className="rounded-[24px] border border-red-200 bg-red-50/90 p-10 text-center text-red-700 shadow-[0_18px_48px_rgba(153,27,27,0.06)]">
+        {error ? (
+          <div className={`${styles.stateCard} ${styles.errorCard}`}>
             Impossible de charger cette sortie.
-          </section>
-        )}
+          </div>
+        ) : null}
 
-        {activity && (
+        {activity ? (
           <FadeIn>
-            <div className="space-y-5">
-              <section className="app-activity-detail-hero app-activity-detail-surface grid overflow-hidden rounded-[26px] lg:h-[400px] lg:grid-cols-[1.12fr_0.88fr] xl:h-[420px]">
-                <div className="app-activity-detail-hero-photo relative h-[300px] overflow-hidden lg:h-auto">
-                  <Image
-                    src={coverImageUrl}
-                    alt={activity.title || "Photo de sortie"}
-                    fill
-                    priority
-                    unoptimized
-                    sizes="(max-width: 1024px) 100vw, 56vw"
-                    className="scale-[1.04] object-cover"
-                    style={{
-                      objectPosition: hasPhoto ? "center 84%" : "center 76%",
-                    }}
-                  />
+            <div className={styles.content}>
+              <div className={styles.hero} style={heroStyle}>
+                <div className={styles.heroShade} aria-hidden="true" />
 
-                  <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(3,18,14,0.88)_0%,rgba(3,18,14,0.48)_46%,rgba(3,18,14,0.16)_100%)]" />
-                  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,15,18,0.38),rgba(7,15,18,0.14)_42%,transparent)]" />
+                <div className={styles.heroContent}>
+                  <div className={styles.heroTopline}>
+                    <span className={styles.sportBadge}>
+                      <Mountain aria-hidden="true" />
+                      {sportLabel}
+                    </span>
 
-                  <div className="app-activity-detail-hero-content relative z-10 flex h-full flex-col gap-6 p-5 lg:p-7">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-[#1f3c2e]/70 px-4 py-2 text-sm font-semibold text-emerald-50 backdrop-blur-sm">
-                        <Mountain className="h-4 w-4" />
-                        {sportLabel}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          className="app-activity-detail-hero-action flex h-10 w-10 items-center justify-center rounded-full border border-white/18 bg-black/20 text-white/90 backdrop-blur-sm"
-                        >
-                          <Share2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          className="app-activity-detail-hero-action flex h-10 w-10 items-center justify-center rounded-full border border-white/18 bg-black/20 text-white/90 backdrop-blur-sm"
-                        >
-                          <Ellipsis className="h-4 w-4" />
-                        </button>
-                      </div>
+                    <div className={styles.heroActions}>
+                      <button
+                        type="button"
+                        onClick={handleShare}
+                        className={styles.heroAction}
+                        aria-label="Partager cette sortie"
+                      >
+                        <Share2 aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.heroAction}
+                        aria-label="Plus d’options"
+                      >
+                        <Ellipsis aria-hidden="true" />
+                      </button>
                     </div>
+                  </div>
 
-                    <div className="app-activity-detail-hero-copy mt-auto max-w-[660px]">
-                      <h1 className="max-w-[620px] text-[clamp(1.6rem,1.95vw,2.28rem)] leading-[1.12] font-semibold tracking-[-0.018em] text-white">
-                        {activity.title || "Sortie sans titre"}
-                      </h1>
-                      <p className="mt-3 max-w-[48ch] text-sm leading-6 font-medium text-white/82 lg:text-[15px] lg:leading-7">
-                        {getHeroText(activity)}
-                      </p>
-                    </div>
+                  <div className={styles.heroCopy}>
+                    <h1 className={styles.heroTitle}>
+                      {activity.title || "Sortie sans titre"}
+                    </h1>
+                    <p className={styles.heroDescription}>
+                      {getHeroText(activity)}
+                    </p>
+                  </div>
 
-                    <div className="app-activity-detail-hero-meta mt-2 flex flex-wrap gap-3 pb-2">
-                      <span className="app-activity-detail-hero-pill inline-flex min-h-[48px] items-center gap-2 rounded-[16px] border border-white/12 bg-black/24 px-4 text-sm font-semibold text-white/92 backdrop-blur-sm">
-                        <CalendarDays className="h-4 w-4 text-emerald-100" />
-                        {formatDate(activity.startedAt)}
-                      </span>
-                      <span className="app-activity-detail-hero-pill inline-flex min-h-[48px] items-center gap-2 rounded-[16px] border border-white/12 bg-black/24 px-4 text-sm font-semibold text-white/92 backdrop-blur-sm">
-                        <MapPin className="h-4 w-4 text-emerald-100" />
-                        {startLabel}
-                      </span>
-                      <span className="app-activity-detail-hero-pill inline-flex min-h-[48px] items-center gap-2 rounded-[16px] border border-white/12 bg-black/24 px-4 text-sm font-semibold text-white/92 backdrop-blur-sm">
-                        <SunMedium className="h-4 w-4 text-amber-300" />
-                        {difficulty}
-                      </span>
-                      {activity.temperature !== null && (
-                        <span className="app-activity-detail-hero-pill inline-flex min-h-[48px] items-center gap-2 rounded-[16px] border border-white/12 bg-black/24 px-4 text-sm font-semibold text-white/92 backdrop-blur-sm">
-                          <SunMedium className="h-4 w-4 text-amber-300" />
-                          {formatNumber(activity.temperature, {
-                            maximumFractionDigits: 0,
-                          })}
-                          °C
-                        </span>
-                      )}
-                    </div>
+                  <div className={styles.heroMeta}>
+                    <span>
+                      <CalendarDays aria-hidden="true" />
+                      {formatDate(activity.startedAt)}
+                    </span>
+                    <span>
+                      <MapPin aria-hidden="true" />
+                      {startLabel}
+                    </span>
+                    <span>
+                      <SunMedium aria-hidden="true" />
+                      {difficulty}
+                    </span>
                   </div>
                 </div>
 
-                <div className="app-activity-detail-side-panel flex h-[300px] min-h-0 flex-col gap-3 p-3 lg:h-auto lg:p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="inline-flex rounded-full border border-emerald-100 bg-emerald-50 p-1">
+                <div className={styles.mapOverlayCard}>
+                  <div className={styles.mapTabs} role="tablist">
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={heroPanel === "map"}
+                      onClick={() => setHeroPanel("map")}
+                      className={heroPanel === "map" ? styles.activeTab : ""}
+                    >
+                      Carte
+                    </button>
+
+                    {hasPhoto ? (
                       <button
                         type="button"
-                        onClick={() => setHeroPanel("map")}
-                        className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                          heroPanel === "map"
-                            ? "bg-white text-emerald-900 shadow-[0_8px_18px_rgba(15,23,42,0.08)]"
-                            : "text-slate-500"
-                        }`}
+                        role="tab"
+                        aria-selected={heroPanel === "photos"}
+                        onClick={() => setHeroPanel("photos")}
+                        className={
+                          heroPanel === "photos" ? styles.activeTab : ""
+                        }
                       >
-                        Carte
+                        Photos
                       </button>
-                      {hasPhoto && (
-                        <button
-                          type="button"
-                          onClick={() => setHeroPanel("photos")}
-                          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                            heroPanel === "photos"
-                              ? "bg-white text-emerald-900 shadow-[0_8px_18px_rgba(15,23,42,0.08)]"
-                              : "text-slate-500"
-                          }`}
-                        >
-                          Photos
-                        </button>
-                      )}
-                    </div>
+                    ) : null}
                   </div>
 
-                  <div
-                    id="activity-map"
-                    className={`app-activity-detail-map-shell min-h-0 flex-1 overflow-hidden rounded-[22px] ${
-                      heroPanel === "photos"
-                        ? "app-activity-detail-photo-shell"
-                        : ""
-                    }`}
-                  >
+                  <div className={styles.mapViewport}>
                     {heroPanel === "map" ? (
                       <MiniRouteMap
                         display="wide"
                         polyline={activity.routePolyline}
                         size="large"
                       />
-                    ) : (
-                      <div className="relative h-full min-h-[260px] overflow-hidden rounded-[22px]">
+                    ) : coverImageUrl ? (
+                      <div className={styles.photoViewport}>
                         <Image
                           src={coverImageUrl}
                           alt={activity.title || "Photo de sortie"}
                           fill
                           unoptimized
                           sizes="(max-width: 1024px) 100vw, 44vw"
-                          className="object-cover"
-                          style={{ objectPosition: "center 70%" }}
+                          className={styles.photoImage}
                         />
-                        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(7,15,18,0.38),rgba(7,15,18,0.02)_58%)]" />
-                        <div className="absolute bottom-4 left-4 rounded-full border border-white/18 bg-black/24 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
-                          Photo principale
+                        <div className={styles.photoCaption}>
+                          <span>Photo Strava</span>
+                          <small>
+                            {hasHiddenStravaPhotos
+                              ? `${reportedPhotoCount} photos signalées`
+                              : `${reportedPhotoCount} photo${reportedPhotoCount > 1 ? "s" : ""}`}
+                          </small>
                         </div>
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
-              </section>
+              </div>
 
-              <section className="app-activity-detail-surface grid overflow-hidden rounded-[24px] sm:grid-cols-2 xl:grid-cols-4">
-                <Stat
+              <div className={styles.metricsGrid}>
+                <MetricCard
                   icon={Route}
                   label="Distance"
                   value={formatNumber(activity.distance, {
                     maximumFractionDigits: 2,
                   })}
                   unit="km"
+                  sparkline="distance"
                 />
-                <div className="border-t border-emerald-100 sm:border-t-0 sm:border-l">
-                  <Stat
-                    icon={Timer}
-                    label="Temps en mouvement"
-                    value={formatMovingTime(activity.movingTime)}
-                  />
-                </div>
-                <div className="border-t border-emerald-100 xl:border-t-0 xl:border-l">
-                  <Stat
-                    icon={Mountain}
-                    label="Dénivelé +"
-                    value={formatNumber(positiveElevation, {
-                      maximumFractionDigits: 0,
-                    })}
-                    unit="m"
-                  />
-                </div>
-                <div className="border-t border-emerald-100 sm:border-l xl:border-t-0">
-                  <Stat
-                    icon={Flame}
-                    label="Calories"
-                    value={formatNumber(activity.calories, {
-                      maximumFractionDigits: 0,
-                    })}
-                    unit="kcal"
-                  />
-                </div>
-              </section>
+                <MetricCard
+                  icon={Timer}
+                  label="Temps en mouvement"
+                  value={formatMovingTime(activity.movingTime)}
+                  sparkline="time"
+                />
+                <MetricCard
+                  icon={Mountain}
+                  label="Dénivelé +"
+                  value={formatNumber(positiveElevation, {
+                    maximumFractionDigits: 0,
+                  })}
+                  unit="m"
+                  sparkline="elevation"
+                />
+                <MetricCard
+                  icon={Flame}
+                  label="Calories"
+                  value={formatNumber(activity.calories, {
+                    maximumFractionDigits: 0,
+                  })}
+                  unit="kcal"
+                  sparkline="calories"
+                />
+              </div>
 
-              <div className="grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(300px,0.8fr)]">
-                <section className="app-activity-detail-surface rounded-[26px] p-5 sm:p-6">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className={styles.analysisGrid}>
+                <div className={styles.elevationCard}>
+                  <div className={styles.cardHeader}>
                     <div>
-                      <p className="app-activity-detail-eyebrow">
-                        Lecture du terrain
-                      </p>
-                      <h2 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">
-                        Profil d’altitude
-                      </h2>
-                      <p className="app-activity-detail-muted mt-1 text-sm">
-                        Une lecture claire du relief sur l’ensemble de la
-                        sortie.
+                      <h2 className={styles.cardTitle}>Profil d’altitude</h2>
+                      <p className={styles.cardSubtitle}>
+                        Une lecture claire du relief sur l’ensemble de la sortie.
                       </p>
                     </div>
 
-                    <div className="app-activity-detail-climb-pill rounded-2xl px-4 py-3 text-right">
-                      <p className="app-activity-detail-eyebrow">D+ total</p>
-                      <strong className="mt-1 block text-xl">
+                    <div className={styles.totalPill}>
+                      <span>D+ total</span>
+                      <strong>
                         {formatNumber(positiveElevation, {
                           maximumFractionDigits: 0,
-                        })}{" "}
+                        })} {" "}
                         m
                       </strong>
                     </div>
                   </div>
 
-                  <div className="mt-5">
-                    <ElevationChart
-                      values={elevationSeries}
-                      distanceKm={activity.distance}
-                      distanceValues={distanceSeries}
-                    />
-                  </div>
+                  <ElevationChart
+                    values={elevationSeries}
+                    distanceKm={activity.distance}
+                    distanceValues={distanceSeries}
+                  />
 
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="app-activity-detail-data-tile rounded-[18px] px-4 py-3.5">
-                      <p className="app-activity-detail-eyebrow">
-                        Altitude min
-                      </p>
-                      <strong className="mt-2 block text-xl">
+                  <div className={styles.elevationFacts}>
+                    <div>
+                      <span>Altitude min</span>
+                      <strong>
                         {minimumAltitude !== null
                           ? `${formatNumber(minimumAltitude, {
                               maximumFractionDigits: 0,
@@ -1241,11 +1236,9 @@ export default function ActivityDetailsPage() {
                           : "—"}
                       </strong>
                     </div>
-                    <div className="app-activity-detail-data-tile rounded-[18px] px-4 py-3.5">
-                      <p className="app-activity-detail-eyebrow">
-                        Altitude max
-                      </p>
-                      <strong className="mt-2 block text-xl">
+                    <div>
+                      <span>Altitude max</span>
+                      <strong>
                         {activity.maxAltitude !== null
                           ? `${formatNumber(activity.maxAltitude, {
                               maximumFractionDigits: 0,
@@ -1253,23 +1246,9 @@ export default function ActivityDetailsPage() {
                           : "—"}
                       </strong>
                     </div>
-                    <div className="app-activity-detail-data-tile rounded-[18px] px-4 py-3.5">
-                      <p className="app-activity-detail-eyebrow">
-                        Dénivelé positif
-                      </p>
-                      <strong className="mt-2 block text-xl">
-                        {positiveElevation !== null
-                          ? `${formatNumber(positiveElevation, {
-                              maximumFractionDigits: 0,
-                            })} m`
-                          : "—"}
-                      </strong>
-                    </div>
-                    <div className="app-activity-detail-data-tile rounded-[18px] px-4 py-3.5">
-                      <p className="app-activity-detail-eyebrow">
-                        Dénivelé négatif
-                      </p>
-                      <strong className="mt-2 block text-xl">
+                    <div>
+                      <span>Dénivelé négatif</span>
+                      <strong>
                         {negativeElevation !== null
                           ? `${formatNumber(negativeElevation, {
                               maximumFractionDigits: 0,
@@ -1277,67 +1256,49 @@ export default function ActivityDetailsPage() {
                           : "—"}
                       </strong>
                     </div>
+                    <div>
+                      <span>Intensité verticale</span>
+                      <strong>
+                        {elevationRate !== null
+                          ? `${formatNumber(elevationRate, {
+                              maximumFractionDigits: 0,
+                            })} m/km`
+                          : "—"}
+                      </strong>
+                    </div>
                   </div>
+                </div>
 
-                  {elevationRate !== null && (
-                    <div className="mt-3 flex justify-end">
-                      <span className="app-activity-detail-tag rounded-full px-3 py-1.5 text-xs font-semibold">
-                        {formatNumber(elevationRate, {
-                          maximumFractionDigits: 0,
-                        })}{" "}
-                        m de D+ / km
-                      </span>
-                    </div>
-                  )}
-                </section>
+                <aside className={styles.summaryCard}>
+                  <h2 className={styles.cardTitle}>Résumé de la sortie</h2>
 
-                <aside className="app-activity-detail-surface rounded-[24px] p-5">
-                  <h2 className="text-lg font-semibold tracking-tight text-slate-900">
-                    Résumé de la sortie
-                  </h2>
-
-                  <div className="mt-5 grid gap-3">
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">Type</span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {sportLabel}
-                      </strong>
+                  <div className={styles.summaryRows}>
+                    <div>
+                      <span>Type</span>
+                      <strong>{sportLabel}</strong>
                     </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Difficulté
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {difficulty}
-                      </strong>
+                    <div>
+                      <span>Difficulté</span>
+                      <strong className={styles.accentValue}>{difficulty}</strong>
                     </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">Source</span>
-                      <strong className="text-right font-semibold text-slate-900">
+                    <div>
+                      <span>Source</span>
+                      <strong className={styles.sourceValue}>
+                        <i aria-hidden="true">S</i>
                         {getSourceLabel(activity)}
                       </strong>
                     </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Allure moyenne
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {formatPace(activity)}
-                      </strong>
+                    <div>
+                      <span>Allure moyenne</span>
+                      <strong>{formatPace(activity)}</strong>
                     </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Vitesse moyenne
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {formatSpeed(activity.averageSpeed)} km/h
-                      </strong>
+                    <div>
+                      <span>Vitesse moyenne</span>
+                      <strong>{formatSpeed(activity.averageSpeed)} km/h</strong>
                     </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Fréquence cardiaque
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
+                    <div>
+                      <span>Fréquence cardiaque</span>
+                      <strong>
                         {activity.averageHeartRate !== null
                           ? `${formatNumber(activity.averageHeartRate, {
                               maximumFractionDigits: 0,
@@ -1345,193 +1306,31 @@ export default function ActivityDetailsPage() {
                           : "—"}
                       </strong>
                     </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Altitude minimale
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {minimumAltitude !== null
-                          ? `${formatNumber(minimumAltitude, {
-                              maximumFractionDigits: 0,
-                            })} m`
-                          : "—"}
-                      </strong>
-                    </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 border-b border-emerald-100 pb-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Altitude maximale
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {activity.maxAltitude !== null
-                          ? `${formatNumber(activity.maxAltitude, {
-                              maximumFractionDigits: 0,
-                            })} m`
-                          : "—"}
-                      </strong>
-                    </div>
-                    <div className="app-activity-detail-meta-row flex items-center justify-between gap-3 text-sm">
-                      <span className="font-medium text-slate-500">
-                        Terrain
-                      </span>
-                      <strong className="text-right font-semibold text-slate-900">
-                        {getSurfaceLabel(activity)}
-                      </strong>
+                    <div>
+                      <span>Terrain</span>
+                      <strong>{getSurfaceLabel(activity)}</strong>
                     </div>
                   </div>
 
-                  {getTerrainTags(activity).length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-2">
+                  {getTerrainTags(activity).length > 0 ? (
+                    <div className={styles.tags}>
                       {getTerrainTags(activity).map((tag) => (
-                        <span
-                          key={tag}
-                          className="app-activity-detail-tag rounded-full px-3 py-1 text-xs font-semibold"
-                        >
-                          {tag}
-                        </span>
+                        <span key={tag}>{tag}</span>
                       ))}
                     </div>
-                  )}
+                  ) : null}
+
+                  <p className={styles.summaryNote}>{getSummaryText(activity)}</p>
+
+                  <Link href="/statistiques" className={styles.summaryCta}>
+                    Voir toutes les statistiques
+                    <ChevronRight aria-hidden="true" />
+                  </Link>
                 </aside>
-              </div>
-
-              <div
-                className={`grid gap-5 ${hasPhoto ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2"}`}
-              >
-                <section className="app-activity-detail-surface rounded-[22px] p-5">
-                  <h2 className="text-lg font-semibold tracking-tight text-slate-900">
-                    Conditions
-                  </h2>
-
-                  {activity.temperature !== null || activity.weather ? (
-                    <>
-                      <div className="mt-4">
-                        <strong className="text-[2rem] leading-none font-bold tracking-tight text-slate-900">
-                          {activity.temperature !== null
-                            ? `${formatNumber(activity.temperature, {
-                                maximumFractionDigits: 0,
-                              })}°C`
-                            : activity.weather}
-                        </strong>
-                        <p className="mt-2 text-sm font-semibold text-slate-500">
-                          {activity.weather || "Conditions au depart"}
-                        </p>
-                      </div>
-
-                      <div className="mt-5 grid gap-3">
-                        <div className="app-activity-detail-meta-row flex items-center justify-between border-b border-emerald-100 pb-3 text-sm">
-                          <span className="font-medium text-slate-500">
-                            Temperature
-                          </span>
-                          <strong className="font-semibold text-slate-900">
-                            {activity.temperature !== null
-                              ? `${formatNumber(activity.temperature, {
-                                  maximumFractionDigits: 0,
-                                })}°C`
-                              : "—"}
-                          </strong>
-                        </div>
-                        <div className="app-activity-detail-meta-row flex items-center justify-between border-b border-emerald-100 pb-3 text-sm">
-                          <span className="font-medium text-slate-500">
-                            Vent
-                          </span>
-                          <strong className="font-semibold text-slate-900">
-                            —
-                          </strong>
-                        </div>
-                        <div className="app-activity-detail-meta-row flex items-center justify-between text-sm">
-                          <span className="font-medium text-slate-500">
-                            Humidite
-                          </span>
-                          <strong className="font-semibold text-slate-900">
-                            —
-                          </strong>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="app-activity-detail-data-tile mt-4 rounded-[18px] p-4 text-sm leading-6 font-medium text-slate-600">
-                      Météo indisponible pour cette sortie.
-                    </div>
-                  )}
-                </section>
-
-                <section className="app-activity-detail-surface rounded-[22px] p-5">
-                  <h2 className="text-lg font-semibold tracking-tight text-slate-900">
-                    Journal de sortie
-                  </h2>
-
-                  <p className="mt-4 text-[15px] leading-7 font-medium text-slate-600">
-                    {getSummaryText(activity)}
-                  </p>
-
-                  <button
-                    type="button"
-                    className="app-activity-detail-action mt-6 inline-flex min-h-11 items-center justify-center rounded-[16px] px-4 text-sm font-semibold"
-                  >
-                    Ajouter une note
-                  </button>
-                </section>
-
-                {hasPhoto && (
-                  <section className="app-activity-detail-surface rounded-[22px] p-5">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <h2 className="text-lg font-semibold tracking-tight text-slate-900">
-                          Photos
-                        </h2>
-                        <p className="mt-1 text-sm text-slate-500">
-                          {hasHiddenStravaPhotos
-                            ? `Strava indique ${reportedPhotoCount} photos, mais l’aperçu disponible ici reste limité.`
-                            : "Toutes les photos détectées pour cette activité"}
-                        </p>
-                      </div>
-                      <span className="app-activity-detail-tag rounded-full px-3 py-1 text-xs font-semibold">
-                        {reportedPhotoCount} photo
-                        {reportedPhotoCount > 1 ? "s" : ""}
-                      </span>
-                    </div>
-
-                    <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
-                      {activityPhotoUrls.map((photoUrl, index) => (
-                        <div
-                          key={`${photoUrl}-${index}`}
-                          className="relative h-28 w-44 shrink-0 overflow-hidden rounded-[18px] border border-emerald-100"
-                        >
-                          <Image
-                            src={photoUrl}
-                            alt={`${activity.title || "Photo de sortie"} ${index + 1}`}
-                            fill
-                            unoptimized
-                            sizes="176px"
-                            className="object-cover"
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    {hasHiddenStravaPhotos && activity.stravaActivityId ? (
-                      <a
-                        href={`https://www.strava.com/activities/${activity.stravaActivityId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="app-activity-detail-action mt-6 inline-flex min-h-11 items-center justify-center rounded-[16px] px-4 text-sm font-semibold"
-                      >
-                        Voir sur Strava
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        className="app-activity-detail-action mt-6 inline-flex min-h-11 items-center justify-center rounded-[16px] px-4 text-sm font-semibold"
-                      >
-                        Voir toutes les photos
-                      </button>
-                    )}
-                  </section>
-                )}
               </div>
             </div>
           </FadeIn>
-        )}
+        ) : null}
       </div>
     </DashboardLayout>
   );

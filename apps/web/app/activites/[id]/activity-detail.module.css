@@ -1,0 +1,1637 @@
+.page {
+  --activity-ink: #181425;
+  --activity-muted: #756f84;
+  --activity-surface: #ffffff;
+  --activity-surface-soft: #fbf9ff;
+  --activity-border: rgba(76, 29, 149, 0.11);
+  --activity-accent: #7c3aed;
+  --activity-accent-strong: #5b21b6;
+  --activity-accent-soft: #f3e8ff;
+  --activity-accent-softer: rgba(124, 58, 237, 0.08);
+  --activity-chart-grid: rgba(91, 33, 182, 0.1);
+  --activity-shadow: 0 24px 68px rgba(67, 56, 202, 0.09);
+  --activity-shadow-strong: 0 32px 90px rgba(43, 25, 83, 0.2);
+
+  width: min(100%, 1480px);
+  margin: 0 auto;
+  padding: 18px 24px 36px;
+  color: var(--activity-ink);
+}
+
+:global(html.sport-theme-nature) .page {
+  --activity-ink: #102033;
+  --activity-muted: #66758d;
+  --activity-surface: #ffffff;
+  --activity-surface-soft: #fbfefb;
+  --activity-border: rgba(6, 95, 70, 0.12);
+  --activity-accent: #16a34a;
+  --activity-accent-strong: #047857;
+  --activity-accent-soft: #ecfdf5;
+  --activity-accent-softer: rgba(16, 185, 129, 0.08);
+  --activity-chart-grid: rgba(6, 95, 70, 0.1);
+  --activity-shadow: 0 24px 68px rgba(6, 78, 59, 0.09);
+  --activity-shadow-strong: 0 32px 90px rgba(6, 78, 59, 0.18);
+}
+
+.content {
+  display: grid;
+  gap: 18px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: var(--activity-accent-strong) !important;
+  font-size: 0.875rem;
+  font-weight: 750;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.backLink:hover {
+  background: var(--activity-accent-softer);
+  transform: translateX(-2px);
+}
+
+.backLink svg {
+  width: 16px;
+  height: 16px;
+}
+
+.stateCard {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+  border: 1px solid var(--activity-border);
+  border-radius: 24px;
+  background: var(--activity-surface);
+  color: var(--activity-muted) !important;
+  font-weight: 650;
+  box-shadow: var(--activity-shadow);
+}
+
+.errorCard {
+  border-color: rgba(220, 38, 38, 0.18);
+  background: #fff7f7;
+  color: #b91c1c !important;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 430px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 30px;
+  background-color: #11231b;
+  background-image: var(--activity-hero-image);
+  background-position: center 52%;
+  background-size: cover;
+  box-shadow: var(--activity-shadow-strong);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(26, 16, 48, 0.9) 0%,
+      rgba(38, 22, 66, 0.72) 40%,
+      rgba(29, 18, 52, 0.32) 66%,
+      rgba(14, 10, 26, 0.16) 100%
+    ),
+    linear-gradient(to top, rgba(15, 10, 28, 0.54), transparent 62%);
+}
+
+:global(html.sport-theme-nature) .hero::before {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(3, 24, 17, 0.92) 0%,
+      rgba(6, 50, 35, 0.74) 40%,
+      rgba(5, 38, 27, 0.34) 66%,
+      rgba(3, 20, 15, 0.14) 100%
+    ),
+    linear-gradient(to top, rgba(3, 22, 16, 0.52), transparent 62%);
+}
+
+.heroShade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255, 255, 255, 0.1), transparent 24%),
+    radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.06), transparent 24%);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 54%;
+  min-height: 430px;
+  flex-direction: column;
+  padding: 28px 28px 30px 34px;
+}
+
+.heroTopline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sportBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(24, 16, 44, 0.38);
+  color: rgba(255, 255, 255, 0.94) !important;
+  font-size: 0.875rem;
+  font-weight: 750;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+}
+
+:global(html.sport-theme-nature) .sportBadge {
+  background: rgba(5, 63, 43, 0.46);
+}
+
+.sportBadge svg {
+  width: 17px;
+  height: 17px;
+}
+
+.heroActions {
+  position: absolute;
+  top: 25px;
+  right: 46.6%;
+  display: flex;
+  gap: 9px;
+}
+
+.heroAction {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #18212f !important;
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.heroAction:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+}
+
+.heroAction svg {
+  width: 18px;
+  height: 18px;
+}
+
+.heroCopy {
+  margin-top: auto;
+  max-width: 720px;
+}
+
+.heroTitle {
+  max-width: 740px !important;
+  margin: 0;
+  color: #ffffff !important;
+  font-size: clamp(2rem, 3.1vw, 3.35rem);
+  font-weight: 780;
+  line-height: 1.03 !important;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  text-shadow: 0 10px 36px rgba(0, 0, 0, 0.34);
+}
+
+.heroDescription {
+  max-width: 560px !important;
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-size: 0.98rem;
+  font-weight: 520;
+  line-height: 1.75;
+  text-shadow: 0 5px 20px rgba(0, 0, 0, 0.24);
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.heroMeta > span {
+  display: inline-flex;
+  min-height: 45px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  background: rgba(16, 12, 29, 0.42);
+  color: rgba(255, 255, 255, 0.94) !important;
+  font-size: 0.82rem;
+  font-weight: 680;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+:global(html.sport-theme-nature) .heroMeta > span {
+  background: rgba(4, 50, 34, 0.46);
+}
+
+.heroMeta svg {
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.mapOverlayCard {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  bottom: 22px;
+  z-index: 2;
+  display: flex;
+  width: min(45%, 610px);
+  flex-direction: column;
+  gap: 11px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
+.mapTabs {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px;
+  border: 1px solid var(--activity-border);
+  border-radius: 999px;
+  background: var(--activity-accent-soft);
+}
+
+.mapTabs button {
+  min-height: 36px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--activity-muted) !important;
+  font-size: 0.82rem;
+  font-weight: 760;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.mapTabs .activeTab {
+  background: var(--activity-accent-strong);
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--activity-accent) 22%, transparent);
+}
+
+.mapViewport {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid var(--activity-border);
+  border-radius: 18px;
+  background: #edf4e9;
+}
+
+.mapViewport :global(.app-mini-route-map) {
+  height: 100% !important;
+  min-height: 100% !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+}
+
+.mapViewport :global(.app-map-chip),
+.mapViewport :global(.app-map-controls),
+.mapViewport :global(.app-map-legend) {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: #0f172a !important;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1) !important;
+}
+
+.mapViewport :global(.app-map-shade) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(15, 23, 42, 0.04)) !important;
+}
+
+.mapViewport :global(.app-map-vignette) {
+  background: radial-gradient(circle at center, transparent 72%, rgba(15, 23, 42, 0.08) 100%) !important;
+}
+
+.photoViewport {
+  position: relative;
+  height: 100%;
+  min-height: 280px;
+  overflow: hidden;
+}
+
+.photoImage {
+  object-fit: cover;
+  object-position: center 66%;
+}
+
+.photoViewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.44), transparent 58%);
+}
+
+.photoCaption {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  color: #ffffff;
+}
+
+.photoCaption span {
+  font-size: 0.86rem;
+  font-weight: 760;
+}
+
+.photoCaption small {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metricCard {
+  position: relative;
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  gap: 15px;
+  overflow: hidden;
+  padding: 18px 20px;
+  border: 1px solid var(--activity-border);
+  border-radius: 20px;
+  background: var(--activity-surface);
+  box-shadow: var(--activity-shadow);
+}
+
+.metricCard::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--activity-accent-softer), transparent 68%);
+}
+
+.metricIcon {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--activity-border);
+  border-radius: 999px;
+  background: var(--activity-accent-soft);
+  color: var(--activity-accent-strong);
+}
+
+.metricIcon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.metricCopy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.metricLabel {
+  margin: 0;
+  color: var(--activity-muted) !important;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.metricValue {
+  margin: 4px 0 0;
+  color: var(--activity-ink) !important;
+  font-size: clamp(1.55rem, 2vw, 2rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.metricValue span {
+  margin-left: 5px;
+  color: var(--activity-ink) !important;
+  font-size: 0.78rem;
+  font-weight: 680;
+  letter-spacing: 0;
+}
+
+.metricSparkline {
+  position: absolute;
+  right: 12px;
+  bottom: 7px;
+  width: 54%;
+  height: 42px;
+  opacity: 0.45;
+}
+
+.metricSparklineFill {
+  fill: var(--activity-accent-softer);
+  stroke: none;
+}
+
+.metricSparklineLine {
+  fill: none;
+  stroke: var(--activity-accent);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.analysisGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(300px, 0.88fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.elevationCard,
+.summaryCard {
+  border: 1px solid var(--activity-border);
+  border-radius: 24px;
+  background: var(--activity-surface);
+  box-shadow: var(--activity-shadow);
+}
+
+.elevationCard {
+  padding: 22px;
+}
+
+.summaryCard {
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.cardTitle {
+  margin: 0;
+  color: var(--activity-ink) !important;
+  font-size: 1.2rem;
+  font-weight: 780;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.cardSubtitle {
+  margin: 7px 0 0;
+  color: var(--activity-muted) !important;
+  font-size: 0.84rem;
+  font-weight: 520;
+  line-height: 1.55;
+}
+
+.totalPill {
+  min-width: 104px;
+  padding: 12px 14px;
+  border: 1px solid var(--activity-border);
+  border-radius: 16px;
+  background: var(--activity-accent-soft);
+  text-align: right;
+}
+
+.totalPill span {
+  display: block;
+  color: var(--activity-accent-strong) !important;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.totalPill strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--activity-ink) !important;
+  font-size: 1.14rem;
+  line-height: 1;
+}
+
+.chartShell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--activity-border);
+  border-radius: 20px;
+  background:
+    linear-gradient(var(--activity-chart-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--activity-chart-grid) 1px, transparent 1px),
+    linear-gradient(180deg, var(--activity-accent-softer), transparent 66%),
+    var(--activity-surface-soft);
+  background-size: 56px 56px, 56px 56px, auto, auto;
+}
+
+.chartBounds {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  left: 18px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.chartBounds > div:last-child {
+  text-align: right;
+}
+
+.chartBounds p {
+  margin: 0;
+  color: var(--activity-muted) !important;
+  font-size: 0.63rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.chartBounds strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--activity-accent) !important;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.chartCanvas {
+  width: 100%;
+  height: 330px;
+  padding-top: 52px;
+}
+
+.chartEmpty {
+  display: grid;
+  min-height: 330px;
+  place-items: center;
+  border: 1px solid var(--activity-border);
+  border-radius: 20px;
+  background: var(--activity-surface-soft);
+  color: var(--activity-muted);
+  text-align: center;
+}
+
+.chartEmpty svg {
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 10px;
+  color: var(--activity-accent);
+}
+
+.chartEmpty p {
+  margin: 0;
+  color: var(--activity-muted) !important;
+  font-size: 0.85rem;
+  font-weight: 620;
+}
+
+.elevationFacts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.elevationFacts > div {
+  padding: 12px 13px;
+  border: 1px solid var(--activity-border);
+  border-radius: 15px;
+  background: var(--activity-surface-soft);
+}
+
+.elevationFacts span {
+  display: block;
+  color: var(--activity-muted) !important;
+  font-size: 0.68rem;
+  font-weight: 690;
+}
+
+.elevationFacts strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--activity-ink) !important;
+  font-size: 0.98rem;
+}
+
+.summaryRows {
+  display: grid;
+  margin-top: 18px;
+}
+
+.summaryRows > div {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--activity-border);
+}
+
+.summaryRows span {
+  color: var(--activity-muted) !important;
+  font-size: 0.8rem;
+  font-weight: 610;
+}
+
+.summaryRows strong {
+  color: var(--activity-ink) !important;
+  font-size: 0.82rem;
+  font-weight: 760;
+  text-align: right;
+}
+
+.summaryRows .accentValue {
+  color: var(--activity-accent) !important;
+}
+
+.sourceValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sourceValue i {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 999px;
+  background: #fc4c02;
+  color: #ffffff;
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+.tags span {
+  padding: 6px 10px;
+  border: 1px solid var(--activity-border);
+  border-radius: 999px;
+  background: var(--activity-accent-soft);
+  color: var(--activity-accent-strong) !important;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.summaryNote {
+  margin: 17px 0 0;
+  color: var(--activity-muted) !important;
+  font-size: 0.78rem;
+  font-weight: 520;
+  line-height: 1.58;
+}
+
+.summaryCta {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding: 0 13px;
+  border: 1px solid var(--activity-border);
+  border-radius: 13px;
+  background: var(--activity-surface-soft);
+  color: var(--activity-ink) !important;
+  font-size: 0.78rem;
+  font-weight: 730;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.summaryCta:hover {
+  border-color: color-mix(in srgb, var(--activity-accent) 42%, transparent);
+  background: var(--activity-accent-soft);
+  transform: translateY(-1px);
+}
+
+.summaryCta svg {
+  width: 16px;
+  height: 16px;
+  color: var(--activity-accent);
+}
+
+@media (max-width: 1180px) {
+  .page {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .hero {
+    min-height: 520px;
+  }
+
+  .heroContent {
+    width: 52%;
+    min-height: 520px;
+  }
+
+  .heroActions {
+    right: 49%;
+  }
+
+  .mapOverlayCard {
+    width: 47%;
+  }
+
+  .analysisGrid {
+    grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.9fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .page {
+    padding-top: 12px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-bottom: 16px;
+    background-position: center 48%;
+  }
+
+  .heroContent {
+    width: 100%;
+    min-height: 380px;
+    padding: 24px 24px 28px;
+  }
+
+  .heroActions {
+    position: static;
+  }
+
+  .heroTitle {
+    max-width: 720px !important;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .mapOverlayCard {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: 330px;
+    margin: 0 16px;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analysisGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryCard {
+    min-height: auto;
+  }
+
+  .summaryCta {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 10px 14px 28px;
+  }
+
+  .hero {
+    border-radius: 24px;
+  }
+
+  .heroContent {
+    min-height: 420px;
+    padding: 20px;
+  }
+
+  .heroTitle {
+    max-width: 100% !important;
+    font-size: clamp(1.85rem, 9vw, 2.55rem);
+    line-height: 1.05 !important;
+  }
+
+  .heroDescription {
+    max-width: 36ch !important;
+    font-size: 0.9rem;
+  }
+
+  .heroMeta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .heroMeta > span {
+    min-height: 42px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .mapOverlayCard {
+    height: 300px;
+    padding: 11px;
+    border-radius: 20px;
+  }
+
+  .mapViewport,
+  .mapViewport :global(.app-mini-route-map) {
+    border-radius: 15px !important;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricCard {
+    min-height: 92px;
+  }
+
+  .cardHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .totalPill {
+    width: 100%;
+    text-align: left;
+  }
+
+  .chartCanvas {
+    height: 290px;
+  }
+
+  .elevationFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .elevationCard,
+  .summaryCard {
+    padding: 18px;
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Nature-theme specificity guards against the legacy global theme rules. */
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroTitle {
+  max-width: 740px !important;
+  color: #ffffff !important;
+  line-height: 1.03 !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroDescription {
+  max-width: 560px !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .metricValue,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .metricValue span {
+  color: var(--activity-ink) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .cardTitle {
+  color: var(--activity-ink) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .mapViewport :global(.app-mini-route-map) {
+  height: 100% !important;
+  min-height: 100% !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: #edf4e9 !important;
+  box-shadow: none !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .mapViewport :global(.app-map-chip),
+:global(html.sport-theme-nature) :global(.app-shell) main .page .mapViewport :global(.app-map-controls),
+:global(html.sport-theme-nature) :global(.app-shell) main .page .mapViewport :global(.app-map-legend) {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: #0f172a !important;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1) !important;
+}
+
+@media (max-width: 720px) {
+  :global(html.sport-theme-nature) :global(.app-shell) main .page .heroTitle {
+    max-width: 100% !important;
+  }
+
+  :global(html.sport-theme-nature) :global(.app-shell) main .page .heroDescription {
+    max-width: 36ch !important;
+  }
+
+  :global(html.sport-theme-nature) :global(.app-shell) main .page .mapViewport :global(.app-mini-route-map) {
+    border-radius: 15px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Compact proportions pass
+   Scoped to this CSS Module only: no impact on globals.css or other pages.
+   -------------------------------------------------------------------------- */
+
+.page {
+  width: min(100%, 1320px);
+  padding: 14px 18px 28px;
+}
+
+.content {
+  gap: 14px;
+}
+
+.backLink {
+  margin-bottom: 8px;
+  padding: 6px 9px;
+  font-size: 0.82rem;
+}
+
+.hero {
+  min-height: 360px;
+  border-radius: 26px;
+  background-position: center 54%;
+}
+
+.heroContent {
+  width: 56%;
+  min-height: 360px;
+  padding: 22px 24px 24px 28px;
+}
+
+.heroActions {
+  top: 20px;
+  right: 43.25%;
+  gap: 8px;
+}
+
+.heroAction {
+  width: 38px;
+  height: 38px;
+}
+
+.sportBadge {
+  min-height: 36px;
+  padding: 0 13px;
+  font-size: 0.82rem;
+}
+
+.heroCopy {
+  max-width: 650px;
+}
+
+.heroTitle {
+  max-width: 680px !important;
+  font-size: clamp(1.75rem, 2.55vw, 2.75rem);
+  line-height: 1.05 !important;
+  letter-spacing: -0.038em;
+}
+
+.heroDescription {
+  max-width: 520px !important;
+  margin-top: 14px;
+  font-size: 0.9rem;
+  line-height: 1.62;
+}
+
+.heroMeta {
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.heroMeta > span {
+  min-height: 40px;
+  padding: 0 13px;
+  border-radius: 12px;
+  font-size: 0.77rem;
+}
+
+.mapOverlayCard {
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: min(43%, 540px);
+  gap: 9px;
+  padding: 11px;
+  border-radius: 21px;
+}
+
+.mapTabs button {
+  min-height: 32px;
+  padding: 0 14px;
+  font-size: 0.77rem;
+}
+
+.mapViewport,
+.mapViewport :global(.app-mini-route-map) {
+  border-radius: 16px !important;
+}
+
+.metricsGrid {
+  gap: 10px;
+}
+
+.metricCard {
+  min-height: 88px;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 17px;
+}
+
+.metricIcon {
+  width: 40px;
+  height: 40px;
+}
+
+.metricIcon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.metricLabel {
+  font-size: 0.74rem;
+}
+
+.metricValue {
+  font-size: clamp(1.35rem, 1.7vw, 1.7rem);
+}
+
+.metricSparkline {
+  right: 10px;
+  bottom: 6px;
+  width: 50%;
+  height: 34px;
+}
+
+.analysisGrid {
+  grid-template-columns: minmax(0, 1.85fr) minmax(280px, 0.82fr);
+  gap: 14px;
+}
+
+.elevationCard,
+.summaryCard {
+  border-radius: 20px;
+}
+
+.elevationCard,
+.summaryCard {
+  padding: 18px;
+}
+
+.cardHeader {
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.cardTitle {
+  font-size: 1.08rem;
+}
+
+.cardSubtitle {
+  margin-top: 5px;
+  font-size: 0.78rem;
+}
+
+.totalPill {
+  min-width: 92px;
+  padding: 10px 12px;
+  border-radius: 14px;
+}
+
+.totalPill strong {
+  font-size: 1.02rem;
+}
+
+.chartShell,
+.chartEmpty {
+  border-radius: 17px;
+}
+
+.chartBounds {
+  top: 12px;
+  right: 15px;
+  left: 15px;
+}
+
+.chartBounds strong {
+  font-size: 1.12rem;
+}
+
+.chartCanvas {
+  height: 270px;
+  padding-top: 46px;
+}
+
+.chartEmpty {
+  min-height: 270px;
+}
+
+.elevationFacts {
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.elevationFacts > div {
+  padding: 10px 11px;
+  border-radius: 13px;
+}
+
+.summaryRows {
+  margin-top: 14px;
+}
+
+.summaryRows > div {
+  min-height: 40px;
+}
+
+.tags {
+  margin-top: 12px;
+}
+
+.summaryNote {
+  margin-top: 13px;
+}
+
+.summaryCta {
+  min-height: 40px;
+}
+
+@media (min-width: 1024px) {
+  .mapViewport :global(.app-map-chip) {
+    top: 0.7rem !important;
+    left: 0.7rem !important;
+    padding: 0.44rem 0.72rem !important;
+    font-size: 0.66rem !important;
+  }
+
+  .mapViewport :global(.app-map-controls) {
+    top: 0.7rem !important;
+    right: 0.7rem !important;
+  }
+
+  .mapViewport :global(.app-map-controls) button {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  .mapViewport :global(.app-map-legend) {
+    right: 0.7rem !important;
+    bottom: 0.7rem !important;
+    left: 0.7rem !important;
+    padding: 0.62rem 0.8rem !important;
+    font-size: 0.66rem !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1180px) {
+  .page {
+    width: min(100%, 1180px);
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .hero,
+  .heroContent {
+    min-height: 350px;
+  }
+
+  .heroContent {
+    width: 56%;
+    padding: 20px 22px 22px 24px;
+  }
+
+  .heroActions {
+    right: 42.25%;
+  }
+
+  .mapOverlayCard {
+    width: 42.5%;
+  }
+
+  .analysisGrid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(270px, 0.86fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .page {
+    padding-top: 10px;
+  }
+
+  .heroContent {
+    min-height: 330px;
+    padding: 20px 22px 22px;
+  }
+
+  .heroTitle {
+    max-width: 680px !important;
+    font-size: clamp(1.75rem, 5vw, 2.45rem);
+  }
+
+  .mapOverlayCard {
+    height: 290px;
+    margin: 0 14px;
+  }
+
+  .summaryCta {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 8px 12px 24px;
+  }
+
+  .hero {
+    border-radius: 22px;
+  }
+
+  .heroContent {
+    min-height: 350px;
+    padding: 18px;
+  }
+
+  .heroTitle {
+    font-size: clamp(1.6rem, 7.6vw, 2.15rem);
+  }
+
+  .heroDescription {
+    font-size: 0.84rem;
+  }
+
+  .heroMeta > span {
+    min-height: 38px;
+  }
+
+  .mapOverlayCard {
+    height: 270px;
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metricCard {
+    min-height: 82px;
+    padding: 12px 13px;
+  }
+
+  .chartCanvas {
+    height: 250px;
+  }
+
+  .elevationCard,
+  .summaryCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroTitle {
+  max-width: 680px !important;
+  line-height: 1.05 !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroDescription {
+  max-width: 520px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Theme alignment pass
+   - violet mode now follows the same dark card language as the rest of Montaro
+   - nature mode remains untouched
+   - hero typography is lighter and closer to the approved mockup
+   - everything remains scoped to this CSS Module
+   -------------------------------------------------------------------------- */
+
+/* Hero typography shared by both themes. */
+.heroTitle {
+  max-width: 620px !important;
+  font-size: clamp(1.7rem, 2.25vw, 2.45rem);
+  font-weight: 700;
+  line-height: 1.08 !important;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.heroDescription {
+  max-width: 500px !important;
+  margin-top: 12px;
+  font-size: 0.84rem;
+  font-weight: 450;
+  line-height: 1.62;
+}
+
+.sportBadge {
+  min-height: 34px;
+  padding-inline: 12px;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.heroMeta {
+  margin-top: 16px;
+}
+
+.heroMeta > span {
+  min-height: 38px;
+  padding-inline: 12px;
+  font-size: 0.73rem;
+  font-weight: 600;
+}
+
+/* Violet mode: reuse the established Montaro dark surfaces. */
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page {
+  --activity-ink: #f4f4f5;
+  --activity-muted: #a1a1aa;
+  --activity-surface: #181922;
+  --activity-surface-soft: #11131a;
+  --activity-border: rgba(255, 255, 255, 0.075);
+  --activity-accent: #8b5cf6;
+  --activity-accent-strong: #7c3aed;
+  --activity-accent-soft: rgba(139, 92, 246, 0.12);
+  --activity-accent-softer: rgba(139, 92, 246, 0.08);
+  --activity-chart-grid: rgba(167, 139, 250, 0.1);
+  --activity-shadow:
+    0 22px 64px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  --activity-shadow-strong:
+    0 32px 92px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  color: var(--activity-ink);
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .backLink {
+  color: #a78bfa !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .backLink:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .stateCard,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricCard,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .elevationCard,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryCard {
+  border-color: rgba(255, 255, 255, 0.075) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.018)
+    ),
+    #181922 !important;
+  color: #f4f4f5 !important;
+  box-shadow:
+    0 22px 64px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricCard::before {
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.12),
+    transparent 68%
+  );
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricIcon,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .totalPill,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .elevationFacts > div,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .tags span,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryCta {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  color: #f4f4f5 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricIcon {
+  color: #a78bfa !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricLabel,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .cardSubtitle,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryRows span,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryNote,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .elevationFacts span,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .chartBounds p {
+  color: #a1a1aa !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricValue,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .metricValue span,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .cardTitle,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryRows strong,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .totalPill strong,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .elevationFacts strong {
+  color: #f4f4f5 !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .totalPill span,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .tags span,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .accentValue,
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .chartBounds strong {
+  color: #a78bfa !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryRows > div {
+  border-color: rgba(255, 255, 255, 0.065) !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .chartShell {
+  border-color: rgba(255, 255, 255, 0.075) !important;
+  background:
+    linear-gradient(rgba(167, 139, 250, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 139, 250, 0.07) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(139, 92, 246, 0.09), transparent 68%),
+    #11131a !important;
+  background-size: 56px 56px, 56px 56px, auto, auto !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .chartEmpty {
+  border-color: rgba(255, 255, 255, 0.075) !important;
+  background: #11131a !important;
+  color: #a1a1aa !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .mapOverlayCard {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.02)
+    ),
+    #181922 !important;
+  box-shadow:
+    0 28px 78px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .mapTabs {
+  border-color: rgba(255, 255, 255, 0.075) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .mapTabs button {
+  color: #a1a1aa !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .mapTabs .activeTab {
+  background: #7c3aed !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3) !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .mapViewport {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: #11131a !important;
+}
+
+:global(html:not(.sport-theme-nature)) :global(.app-shell) main .page .summaryCta:hover {
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  background: rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Keep the nature theme exactly as designed. */
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroTitle {
+  max-width: 620px !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  line-height: 1.08 !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroDescription {
+  max-width: 500px !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 450 !important;
+}
+
+@media (min-width: 1024px) and (max-width: 1180px) {
+  .heroTitle {
+    max-width: 560px !important;
+    font-size: clamp(1.65rem, 2.3vw, 2.2rem);
+  }
+
+  .heroDescription {
+    max-width: 450px !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .heroTitle {
+    max-width: 650px !important;
+    font-size: clamp(1.7rem, 4.8vw, 2.3rem);
+  }
+}
+
+@media (max-width: 720px) {
+  .heroTitle {
+    max-width: 100% !important;
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    line-height: 1.1 !important;
+  }
+
+  .heroDescription {
+    max-width: 36ch !important;
+    font-size: 0.82rem;
+  }
+}
