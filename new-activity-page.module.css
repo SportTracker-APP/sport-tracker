@@ -1,0 +1,436 @@
+.page {
+  --page-ink: #f8f7ff;
+  --page-muted: #aaa6bd;
+  --page-border: rgba(196, 181, 253, 0.14);
+  --page-surface: rgba(20, 17, 31, 0.9);
+  width: 100%;
+  max-width: 1540px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 0 2rem;
+  color: var(--page-ink);
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 350px;
+  overflow: hidden;
+  border: 1px solid rgba(196, 181, 253, 0.18);
+  border-radius: 30px;
+  background: #0d0a17;
+  box-shadow:
+    0 30px 90px rgba(12, 8, 25, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.heroPhoto,
+.heroOverlay,
+.heroGrid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.heroPhoto {
+  z-index: -3;
+  background-image: url("https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1800");
+  background-position: center 54%;
+  background-size: cover;
+  opacity: 0.46;
+  filter: saturate(0.86) contrast(1.08) brightness(0.72);
+  transform: scale(1.02);
+}
+
+.heroOverlay {
+  z-index: -2;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(168, 85, 247, 0.3), transparent 32%),
+    radial-gradient(circle at 12% 100%, rgba(79, 70, 229, 0.22), transparent 38%),
+    linear-gradient(
+      102deg,
+      rgba(9, 7, 18, 0.96) 0%,
+      rgba(24, 16, 44, 0.86) 48%,
+      rgba(12, 9, 24, 0.5) 100%
+    );
+}
+
+.heroGrid {
+  z-index: -1;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 86px 86px;
+  mask-image: linear-gradient(to right, black, transparent 84%);
+}
+
+.heroContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 2rem;
+  align-items: center;
+  min-height: 350px;
+  padding: clamp(1.5rem, 3vw, 2.7rem);
+}
+
+.heroCopy {
+  max-width: 760px;
+}
+
+.heroKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48rem;
+  min-height: 34px;
+  padding: 0 0.85rem;
+  border: 1px solid rgba(216, 180, 254, 0.22);
+  border-radius: 999px;
+  background: rgba(76, 29, 149, 0.24);
+  color: #ddd6fe;
+  font-size: 0.72rem;
+  font-weight: 720;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.heroKicker svg {
+  width: 14px;
+  height: 14px;
+}
+
+.heroCopy h1 {
+  max-width: 720px !important;
+  margin: 1.15rem 0 0;
+  color: #ffffff !important;
+  font-size: clamp(2.25rem, 4vw, 4.2rem);
+  font-weight: 760;
+  line-height: 1.02 !important;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  text-shadow: 0 16px 44px rgba(0, 0, 0, 0.34);
+}
+
+.heroCopy h1 span {
+  background: linear-gradient(90deg, #c4b5fd, #e879f9 58%, #f0abfc);
+  background-clip: text;
+  color: transparent;
+}
+
+.heroCopy > p {
+  max-width: 670px !important;
+  margin: 1rem 0 0;
+  color: rgba(237, 233, 254, 0.76) !important;
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.sportPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.25rem;
+}
+
+.sportPills span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-height: 34px;
+  padding: 0 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  background: rgba(10, 8, 18, 0.4);
+  color: rgba(245, 243, 255, 0.82);
+  font-size: 0.69rem;
+  font-weight: 650;
+  backdrop-filter: blur(12px);
+}
+
+.sportPills svg {
+  width: 14px;
+  height: 14px;
+  color: #c4b5fd;
+}
+
+.heroStats {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.heroStat {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 82px;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 19px;
+  background: rgba(12, 10, 22, 0.54);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.heroStat > span {
+  display: grid;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 13px;
+}
+
+.heroStat svg {
+  width: 18px;
+  height: 18px;
+}
+
+.heroStat p,
+.heroStat strong {
+  margin: 0;
+}
+
+.heroStat p {
+  color: rgba(221, 214, 254, 0.62) !important;
+  font-size: 0.65rem;
+  font-weight: 680;
+}
+
+.heroStat strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: #ffffff;
+  font-size: 1.45rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.statViolet > span {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+}
+
+.statSky > span {
+  background: rgba(14, 165, 233, 0.17);
+  color: #7dd3fc;
+}
+
+.statAmber > span {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fcd34d;
+}
+
+.formIntro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 92px;
+  margin-top: 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgba(196, 181, 253, 0.12);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.12), transparent 36%),
+    rgba(20, 17, 31, 0.82);
+  box-shadow:
+    0 16px 42px rgba(6, 4, 15, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.formIntro p,
+.formIntro h2,
+.formIntro span {
+  margin: 0;
+}
+
+.formIntro p {
+  color: #a78bfa !important;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.formIntro h2 {
+  margin-top: 0.25rem;
+  color: #ffffff !important;
+  font-size: 1.05rem;
+  font-weight: 760;
+}
+
+.formIntro > div > span {
+  display: block;
+  margin-top: 0.25rem;
+  color: #aaa6bd !important;
+  font-size: 0.72rem;
+}
+
+.formIntroIcon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(196, 181, 253, 0.16);
+  border-radius: 14px;
+  background: rgba(139, 92, 246, 0.13);
+  color: #c4b5fd;
+}
+
+.formIntroIcon svg {
+  width: 19px;
+  height: 19px;
+}
+
+:global(html.sport-theme-nature) .page {
+  --page-ink: #102033;
+  --page-muted: #63748a;
+  --page-border: rgba(6, 95, 70, 0.12);
+  --page-surface: rgba(255, 255, 255, 0.88);
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .hero {
+  border-color: rgba(187, 247, 208, 0.22) !important;
+  background: #071610 !important;
+  box-shadow:
+    0 30px 90px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+:global(html.sport-theme-nature) .heroPhoto {
+  opacity: 0.7;
+  filter: saturate(1.08) contrast(1.04) brightness(0.78);
+}
+
+:global(html.sport-theme-nature) .heroOverlay {
+  background:
+    radial-gradient(circle at 84% 18%, rgba(132, 204, 22, 0.23), transparent 32%),
+    radial-gradient(circle at 12% 100%, rgba(16, 185, 129, 0.24), transparent 38%),
+    linear-gradient(
+      102deg,
+      rgba(3, 24, 18, 0.96) 0%,
+      rgba(7, 52, 37, 0.84) 48%,
+      rgba(4, 29, 22, 0.5) 100%
+    );
+}
+
+:global(html.sport-theme-nature) .heroKicker {
+  border-color: rgba(187, 247, 208, 0.24);
+  background: rgba(6, 95, 70, 0.48);
+  color: #d1fae5;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroCopy h1 {
+  color: #ffffff !important;
+}
+
+:global(html.sport-theme-nature) .heroCopy h1 span {
+  background: linear-gradient(90deg, #86efac, #bef264 58%, #d9f99d);
+  background-clip: text;
+  color: transparent !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .heroCopy > p {
+  color: rgba(236, 253, 245, 0.8) !important;
+}
+
+:global(html.sport-theme-nature) .sportPills svg {
+  color: #a7f3d0;
+}
+
+:global(html.sport-theme-nature) .heroStat {
+  border-color: rgba(187, 247, 208, 0.16);
+  background: rgba(3, 24, 18, 0.56);
+}
+
+:global(html.sport-theme-nature) .statViolet > span,
+:global(html.sport-theme-nature) .statSky > span {
+  background: rgba(16, 185, 129, 0.18);
+  color: #a7f3d0;
+}
+
+:global(html.sport-theme-nature) .statAmber > span {
+  background: rgba(245, 158, 11, 0.17);
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .formIntro {
+  border-color: rgba(6, 95, 70, 0.12) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(132, 204, 22, 0.12), transparent 34%),
+    rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    0 18px 48px rgba(6, 78, 59, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .formIntro h2 {
+  color: #102033 !important;
+}
+
+:global(html.sport-theme-nature) .formIntro p {
+  color: #047857 !important;
+}
+
+:global(html.sport-theme-nature) .formIntroIcon {
+  border-color: rgba(16, 185, 129, 0.18);
+  background: rgba(236, 253, 245, 0.9);
+  color: #047857;
+}
+
+@media (max-width: 980px) {
+  .heroContent {
+    grid-template-columns: 1fr;
+  }
+
+  .heroStats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding-bottom: 1rem;
+  }
+
+  .hero {
+    min-height: auto;
+    border-radius: 23px;
+  }
+
+  .heroContent {
+    min-height: auto;
+    padding: 1.3rem;
+  }
+
+  .heroCopy h1 {
+    font-size: 2.25rem;
+  }
+
+  .heroStats {
+    grid-template-columns: 1fr;
+  }
+
+  .formIntro {
+    border-radius: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
