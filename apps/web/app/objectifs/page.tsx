@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import type { CSSProperties, FormEvent } from "react";
+import { useMemo, useState } from "react";
 import {
   Activity,
   CalendarDays,
@@ -9,15 +10,20 @@ import {
   Edit3,
   Flame,
   Footprints,
+  History,
   Mountain,
+  MoreHorizontal,
   PauseCircle,
   Plus,
+  Sparkles,
   Target,
   Trash2,
   Trophy,
+  TrendingUp,
 } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useActivities } from "@/hooks/use-activities";
 import {
@@ -34,14 +40,55 @@ import {
   getGoalTypeLabel,
   selectPrimaryGoal,
 } from "@/lib/goal-progress";
-import type { Goal, GoalPeriod, GoalType } from "@/lib/goals";
+import type {
+  Goal,
+  GoalPeriod,
+  GoalType,
+  SportType,
+} from "@/lib/goals";
 
-const goalTypes: Array<{ value: GoalType; label: string }> = [
-  { value: "DISTANCE_KM", label: "Distance" },
-  { value: "ACTIVITY_COUNT", label: "Sorties" },
-  { value: "ELEVATION_M", label: "Dénivelé" },
-  { value: "DURATION_MIN", label: "Temps" },
-  { value: "CALORIES", label: "Calories" },
+import styles from "./goals-page.module.css";
+
+type GoalFilter = "ACTIVE" | "PAUSED" | "ALL";
+
+type GoalTypeOption = {
+  value: GoalType;
+  label: string;
+  unit: string;
+  icon: typeof Footprints;
+};
+
+const goalTypes: GoalTypeOption[] = [
+  {
+    value: "DISTANCE_KM",
+    label: "Distance",
+    unit: "km",
+    icon: Footprints,
+  },
+  {
+    value: "ACTIVITY_COUNT",
+    label: "Sorties",
+    unit: "sorties",
+    icon: Activity,
+  },
+  {
+    value: "ELEVATION_M",
+    label: "Dénivelé",
+    unit: "m D+",
+    icon: Mountain,
+  },
+  {
+    value: "DURATION_MIN",
+    label: "Temps",
+    unit: "min",
+    icon: Clock,
+  },
+  {
+    value: "CALORIES",
+    label: "Calories",
+    unit: "kcal",
+    icon: Flame,
+  },
 ];
 
 const goalPeriods: Array<{ value: GoalPeriod; label: string }> = [
@@ -49,6 +96,32 @@ const goalPeriods: Array<{ value: GoalPeriod; label: string }> = [
   { value: "WEEKLY", label: "Semaine en cours" },
   { value: "CUSTOM", label: "Période libre" },
 ];
+
+type GoalSportOption = {
+  value: SportType | "";
+  label: string;
+};
+
+const goalSports: GoalSportOption[] = [
+  { value: "", label: "Tous les sports" },
+  { value: "RUNNING", label: "Course à pied" },
+  { value: "TRAIL", label: "Trail" },
+  { value: "HIKING", label: "Randonnée" },
+  { value: "WALKING", label: "Marche" },
+  { value: "ROAD_CYCLING", label: "Vélo de route" },
+  { value: "MTB", label: "VTT" },
+  { value: "GRAVEL", label: "Gravel" },
+  { value: "SWIMMING", label: "Natation" },
+  { value: "GYM", label: "Musculation" },
+  { value: "FITNESS", label: "Fitness" },
+  { value: "SKI", label: "Ski" },
+  { value: "SNOWBOARD", label: "Snowboard" },
+  { value: "CLIMBING", label: "Escalade" },
+];
+
+function getGoalSportLabel(sport: SportType | null | undefined) {
+  return goalSports.find((option) => option.value === sport)?.label ?? "Tous les sports";
+}
 
 const goalIcons: Record<GoalType, typeof Footprints> = {
   ACTIVITY_COUNT: Activity,
@@ -113,27 +186,77 @@ function getPeriodDates(period: GoalPeriod, startDate: string, endDate: string) 
   };
 }
 
-function getDefaultTitle(type: GoalType, period: GoalPeriod) {
+function getDefaultTitle(
+  type: GoalType,
+  period: GoalPeriod,
+  sport: SportType | "",
+) {
   const periodLabel =
     period === "WEEKLY" ? "hebdo" : period === "MONTHLY" ? "mensuel" : "perso";
+  const sportLabel = sport
+    ? ` ${getGoalSportLabel(sport).toLocaleLowerCase("fr-FR")}`
+    : "";
 
   if (type === "DISTANCE_KM") {
-    return `Objectif distance ${periodLabel}`;
+    return `Objectif distance${sportLabel} ${periodLabel}`;
   }
 
   if (type === "ACTIVITY_COUNT") {
-    return `Objectif sorties ${periodLabel}`;
+    return `Objectif sorties${sportLabel} ${periodLabel}`;
   }
 
   if (type === "ELEVATION_M") {
-    return `Objectif dénivelé ${periodLabel}`;
+    return `Objectif dénivelé${sportLabel} ${periodLabel}`;
   }
 
   if (type === "DURATION_MIN") {
-    return `Objectif temps ${periodLabel}`;
+    return `Objectif temps${sportLabel} ${periodLabel}`;
   }
 
-  return `Objectif calories ${periodLabel}`;
+  return `Objectif calories${sportLabel} ${periodLabel}`;
+}
+
+function formatGoalEndDate(endDate: string) {
+  const date = new Date(endDate);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Échéance à définir";
+  }
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function getErrorMessage(unknownError: unknown) {
+  if (
+    unknownError &&
+    typeof unknownError === "object" &&
+    "response" in unknownError
+  ) {
+    const response = (
+      unknownError as {
+        response?: { data?: { message?: string | string[] } };
+      }
+    ).response;
+    const message = response?.data?.message;
+
+    if (Array.isArray(message)) {
+      return message.join(" ");
+    }
+
+    if (message) {
+      return message;
+    }
+  }
+
+  if (unknownError instanceof Error) {
+    return unknownError.message;
+  }
+
+  return "Une erreur est survenue. Vérifiez que le backend est lancé et que la base est à jour.";
 }
 
 function GoalCard({
@@ -152,105 +275,126 @@ function GoalCard({
   isBusy: boolean;
 }) {
   const progress = calculateGoalProgress(goal, activities ?? []);
+  const progressPercent = Math.max(0, Math.min(progress.progress, 100));
   const Icon = goalIcons[goal.type];
+  const isCompleted = progress.remaining <= 0;
+  const progressStyle = {
+    "--goal-progress": `${progressPercent}%`,
+  } as CSSProperties;
 
   return (
-    <article className="app-premium-surface relative overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.14),transparent_34%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.10),transparent_34%)]" />
-
-      <div className="relative">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-violet-300">
-              <Icon className="h-5 w-5" />
-            </div>
-
-            <div>
-              <p className="text-xs font-medium tracking-[0.16em] text-zinc-500 uppercase">
-                {getGoalTypeLabel(goal.type)}
-              </p>
-              <h2 className="mt-1 text-lg font-semibold text-white">
-                {goal.title}
-              </h2>
-            </div>
+    <article
+      className={`${styles.goalCard} ${
+        goal.isActive ? "" : styles.goalCardPaused
+      }`}
+    >
+      <div className={styles.goalCardHeader}>
+        <div className={styles.goalIdentity}>
+          <div className={styles.goalIcon}>
+            <Icon aria-hidden="true" />
           </div>
 
+          <div className={styles.goalTitleGroup}>
+            <div className={styles.goalMetaLine}>
+              <span>{getGoalTypeLabel(goal.type)}</span>
+              {goal.sport && (
+                <>
+                  <span aria-hidden="true">•</span>
+                  <span>{getGoalSportLabel(goal.sport)}</span>
+                </>
+              )}
+              <span aria-hidden="true">•</span>
+              <span>{getGoalPeriodLabel(goal.period)}</span>
+            </div>
+            <h3>{goal.title}</h3>
+          </div>
+        </div>
+
+        <div className={styles.goalHeaderActions}>
           <span
-            className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-              goal.isActive
-                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
-                : "border-zinc-500/20 bg-zinc-500/10 text-zinc-400"
+            className={`${styles.statusBadge} ${
+              goal.isActive ? styles.statusActive : styles.statusPaused
             }`}
           >
             {goal.isActive ? "Actif" : "En pause"}
           </span>
+
+          <details className={styles.goalMenu}>
+            <summary aria-label={`Actions pour ${goal.title}`}>
+              <MoreHorizontal aria-hidden="true" />
+            </summary>
+
+            <div className={styles.goalMenuContent}>
+              <button
+                type="button"
+                onClick={() => onEdit(goal)}
+                disabled={isBusy}
+              >
+                <Edit3 aria-hidden="true" />
+                Modifier
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onToggle(goal)}
+                disabled={isBusy}
+              >
+                <PauseCircle aria-hidden="true" />
+                {goal.isActive ? "Mettre en pause" : "Réactiver"}
+              </button>
+
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.currentTarget.closest("details")?.removeAttribute("open");
+                  onDelete(goal);
+                }}
+                disabled={isBusy}
+                className={styles.deleteAction}
+                aria-haspopup="dialog"
+              >
+                <Trash2 aria-hidden="true" />
+                Supprimer
+              </button>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div className={styles.goalProgressRow}>
+        <div>
+          <span className={styles.currentValue}>
+            {formatGoalValue(progress.current, goal.type)}
+          </span>
+          <span className={styles.targetValue}>
+            / {formatGoalValue(goal.target, goal.type)}
+          </span>
         </div>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-[minmax(0,1fr)_110px] sm:items-end">
-          <div>
-            <p className="text-4xl font-bold tracking-tight text-white">
-              {formatGoalValue(progress.current, goal.type)}
-            </p>
-            <p className="mt-2 text-sm text-zinc-400">
-              sur {formatGoalValue(goal.target, goal.type)} •{" "}
-              {getGoalPeriodLabel(goal.period)}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-center">
-            <p className="text-xs tracking-[0.16em] text-zinc-500 uppercase">
-              Progression
-            </p>
-            <p className="mt-1 text-2xl font-bold text-white">
-              {progress.progress}%
-            </p>
-          </div>
+        <div className={styles.progressPercentage}>
+          <span>Progression</span>
+          <strong>{progress.progress}%</strong>
         </div>
+      </div>
 
-        <div className="mt-5 h-2.5 overflow-hidden rounded-full border border-white/[0.06] bg-white/[0.05]">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-emerald-400 transition-all duration-700"
-            style={{ width: `${progress.progress}%` }}
-          />
-        </div>
+      <div className={styles.progressTrack} aria-hidden="true">
+        <div className={styles.progressFill} style={progressStyle} />
+      </div>
 
-        <p className="mt-4 text-sm leading-6 text-zinc-400">
-          Encore {formatGoalValue(progress.remaining, goal.type)} à valider pour
-          terminer ce cap.
+      <div className={styles.goalFooter}>
+        <p className={isCompleted ? styles.completedMessage : undefined}>
+          {isCompleted
+            ? "Objectif atteint. Beau travail."
+            : `Encore ${formatGoalValue(
+                progress.remaining,
+                goal.type,
+              )} pour terminer ce cap.`}
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => onEdit(goal)}
-            disabled={isBusy}
-            className="inline-flex h-10 items-center gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-500/15 disabled:opacity-50"
-          >
-            <Edit3 className="h-4 w-4" />
-            Modifier
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onToggle(goal)}
-            disabled={isBusy}
-            className="inline-flex h-10 items-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm font-semibold text-zinc-200 transition hover:bg-white/[0.07] disabled:opacity-50"
-          >
-            <PauseCircle className="h-4 w-4" />
-            {goal.isActive ? "Mettre en pause" : "Réactiver"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onDelete(goal)}
-            disabled={isBusy}
-            className="inline-flex h-10 items-center gap-2 rounded-2xl border border-red-500/15 bg-red-500/10 px-4 text-sm font-semibold text-red-200 transition hover:bg-red-500/15 disabled:opacity-50"
-          >
-            <Trash2 className="h-4 w-4" />
-            Supprimer
-          </button>
-        </div>
+        <span>
+          <CalendarDays aria-hidden="true" />
+          {formatGoalEndDate(goal.endDate)}
+        </span>
       </div>
     </article>
   );
@@ -262,8 +406,12 @@ export default function GoalsPage() {
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();
   const deleteGoalMutation = useDeleteGoal();
+
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [goalToDelete, setGoalToDelete] = useState<Goal | null>(null);
+  const [filter, setFilter] = useState<GoalFilter>("ACTIVE");
   const [type, setType] = useState<GoalType>("DISTANCE_KM");
+  const [sport, setSport] = useState<SportType | "">("");
   const [period, setPeriod] = useState<GoalPeriod>("WEEKLY");
   const [title, setTitle] = useState("");
   const [target, setTarget] = useState("30");
@@ -274,21 +422,58 @@ export default function GoalsPage() {
     toDateInputValue(endOfMonth(new Date())),
   );
 
-  const primaryGoal = useMemo(() => selectPrimaryGoal(goals), [goals]);
+  const primaryGoal = useMemo(
+    () => (goals.length > 0 ? selectPrimaryGoal(goals) : null),
+    [goals],
+  );
   const primaryProgress = useMemo(
-    () => calculateGoalProgress(primaryGoal, activities),
+    () =>
+      primaryGoal ? calculateGoalProgress(primaryGoal, activities) : null,
     [activities, primaryGoal],
   );
+
+  const goalProgressById = useMemo(
+    () =>
+      new Map(
+        goals.map((goal) => [
+          goal.id,
+          calculateGoalProgress(goal, activities),
+        ]),
+      ),
+    [activities, goals],
+  );
+
+  const activeGoals = goals.filter((goal) => goal.isActive);
+  const pausedGoals = goals.filter((goal) => !goal.isActive);
+  const completedGoals = goals.filter(
+    (goal) => (goalProgressById.get(goal.id)?.remaining ?? 1) <= 0,
+  );
+  const visibleGoals = goals.filter((goal) => {
+    if (filter === "ACTIVE") {
+      return goal.isActive;
+    }
+
+    if (filter === "PAUSED") {
+      return !goal.isActive;
+    }
+
+    return true;
+  });
+
   const averageProgress =
     goals.length > 0
       ? Math.round(
           goals.reduce(
             (total, goal) =>
-              total + calculateGoalProgress(goal, activities).progress,
+              total + (goalProgressById.get(goal.id)?.progress ?? 0),
             0,
           ) / goals.length,
         )
-      : primaryProgress.progress;
+      : 0;
+
+  const selectedGoalType =
+    goalTypes.find((goalType) => goalType.value === type) ?? goalTypes[0];
+
   const isBusy =
     createGoalMutation.isPending ||
     updateGoalMutation.isPending ||
@@ -299,38 +484,10 @@ export default function GoalsPage() {
     deleteGoalMutation.error ||
     null;
 
-  function getErrorMessage(unknownError: unknown) {
-    if (
-      unknownError &&
-      typeof unknownError === "object" &&
-      "response" in unknownError
-    ) {
-      const response = (
-        unknownError as {
-          response?: { data?: { message?: string | string[] } };
-        }
-      ).response;
-      const message = response?.data?.message;
-
-      if (Array.isArray(message)) {
-        return message.join(" ");
-      }
-
-      if (message) {
-        return message;
-      }
-    }
-
-    if (unknownError instanceof Error) {
-      return unknownError.message;
-    }
-
-    return "Une erreur est survenue. Vérifiez que le backend est lancé et que la base est à jour.";
-  }
-
   function resetForm() {
     setEditingGoal(null);
     setType("DISTANCE_KM");
+    setSport("");
     setPeriod("WEEKLY");
     setTitle("");
     setTarget("30");
@@ -338,40 +495,24 @@ export default function GoalsPage() {
     setCustomEndDate(toDateInputValue(endOfMonth(new Date())));
   }
 
+  function scrollToForm() {
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById("goal-form")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   function handleEdit(goal: Goal) {
     setEditingGoal(goal);
     setType(goal.type);
+    setSport(goal.sport ?? "");
     setPeriod(goal.period);
     setTitle(goal.title);
     setTarget(String(goal.target).replace(".", ","));
     setCustomStartDate(toDateInputValue(new Date(goal.startDate)));
     setCustomEndDate(toDateInputValue(new Date(goal.endDate)));
-  }
-
-  async function createStarterGoals() {
-    const now = new Date();
-    const weekDates = {
-      startDate: startOfWeek(now).toISOString(),
-      endDate: endOfWeek(now).toISOString(),
-    };
-
-    await createGoalMutation.mutateAsync({
-      title: "30 km cette semaine",
-      type: "DISTANCE_KM",
-      target: 30,
-      period: "WEEKLY",
-      ...weekDates,
-      isActive: true,
-    });
-
-    await createGoalMutation.mutateAsync({
-      title: "3 sorties cette semaine",
-      type: "ACTIVITY_COUNT",
-      target: 3,
-      period: "WEEKLY",
-      ...weekDates,
-      isActive: true,
-    });
+    scrollToForm();
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -380,15 +521,15 @@ export default function GoalsPage() {
     const parsedTarget = Number(target.replace(",", "."));
 
     if (!Number.isFinite(parsedTarget) || parsedTarget <= 0) {
-      alert("Ajoutez une cible supérieure à 0.");
+      window.alert("Ajoutez une cible supérieure à 0.");
       return;
     }
 
     const dates = getPeriodDates(period, customStartDate, customEndDate);
-
     const payload = {
-      title: title.trim() || getDefaultTitle(type, period),
+      title: title.trim() || getDefaultTitle(type, period, sport),
       type,
+      sport: sport || null,
       target: parsedTarget,
       period,
       ...dates,
@@ -416,112 +557,249 @@ export default function GoalsPage() {
     });
   }
 
-  async function handleDelete(goal: Goal) {
-    if (!window.confirm(`Supprimer “${goal.title}” ?`)) {
+  function handleDelete(goal: Goal) {
+    deleteGoalMutation.reset();
+    setGoalToDelete(goal);
+  }
+
+  function handleDeleteDialogOpenChange(open: boolean) {
+    if (open || deleteGoalMutation.isPending) {
       return;
     }
 
-    await deleteGoalMutation.mutateAsync(goal.id);
+    setGoalToDelete(null);
+    deleteGoalMutation.reset();
+  }
+
+  async function handleConfirmDelete() {
+    if (!goalToDelete) {
+      return;
+    }
+
+    try {
+      await deleteGoalMutation.mutateAsync(goalToDelete.id);
+
+      if (editingGoal?.id === goalToDelete.id) {
+        resetForm();
+      }
+
+      setGoalToDelete(null);
+      deleteGoalMutation.reset();
+    } catch {
+      // La mutation conserve son erreur pour l'afficher dans la modale.
+    }
   }
 
   return (
     <DashboardLayout>
-      <div className="app-goals-page space-y-6">
-        <section className="app-goals-hero app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-7 backdrop-blur-xl">
-          <div className="app-goals-hero-photo absolute inset-0 bg-[url('https://images.pexels.com/photos/26382487/pexels-photo-26382487.jpeg')] bg-cover bg-center" />
-          <div className="app-goals-hero-wash absolute inset-0" />
+      <main className={styles.page}>
+        <FadeIn delay={0.05}>
+          <section className={styles.hero}>
+            <div className={styles.heroPhoto} aria-hidden="true" />
+            <div className={styles.heroOverlay} aria-hidden="true" />
 
-          <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1fr)_330px] xl:items-center">
-            <div>
-              <div className="app-goals-kicker inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300">
-                <Target className="h-3.5 w-3.5" />
-                Défis outdoor
-              </div>
-
-              <h1 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight text-white md:text-4xl">
-                Fixez le cap, on garde le rythme.
-              </h1>
-
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
-                Distance, sorties, D+ ou temps sportif : créez vos défis selon
-                votre terrain du moment. Lac, route, sentier ou montagne,
-                l’objectif doit donner envie de chausser les baskets.
-              </p>
-            </div>
-
-            <div className="app-goals-priority-card rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-5">
-              <p className="text-sm text-zinc-400">Défi prioritaire</p>
-              <p className="mt-2 text-2xl font-bold text-white">
-                {primaryGoal.title}
-              </p>
-              <div className="mt-4 flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-xs text-zinc-500">Progression moyenne</p>
-                  <p className="mt-1 text-3xl font-bold text-white">
-                    {averageProgress}%
-                  </p>
+            <div className={styles.heroContent}>
+              <div className={styles.heroCopy}>
+                <div className={styles.heroKicker}>
+                  <Target aria-hidden="true" />
+                  Objectifs du moment
                 </div>
-                <Trophy className="h-8 w-8 text-violet-300" />
+
+                <h1>Gardez le cap, avancez à votre rythme.</h1>
+                <p>
+                  Des objectifs simples, lisibles et motivants pour transformer
+                  chaque sortie en progression concrète.
+                </p>
+
+                <div className={styles.heroActions}>
+                  <a href="#goal-form" className={styles.primaryButton}>
+                    <Plus aria-hidden="true" />
+                    Nouvel objectif
+                  </a>
+
+                  <div className={styles.heroFacts}>
+                    <span>
+                      <strong>{activeGoals.length}</strong> actif
+                      {activeGoals.length > 1 ? "s" : ""}
+                    </span>
+                    <span>
+                      <strong>{averageProgress}%</strong> de progression moyenne
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {primaryGoal && primaryProgress ? (
+                <div className={styles.priorityCard}>
+                  <div className={styles.priorityHeader}>
+                    <div>
+                      <span>Cap prioritaire</span>
+                      <h2>{primaryGoal.title}</h2>
+                    </div>
+                    <div className={styles.priorityIcon}>
+                      <Trophy aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  <div className={styles.priorityProgress}>
+                    <div>
+                      <span>Progression</span>
+                      <strong>{primaryProgress.progress}%</strong>
+                    </div>
+                    <p>
+                      {formatGoalValue(primaryProgress.current, primaryGoal.type)}
+                      <span>
+                        / {formatGoalValue(primaryGoal.target, primaryGoal.type)}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className={styles.priorityTrack} aria-hidden="true">
+                    <div
+                      style={
+                        {
+                          "--priority-progress": `${Math.max(
+                            0,
+                            Math.min(primaryProgress.progress, 100),
+                          )}%`,
+                        } as CSSProperties
+                      }
+                    />
+                  </div>
+
+                  <div className={styles.priorityStatus}>
+                    <TrendingUp aria-hidden="true" />
+                    {primaryProgress.remaining <= 0
+                      ? "Objectif atteint"
+                      : `Encore ${formatGoalValue(
+                          primaryProgress.remaining,
+                          primaryGoal.type,
+                        )}`}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={`${styles.priorityCard} ${styles.priorityCardEmpty}`}
+                >
+                  <div className={styles.priorityHeader}>
+                    <div>
+                      <span>Cap prioritaire</span>
+                      <h2>Aucun objectif actif</h2>
+                    </div>
+                    <div className={styles.priorityIcon}>
+                      <Target aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  <div className={styles.priorityStatus}>
+                    <Sparkles aria-hidden="true" />
+                    Définissez votre prochain cap quand vous serez prêt.
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={scrollToForm}
+                    className={styles.primaryButton}
+                  >
+                    <Plus aria-hidden="true" />
+                    Créer un objectif
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+        </FadeIn>
+
+        <div className={styles.contentGrid}>
+          <section className={styles.goalsPanel}>
+            <div className={styles.panelHeader}>
+              <div>
+                <div className={styles.panelTitle}>
+                  <Target aria-hidden="true" />
+                  <h2>Caps en cours</h2>
+                </div>
+                <p>Suivez ce qui compte, sans surcharger votre tableau de bord.</p>
+              </div>
+
+              <div className={styles.filters} role="group" aria-label="Filtrer les objectifs">
+                <button
+                  type="button"
+                  onClick={() => setFilter("ACTIVE")}
+                  aria-pressed={filter === "ACTIVE"}
+                >
+                  Actifs
+                  <span>{activeGoals.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilter("PAUSED")}
+                  aria-pressed={filter === "PAUSED"}
+                >
+                  En pause
+                  <span>{pausedGoals.length}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilter("ALL")}
+                  aria-pressed={filter === "ALL"}
+                >
+                  Tous
+                  <span>{goals.length}</span>
+                </button>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_430px]">
-          <div className="space-y-4">
             {isError && (
-              <div className="app-premium-surface rounded-[24px] border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
-                Impossible de charger vos défis : {getErrorMessage(error)}
+              <div className={styles.errorState}>
+                Impossible de charger vos objectifs : {getErrorMessage(error)}
               </div>
             )}
 
             {mutationError && (
-              <div className="app-premium-surface rounded-[24px] border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
-                Impossible d’enregistrer le défi :{" "}
-                {getErrorMessage(mutationError)}
+              <div className={styles.errorState}>
+                Impossible d’enregistrer l’objectif : {getErrorMessage(mutationError)}
               </div>
             )}
 
             {isLoading && (
-              <div className="app-premium-surface rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 text-sm text-zinc-400">
-                Chargement des objectifs...
+              <div className={styles.loadingState}>
+                <span />
+                Chargement de vos objectifs…
               </div>
             )}
 
             {!isLoading && goals.length === 0 && (
-              <FadeIn>
-                <div className="app-premium-surface rounded-[26px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300">
-                      <CheckCircle2 className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-semibold text-white">
-                        Aucun objectif créé pour le moment.
-                      </h2>
-                      <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-                        Sport Tracker va préparer vos deux objectifs de départ.
-                        Vous pourrez ensuite les ajuster ou créer un cap plus
-                        personnel.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={createStarterGoals}
-                        disabled={isBusy}
-                        className="app-goals-starter-button mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.28)] transition hover:scale-[1.01] disabled:opacity-60"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Créer mes deux défis de départ
-                      </button>
-                    </div>
-                  </div>
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>
+                  <CheckCircle2 aria-hidden="true" />
                 </div>
-              </FadeIn>
+                <div>
+                  <h3>Votre prochain cap commence ici.</h3>
+                  <p>
+                    Aucun objectif n’est imposé. Créez uniquement le cap qui vous
+                    correspond, au moment qui vous convient.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={scrollToForm}
+                    className={styles.secondaryButton}
+                  >
+                    <Plus aria-hidden="true" />
+                    Créer un objectif
+                  </button>
+                </div>
+              </div>
             )}
 
-            <div className="grid gap-4 lg:grid-cols-2">
-              {goals.map((goal, index) => (
-                <FadeIn key={goal.id} delay={0.08 * index}>
+            {!isLoading && goals.length > 0 && visibleGoals.length === 0 && (
+              <div className={styles.filterEmptyState}>
+                Aucun objectif dans cette catégorie.
+              </div>
+            )}
+
+            <div className={styles.goalsList}>
+              {visibleGoals.map((goal, index) => (
+                <FadeIn key={goal.id} delay={0.05 * index}>
                   <GoalCard
                     goal={goal}
                     activities={activities}
@@ -533,149 +811,224 @@ export default function GoalsPage() {
                 </FadeIn>
               ))}
             </div>
-          </div>
+          </section>
 
-          <aside className="app-premium-surface h-fit rounded-[28px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-300">
-                <Plus className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-white">
-                  {editingGoal ? "Modifier le défi" : "Créer un objectif"}
-                </h2>
-                <p className="mt-1 text-sm text-zinc-400">
-                  {editingGoal
-                    ? "Ajustez la cible, la période ou le nom."
-                    : "Simple, mesurable, visible sur le dashboard."}
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div>
-                <label className="text-sm font-medium text-zinc-300">
-                  Nom
-                </label>
-                <input
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  placeholder={getDefaultTitle(type, period)}
-                  className="mt-2 h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/40"
-                />
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
+          <aside className={styles.sidebarColumn}>
+            <section id="goal-form" className={styles.formCard}>
+              <div className={styles.cardHeading}>
+                <div className={styles.cardHeadingIcon}>
+                  <Plus aria-hidden="true" />
+                </div>
                 <div>
-                  <label className="text-sm font-medium text-zinc-300">
-                    Type
-                  </label>
+                  <h2>{editingGoal ? "Modifier l’objectif" : "Créer un objectif"}</h2>
+                  <p>
+                    {editingGoal
+                      ? "Ajustez la cible sans perdre votre progression."
+                      : "Un cap clair, mesurable et motivant."}
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className={styles.form}>
+                <fieldset className={styles.typeFieldset}>
+                  <legend>Type d’objectif</legend>
+                  <div className={styles.typeGrid}>
+                    {goalTypes.map((goalType) => {
+                      const Icon = goalType.icon;
+                      const isSelected = type === goalType.value;
+
+                      return (
+                        <button
+                          key={goalType.value}
+                          type="button"
+                          onClick={() => setType(goalType.value)}
+                          aria-pressed={isSelected}
+                          className={isSelected ? styles.typeSelected : undefined}
+                        >
+                          <Icon aria-hidden="true" />
+                          <span>{goalType.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+
+                <label className={styles.field}>
+                  <span>Sport concerné</span>
                   <select
-                    value={type}
-                    onChange={(event) => setType(event.target.value as GoalType)}
-                    className="mt-2 h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/40"
+                    value={sport}
+                    onChange={(event) =>
+                      setSport(event.target.value as SportType | "")
+                    }
                   >
-                    {goalTypes.map((goalType) => (
-                      <option key={goalType.value} value={goalType.value}>
-                        {goalType.label}
+                    {goalSports.map((goalSport) => (
+                      <option key={goalSport.value || "ALL"} value={goalSport.value}>
+                        {goalSport.label}
                       </option>
                     ))}
                   </select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-zinc-300">
-                    Cible
-                  </label>
-                  <input
-                    value={target}
-                    onChange={(event) => setTarget(event.target.value)}
-                    inputMode="decimal"
-                    className="mt-2 h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/40"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-zinc-300">
-                  Période
+                  <small className={styles.fieldHint}>
+                    Choisissez un sport pour ne compter que ses activités, ou
+                    laissez “Tous les sports”.
+                  </small>
                 </label>
-                <select
-                  value={period}
-                  onChange={(event) => setPeriod(event.target.value as GoalPeriod)}
-                  className="mt-2 h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/40"
-                >
-                  {goalPeriods.map((goalPeriod) => (
-                    <option key={goalPeriod.value} value={goalPeriod.value}>
-                      {goalPeriod.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
 
-              {period === "CUSTOM" && (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className="text-sm font-medium text-zinc-300">
-                      Début
-                    </label>
-                    <input
-                      type="date"
-                      value={customStartDate}
-                      onChange={(event) => setCustomStartDate(event.target.value)}
-                      className="mt-2 h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/40"
-                    />
-                  </div>
+                <label className={styles.field}>
+                  <span>Nom de l’objectif</span>
+                  <input
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    placeholder={getDefaultTitle(type, period, sport)}
+                  />
+                </label>
 
-                  <div>
-                    <label className="text-sm font-medium text-zinc-300">
-                      Fin
-                    </label>
-                    <input
-                      type="date"
-                      value={customEndDate}
-                      onChange={(event) => setCustomEndDate(event.target.value)}
-                      className="mt-2 h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/40"
-                    />
-                  </div>
+                <div className={styles.formRow}>
+                  <label className={styles.field}>
+                    <span>Cible</span>
+                    <div className={styles.inputWithUnit}>
+                      <input
+                        value={target}
+                        onChange={(event) => setTarget(event.target.value)}
+                        inputMode="decimal"
+                        aria-describedby="goal-target-unit"
+                      />
+                      <span id="goal-target-unit">{selectedGoalType.unit}</span>
+                    </div>
+                  </label>
+
+                  <label className={styles.field}>
+                    <span>Période</span>
+                    <select
+                      value={period}
+                      onChange={(event) =>
+                        setPeriod(event.target.value as GoalPeriod)
+                      }
+                    >
+                      {goalPeriods.map((goalPeriod) => (
+                        <option key={goalPeriod.value} value={goalPeriod.value}>
+                          {goalPeriod.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </div>
-              )}
 
-              <button
-                type="submit"
-                disabled={isBusy}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-500 text-sm font-semibold text-white shadow-[0_0_28px_rgba(168,85,247,0.28)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <Plus className="h-4 w-4" />
-                {editingGoal ? "Enregistrer les modifications" : "Ajouter l’objectif"}
-              </button>
+                {period === "CUSTOM" && (
+                  <div className={styles.formRow}>
+                    <label className={styles.field}>
+                      <span>Début</span>
+                      <input
+                        type="date"
+                        value={customStartDate}
+                        onChange={(event) =>
+                          setCustomStartDate(event.target.value)
+                        }
+                      />
+                    </label>
 
-              {editingGoal && (
+                    <label className={styles.field}>
+                      <span>Fin</span>
+                      <input
+                        type="date"
+                        value={customEndDate}
+                        onChange={(event) => setCustomEndDate(event.target.value)}
+                      />
+                    </label>
+                  </div>
+                )}
+
                 <button
-                  type="button"
-                  onClick={resetForm}
+                  type="submit"
                   disabled={isBusy}
-                  className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-sm font-semibold text-zinc-200 transition hover:bg-white/[0.07] disabled:opacity-50"
+                  className={styles.submitButton}
                 >
-                  Annuler la modification
+                  <Plus aria-hidden="true" />
+                  {editingGoal
+                    ? "Enregistrer les modifications"
+                    : "Ajouter l’objectif"}
                 </button>
-              )}
-            </form>
 
-            <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <CalendarDays className="h-4 w-4 text-emerald-300" />
-                Conseil
+                {editingGoal && (
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    disabled={isBusy}
+                    className={styles.cancelButton}
+                  >
+                    Annuler la modification
+                  </button>
+                )}
+              </form>
+            </section>
+
+            <section className={styles.adviceCard}>
+              <div className={styles.adviceArt} aria-hidden="true" />
+              <div className={styles.adviceContent}>
+                <div className={styles.adviceIcon}>
+                  <Sparkles aria-hidden="true" />
+                </div>
+                <div>
+                  <h2>Conseil du refuge</h2>
+                  <p>
+                    Associez un objectif de distance à un objectif de régularité :
+                    l’un donne le volume, l’autre protège le rythme.
+                  </p>
+                </div>
               </div>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">
-                Un objectif de distance et un objectif de régularité
-                fonctionnent très bien ensemble : l’un donne le volume, l’autre
-                garde le rythme.
-              </p>
-            </div>
+            </section>
+
+            <section className={styles.historyCard}>
+              <div className={styles.historyHeader}>
+                <div>
+                  <History aria-hidden="true" />
+                  <h2>Objectifs accomplis</h2>
+                </div>
+                <span>{completedGoals.length}</span>
+              </div>
+
+              {completedGoals.length > 0 ? (
+                <div className={styles.historyList}>
+                  {completedGoals.slice(0, 3).map((goal) => (
+                    <div key={goal.id}>
+                      <div>
+                        <strong>{goal.title}</strong>
+                        <span>{formatGoalEndDate(goal.endDate)}</span>
+                      </div>
+                      <CheckCircle2 aria-hidden="true" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.historyEmpty}>
+                  Votre premier objectif terminé apparaîtra ici.
+                </p>
+              )}
+            </section>
           </aside>
-        </section>
-      </div>
+        </div>
+      </main>
+
+      <ConfirmationDialog
+        open={goalToDelete !== null}
+        title="Supprimer cet objectif ?"
+        description={
+          goalToDelete
+            ? `L’objectif “${goalToDelete.title}” sera définitivement supprimé. Cette action ne peut pas être annulée.`
+            : "Cet objectif sera définitivement supprimé."
+        }
+        confirmLabel="Supprimer l’objectif"
+        cancelLabel="Conserver l’objectif"
+        tone="default"
+        icon={<Trash2 aria-hidden="true" />}
+        isLoading={deleteGoalMutation.isPending}
+        errorMessage={
+          deleteGoalMutation.error
+            ? getErrorMessage(deleteGoalMutation.error)
+            : undefined
+        }
+        onConfirm={handleConfirmDelete}
+        onOpenChange={handleDeleteDialogOpenChange}
+      />
     </DashboardLayout>
   );
 }

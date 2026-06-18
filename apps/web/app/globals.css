@@ -19,6 +19,21 @@ body {
   --auth-photo-position: right center;
 }
 
+.app-dashboard-hero {
+  --dashboard-hero-image: url("https://images.pexels.com/photos/29518500/pexels-photo-29518500.jpeg");
+  --dashboard-hero-x: center;
+  --dashboard-hero-y: 20%;
+  background-image: var(--dashboard-hero-image);
+  background-position: var(--dashboard-hero-x) var(--dashboard-hero-y);
+  background-size: cover;
+}
+
+html:not(.sport-theme-nature) .app-dashboard-hero {
+  border-color: rgba(139, 92, 246, 0.18) !important;
+  box-shadow:
+    0 26px 90px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.035) inset !important;
+}
 
 .app-mascot-choices {
   display: none;
@@ -68,6 +83,20 @@ body {
   color: #a7f3d0;
 }
 
+.app-dashboard-hero .app-mountain-mascot {
+  border-color: rgba(255, 255, 255, 0.18);
+  background:
+    radial-gradient(
+      circle at 22% 35%,
+      rgba(74, 222, 128, 0.22),
+      transparent 44%
+    ),
+    rgba(255, 255, 255, 0.12);
+  color: #bbf7d0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 34px rgba(0, 0, 0, 0.18);
+}
 
 .app-sneaker-shoe,
 .app-mountain-peaks {
@@ -271,6 +300,20 @@ html.sport-theme-nature .app-mountain-mascot {
   color: #65a30d !important;
 }
 
+html.sport-theme-nature .app-dashboard-hero .app-mountain-mascot {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background:
+    radial-gradient(
+      circle at 22% 35%,
+      rgba(16, 185, 129, 0.24),
+      transparent 44%
+    ),
+    rgba(255, 255, 255, 0.18) !important;
+  color: #bbf7d0 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 16px 36px rgba(15, 23, 42, 0.16) !important;
+}
 
 html.sport-theme-nature .app-topbar > .pointer-events-none > * {
   display: none !important;
@@ -641,16 +684,9 @@ html.sport-theme-nature .app-sidebar {
 }
 
 html.sport-theme-nature .app-topbar {
-  border-bottom-color: rgba(6, 95, 70, 0.1) !important;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(252, 255, 252, 0.88),
-      rgba(239, 248, 243, 0.72)
-    ) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(1.12);
-  backdrop-filter: blur(18px) saturate(1.12);
-  box-shadow: 0 10px 32px rgba(6, 78, 59, 0.05) !important;
+  border-bottom-color: var(--nature-border) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 18px 52px rgba(21, 128, 61, 0.07) !important;
 }
 
 html.sport-theme-nature .app-sidebar h1,
@@ -830,30 +866,7 @@ html.sport-theme-nature .app-shell main a:not([class*="FC4C02"]) {
 }
 
 html.sport-theme-nature .app-topbar a,
-html.sport-theme-nature .app-topbar button {
-  border-color: rgba(6, 95, 70, 0.12) !important;
-  background: rgba(255, 255, 255, 0.62) !important;
-  color: var(--nature-ink) !important;
-  box-shadow:
-    0 8px 24px rgba(6, 78, 59, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84) !important;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
-}
-
-html.sport-theme-nature .app-topbar a:hover,
-html.sport-theme-nature .app-topbar button:hover {
-  border-color: rgba(16, 185, 129, 0.24) !important;
-  background: rgba(236, 253, 245, 0.92) !important;
-  box-shadow:
-    0 10px 28px rgba(6, 78, 59, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-  transform: translateY(-1px);
-}
-
+html.sport-theme-nature .app-topbar button,
 html.sport-theme-nature .app-shell main input,
 html.sport-theme-nature .app-shell main textarea,
 html.sport-theme-nature .app-shell main select,
@@ -1228,6 +1241,124 @@ html.sport-theme-nature .app-shell main [class*="transition-all"] {
   transition-duration: 160ms !important;
 }
 
+html.sport-theme-nature .app-shell main section.app-dashboard-hero {
+  border-color: rgba(255, 255, 255, 0.34) !important;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 24, 18, 0.78),
+      rgba(15, 35, 26, 0.58),
+      rgba(4, 19, 15, 0.34)
+    ),
+    linear-gradient(to top, rgba(5, 16, 12, 0.76), transparent 58%),
+    url("https://images.pexels.com/photos/29518500/pexels-photo-29518500.jpeg") !important;
+  background-position: center 42% !important;
+  background-size: cover !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 28px 82px rgba(21, 128, 61, 0.18) !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero h1,
+html.sport-theme-nature .app-shell main section.app-dashboard-hero h2,
+html.sport-theme-nature .app-shell main section.app-dashboard-hero h3,
+html.sport-theme-nature .app-shell main section.app-dashboard-hero .text-white {
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero p,
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  [class*="text-zinc"] {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  .app-dashboard-glass,
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  [class*="bg-black/"],
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  [class*="bg-white/"] {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(6, 18, 14, 0.42) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  > .pointer-events-none
+  .absolute {
+  opacity: 1 !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  a[class*="from-violet"] {
+  background-image: linear-gradient(
+    135deg,
+    #052e2b,
+    #065f46 58%,
+    #064e3b
+  ) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  section.app-dashboard-hero
+  .app-trace-activity-cta {
+  border-color: rgba(187, 247, 208, 0.28) !important;
+  background:
+    radial-gradient(
+      circle at 28% 16%,
+      rgba(187, 247, 208, 0.18),
+      transparent 38%
+    ),
+    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
+  color: #ecfdf5 !important;
+  box-shadow:
+    0 18px 38px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 24, 18, 0.78),
+      rgba(15, 35, 26, 0.54),
+      rgba(4, 19, 15, 0.28)
+    ),
+    var(--dashboard-hero-image);
+  background-position: var(--dashboard-hero-x) var(--dashboard-hero-y);
+  background-size: cover;
+  opacity: 1;
+  z-index: 0;
+}
+
+html.sport-theme-nature .app-shell main section.app-dashboard-hero > * {
+  position: relative;
+  z-index: 1;
+}
 
 html.sport-theme-nature .app-auth-page {
   background:
@@ -1592,6 +1723,49 @@ html.sport-theme-nature .app-mobile-sidebar .app-brand-logo svg {
   stroke: #ffffff !important;
 }
 
+html.sport-theme-nature .app-stats-icon-activity {
+  border-color: rgba(187, 247, 208, 0.28) !important;
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(187, 247, 208, 0.18),
+      transparent 38%
+    ),
+    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
+  color: #ecfdf5 !important;
+  box-shadow:
+    0 18px 46px rgba(6, 78, 59, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+html.sport-theme-nature .app-stats-icon-activity svg {
+  color: #ecfdf5 !important;
+  stroke: #ecfdf5 !important;
+}
+
+html.sport-theme-nature .app-stats-icon-activity > div {
+  opacity: 0 !important;
+}
+
+html.sport-theme-nature .app-shell main .app-stats-icon-activity {
+  border-color: rgba(187, 247, 208, 0.28) !important;
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(187, 247, 208, 0.18),
+      transparent 38%
+    ),
+    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
+  color: #ecfdf5 !important;
+  box-shadow:
+    0 18px 46px rgba(6, 78, 59, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+html.sport-theme-nature .app-shell main .app-stats-icon-activity svg {
+  color: #ecfdf5 !important;
+  stroke: #ecfdf5 !important;
+}
 
 html.sport-theme-nature .app-dashboard-green-icon {
   border-color: rgba(187, 247, 208, 0.28) !important;
@@ -1637,6 +1811,7 @@ html.sport-theme-nature .app-shell main .app-dashboard-green-icon svg {
   stroke: #ecfdf5 !important;
 }
 
+html.sport-theme-nature .app-goal-progress-card,
 html.sport-theme-nature .app-heatmap-momentum-card {
   border-color: rgba(255, 255, 255, 0.62) !important;
   background: linear-gradient(135deg, #06b981, #35d45b 58%, #8be324) !important;
@@ -1646,15 +1821,18 @@ html.sport-theme-nature .app-heatmap-momentum-card {
     inset 0 1px 0 rgba(255, 255, 255, 0.36) !important;
 }
 
+html.sport-theme-nature .app-goal-progress-card > div,
 html.sport-theme-nature .app-heatmap-momentum-card > div {
   opacity: 0 !important;
 }
 
+html.sport-theme-nature .app-goal-progress-card p,
 html.sport-theme-nature .app-heatmap-momentum-card p {
   color: #ffffff !important;
   text-shadow: 0 1px 12px rgba(6, 78, 59, 0.26);
 }
 
+html.sport-theme-nature .app-goal-progress-card p:first-of-type,
 html.sport-theme-nature .app-heatmap-momentum-card p:first-of-type {
   color: rgba(255, 255, 255, 0.74) !important;
 }
@@ -3540,8 +3718,7 @@ html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
   box-shadow: 0 0 18px rgba(16, 185, 129, 0.18) !important;
 }
 
-/* Statistiques nature: reprise propre,
-proche de la page Sorties.
+/* Statistiques nature: reprise propre, proche de la page Sorties.
    Ce bloc doit rester en fin de fichier pour neutraliser les surfaces globales. */
 html.sport-theme-nature .app-shell main .app-statistics-page {
   background: transparent !important;
@@ -4891,5 +5068,332 @@ html.sport-theme-nature
 
   html.sport-theme-nature .app-activity-detail-page .app-mini-route-map {
     min-height: 300px !important;
+  }
+}
+
+/* ========================================================================== */
+/* Montaro nature shell Ã¢â‚¬â€ final uniform forest/mint pass                      */
+/* Keep this block at the very end of globals.css so it wins over old rules.  */
+/* ========================================================================== */
+html.sport-theme-nature {
+  --montaro-shell-mint: #e7f2e9;
+  --montaro-shell-forest: #064e3b;
+  --montaro-shell-forest-soft: rgba(6, 78, 59, 0.08);
+  --montaro-shell-border: rgba(6, 78, 59, 0.12);
+  --montaro-shell-text: #102033;
+  --montaro-shell-muted: #607268;
+}
+
+html.sport-theme-nature .app-sidebar,
+html.sport-theme-nature .app-topbar {
+  background: var(--montaro-shell-mint) !important;
+  background-image: none !important;
+  color: var(--montaro-shell-text) !important;
+}
+
+html.sport-theme-nature .app-sidebar {
+  position: relative;
+  isolation: isolate;
+  border-right-color: var(--montaro-shell-border) !important;
+  box-shadow:
+    14px 0 36px rgba(6, 78, 59, 0.055),
+    inset -1px 0 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+html.sport-theme-nature .app-sidebar::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  bottom: 0;
+  z-index: 0;
+  width: 92%;
+  height: 300px;
+  background: url("/images/sidebar-pine-forest.svg") right bottom / contain no-repeat;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+html.sport-theme-nature .app-sidebar > * {
+  position: relative;
+  z-index: 1;
+}
+
+html.sport-theme-nature .app-sidebar > .pointer-events-none {
+  display: none !important;
+}
+
+html.sport-theme-nature .app-sidebar h1,
+html.sport-theme-nature .app-sidebar h2,
+html.sport-theme-nature .app-sidebar .text-white {
+  color: var(--montaro-shell-text) !important;
+}
+
+html.sport-theme-nature .app-sidebar p,
+html.sport-theme-nature .app-sidebar [class*="text-zinc"] {
+  color: var(--montaro-shell-muted) !important;
+}
+
+html.sport-theme-nature .app-sidebar nav a {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: var(--montaro-shell-muted) !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature .app-sidebar nav a:not([aria-current="page"]):hover {
+  border-color: rgba(6, 78, 59, 0.08) !important;
+  background: rgba(255, 255, 255, 0.34) !important;
+  color: var(--montaro-shell-forest) !important;
+}
+
+html.sport-theme-nature .app-sidebar nav a[aria-current="page"] {
+  border-color: rgba(6, 78, 59, 0.18) !important;
+  background: rgba(6, 78, 59, 0.08) !important;
+  color: var(--montaro-shell-forest) !important;
+  box-shadow:
+    0 10px 24px rgba(6, 78, 59, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.48) !important;
+}
+
+html.sport-theme-nature .app-sidebar nav a[aria-current="page"] > .absolute {
+  display: none !important;
+}
+
+html.sport-theme-nature .app-sidebar nav a[aria-current="page"] > div[class*="w-1"] {
+  background: #10b981 !important;
+  opacity: 1 !important;
+}
+
+html.sport-theme-nature .app-sidebar nav a[aria-current="page"] svg,
+html.sport-theme-nature .app-sidebar nav a[aria-current="page"] span {
+  color: var(--montaro-shell-forest) !important;
+}
+
+html.sport-theme-nature .app-sidebar [class*="border-t"] {
+  border-color: rgba(6, 78, 59, 0.11) !important;
+}
+
+html.sport-theme-nature .app-topbar {
+  border-bottom-color: var(--montaro-shell-border) !important;
+  box-shadow:
+    0 8px 24px rgba(6, 78, 59, 0.045),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.45) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.sport-theme-nature .app-topbar > .pointer-events-none {
+  display: none !important;
+}
+
+html.sport-theme-nature .app-topbar a,
+html.sport-theme-nature .app-topbar button,
+html.sport-theme-nature .app-topbar .border-white\/\[0\.06\] {
+  border-color: rgba(6, 78, 59, 0.12) !important;
+  background: rgba(255, 255, 255, 0.48) !important;
+  color: var(--montaro-shell-text) !important;
+  box-shadow:
+    0 7px 20px rgba(6, 78, 59, 0.045),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+html.sport-theme-nature .app-topbar a:hover,
+html.sport-theme-nature .app-topbar button:hover {
+  border-color: rgba(6, 78, 59, 0.2) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+html.sport-theme-nature .app-topbar [class*="text-zinc"] {
+  color: var(--montaro-shell-muted) !important;
+}
+
+html.sport-theme-nature .app-topbar [class*="bg-violet-400"] {
+  background-color: #10b981 !important;
+}
+
+html.sport-theme-nature .app-mobile-sidebar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--montaro-shell-border) !important;
+  background: var(--montaro-shell-mint) !important;
+  background-image: none !important;
+  color: var(--montaro-shell-text) !important;
+}
+
+html.sport-theme-nature .app-mobile-sidebar::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  bottom: 0;
+  z-index: 0;
+  width: 94%;
+  height: 270px;
+  background: url("/images/sidebar-pine-forest.svg") right bottom / contain no-repeat;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+html.sport-theme-nature .app-mobile-sidebar > * {
+  position: relative;
+  z-index: 1;
+}
+
+html.sport-theme-nature .app-mobile-sidebar [class*="border-zinc"] {
+  border-color: rgba(6, 78, 59, 0.11) !important;
+}
+
+html.sport-theme-nature .app-mobile-sidebar a {
+  color: var(--montaro-shell-muted) !important;
+}
+
+html.sport-theme-nature .app-mobile-sidebar a:hover {
+  background: rgba(255, 255, 255, 0.42) !important;
+  color: var(--montaro-shell-forest) !important;
+}
+
+/* Account dropdown â€” avatar menu */
+.app-account-menu {
+  transform-origin: top right;
+  animation: app-account-menu-in 160ms ease-out;
+}
+
+@keyframes app-account-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+html.sport-theme-nature .app-account-trigger > span:nth-child(2) {
+  border-color: rgba(187, 247, 208, 0.34) !important;
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(236, 253, 245, 0.24),
+      transparent 38%
+    ),
+    linear-gradient(135deg, #065f46, #10b981 58%, #84cc16) !important;
+  box-shadow:
+    0 14px 32px rgba(6, 78, 59, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+html.sport-theme-nature .app-account-menu {
+  border-color: rgba(6, 78, 59, 0.14) !important;
+  background: rgba(239, 248, 242, 0.98) !important;
+  color: #102033 !important;
+  box-shadow:
+    0 30px 80px rgba(6, 78, 59, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+
+html.sport-theme-nature .app-account-identity {
+  border-color: rgba(6, 78, 59, 0.1) !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+}
+
+html.sport-theme-nature .app-account-identity p:first-child {
+  color: #102033 !important;
+}
+
+html.sport-theme-nature .app-account-identity p:last-child,
+html.sport-theme-nature .app-account-menu [class*="text-zinc-500"] {
+  color: #607268 !important;
+}
+
+html.sport-theme-nature .app-account-theme-option {
+  border-color: rgba(6, 78, 59, 0.1) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  color: #375248 !important;
+}
+
+html.sport-theme-nature
+  .app-account-theme-option[aria-checked="true"]:first-child {
+  border-color: rgba(5, 150, 105, 0.32) !important;
+  background: rgba(209, 250, 229, 0.82) !important;
+  color: #065f46 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+html.sport-theme-nature
+  .app-account-theme-option[aria-checked="true"]:nth-child(2) {
+  border-color: rgba(139, 92, 246, 0.22) !important;
+  background: rgba(237, 233, 254, 0.7) !important;
+  color: #6d28d9 !important;
+}
+
+html.sport-theme-nature .app-account-menu-item {
+  color: #375248 !important;
+}
+
+html.sport-theme-nature .app-account-menu-item:hover {
+  background: rgba(209, 250, 229, 0.7) !important;
+  color: #065f46 !important;
+}
+
+html.sport-theme-nature .app-account-logout {
+  color: #0f766e !important;
+}
+
+html.sport-theme-nature .app-account-logout:hover {
+  background: rgba(204, 251, 241, 0.72) !important;
+  color: #115e59 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-account-menu {
+    animation: none;
+  }
+}
+
+
+/* Shell background polish â€” keep sidebar/topbar detached from page */
+html.sport-theme-nature body {
+  background: #f8fbf9 !important;
+}
+
+html.sport-theme-nature .app-shell {
+  background:
+    linear-gradient(rgba(6, 78, 59, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 78, 59, 0.022) 1px, transparent 1px),
+    #f8fbf9 !important;
+  background-size:
+    120px 120px,
+    120px 120px,
+    auto !important;
+}
+
+html.sport-theme-nature .app-content-container {
+  background: transparent !important;
+}
+
+html.sport-theme-nature .app-sidebar,
+html.sport-theme-nature .app-topbar {
+  background: #e7f2e9 !important;
+}
+
+html.sport-theme-nature .app-sidebar {
+  border-right-color: rgba(6, 78, 59, 0.14) !important;
+}
+
+html.sport-theme-nature .app-topbar {
+  border-bottom-color: rgba(6, 78, 59, 0.12) !important;
+}
+
+html.sport-theme-nature .app-account-logout {
+  margin-top: 0.375rem;
+}
+
+@media (max-width: 767px) {
+  html.sport-theme-nature body,
+  html.sport-theme-nature .app-shell {
+    background: #fbfdfc !important;
   }
 }

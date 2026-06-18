@@ -9,10 +9,26 @@ export type GoalType =
 
 export type GoalPeriod = "WEEKLY" | "MONTHLY" | "CUSTOM";
 
+export type SportType =
+  | "RUNNING"
+  | "TRAIL"
+  | "HIKING"
+  | "WALKING"
+  | "ROAD_CYCLING"
+  | "MTB"
+  | "GRAVEL"
+  | "SWIMMING"
+  | "GYM"
+  | "FITNESS"
+  | "SKI"
+  | "SNOWBOARD"
+  | "CLIMBING";
+
 export interface Goal {
   id: string;
   title: string;
   type: GoalType;
+  sport: SportType | null;
   target: number;
   period: GoalPeriod;
   startDate: string;
@@ -25,6 +41,7 @@ export interface Goal {
 export type CreateGoalInput = {
   title: string;
   type: GoalType;
+  sport?: SportType | null;
   target: number;
   period: GoalPeriod;
   startDate: string;

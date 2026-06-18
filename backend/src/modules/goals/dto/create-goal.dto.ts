@@ -8,7 +8,7 @@ import {
   Min,
 } from 'class-validator';
 
-import { GoalPeriod, GoalType } from '@prisma/client';
+import { GoalPeriod, GoalType, SportType } from '@prisma/client';
 
 export class CreateGoalDto {
   @IsString()
@@ -16,6 +16,10 @@ export class CreateGoalDto {
 
   @IsEnum(GoalType)
   type: GoalType;
+
+  @IsOptional()
+  @IsEnum(SportType)
+  sport?: SportType | null;
 
   @IsNumber()
   @Min(1)

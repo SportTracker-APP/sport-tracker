@@ -3,10 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 import { CreateGoalDto } from './dto/create-goal.dto';
-
 import { UpdateGoalDto } from './dto/update-goal.dto';
-
-import { buildDefaultGoals } from './default-goals';
 
 @Injectable()
 export class GoalsService {
@@ -17,6 +14,7 @@ export class GoalsService {
       data: {
         title: dto.title,
         type: dto.type,
+        sport: dto.sport ?? null,
         target: dto.target,
         period: dto.period,
         startDate: new Date(dto.startDate),
@@ -28,25 +26,6 @@ export class GoalsService {
   }
 
   async findAll(userId: string) {
-    const existingGoalsCount = await this.prisma.goal.count({
-      where: {
-        userId,
-      },
-    });
-
-    if (existingGoalsCount === 0) {
-      await this.prisma.$transaction(
-        buildDefaultGoals().map((goal) =>
-          this.prisma.goal.create({
-            data: {
-              ...goal,
-              userId,
-            },
-          }),
-        ),
-      );
-    }
-
     return this.prisma.goal.findMany({
       where: {
         userId,
@@ -78,6 +57,9 @@ export class GoalsService {
         }),
         ...(dto.type !== undefined && {
           type: dto.type,
+        }),
+        ...(dto.sport !== undefined && {
+          sport: dto.sport,
         }),
         ...(dto.target !== undefined && {
           target: dto.target,

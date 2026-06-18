@@ -78,7 +78,9 @@ export function formatGoalValue(value: number, type: GoalType) {
       : `${hours}H${String(remainingMinutes).padStart(2, "0")}`;
   }
 
-  return `${Math.round(roundedValue)} sortie${Math.round(roundedValue) > 1 ? "s" : ""}`;
+  return `${Math.round(roundedValue)} sortie${
+    Math.round(roundedValue) > 1 ? "s" : ""
+  }`;
 }
 
 export function getGoalTypeLabel(type: GoalType) {
@@ -110,6 +112,7 @@ export function getCurrentMonthSuggestedGoal(): GoalLike {
     id: "suggested-monthly-distance",
     title: "30 km cette semaine",
     type: "DISTANCE_KM",
+    sport: null,
     target: DEFAULT_MONTHLY_DISTANCE_TARGET,
     period: "WEEKLY",
     startDate: startOfWeek(now).toISOString(),
@@ -161,8 +164,13 @@ export function selectPrimaryGoal(goals: Goal[]) {
 export function calculateGoalProgress(goal: GoalLike, activities: Activity[]) {
   const startDate = new Date(goal.startDate);
   const endDate = new Date(goal.endDate);
+
   const goalActivities = activities.filter((activity) => {
     if (activity.status === "PLANNED") {
+      return false;
+    }
+
+    if (goal.sport && activity.sport !== goal.sport) {
       return false;
     }
 
@@ -185,7 +193,7 @@ export function calculateGoalProgress(goal: GoalLike, activities: Activity[]) {
     }
 
     if (goal.type === "DURATION_MIN") {
-      return total + (activity.duration || 0);
+      return total + (activity.duration || 0) / 60;
     }
 
     return total + 1;

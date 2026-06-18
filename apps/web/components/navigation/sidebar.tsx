@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 
 import { api } from "@/lib/api";
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { useAuthStore } from "@/store/auth-store";
 
 interface StravaStatus {
@@ -97,10 +96,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
 
-  const [isStravaConnected, setIsStravaConnected] = useState(false);
-  const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
-  const [hasSyncedStravaActivities, setHasSyncedStravaActivities] =
-    useState(false);
+  const [hasStravaIntegration, setHasStravaIntegration] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -110,15 +106,13 @@ export function Sidebar() {
         const { data } = await api.get<StravaStatus>("/strava/status");
 
         if (isMounted) {
-          setIsStravaConnected(data.connected);
-          setHasSyncedStravaActivities(Boolean(data.hasSyncedActivities));
-          setIsLoadingStravaStatus(false);
+          setHasStravaIntegration(
+            Boolean(data.connected || data.hasSyncedActivities),
+          );
         }
       } catch {
         if (isMounted) {
-          setIsStravaConnected(false);
-          setHasSyncedStravaActivities(false);
-          setIsLoadingStravaStatus(false);
+          setHasStravaIntegration(false);
         }
       }
     }
@@ -313,7 +307,7 @@ export function Sidebar() {
 
               const isActive = isActiveRoute(item.href);
               const isConnectedIntegration =
-                item.title === "Strava" && hasSyncedStravaActivities;
+                item.title === "Strava" && hasStravaIntegration;
 
               return (
                 <Link
@@ -369,33 +363,6 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* STRAVA CTA */}
-          {!isLoadingStravaStatus && !hasSyncedStravaActivities && (
-            <Link
-              href="/integrations/strava"
-              className="mt-5 block overflow-hidden rounded-[24px] border border-orange-500/15 bg-gradient-to-br from-orange-500/10 to-orange-500/5 p-4 transition-all duration-300 hover:border-orange-500/25 hover:from-orange-500/15 hover:to-orange-500/10"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FC4C02]/15">
-                  <Link2 className="h-5 w-5 text-[#FC4C02]" />
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-white">
-                    {isStravaConnected ? "Strava connecté" : "Connecter Strava"}
-                  </p>
-
-                  <p className="text-xs text-zinc-400">
-                    {isStravaConnected
-                      ? "Prêt à synchroniser"
-                      : "Synchronisation automatique"}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          )}
-
-          <ThemeSwitcher />
         </div>
 
         {/* SPACER */}

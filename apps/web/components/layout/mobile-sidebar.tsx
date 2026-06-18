@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { useAuthStore } from "@/store/auth-store";
 
 const links = [
@@ -129,10 +128,6 @@ export function MobileSidebar() {
                 );
               })}
           </nav>
-
-          <div className="border-t border-zinc-800 p-4">
-            <ThemeSwitcher />
-          </div>
         </div>
       </SheetContent>
     </Sheet>

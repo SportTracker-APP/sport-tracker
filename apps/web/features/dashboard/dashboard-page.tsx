@@ -1076,16 +1076,21 @@ function ExplorationHeatmap({ activities }: { activities: SportActivity[] }) {
   );
 }
 
-function EmptyStravaDashboard() {
+function StravaConnectionCard({ compact }: { compact: boolean }) {
   return (
-    <div className={styles.emptyDashboard}>
+    <div
+      className={`${styles.stravaConnectionCard} ${
+        compact ? styles.stravaConnectionCardCompact : ""
+      }`}
+    >
       <div className={styles.emptyDashboardIcon}><Link2 aria-hidden="true" /></div>
-      <p className={styles.emptyDashboardKicker}>Strava non synchronisé</p>
-      <h1>Connectez Strava et transformez vos sorties en carnet d’exploration.</h1>
-      <p>
-        Course au bord du lac, trail dans les Aravis ou boucle du soir : Montaro
-        transforme votre historique en tendances, objectifs et prochaines aventures.
-      </p>
+      <div className={styles.stravaConnectionContent}>
+        <p className={styles.emptyDashboardKicker}>Strava non synchronisé</p>
+        <h2>Synchronisez automatiquement vos sorties avec Strava</h2>
+        <p>
+          Montaro fonctionne aussi avec vos activités ajoutées manuellement.
+        </p>
+      </div>
       <div className={styles.emptyDashboardActions}>
         <Link href="/integrations/strava" className={styles.primaryButton}>
           <Link2 aria-hidden="true" /> Connecter Strava
@@ -1315,14 +1320,15 @@ export default function DashboardPage() {
     [primaryGoal],
   );
   const goalDeadlineLabel = formatGoalDeadline(goalDeadline);
-  const hasSyncedStrava =
+  const hasStravaIntegration =
+    Boolean(stravaStatus?.connected) ||
     Boolean(stravaStatus?.hasSyncedActivities) ||
     dashboardData.completedActivities.some((activity) =>
       Boolean(activity.stravaActivityId),
     );
   const hasAnyActivity = dashboardData.completedActivities.length > 0;
-  const showEmptyStravaState =
-    !isLoading && !isLoadingStravaStatus && !hasSyncedStrava && !hasAnyActivity;
+  const showStravaConnectionCard =
+    !isLoadingStravaStatus && !hasStravaIntegration;
   const weeklyDelta =
     dashboardData.weeklyDistance - dashboardData.previousWeeklyDistance;
   const nextAdventure = getAdventureName(dashboardData.completedActivities);
@@ -1418,13 +1424,13 @@ export default function DashboardPage() {
 
   const recommendations = [
     {
-      title: hasSyncedStrava ? "Strava synchronisé" : "Strava à connecter",
-      description: hasSyncedStrava
+      title: hasStravaIntegration ? "Strava synchronisé" : "Strava à connecter",
+      description: hasStravaIntegration
         ? "Les données du dashboard sont alimentées automatiquement."
         : "Le dashboard utilise encore vos activités manuelles.",
-      icon: hasSyncedStrava ? CheckCircle2 : AlertTriangle,
+      icon: hasStravaIntegration ? CheckCircle2 : AlertTriangle,
       href: "/integrations/strava",
-      label: hasSyncedStrava ? "OK" : "Connecter",
+      label: hasStravaIntegration ? "OK" : "Connecter",
       tone: "success",
     },
     {
@@ -1472,21 +1478,10 @@ export default function DashboardPage() {
           </div>
         ) : null}
 
-        {showEmptyStravaState ? (
-          <EmptyStravaDashboard />
-        ) : (
-          <>
-            {!isLoadingStravaStatus && !hasSyncedStrava && hasAnyActivity ? (
-              <div className={styles.syncBanner}>
-                <span>
-                  Votre dashboard utilise vos activités manuelles. Connectez Strava
-                  pour automatiser les tendances et recommandations.
-                </span>
-                <Link href="/integrations/strava">
-                  <Link2 aria-hidden="true" /> Connecter Strava
-                </Link>
-              </div>
-            ) : null}
+        <>
+          {showStravaConnectionCard ? (
+            <StravaConnectionCard compact={hasAnyActivity} />
+          ) : null}
 
             <FadeIn delay={0.1}>
               <div className={styles.hero}>
@@ -1842,7 +1837,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </>
-        )}
       </div>
     </DashboardLayout>
   );

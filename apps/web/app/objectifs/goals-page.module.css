@@ -1,0 +1,1973 @@
+.page {
+  --goals-text: #f8fafc;
+  --goals-text-soft: rgba(241, 245, 249, 0.82);
+  --goals-muted: rgba(203, 213, 225, 0.64);
+  --goals-muted-strong: rgba(226, 232, 240, 0.76);
+  --goals-surface: rgba(17, 19, 28, 0.82);
+  --goals-surface-strong: rgba(23, 25, 36, 0.94);
+  --goals-surface-soft: rgba(255, 255, 255, 0.045);
+  --goals-surface-hover: rgba(255, 255, 255, 0.072);
+  --goals-border: rgba(255, 255, 255, 0.085);
+  --goals-border-strong: rgba(255, 255, 255, 0.14);
+  --goals-input: rgba(255, 255, 255, 0.055);
+  --goals-accent: #8b5cf6;
+  --goals-accent-strong: #7c3aed;
+  --goals-accent-soft: rgba(139, 92, 246, 0.15);
+  --goals-accent-text: #c4b5fd;
+  --goals-success: #34d399;
+  --goals-success-strong: #10b981;
+  --goals-success-soft: rgba(16, 185, 129, 0.12);
+  --goals-progress-track: rgba(255, 255, 255, 0.075);
+  --goals-progress-fill: linear-gradient(90deg, #8b5cf6, #a855f7, #34d399);
+  --goals-danger: #fca5a5;
+  --goals-danger-soft: rgba(239, 68, 68, 0.1);
+  --goals-shadow:
+    0 24px 72px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  --goals-shadow-soft:
+    0 18px 48px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 1480px);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2.5rem;
+  color: var(--goals-text);
+}
+
+:global(html.sport-theme-nature) .page {
+  --goals-text: #102033;
+  --goals-text-soft: #334155;
+  --goals-muted: #6b7b8f;
+  --goals-muted-strong: #53657b;
+  --goals-surface: rgba(255, 255, 255, 0.82);
+  --goals-surface-strong: rgba(255, 255, 255, 0.94);
+  --goals-surface-soft: rgba(236, 253, 245, 0.68);
+  --goals-surface-hover: rgba(236, 253, 245, 0.92);
+  --goals-border: rgba(6, 95, 70, 0.12);
+  --goals-border-strong: rgba(5, 150, 105, 0.24);
+  --goals-input: rgba(255, 255, 255, 0.82);
+  --goals-accent: #10b981;
+  --goals-accent-strong: #047857;
+  --goals-accent-soft: rgba(16, 185, 129, 0.12);
+  --goals-accent-text: #047857;
+  --goals-success: #10b981;
+  --goals-success-strong: #047857;
+  --goals-success-soft: rgba(16, 185, 129, 0.11);
+  --goals-progress-track: rgba(6, 95, 70, 0.1);
+  --goals-progress-fill: linear-gradient(90deg, #059669, #22c55e 58%, #84cc16);
+  --goals-danger: #b91c1c;
+  --goals-danger-soft: rgba(254, 226, 226, 0.92);
+  --goals-shadow:
+    0 24px 68px rgba(15, 118, 110, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --goals-shadow-soft:
+    0 16px 42px rgba(15, 118, 110, 0.075),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.hero {
+  position: relative;
+  min-height: 248px;
+  overflow: hidden;
+  border: 1px solid var(--goals-border);
+  border-radius: 30px;
+  background: #0b0e16;
+  box-shadow: var(--goals-shadow);
+}
+
+.heroPhoto {
+  position: absolute;
+  inset: 0;
+  background-image: url("https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1800");
+  background-position: center 52%;
+  background-size: cover;
+  opacity: 0.56;
+  filter: saturate(0.92) contrast(1.06) brightness(0.84);
+  transform: scale(1.015);
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 86% 10%, rgba(52, 211, 153, 0.18), transparent 32%),
+    radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.28), transparent 34%),
+    linear-gradient(
+      100deg,
+      rgba(8, 9, 16, 0.94) 0%,
+      rgba(15, 18, 29, 0.76) 50%,
+      rgba(8, 11, 17, 0.4) 100%
+    );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 248px;
+  grid-template-columns: minmax(0, 1fr) minmax(290px, 350px);
+  gap: 1.5rem;
+  align-items: center;
+  padding: clamp(1.35rem, 2.2vw, 2rem);
+}
+
+.heroCopy {
+  min-width: 0;
+}
+
+.heroKicker {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(196, 181, 253, 0.22);
+  border-radius: 999px;
+  padding: 0 0.75rem;
+  background: rgba(91, 33, 182, 0.28);
+  color: #ddd6fe;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.heroKicker svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.heroCopy h1 {
+  max-width: 680px;
+  margin: 0.9rem 0 0;
+  color: #ffffff;
+  font-size: clamp(2rem, 3vw, 3.15rem);
+  font-weight: 760;
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  text-shadow: 0 10px 36px rgba(0, 0, 0, 0.34);
+}
+
+.heroCopy > p {
+  max-width: 610px;
+  margin: 0.75rem 0 0;
+  color: rgba(241, 245, 249, 0.78);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.2rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.submitButton,
+.cancelButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 14px;
+  font-size: 0.84rem;
+  font-weight: 720;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.primaryButton,
+.submitButton {
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0 1rem;
+  background: var(--goals-progress-fill);
+  color: #ffffff;
+  box-shadow:
+    0 16px 34px var(--goals-accent-soft),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.primaryButton:hover,
+.submitButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible,
+.submitButton:focus-visible,
+.cancelButton:focus-visible,
+.filters button:focus-visible,
+.typeGrid button:focus-visible,
+.goalMenu summary:focus-visible,
+.goalMenu button:focus-visible {
+  outline: 3px solid var(--goals-accent-soft);
+  outline-offset: 3px;
+}
+
+.primaryButton svg,
+.secondaryButton svg,
+.submitButton svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.heroFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.heroFacts span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  padding: 0 0.75rem;
+  background: rgba(3, 7, 18, 0.32);
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.74rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.heroFacts strong {
+  color: #ffffff;
+}
+
+.priorityCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 24px;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at 88% 10%, rgba(52, 211, 153, 0.16), transparent 34%),
+    linear-gradient(145deg, rgba(5, 9, 16, 0.74), rgba(12, 31, 28, 0.66));
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(18px);
+}
+
+.priorityCardEmpty {
+  display: flex;
+  min-height: 214px;
+  flex-direction: column;
+}
+
+.priorityCardEmpty .priorityStatus {
+  margin-bottom: 1rem;
+}
+
+.priorityCardEmpty .primaryButton {
+  width: 100%;
+  margin-top: auto;
+}
+
+.priorityHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.priorityHeader span,
+.priorityProgress span {
+  display: block;
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.68rem;
+  font-weight: 720;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.priorityHeader h2 {
+  margin: 0.45rem 0 0;
+  color: #ffffff;
+  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+  font-weight: 730;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.priorityIcon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 1px solid rgba(167, 243, 208, 0.22);
+  border-radius: 15px;
+  background: rgba(16, 185, 129, 0.16);
+  color: #a7f3d0;
+}
+
+.priorityIcon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.priorityProgress {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.15rem;
+}
+
+.priorityProgress strong {
+  display: block;
+  margin-top: 0.2rem;
+  color: #ffffff;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.priorityProgress p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.priorityProgress p span {
+  display: inline;
+  color: rgba(226, 232, 240, 0.62);
+  font-size: inherit;
+  font-weight: 560;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.priorityTrack,
+.progressTrack {
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--goals-progress-track);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.priorityTrack {
+  height: 6px;
+  margin-top: 0.85rem;
+}
+
+.priorityTrack > div {
+  width: var(--priority-progress);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #34d399, #a3e635);
+  box-shadow: 0 0 18px rgba(52, 211, 153, 0.25);
+  transition: width 700ms ease;
+}
+
+.priorityStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+  color: #a7f3d0;
+  font-size: 0.74rem;
+  font-weight: 650;
+}
+
+.priorityStatus svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+  gap: 1.25rem;
+  align-items: start;
+  margin-top: 1.25rem;
+}
+
+.goalsPanel,
+.formCard,
+.historyCard {
+  border: 1px solid var(--goals-border);
+  background: var(--goals-surface);
+  color: var(--goals-text);
+  box-shadow: var(--goals-shadow);
+}
+
+.goalsPanel {
+  min-width: 0;
+  border-radius: 26px;
+  padding: 1.1rem;
+}
+
+.panelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0.25rem 1rem;
+  border-bottom: 1px solid var(--goals-border);
+}
+
+.panelTitle,
+.cardHeading,
+.historyHeader > div,
+.adviceContent {
+  display: flex;
+  align-items: center;
+}
+
+.panelTitle {
+  gap: 0.6rem;
+}
+
+.panelTitle svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--goals-accent-text);
+}
+
+.panelTitle h2,
+.cardHeading h2,
+.adviceContent h2,
+.historyHeader h2 {
+  margin: 0;
+  color: var(--goals-text);
+  font-size: 1rem;
+  font-weight: 730;
+  letter-spacing: -0.015em;
+}
+
+.panelHeader > div > p {
+  margin: 0.35rem 0 0;
+  color: var(--goals-muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.filters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  border: 1px solid var(--goals-border);
+  border-radius: 14px;
+  background: var(--goals-surface-soft);
+}
+
+.filters button {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 10px;
+  padding: 0 0.7rem;
+  background: transparent;
+  color: var(--goals-muted-strong);
+  font-size: 0.74rem;
+  font-weight: 680;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.filters button span {
+  display: grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--goals-surface-soft);
+  font-size: 0.66rem;
+}
+
+.filters button[aria-pressed="true"] {
+  background: var(--goals-accent-soft);
+  color: var(--goals-accent-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.goalsList {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.goalCard {
+  position: relative;
+  border: 1px solid var(--goals-border);
+  border-radius: 22px;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 94% 0%, var(--goals-accent-soft), transparent 28%),
+    var(--goals-surface-strong);
+  box-shadow: var(--goals-shadow-soft);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.goalCard:hover {
+  transform: translateY(-1px);
+  border-color: var(--goals-border-strong);
+  box-shadow: var(--goals-shadow);
+}
+
+.goalCardPaused {
+  opacity: 0.76;
+}
+
+.goalCardHeader,
+.goalProgressRow,
+.goalFooter,
+.goalHeaderActions,
+.goalIdentity {
+  display: flex;
+  align-items: center;
+}
+
+.goalCardHeader {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.goalIdentity {
+  min-width: 0;
+  gap: 0.85rem;
+}
+
+.goalIcon,
+.cardHeadingIcon,
+.adviceIcon,
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--goals-border-strong);
+  background: var(--goals-accent-soft);
+  color: var(--goals-accent-text);
+}
+
+.goalIcon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 15px;
+}
+
+.goalIcon svg,
+.cardHeadingIcon svg,
+.adviceIcon svg,
+.emptyIcon svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.goalTitleGroup {
+  min-width: 0;
+}
+
+.goalMetaLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  color: var(--goals-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.goalTitleGroup h3 {
+  overflow: hidden;
+  margin: 0.3rem 0 0;
+  color: var(--goals-text);
+  font-size: 1rem;
+  font-weight: 730;
+  letter-spacing: -0.015em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goalHeaderActions {
+  flex: 0 0 auto;
+  gap: 0.5rem;
+}
+
+.statusBadge {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0 0.65rem;
+  font-size: 0.66rem;
+  font-weight: 720;
+}
+
+.statusActive {
+  border-color: rgba(16, 185, 129, 0.18);
+  background: var(--goals-success-soft);
+  color: var(--goals-success-strong);
+}
+
+.statusPaused {
+  border-color: var(--goals-border);
+  background: var(--goals-surface-soft);
+  color: var(--goals-muted-strong);
+}
+
+.goalMenu {
+  position: relative;
+}
+
+.goalMenu summary {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid var(--goals-border);
+  border-radius: 11px;
+  background: var(--goals-surface-soft);
+  color: var(--goals-muted-strong);
+  cursor: pointer;
+  list-style: none;
+}
+
+.goalMenu summary::-webkit-details-marker {
+  display: none;
+}
+
+.goalMenu summary svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.goalMenuContent {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  z-index: 20;
+  display: grid;
+  min-width: 190px;
+  gap: 0.25rem;
+  border: 1px solid var(--goals-border-strong);
+  border-radius: 14px;
+  padding: 0.4rem;
+  background: var(--goals-surface-strong);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.goalMenuContent button {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.55rem;
+  border: 0;
+  border-radius: 10px;
+  padding: 0 0.7rem;
+  background: transparent;
+  color: var(--goals-text-soft);
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+
+.goalMenuContent button:hover {
+  background: var(--goals-surface-hover);
+}
+
+.goalMenuContent button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.goalMenuContent svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.goalMenuContent .deleteAction {
+  color: var(--goals-danger);
+}
+
+.goalProgressRow {
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.05rem;
+}
+
+.currentValue {
+  color: var(--goals-text);
+  font-size: 1.35rem;
+  font-weight: 760;
+  letter-spacing: -0.025em;
+}
+
+.targetValue {
+  margin-left: 0.3rem;
+  color: var(--goals-muted);
+  font-size: 0.82rem;
+  font-weight: 560;
+}
+
+.progressPercentage {
+  text-align: right;
+}
+
+.progressPercentage span {
+  display: block;
+  color: var(--goals-muted);
+  font-size: 0.61rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.progressPercentage strong {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--goals-accent-text);
+  font-size: 1.15rem;
+}
+
+.progressTrack {
+  height: 6px;
+  margin-top: 0.7rem;
+}
+
+.progressFill {
+  width: var(--goal-progress);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--goals-progress-fill);
+  box-shadow: 0 0 18px var(--goals-accent-soft);
+  transition: width 700ms ease;
+}
+
+.goalFooter {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.7rem 1rem;
+  margin-top: 0.7rem;
+}
+
+.goalFooter p,
+.goalFooter span {
+  margin: 0;
+  color: var(--goals-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.goalFooter > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.goalFooter svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.goalFooter .completedMessage {
+  color: var(--goals-success-strong);
+  font-weight: 680;
+}
+
+.sidebarColumn {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.formCard,
+.historyCard,
+.adviceCard {
+  border-radius: 24px;
+  padding: 1.15rem;
+}
+
+.formCard {
+  scroll-margin-top: 96px;
+}
+
+.cardHeading {
+  gap: 0.75rem;
+}
+
+.cardHeadingIcon,
+.adviceIcon,
+.emptyIcon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 14px;
+}
+
+.cardHeading p,
+.adviceContent p {
+  margin: 0.3rem 0 0;
+  color: var(--goals-muted);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.form {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.1rem;
+}
+
+.typeFieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.typeFieldset legend,
+.field > span {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--goals-muted-strong);
+  font-size: 0.72rem;
+  font-weight: 680;
+}
+
+.typeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.typeGrid button {
+  display: grid;
+  min-height: 64px;
+  place-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--goals-border);
+  border-radius: 14px;
+  padding: 0.45rem;
+  background: var(--goals-surface-soft);
+  color: var(--goals-muted-strong);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.typeGrid button:hover {
+  transform: translateY(-1px);
+  border-color: var(--goals-border-strong);
+}
+
+.typeGrid button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.typeGrid button span {
+  font-size: 0.66rem;
+  font-weight: 680;
+}
+
+.typeGrid .typeSelected {
+  border-color: var(--goals-border-strong);
+  background: var(--goals-accent-soft);
+  color: var(--goals-accent-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 0.7rem;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--goals-border);
+  border-radius: 13px;
+  padding: 0 0.8rem;
+  background: var(--goals-input);
+  color: var(--goals-text);
+  font-size: 0.78rem;
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.field input::placeholder {
+  color: var(--goals-muted);
+}
+
+.fieldHint {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--goals-muted);
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--goals-border-strong);
+  box-shadow: 0 0 0 4px var(--goals-accent-soft);
+}
+
+.field select option {
+  background: #171922;
+  color: #f8fafc;
+}
+
+.inputWithUnit {
+  position: relative;
+}
+
+.inputWithUnit input {
+  padding-right: 4.4rem;
+}
+
+.inputWithUnit > span {
+  position: absolute;
+  top: 50%;
+  right: 0.8rem;
+  color: var(--goals-muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.submitButton {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 0.15rem;
+  cursor: pointer;
+}
+
+.submitButton:disabled,
+.cancelButton:disabled,
+.secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.56;
+}
+
+.cancelButton,
+.secondaryButton {
+  min-height: 42px;
+  border: 1px solid var(--goals-border);
+  padding: 0 0.95rem;
+  background: var(--goals-surface-soft);
+  color: var(--goals-text-soft);
+  cursor: pointer;
+}
+
+.cancelButton {
+  width: 100%;
+}
+
+.cancelButton:hover,
+.secondaryButton:hover {
+  border-color: var(--goals-border-strong);
+  background: var(--goals-surface-hover);
+}
+
+.adviceCard {
+  position: relative;
+  min-height: 142px;
+  overflow: hidden;
+  border: 1px solid var(--goals-border);
+  background:
+    radial-gradient(circle at 8% 10%, var(--goals-accent-soft), transparent 36%),
+    var(--goals-surface);
+  box-shadow: var(--goals-shadow-soft);
+}
+
+.adviceArt {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 48%;
+  background-image:
+    linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.16)),
+    url("https://images.pexels.com/photos/1365425/pexels-photo-1365425.jpeg?auto=compress&cs=tinysrgb&w=700");
+  background-position: center;
+  background-size: cover;
+  opacity: 0.2;
+  mask-image: linear-gradient(90deg, transparent, #000 38%);
+}
+
+.adviceContent {
+  position: relative;
+  z-index: 1;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.adviceContent > div:last-child {
+  max-width: 250px;
+}
+
+.historyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.historyHeader > div {
+  gap: 0.55rem;
+}
+
+.historyHeader svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--goals-accent-text);
+}
+
+.historyHeader > span {
+  display: grid;
+  min-width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--goals-accent-soft);
+  color: var(--goals-accent-text);
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.historyList {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.historyList > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--goals-border);
+  border-radius: 13px;
+  padding: 0.7rem 0.75rem;
+  background: var(--goals-surface-soft);
+}
+
+.historyList > div > div {
+  min-width: 0;
+}
+
+.historyList strong,
+.historyList span {
+  display: block;
+}
+
+.historyList strong {
+  overflow: hidden;
+  color: var(--goals-text-soft);
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.historyList span {
+  margin-top: 0.15rem;
+  color: var(--goals-muted);
+  font-size: 0.65rem;
+}
+
+.historyList svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--goals-success-strong);
+}
+
+.historyEmpty,
+.filterEmptyState {
+  margin: 0;
+  color: var(--goals-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.historyEmpty {
+  margin-top: 0.9rem;
+}
+
+.filterEmptyState {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.errorState,
+.loadingState,
+.emptyState {
+  margin-top: 1rem;
+  border-radius: 18px;
+}
+
+.errorState {
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 0.85rem 1rem;
+  background: var(--goals-danger-soft);
+  color: var(--goals-danger);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  min-height: 130px;
+  border: 1px solid var(--goals-border);
+  background: var(--goals-surface-soft);
+  color: var(--goals-muted);
+  font-size: 0.78rem;
+}
+
+.loadingState > span {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--goals-border-strong);
+  border-top-color: var(--goals-accent);
+  border-radius: 999px;
+  animation: goals-spin 0.8s linear infinite;
+}
+
+.emptyState {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  border: 1px solid var(--goals-border);
+  padding: 1rem;
+  background: var(--goals-surface-soft);
+}
+
+.emptyState h3 {
+  margin: 0;
+  color: var(--goals-text);
+  font-size: 0.95rem;
+}
+
+.emptyState p {
+  max-width: 580px;
+  margin: 0.35rem 0 0;
+  color: var(--goals-muted);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.emptyState .secondaryButton {
+  margin-top: 0.85rem;
+}
+
+@keyframes goals-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .hero {
+  border-color: rgba(16, 185, 129, 0.17) !important;
+  background: #edf8ef !important;
+  box-shadow: var(--goals-shadow) !important;
+}
+
+:global(html.sport-theme-nature) .heroPhoto {
+  opacity: 0.42;
+  filter: saturate(0.98) contrast(1.02) brightness(1.12);
+}
+
+:global(html.sport-theme-nature) .heroOverlay {
+  background:
+    radial-gradient(circle at 86% 12%, rgba(132, 204, 22, 0.18), transparent 32%),
+    radial-gradient(circle at 10% 18%, rgba(16, 185, 129, 0.16), transparent 34%),
+    linear-gradient(
+      100deg,
+      rgba(250, 255, 251, 0.96) 0%,
+      rgba(247, 253, 249, 0.86) 48%,
+      rgba(236, 253, 245, 0.48) 100%
+    );
+}
+
+:global(html.sport-theme-nature) .heroKicker {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(236, 253, 245, 0.88);
+  color: #047857;
+}
+
+:global(html.sport-theme-nature) .heroCopy h1 {
+  color: #102033 !important;
+  text-shadow: none;
+}
+
+:global(html.sport-theme-nature) .heroCopy > p {
+  color: #5f7085 !important;
+}
+
+:global(html.sport-theme-nature) .heroFacts span {
+  border-color: rgba(6, 95, 70, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: #64748b;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+:global(html.sport-theme-nature) .heroFacts strong {
+  color: #0f172a;
+}
+
+:global(html.sport-theme-nature) .priorityCard {
+  border-color: rgba(16, 185, 129, 0.16);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(132, 204, 22, 0.18), transparent 34%),
+    rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 18px 48px rgba(15, 118, 110, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+:global(html.sport-theme-nature) .priorityHeader span,
+:global(html.sport-theme-nature) .priorityProgress span {
+  color: #64748b;
+}
+
+:global(html.sport-theme-nature) .priorityHeader h2,
+:global(html.sport-theme-nature) .priorityProgress strong,
+:global(html.sport-theme-nature) .priorityProgress p {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+:global(html.sport-theme-nature) .priorityProgress p span {
+  color: #64748b;
+}
+
+:global(html.sport-theme-nature) .priorityIcon {
+  border-color: rgba(16, 185, 129, 0.18);
+  background: rgba(236, 253, 245, 0.92);
+  color: #047857;
+}
+
+:global(html.sport-theme-nature) .priorityStatus {
+  color: #047857;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalsPanel,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .formCard,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .historyCard,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .adviceCard,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalCard {
+  border-color: var(--goals-border) !important;
+  color: var(--goals-text) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalsPanel,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .formCard,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .historyCard {
+  background: var(--goals-surface) !important;
+  box-shadow: var(--goals-shadow) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalCard {
+  background:
+    radial-gradient(circle at 94% 0%, rgba(132, 204, 22, 0.12), transparent 28%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(241, 253, 245, 0.88)) !important;
+  box-shadow: var(--goals-shadow-soft) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .adviceCard {
+  background:
+    radial-gradient(circle at 8% 10%, rgba(16, 185, 129, 0.1), transparent 36%),
+    rgba(255, 255, 255, 0.8) !important;
+  box-shadow: var(--goals-shadow-soft) !important;
+}
+
+:global(html.sport-theme-nature) .adviceArt {
+  opacity: 0.22;
+}
+
+:global(html.sport-theme-nature) .field select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+@media (max-width: 1180px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebarColumn {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+    align-items: start;
+  }
+
+  .formCard {
+    grid-row: span 2;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .heroContent {
+    min-height: auto;
+  }
+
+  .heroContent {
+    grid-template-columns: 1fr;
+  }
+
+  .priorityCard {
+    max-width: 520px;
+  }
+
+  .sidebarColumn {
+    grid-template-columns: 1fr;
+  }
+
+  .formCard {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0.8rem 0.75rem 2rem;
+  }
+
+  .hero {
+    border-radius: 24px;
+  }
+
+  .heroContent {
+    padding: 1.1rem;
+  }
+
+  .heroCopy h1 {
+    font-size: 1.9rem;
+  }
+
+  .heroActions,
+  .heroFacts {
+    align-items: stretch;
+  }
+
+  .primaryButton {
+    width: 100%;
+  }
+
+  .heroFacts {
+    width: 100%;
+  }
+
+  .heroFacts span {
+    flex: 1 1 100%;
+  }
+
+  .priorityCard {
+    padding: 1rem;
+  }
+
+  .goalsPanel,
+  .formCard,
+  .historyCard,
+  .adviceCard {
+    border-radius: 20px;
+  }
+
+  .goalsPanel {
+    padding: 0.8rem;
+  }
+
+  .panelHeader {
+    display: grid;
+  }
+
+  .filters {
+    width: 100%;
+  }
+
+  .filters button {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .goalCard {
+    padding: 0.85rem;
+  }
+
+  .goalCardHeader {
+    align-items: flex-start;
+  }
+
+  .statusBadge {
+    display: none;
+  }
+
+  .goalProgressRow,
+  .goalFooter {
+    align-items: flex-start;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .typeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .emptyState {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* Nature theme ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â forest mint final pass */
+:global(html.sport-theme-nature) .page {
+  --goals-text: #0f2f26;
+  --goals-text-soft: #23493d;
+  --goals-muted: #5e776f;
+  --goals-muted-strong: #45665b;
+
+  --goals-surface: rgba(231, 248, 239, 0.66);
+  --goals-surface-strong: rgba(224, 244, 233, 0.78);
+  --goals-surface-soft: rgba(209, 250, 229, 0.5);
+  --goals-surface-hover: rgba(197, 244, 218, 0.72);
+
+  --goals-border: rgba(6, 95, 70, 0.18);
+  --goals-border-strong: rgba(5, 150, 105, 0.34);
+  --goals-input: rgba(241, 252, 246, 0.74);
+
+  --goals-accent: #10b981;
+  --goals-accent-strong: #065f46;
+  --goals-accent-soft: rgba(16, 185, 129, 0.17);
+  --goals-accent-text: #05603f;
+
+  --goals-success: #22c55e;
+  --goals-success-strong: #047857;
+  --goals-success-soft: rgba(16, 185, 129, 0.15);
+
+  --goals-progress-track: rgba(6, 95, 70, 0.13);
+  --goals-progress-fill: linear-gradient(90deg, #047857 0%, #10b981 50%, #84cc16 100%);
+
+  --goals-shadow:
+    0 24px 70px rgba(6, 78, 59, 0.15),
+    0 10px 26px rgba(15, 118, 110, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.56);
+  --goals-shadow-soft:
+    0 16px 42px rgba(6, 78, 59, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52);
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .hero {
+  border-color: rgba(167, 243, 208, 0.24) !important;
+  background: #0b2a20 !important;
+  box-shadow:
+    0 30px 84px rgba(4, 47, 46, 0.24),
+    0 10px 26px rgba(6, 78, 59, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+:global(html.sport-theme-nature) .heroPhoto {
+  opacity: 0.82;
+  filter: saturate(1.14) contrast(1.08) brightness(0.9);
+  transform: scale(1.01);
+}
+
+:global(html.sport-theme-nature) .heroOverlay {
+  background:
+    radial-gradient(circle at 84% 14%, rgba(132, 204, 22, 0.16), transparent 34%),
+    radial-gradient(circle at 18% 18%, rgba(16, 185, 129, 0.22), transparent 36%),
+    linear-gradient(
+      100deg,
+      rgba(3, 24, 18, 0.84) 0%,
+      rgba(4, 47, 35, 0.62) 46%,
+      rgba(4, 47, 35, 0.18) 100%
+    );
+}
+
+:global(html.sport-theme-nature) .heroKicker {
+  border-color: rgba(167, 243, 208, 0.3);
+  background: rgba(6, 78, 59, 0.52);
+  color: #d1fae5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+:global(html.sport-theme-nature) .heroCopy h1 {
+  color: #ffffff !important;
+  text-shadow:
+    0 3px 20px rgba(0, 0, 0, 0.34),
+    0 12px 34px rgba(3, 18, 14, 0.28);
+}
+
+:global(html.sport-theme-nature) .heroCopy > p {
+  color: rgba(236, 253, 245, 0.82) !important;
+  text-shadow: 0 2px 12px rgba(3, 18, 14, 0.28);
+}
+
+:global(html.sport-theme-nature) .heroFacts span {
+  border-color: rgba(167, 243, 208, 0.2);
+  background: rgba(3, 32, 24, 0.46);
+  color: rgba(220, 252, 231, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+:global(html.sport-theme-nature) .heroFacts strong {
+  color: #ffffff;
+}
+
+:global(html.sport-theme-nature) .priorityCard {
+  border-color: rgba(167, 243, 208, 0.24);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(132, 204, 22, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(3, 31, 23, 0.72), rgba(7, 68, 49, 0.64));
+  box-shadow:
+    0 24px 62px rgba(3, 18, 14, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+:global(html.sport-theme-nature) .priorityHeader span,
+:global(html.sport-theme-nature) .priorityProgress span {
+  color: rgba(209, 250, 229, 0.66);
+}
+
+:global(html.sport-theme-nature) .priorityHeader h2,
+:global(html.sport-theme-nature) .priorityProgress strong,
+:global(html.sport-theme-nature) .priorityProgress p {
+  color: #ffffff;
+  text-shadow: 0 8px 26px rgba(3, 18, 14, 0.24);
+}
+
+:global(html.sport-theme-nature) .priorityProgress p span {
+  color: rgba(209, 250, 229, 0.68);
+}
+
+:global(html.sport-theme-nature) .priorityIcon {
+  border-color: rgba(167, 243, 208, 0.22);
+  background: rgba(209, 250, 229, 0.14);
+  color: #d1fae5;
+}
+
+:global(html.sport-theme-nature) .priorityStatus {
+  color: #bbf7d0;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalsPanel,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .formCard,
+:global(html.sport-theme-nature) :global(.app-shell) main .page .historyCard {
+  border-color: rgba(6, 95, 70, 0.18) !important;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(132, 204, 22, 0.09), transparent 30%),
+    linear-gradient(145deg, rgba(235, 250, 242, 0.72), rgba(219, 242, 230, 0.62)) !important;
+  box-shadow: var(--goals-shadow) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalCard {
+  border-color: rgba(6, 95, 70, 0.16) !important;
+  background:
+    radial-gradient(circle at 94% 0%, rgba(132, 204, 22, 0.13), transparent 30%),
+    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.09), transparent 34%),
+    linear-gradient(145deg, rgba(232, 248, 239, 0.8), rgba(211, 238, 224, 0.68)) !important;
+  box-shadow: var(--goals-shadow-soft) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .goalCard:hover {
+  border-color: rgba(5, 150, 105, 0.3) !important;
+  background:
+    radial-gradient(circle at 94% 0%, rgba(132, 204, 22, 0.18), transparent 30%),
+    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.14), transparent 36%),
+    linear-gradient(145deg, rgba(225, 246, 234, 0.88), rgba(197, 232, 214, 0.76)) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .adviceCard {
+  border-color: rgba(6, 95, 70, 0.16) !important;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.14), transparent 34%),
+    linear-gradient(145deg, rgba(228, 247, 236, 0.76), rgba(209, 238, 222, 0.64)) !important;
+  box-shadow: var(--goals-shadow-soft) !important;
+}
+
+:global(html.sport-theme-nature) .adviceArt {
+  opacity: 0.34;
+  filter: saturate(1.12) contrast(1.02) brightness(0.92);
+}
+
+:global(html.sport-theme-nature) .filters,
+:global(html.sport-theme-nature) .typeGrid button,
+:global(html.sport-theme-nature) .goalMenu summary,
+:global(html.sport-theme-nature) .historyList > div,
+:global(html.sport-theme-nature) .loadingState,
+:global(html.sport-theme-nature) .emptyState {
+  background: rgba(214, 243, 227, 0.54);
+  border-color: rgba(6, 95, 70, 0.15);
+}
+
+:global(html.sport-theme-nature) .filters button[aria-pressed="true"],
+:global(html.sport-theme-nature) .typeGrid .typeSelected {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.19), rgba(132, 204, 22, 0.14));
+  color: #05603f;
+}
+
+:global(html.sport-theme-nature) .field input,
+:global(html.sport-theme-nature) .field select {
+  border-color: rgba(6, 95, 70, 0.18);
+  background: rgba(232, 248, 239, 0.68);
+  color: #0f2f26;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.54);
+}
+
+:global(html.sport-theme-nature) .field input:focus,
+:global(html.sport-theme-nature) .field select:focus {
+  border-color: rgba(5, 150, 105, 0.42);
+  background: rgba(238, 252, 244, 0.82);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+:global(html.sport-theme-nature) .secondaryButton,
+:global(html.sport-theme-nature) .cancelButton {
+  border-color: rgba(6, 95, 70, 0.18);
+  background: rgba(218, 244, 230, 0.58);
+  color: #23493d;
+}
+
+:global(html.sport-theme-nature) .secondaryButton:hover,
+:global(html.sport-theme-nature) .cancelButton:hover {
+  border-color: rgba(5, 150, 105, 0.3);
+  background: rgba(198, 238, 216, 0.72);
+}
+
+/* Nature theme Ã¢â‚¬â€ contrast and surface balance correction */
+:global(html.sport-theme-nature) .page {
+  --goals-text: #102033;
+  --goals-text-soft: #27443b;
+  --goals-muted: #64776f;
+  --goals-muted-strong: #48665b;
+
+  --goals-surface: rgba(247, 252, 249, 0.7);
+  --goals-surface-strong: rgba(252, 254, 253, 0.82);
+  --goals-surface-soft: rgba(237, 247, 242, 0.62);
+  --goals-surface-hover: rgba(226, 242, 234, 0.78);
+
+  --goals-border: rgba(6, 95, 70, 0.15);
+  --goals-border-strong: rgba(6, 95, 70, 0.28);
+  --goals-input: rgba(252, 254, 253, 0.74);
+
+  --goals-accent: #0f766e;
+  --goals-accent-strong: #064e3b;
+  --goals-accent-soft: rgba(6, 95, 70, 0.11);
+  --goals-accent-text: #065f46;
+
+  --goals-success: #10b981;
+  --goals-success-strong: #047857;
+  --goals-success-soft: rgba(16, 185, 129, 0.11);
+
+  --goals-progress-track: rgba(6, 95, 70, 0.11);
+  --goals-progress-fill: linear-gradient(
+    90deg,
+    #047857 0%,
+    #10b981 60%,
+    #65a30d 100%
+  );
+
+  --goals-shadow:
+    0 24px 68px rgba(6, 78, 59, 0.12),
+    0 10px 24px rgba(15, 118, 110, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+  --goals-shadow-soft:
+    0 14px 38px rgba(6, 78, 59, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+/* Hero: visible landscape + guaranteed white contrast */
+:global(html.sport-theme-nature) :global(.app-shell) main .page .hero {
+  border-color: rgba(167, 243, 208, 0.24) !important;
+  background: #06261c !important;
+}
+
+:global(html.sport-theme-nature) .heroPhoto {
+  opacity: 0.9;
+  filter: saturate(1.08) contrast(1.06) brightness(0.88);
+}
+
+:global(html.sport-theme-nature) .heroOverlay {
+  background:
+    radial-gradient(
+      circle at 86% 12%,
+      rgba(132, 204, 22, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(
+      100deg,
+      rgba(2, 22, 16, 0.9) 0%,
+      rgba(3, 38, 28, 0.7) 44%,
+      rgba(3, 38, 28, 0.22) 100%
+    );
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .heroCopy
+  h1 {
+  color: #ffffff !important;
+  text-shadow:
+    0 3px 18px rgba(0, 0, 0, 0.48),
+    0 12px 38px rgba(2, 18, 13, 0.34) !important;
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .heroCopy
+  > p {
+  color: rgba(236, 253, 245, 0.86) !important;
+  text-shadow: 0 2px 12px rgba(2, 18, 13, 0.38);
+}
+
+:global(html.sport-theme-nature) .heroKicker {
+  border-color: rgba(187, 247, 208, 0.28);
+  background: rgba(4, 47, 46, 0.62);
+  color: #ecfdf5;
+}
+
+:global(html.sport-theme-nature) .heroFacts span {
+  border-color: rgba(187, 247, 208, 0.2);
+  background: rgba(3, 32, 24, 0.56);
+  color: rgba(220, 252, 231, 0.8);
+}
+
+:global(html.sport-theme-nature) .heroFacts strong {
+  color: #ffffff;
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .priorityCard {
+  border-color: rgba(187, 247, 208, 0.24) !important;
+  background:
+    radial-gradient(
+      circle at 88% 10%,
+      rgba(132, 204, 22, 0.16),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(3, 30, 22, 0.84),
+      rgba(5, 70, 49, 0.76)
+    ) !important;
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .priorityHeader
+  h2,
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .priorityProgress
+  strong,
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .priorityProgress
+  p {
+  color: #ffffff !important;
+}
+
+/* Forest CTA instead of the old neon gradient */
+:global(html.sport-theme-nature) .primaryButton,
+:global(html.sport-theme-nature) .submitButton {
+  border-color: rgba(187, 247, 208, 0.26) !important;
+  background:
+    radial-gradient(
+      circle at 28% 16%,
+      rgba(236, 253, 245, 0.18),
+      transparent 38%
+    ),
+    linear-gradient(135deg, #052e2b 0%, #065f46 58%, #0f766e 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 38px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+:global(html.sport-theme-nature) .primaryButton:hover,
+:global(html.sport-theme-nature) .submitButton:hover {
+  background:
+    radial-gradient(
+      circle at 28% 16%,
+      rgba(236, 253, 245, 0.24),
+      transparent 38%
+    ),
+    linear-gradient(135deg, #064e3b 0%, #047857 58%, #0f766e 100%) !important;
+  box-shadow:
+    0 20px 44px rgba(6, 78, 59, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Main surfaces: neutral glass with a very light mint tint */
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .goalsPanel,
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .formCard,
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .historyCard {
+  border-color: rgba(6, 95, 70, 0.15) !important;
+  background:
+    radial-gradient(
+      circle at 94% 4%,
+      rgba(132, 204, 22, 0.055),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(250, 253, 251, 0.76),
+      rgba(240, 248, 244, 0.66)
+    ) !important;
+  box-shadow: var(--goals-shadow) !important;
+  backdrop-filter: blur(14px);
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .goalCard {
+  border-color: rgba(6, 95, 70, 0.14) !important;
+  background:
+    radial-gradient(
+      circle at 96% 0%,
+      rgba(132, 204, 22, 0.07),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(252, 254, 253, 0.82),
+      rgba(240, 248, 244, 0.72)
+    ) !important;
+  box-shadow: var(--goals-shadow-soft) !important;
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .goalCard:hover {
+  border-color: rgba(5, 150, 105, 0.28) !important;
+  background:
+    radial-gradient(
+      circle at 96% 0%,
+      rgba(132, 204, 22, 0.1),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.88),
+      rgba(235, 246, 240, 0.78)
+    ) !important;
+}
+
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .adviceCard {
+  border-color: rgba(6, 95, 70, 0.14) !important;
+  background:
+    radial-gradient(
+      circle at 8% 10%,
+      rgba(16, 185, 129, 0.08),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(248, 252, 250, 0.76),
+      rgba(237, 247, 242, 0.68)
+    ) !important;
+}
+
+:global(html.sport-theme-nature) .filters,
+:global(html.sport-theme-nature) .typeGrid button,
+:global(html.sport-theme-nature) .goalMenu summary,
+:global(html.sport-theme-nature) .historyList > div,
+:global(html.sport-theme-nature) .loadingState,
+:global(html.sport-theme-nature) .emptyState {
+  border-color: rgba(6, 95, 70, 0.13);
+  background: rgba(240, 248, 244, 0.62);
+}
+
+:global(html.sport-theme-nature) .field input,
+:global(html.sport-theme-nature) .field select {
+  border-color: rgba(6, 95, 70, 0.16);
+  background: rgba(252, 254, 253, 0.76);
+  color: #102033;
+}

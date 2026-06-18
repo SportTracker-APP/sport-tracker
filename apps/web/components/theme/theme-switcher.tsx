@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Leaf, Sparkles } from "lucide-react";
 
 const LEGACY_THEME_STORAGE_KEY = "sport-tracker-theme";
 const THEME_STORAGE_KEY = "sport-tracker-theme-v2";
 const NATURE_THEME_CLASS = "sport-theme-nature";
+const THEME_CHANGE_EVENT = "montaro-theme-change";
 
-type AppTheme = "violet" | "nature";
+export type AppTheme = "violet" | "nature";
+
+function getStoredTheme(): AppTheme {
+  if (typeof window === "undefined") {
+    return "nature";
+  }
+
+  return localStorage.getItem(THEME_STORAGE_KEY) === "violet"
+    ? "violet"
+    : "nature";
+}
 
 function applyTheme(theme: AppTheme) {
   document.documentElement.classList.toggle(
@@ -17,24 +28,52 @@ function applyTheme(theme: AppTheme) {
   );
 
   localStorage.setItem(THEME_STORAGE_KEY, theme);
+  window.dispatchEvent(
+    new CustomEvent<AppTheme>(THEME_CHANGE_EVENT, {
+      detail: theme,
+    }),
+  );
 }
 
-export function ThemeSwitcher() {
-  const [theme, setTheme] = useState<AppTheme>("nature");
+export function useAppTheme() {
+  const [theme, setThemeState] = useState<AppTheme>("nature");
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);
 
-    const savedTheme = localStorage.getItem(
-      THEME_STORAGE_KEY,
-    ) as AppTheme | null;
-    const initialTheme = savedTheme === "violet" ? "violet" : "nature";
+    const initialTheme = getStoredTheme();
 
-    setTheme(initialTheme);
+    setThemeState(initialTheme);
     applyTheme(initialTheme);
+
+    const handleThemeChange = (event: Event) => {
+      const customEvent = event as CustomEvent<AppTheme>;
+
+      setThemeState(customEvent.detail);
+    };
+
+    window.addEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+
+    return () => {
+      window.removeEventListener(THEME_CHANGE_EVENT, handleThemeChange);
+    };
   }, []);
 
-  const isNatureTheme = theme === "nature";
+  const setTheme = useCallback((nextTheme: AppTheme) => {
+    setThemeState(nextTheme);
+    applyTheme(nextTheme);
+  }, []);
+
+  return {
+    theme,
+    setTheme,
+    isNatureTheme: theme === "nature",
+  };
+}
+
+export function ThemeSwitcher() {
+  const { isNatureTheme, setTheme } = useAppTheme();
+
   const title = isNatureTheme
     ? "Activer le thème violet"
     : "Activer le thème vert";
@@ -45,12 +84,7 @@ export function ThemeSwitcher() {
   return (
     <button
       type="button"
-      onClick={() => {
-        const nextTheme = isNatureTheme ? "violet" : "nature";
-
-        setTheme(nextTheme);
-        applyTheme(nextTheme);
-      }}
+      onClick={() => setTheme(isNatureTheme ? "violet" : "nature")}
       className={`theme-switcher group relative mt-5 w-full overflow-hidden rounded-[24px] border p-4 text-left transition-all duration-300 ${
         isNatureTheme
           ? "border-emerald-400/24 bg-emerald-500/[0.10] text-emerald-50"
@@ -78,7 +112,6 @@ export function ThemeSwitcher() {
 
         <div>
           <p className="text-sm font-semibold">{title}</p>
-
           <p
             className={`mt-0.5 text-xs ${
               isNatureTheme ? "text-emerald-50/65" : "text-zinc-500"
