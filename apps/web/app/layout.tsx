@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Montaro",
+  title: "Montara",
   description: "Modern sport tracking platform",
   manifest: "/site.webmanifest",
   icons: {
