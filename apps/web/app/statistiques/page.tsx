@@ -1,23 +1,41 @@
 "use client";
 
+import { useState } from "react";
+import type { ReactNode } from "react";
+
 import {
+  Activity,
   BarChart3,
+  Bike,
   CalendarDays,
   Clock3,
+  ChevronDown,
+  Dumbbell,
   Flame,
+  Footprints,
   Mountain,
   Navigation,
   Route,
   TrendingDown,
   TrendingUp,
+  Waves,
 } from "lucide-react";
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-import { ActivityHeatmap } from "@/components/dashboard/activity-heatmap";
-import { WeeklyActivityChart } from "@/components/dashboard/weekly-activity-chart";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { FadeIn } from "@/components/ui/fade-in";
 import { useActivities } from "@/hooks/use-activities";
 import type { Activity as SportActivity } from "@/lib/activities";
+import styles from "@/features/dashboard/dashboard.module.css";
 
 type Totals = {
   count: number;
@@ -27,9 +45,13 @@ type Totals = {
   calories: number;
 };
 
-type ChartPoint = {
+type ChartMetric = "distance" | "elevation" | "duration";
+
+type ChartDatum = {
   day: string;
-  km: number;
+  distance: number;
+  elevation: number;
+  duration: number;
 };
 
 function startOfDay(date: Date) {
@@ -102,6 +124,24 @@ function getMonthStart(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
+function startOfMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function startOfWeek(date: Date) {
+  const nextDate = startOfDay(date);
+  const day = nextDate.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+
+  nextDate.setDate(nextDate.getDate() + diff);
+
+  return nextDate;
+}
+
+function isSameDay(firstDate: Date, secondDate: Date) {
+  return getDateKey(firstDate) === getDateKey(secondDate);
+}
+
 function getCompletedActivities(activities: SportActivity[]) {
   return activities.filter((activity) => activity.status !== "PLANNED");
 }
@@ -166,19 +206,36 @@ function getLastDaysChart(
   startDate: Date,
   days: number,
 ) {
-  const byDay = new Map<string, number>();
-
-  activities.forEach((activity) => {
-    const key = getDateKey(new Date(activity.startedAt));
-    byDay.set(key, (byDay.get(key) ?? 0) + (activity.distance ?? 0));
-  });
-
-  return Array.from({ length: days }, (_, index): ChartPoint => {
+  return Array.from({ length: days }, (_, index): ChartDatum => {
     const date = addDays(startDate, index);
+    const dayActivities = activities.filter((activity) =>
+      isSameDay(new Date(activity.startedAt), date),
+    );
 
     return {
-      day: formatDate(date),
-      km: byDay.get(getDateKey(date)) ?? 0,
+      day: new Intl.DateTimeFormat("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+      }).format(date),
+      distance: Number(
+        dayActivities
+          .reduce((total, activity) => total + (activity.distance ?? 0), 0)
+          .toFixed(2),
+      ),
+      elevation: Math.round(
+        dayActivities.reduce(
+          (total, activity) => total + (activity.elevationGain ?? 0),
+          0,
+        ),
+      ),
+      duration: Number(
+        (
+          dayActivities.reduce(
+            (total, activity) => total + (activity.duration ?? 0),
+            0,
+          ) / 60
+        ).toFixed(2),
+      ),
     };
   });
 }
@@ -231,9 +288,10 @@ function getSportDistribution(activities: SportActivity[]) {
     .sort((first, second) => second.distance - first.distance);
 }
 
-function getBestDay(chartData: ChartPoint[]) {
-  return chartData.reduce<ChartPoint | null>(
-    (best, point) => (!best || point.km > best.km ? point : best),
+function getBestDay(chartData: ChartDatum[]) {
+  return chartData.reduce<ChartDatum | null>(
+    (best, point) =>
+      !best || point.distance > best.distance ? point : best,
     null,
   );
 }
@@ -262,8 +320,430 @@ function getCoachMessage(totals: Totals, activeDays: number) {
   return "La progression est propre : assez de données pour voir où accélérer sans perdre le plaisir.";
 }
 
+function SurfaceHeader({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className={styles.surfaceHeader}>
+      <div>
+        <h2 className={styles.surfaceTitle}>{title}</h2>
+        <p className={styles.surfaceDescription}>{description}</p>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function ActivityChart({
+  data,
+  metric,
+}: {
+  data: ChartDatum[];
+  metric: ChartMetric;
+}) {
+  const configuration = {
+    distance: {
+      dataKey: "distance",
+      label: "Distance (km)",
+      color: "var(--chart-distance)",
+      gradientId: "distanceGradient",
+    },
+    elevation: {
+      dataKey: "elevation",
+      label: "Dénivelé positif (m)",
+      color: "var(--chart-elevation)",
+      gradientId: "elevationGradient",
+    },
+    duration: {
+      dataKey: "duration",
+      label: "Durée (h)",
+      color: "var(--chart-duration)",
+      gradientId: "durationGradient",
+    },
+  } as const;
+  const selected = configuration[metric];
+
+  return (
+    <div className={styles.chartArea}>
+      <ResponsiveContainer width="100%" height="100%">
+        <ComposedChart
+          data={data}
+          margin={{ top: 18, right: 8, left: -20, bottom: 0 }}
+        >
+          <defs>
+            <linearGradient id="distanceGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="var(--chart-distance-start)"
+                stopOpacity={0.95}
+              />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-distance-end)"
+                stopOpacity={0.58}
+              />
+            </linearGradient>
+            <linearGradient id="elevationGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="var(--chart-elevation-start)"
+                stopOpacity={0.94}
+              />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-elevation-end)"
+                stopOpacity={0.56}
+              />
+            </linearGradient>
+            <linearGradient id="durationGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="var(--chart-duration-start)"
+                stopOpacity={0.34}
+              />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-duration-end)"
+                stopOpacity={0.02}
+              />
+            </linearGradient>
+          </defs>
+          <CartesianGrid
+            stroke="var(--chart-grid)"
+            strokeDasharray="3 5"
+            vertical={false}
+          />
+          <XAxis
+            dataKey="day"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
+            interval={4}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
+          />
+          <Tooltip
+            cursor={{ fill: "var(--chart-cursor)" }}
+            contentStyle={{
+              borderRadius: 18,
+              border: "1px solid var(--chart-tooltip-border)",
+              background: "var(--chart-tooltip-background)",
+              boxShadow: "var(--chart-tooltip-shadow)",
+              fontSize: 12,
+              padding: "10px 12px",
+            }}
+            labelStyle={{
+              color: "var(--chart-tooltip-title)",
+              fontWeight: 700,
+            }}
+            itemStyle={{ color: selected.color, fontWeight: 700 }}
+          />
+          {metric === "duration" ? (
+            <>
+              <Area
+                type="monotone"
+                dataKey={selected.dataKey}
+                name={selected.label}
+                stroke="none"
+                fill={`url(#${selected.gradientId})`}
+                isAnimationActive
+                animationDuration={650}
+                animationEasing="ease-out"
+              />
+              <Line
+                type="monotone"
+                dataKey={selected.dataKey}
+                name={selected.label}
+                stroke={selected.color}
+                strokeWidth={3}
+                dot={false}
+                activeDot={{
+                  r: 5,
+                  fill: selected.color,
+                  stroke: "var(--chart-active-dot-ring)",
+                  strokeWidth: 2,
+                }}
+                isAnimationActive
+                animationDuration={700}
+                animationEasing="ease-out"
+              />
+            </>
+          ) : (
+            <Bar
+              dataKey={selected.dataKey}
+              name={selected.label}
+              fill={`url(#${selected.gradientId})`}
+              radius={[9, 9, 3, 3]}
+              maxBarSize={22}
+              isAnimationActive
+              animationDuration={650}
+              animationEasing="ease-out"
+            />
+          )}
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function getSportIcon(sport: SportActivity["sport"]) {
+  switch (sport) {
+    case "RUNNING":
+    case "WALKING":
+      return Footprints;
+    case "MTB":
+    case "ROAD_CYCLING":
+    case "GRAVEL":
+      return Bike;
+    case "HIKING":
+    case "TRAIL":
+      return Mountain;
+    case "SWIMMING":
+      return Waves;
+    case "FITNESS":
+      return Dumbbell;
+    default:
+      return Activity;
+  }
+}
+
+function ExplorationHeatmap({ activities }: { activities: SportActivity[] }) {
+  const now = new Date();
+  const monthStart = startOfMonth(now);
+  const gridStart = startOfWeek(monthStart);
+  const displayedDayCount = 28;
+  const monthEndDay = Math.min(
+    displayedDayCount,
+    new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(),
+  );
+
+  const activitiesByDay = new Map<string, SportActivity[]>();
+
+  activities.forEach((activity) => {
+    const key = getDateKey(new Date(activity.startedAt));
+    const dayActivities = activitiesByDay.get(key) ?? [];
+    dayActivities.push(activity);
+    activitiesByDay.set(key, dayActivities);
+  });
+
+  const cells = Array.from({ length: displayedDayCount }, (_, index) => {
+    const day = addDays(gridStart, index);
+    const isCurrentMonth = day.getMonth() === now.getMonth();
+    const isInsideDisplayedMonthRange =
+      isCurrentMonth && day.getDate() >= 1 && day.getDate() <= monthEndDay;
+    const dayActivities = isInsideDisplayedMonthRange
+      ? activitiesByDay.get(getDateKey(day)) ?? []
+      : [];
+    const totalDuration = dayActivities.reduce(
+      (total, activity) => total + (activity.duration ?? 0),
+      0,
+    );
+    const intensity =
+      dayActivities.length === 0
+        ? 0
+        : totalDuration < 45
+          ? 1
+          : totalDuration < 120
+            ? 2
+            : 3;
+    const firstActivity = dayActivities[0] ?? null;
+    const Icon = firstActivity ? getSportIcon(firstActivity.sport) : null;
+    const formattedDate = new Intl.DateTimeFormat("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    }).format(day);
+
+    return {
+      id: getDateKey(day),
+      day,
+      intensity,
+      Icon,
+      isInsideDisplayedMonthRange,
+      title:
+        dayActivities.length > 0
+          ? `${formattedDate} — ${dayActivities.length} ${
+              dayActivities.length === 1 ? "sortie" : "sorties"
+            }`
+          : formattedDate,
+    };
+  });
+
+  return (
+    <div className={styles.heatmap}>
+      <div className={styles.heatmapWeekdays}>
+        {["LU", "MA", "ME", "JE", "VE", "SA", "DI"].map((day) => (
+          <span key={day}>{day}</span>
+        ))}
+      </div>
+      <div className={styles.heatmapBody}>
+        {[0, 1, 2, 3].map((week) => (
+          <div className={styles.heatmapRow} key={week}>
+            <span className={styles.heatmapWeek}>S{week + 1}</span>
+            {cells.slice(week * 7, week * 7 + 7).map((cell) => {
+              const Icon = cell.Icon;
+
+              return (
+                <div
+                  className={`${styles.heatmapCell} ${
+                    styles[`heatmapLevel${cell.intensity}`]
+                  } ${
+                    cell.isInsideDisplayedMonthRange
+                      ? ""
+                      : styles.heatmapOutsideMonth
+                  }`}
+                  key={cell.id}
+                  title={cell.title}
+                  aria-label={cell.title}
+                >
+                  {Icon ? <Icon aria-hidden="true" /> : null}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className={styles.heatmapLegend}>
+        <span>Charge réelle par jour</span>
+        <span>
+          <i className={styles.legendRest} />
+          Repos
+        </span>
+        <span>
+          <i className={styles.legendLow} />
+          Courte
+        </span>
+        <span>
+          <i className={styles.legendMedium} />
+          Soutenue
+        </span>
+        <span>
+          <i className={styles.legendHigh} />
+          Longue
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function DashboardActivityPanel({
+  activeMetric,
+  bestActivity,
+  chartData,
+  onMetricChange,
+  totalDistance,
+  totalDuration,
+  totalElevation,
+}: {
+  activeMetric: ChartMetric;
+  bestActivity: SportActivity | null;
+  chartData: ChartDatum[];
+  onMetricChange: (metric: ChartMetric) => void;
+  totalDistance: number;
+  totalDuration: number;
+  totalElevation: number;
+}) {
+  return (
+    <div className={`${styles.surface} ${styles.activityPanel}`}>
+      <SurfaceHeader
+        title="Activité sur les 30 derniers jours"
+        description="Vos sorties réelles, jour par jour."
+        action={
+          <button type="button" className={styles.rangeButton}>
+            30 derniers jours <ChevronDown aria-hidden="true" />
+          </button>
+        }
+      />
+      <div className={styles.chartSummary}>
+        <div>
+          <span>Total</span>
+          <strong>{formatDistance(totalDistance)} km</strong>
+        </div>
+        <div>
+          <span>Durée</span>
+          <strong>{formatDuration(totalDuration)}</strong>
+        </div>
+        <div>
+          <span>D+</span>
+          <strong>{formatInteger(totalElevation)} m</strong>
+        </div>
+      </div>
+      <div className={styles.chartToolbar}>
+        <div
+          className={styles.chartTabs}
+          role="tablist"
+          aria-label="Métrique du graphique"
+        >
+          {([
+            ["distance", "Distance"],
+            ["elevation", "Dénivelé"],
+            ["duration", "Durée"],
+          ] as const).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              role="tab"
+              aria-selected={activeMetric === value}
+              className={activeMetric === value ? styles.chartTabActive : ""}
+              onClick={() => onMetricChange(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <span className={styles.chartUnit}>
+          {activeMetric === "distance"
+            ? "Kilomètres"
+            : activeMetric === "elevation"
+              ? "Mètres de D+"
+              : "Heures d’activité"}
+        </span>
+      </div>
+      <ActivityChart data={chartData} metric={activeMetric} />
+      <div className={styles.chartInsight}>
+        <Mountain aria-hidden="true" />
+        Votre meilleure trace sur la période atteint
+        <strong>
+          {bestActivity ? `${formatDistance(bestActivity.distance ?? 0)} km` : "0 km"}
+        </strong>
+      </div>
+    </div>
+  );
+}
+
+function DashboardHeatmapPanel({
+  activities,
+  description,
+  monthLabel,
+}: {
+  activities: SportActivity[];
+  description: string;
+  monthLabel: string;
+}) {
+  return (
+    <div className={`${styles.surface} ${styles.heatmapPanel}`}>
+      <SurfaceHeader
+        title="Rythme d’exploration"
+        description={description}
+        action={<span className={styles.monthBadge}>{monthLabel} · 4 semaines</span>}
+      />
+      <ExplorationHeatmap activities={activities} />
+    </div>
+  );
+}
+
 export default function StatisticsPage() {
   const { data: activities = [], error, isLoading } = useActivities();
+  const [chartMetric, setChartMetric] = useState<ChartMetric>("distance");
   const completedActivities = getCompletedActivities(activities);
   const sortedActivities = [...completedActivities].sort(
     (first, second) =>
@@ -276,6 +756,7 @@ export default function StatisticsPage() {
   const monthStart = getMonthStart(today);
   const last30Start = addDays(today, -29);
   const previous30Start = addDays(last30Start, -30);
+  const chartStart = addDays(today, -30);
   const yearStart = new Date(today.getFullYear(), 0, 1);
   const last30Activities = getActivitiesBetween(
     completedActivities,
@@ -307,13 +788,21 @@ export default function StatisticsPage() {
   const monthTotals = sumActivities(monthActivities);
   const previousTotals = sumActivities(previous30Activities);
   const yearTotals = sumActivities(yearActivities);
-  const chartData = getLastDaysChart(last30Activities, last30Start, 30);
+  const chartData = getLastDaysChart(last30Activities, chartStart, 31);
   const activeDays = new Set(
     last30Activities.map((activity) =>
       getDateKey(new Date(activity.startedAt)),
     ),
   ).size;
   const bestDay = getBestDay(chartData);
+  const bestActivity =
+    last30Activities.reduce<SportActivity | null>(
+      (currentBest, activity) =>
+        !currentBest || (activity.distance ?? 0) > (currentBest.distance ?? 0)
+          ? activity
+          : currentBest,
+      null,
+    );
   const sportDistribution = getSportDistribution(last30Activities);
   const topSport = sportDistribution[0] ?? null;
   const historicalBestElevationActivity =
@@ -403,6 +892,14 @@ export default function StatisticsPage() {
       : topSport
         ? `${topSport.label} porte l'essentiel du volume récent.`
         : "Ajoutez quelques sorties pour faire apparaître votre mix.";
+  const heatmapMonthLabel = new Intl.DateTimeFormat("fr-FR", {
+    month: "long",
+    year: "numeric",
+  }).format(today);
+  const heatmapDescription = `Données réelles du 1er au ${Math.min(
+    28,
+    today.getDate(),
+  )} ${new Intl.DateTimeFormat("fr-FR", { month: "long" }).format(today)}`;
 
   return (
     <DashboardLayout>
@@ -547,12 +1044,14 @@ export default function StatisticsPage() {
                   <div className="app-statistics-mini-fact rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-4">
                     <p className="text-xs text-zinc-500">Meilleure journée</p>
                     <p className="mt-2 text-2xl font-bold text-white">
-                      {bestDay && bestDay.km > 0
-                        ? `${formatDistance(bestDay.km)} km`
+                      {bestDay && bestDay.distance > 0
+                        ? `${formatDistance(bestDay.distance)} km`
                         : "—"}
                     </p>
                     <p className="mt-1 text-sm text-zinc-500">
-                      {bestDay && bestDay.km > 0 ? bestDay.day : "À déclencher"}
+                      {bestDay && bestDay.distance > 0
+                        ? bestDay.day
+                        : "À déclencher"}
                     </p>
                   </div>
 
@@ -683,12 +1182,23 @@ export default function StatisticsPage() {
               </div>
             </section>
 
-            <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-              <WeeklyActivityChart
-                data={chartData}
+            <section
+              className={`${styles.dashboardPage} app-statistics-dashboard-modules grid gap-4 xl:grid-cols-[1.1fr_0.9fr]`}
+            >
+              <DashboardActivityPanel
+                activeMetric={chartMetric}
+                bestActivity={bestActivity}
+                chartData={chartData}
+                onMetricChange={setChartMetric}
                 totalDistance={totals30.distance}
+                totalDuration={totals30.duration}
+                totalElevation={totals30.elevation}
               />
-              <ActivityHeatmap activities={completedActivities} />
+              <DashboardHeatmapPanel
+                activities={completedActivities}
+                description={heatmapDescription}
+                monthLabel={heatmapMonthLabel}
+              />
             </section>
 
             <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
