@@ -1,55 +1,28 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
 import { Loader2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 
-import { Input } from "@/components/ui/input";
-
-import { Button } from "@/components/ui/button";
-
 export function PasswordSettingsCard() {
-  const [
-    currentPassword,
-    setCurrentPassword,
-  ] = useState("");
-
-  const [
-    newPassword,
-    setNewPassword,
-  ] = useState("");
-
-  const [
-    confirmPassword,
-    setConfirmPassword,
-  ] = useState("");
-
-  const [isSaving, setIsSaving] =
-    useState(false);
-
-  const [successMessage, setSuccessMessage] =
-    useState("");
-
-  const [errorMessage, setErrorMessage] =
-    useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleUpdatePassword() {
     setSuccessMessage("");
-
     setErrorMessage("");
 
-    // VALIDATION
-    if (
-      !currentPassword ||
-      !newPassword ||
-      !confirmPassword
-    ) {
-      setErrorMessage(
-        "Veuillez remplir tous les champs.",
-      );
-
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setErrorMessage("Veuillez remplir tous les champs.");
       return;
     }
 
@@ -57,48 +30,37 @@ export function PasswordSettingsCard() {
       setErrorMessage(
         "Le nouveau mot de passe doit contenir au moins 6 caractères.",
       );
-
       return;
     }
 
-    if (
-      newPassword !== confirmPassword
-    ) {
-      setErrorMessage(
-        "Les mots de passe ne correspondent pas.",
-      );
-
+    if (newPassword !== confirmPassword) {
+      setErrorMessage("Les mots de passe ne correspondent pas.");
       return;
     }
 
     try {
       setIsSaving(true);
 
-      await api.patch(
-        "/users/password",
-        {
-          currentPassword,
-          newPassword,
-        },
-      );
+      await api.patch("/users/password", {
+        currentPassword,
+        newPassword,
+      });
 
-      // RESET
       setCurrentPassword("");
-
       setNewPassword("");
-
       setConfirmPassword("");
-
-      setSuccessMessage(
-        "Mot de passe mis à jour avec succès.",
-      );
-
-    } catch (error: any) {
+      setSuccessMessage("Mot de passe mis à jour avec succès.");
+    } catch (error: unknown) {
       console.error(error);
 
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : null;
+
       setErrorMessage(
-        error?.response?.data?.message ||
-          "Erreur lors de la mise à jour.",
+        typeof message === "string"
+          ? message
+          : "Erreur lors de la mise à jour.",
       );
     } finally {
       setIsSaving(false);
@@ -106,108 +68,82 @@ export function PasswordSettingsCard() {
   }
 
   return (
-    <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-xl">
+    <div className="app-settings-card-content">
+      <header className="app-settings-card-header">
+        <h2>Sécurité</h2>
+        <p>Modifiez votre mot de passe.</p>
+      </header>
 
-      {/* HEADER */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold tracking-tight text-white">
-          Sécurité
-        </h2>
-
-        <p className="mt-1 text-sm text-zinc-500">
-          Modifiez votre mot de passe.
-        </p>
-      </div>
-
-      {/* FORM */}
-      <div className="space-y-5">
-
-        {/* CURRENT PASSWORD */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-400">
-            Mot de passe actuel
-          </label>
+      <div className="app-settings-form-stack">
+        <div className="app-settings-field">
+          <label htmlFor="current-password">Mot de passe actuel</label>
 
           <Input
+            id="current-password"
             type="password"
+            autoComplete="current-password"
             value={currentPassword}
-            onChange={(e) =>
-              setCurrentPassword(
-                e.target.value,
-              )
-            }
-            className="h-12 border-white/10 bg-black/20 text-white"
+            onChange={(event) => setCurrentPassword(event.target.value)}
+            className="h-12"
           />
         </div>
 
-        {/* NEW PASSWORD */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-400">
-            Nouveau mot de passe
-          </label>
+        <div className="app-settings-field">
+          <label htmlFor="new-password">Nouveau mot de passe</label>
 
           <Input
+            id="new-password"
             type="password"
+            autoComplete="new-password"
             value={newPassword}
-            onChange={(e) =>
-              setNewPassword(
-                e.target.value,
-              )
-            }
-            className="h-12 border-white/10 bg-black/20 text-white"
+            onChange={(event) => setNewPassword(event.target.value)}
+            className="h-12"
           />
         </div>
 
-        {/* CONFIRM PASSWORD */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-400">
-            Confirmation
-          </label>
+        <div className="app-settings-field">
+          <label htmlFor="confirm-password">Confirmation</label>
 
           <Input
+            id="confirm-password"
             type="password"
+            autoComplete="new-password"
             value={confirmPassword}
-            onChange={(e) =>
-              setConfirmPassword(
-                e.target.value,
-              )
-            }
-            className="h-12 border-white/10 bg-black/20 text-white"
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            className="h-12"
           />
         </div>
 
-        {/* ERROR */}
         {errorMessage && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div role="alert" className="app-settings-feedback app-settings-feedback-error">
             {errorMessage}
           </div>
         )}
 
-        {/* SUCCESS */}
         {successMessage && (
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+          <div role="status" className="app-settings-feedback app-settings-feedback-success">
             {successMessage}
           </div>
         )}
 
-        {/* BUTTON */}
-        <Button
-          type="button"
-          onClick={
-            handleUpdatePassword
-          }
-          disabled={isSaving}
-          className="h-11 rounded-2xl bg-violet-500 px-6 hover:bg-violet-400"
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Mise à jour...
-            </>
-          ) : (
-            "Modifier le mot de passe"
-          )}
-        </Button>
+        <div className="app-settings-actions">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={handleUpdatePassword}
+            disabled={isSaving}
+            className="app-settings-primary-action h-11 rounded-2xl px-6"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Mise à jour...
+              </>
+            ) : (
+              "Modifier le mot de passe"
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

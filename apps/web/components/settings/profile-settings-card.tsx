@@ -4,127 +4,90 @@ import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
 
-import { api } from "@/lib/api";
-
-import { useAuthStore } from "@/store/auth-store";
-
 import { AvatarUpload } from "./avatar-upload";
 
-import { Input } from "@/components/ui/input";
-
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { api } from "@/lib/api";
+import { useAuthStore } from "@/store/auth-store";
 
 export function ProfileSettingsCard() {
-  const user = useAuthStore(
-    (state) => state.user,
-  );
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const setUser = useAuthStore(
-    (state) => state.setUser,
-  );
-
-  const [firstName, setFirstName] =
-    useState(user?.firstName || "");
-
-  const [isSaving, setIsSaving] =
-    useState(false);
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [isSaving, setIsSaving] = useState(false);
 
   async function handleSave() {
     try {
       setIsSaving(true);
 
-      const response = await api.patch(
-        "/users/profile",
-        {
-          firstName,
-        },
-      );
+      const response = await api.patch("/users/profile", {
+        firstName: firstName.trim(),
+      });
 
       setUser(response.data);
-
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-
-      alert(
-        "Erreur lors de la sauvegarde.",
-      );
+      window.alert("Erreur lors de la sauvegarde.");
     } finally {
       setIsSaving(false);
     }
   }
 
   return (
-    <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+    <div className="app-settings-card-content">
+      <header className="app-settings-card-header">
+        <h2>Profil</h2>
+        <p>Modifiez vos informations personnelles.</p>
+      </header>
 
-      {/* HEADER */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-white">
-          Profil
-        </h2>
-
-        <p className="mt-1 text-sm text-zinc-500">
-          Modifiez vos informations personnelles.
-        </p>
-      </div>
-
-      {/* AVATAR */}
       <AvatarUpload
-        firstName={
-          firstName || "U"
-        }
-        avatarUrl={
-          user?.avatarUrl
-        }
+        firstName={firstName || "U"}
+        avatarUrl={user?.avatarUrl}
       />
 
-      {/* FORM */}
-      <div className="mt-8 space-y-5">
-
-        {/* FIRST NAME */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-400">
-            Prénom
-          </label>
+      <div className="app-settings-form-stack">
+        <div className="app-settings-field">
+          <label htmlFor="profile-first-name">Prénom</label>
 
           <Input
+            id="profile-first-name"
             value={firstName}
-            onChange={(e) =>
-              setFirstName(
-                e.target.value,
-              )
-            }
-            className="h-12 border-white/10 bg-black/20 text-white"
+            onChange={(event) => setFirstName(event.target.value)}
+            className="h-12"
           />
         </div>
 
-        {/* EMAIL */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-400">
-            Email
-          </label>
+        <div className="app-settings-field">
+          <label htmlFor="profile-email">Email</label>
 
           <Input
+            id="profile-email"
             disabled
             value={user?.email || ""}
-            className="h-12 border-white/10 bg-black/10 text-zinc-500"
+            className="h-12"
           />
         </div>
 
-        {/* BUTTON */}
-        <Button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="h-11 rounded-2xl bg-violet-500 px-6 hover:bg-violet-400"
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Sauvegarde...
-            </>
-          ) : (
-            "Sauvegarder"
-          )}
-        </Button>
+        <div className="app-settings-actions">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || !firstName.trim()}
+            className="app-settings-primary-action h-11 rounded-2xl px-6"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sauvegarde...
+              </>
+            ) : (
+              "Sauvegarder"
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

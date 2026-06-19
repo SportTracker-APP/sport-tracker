@@ -821,15 +821,15 @@ html.sport-theme-nature .app-shell main a[class*="from-violet"],
 html.sport-theme-nature .app-shell main button[class*="from-violet"],
 html.sport-theme-nature .app-shell main button[class*="bg-violet"],
 html.sport-theme-nature .app-auth-card button[type="submit"] {
-  border-color: rgba(16, 185, 129, 0.28) !important;
+  border-color: rgba(187, 247, 208, 0.24) !important;
   background: linear-gradient(
     135deg,
-    #059669 0%,
-    #22c55e 55%,
-    #a3e635 100%
+    #052e2b 0%,
+    #065f46 58%,
+    #047857 100%
   ) !important;
   color: #ffffff !important;
-  box-shadow: 0 18px 38px rgba(16, 185, 129, 0.24) !important;
+  box-shadow: 0 18px 38px rgba(6, 78, 59, 0.24) !important;
 }
 
 html.sport-theme-nature .app-shell main .app-trace-activity-cta {
@@ -4068,8 +4068,8 @@ html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
   box-shadow: 0 0 18px rgba(16, 185, 129, 0.22) !important;
 }
 
-/* IntÃƒÆ’Ã‚Â©gration Strava: correction nature ciblÃƒÆ’Ã‚Â©e.
-   On neutralise les fonds gÃƒÆ’Ã‚Â©nÃƒÆ’Ã‚Â©riques pour ÃƒÆ’Ã‚Â©viter les rectangles blancs parasites. */
+/* IntÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©gration Strava: correction nature ciblÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e.
+   On neutralise les fonds gÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©riques pour ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©viter les rectangles blancs parasites. */
 html.sport-theme-nature .app-shell main .app-strava-page {
   background: transparent !important;
   color: #0f172a !important;
@@ -4287,7 +4287,7 @@ html.sport-theme-nature
   stroke: #059669 !important;
 }
 
-/* Calendar page V2 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â clean premium outdoor */
+/* Calendar page V2 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â clean premium outdoor */
 html .app-calendar-page-v2 {
   --calendar-ink: #102033;
   --calendar-muted: #66758d;
@@ -5072,7 +5072,7 @@ html.sport-theme-nature
 }
 
 /* ========================================================================== */
-/* Montaro nature shell Ã¢â‚¬â€ final uniform forest/mint pass                      */
+/* Montaro nature shell ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â final uniform forest/mint pass                      */
 /* Keep this block at the very end of globals.css so it wins over old rules.  */
 /* ========================================================================== */
 html.sport-theme-nature {
@@ -5252,7 +5252,7 @@ html.sport-theme-nature .app-mobile-sidebar a:hover {
   color: var(--montaro-shell-forest) !important;
 }
 
-/* Account dropdown â€” avatar menu */
+/* Account dropdown ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â avatar menu */
 .app-account-menu {
   transform-origin: top right;
   animation: app-account-menu-in 160ms ease-out;
@@ -5354,7 +5354,7 @@ html.sport-theme-nature .app-account-logout:hover {
 }
 
 
-/* Shell background polish â€” keep sidebar/topbar detached from page */
+/* Shell background polish ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â keep sidebar/topbar detached from page */
 html.sport-theme-nature body {
   background: #f8fbf9 !important;
 }
@@ -5396,4 +5396,2196 @@ html.sport-theme-nature .app-account-logout {
   html.sport-theme-nature .app-shell {
     background: #fbfdfc !important;
   }
+}
+
+/* ParamÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨tres ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Montaro nature refinement                                     */
+/* Scoped styles only: safe for the rest of the application.                  */
+/* ========================================================================== */
+.app-settings-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.app-settings-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 190px;
+  border: 1px solid rgba(6, 78, 59, 0.12);
+  border-radius: 30px;
+  background:
+    linear-gradient(
+      118deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(241, 250, 244, 0.9) 58%,
+      rgba(228, 244, 234, 0.92)
+    );
+  box-shadow:
+    0 24px 70px rgba(6, 78, 59, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+}
+
+.app-settings-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -4rem -7rem auto;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.1);
+  filter: blur(1px);
+  z-index: -1;
+}
+
+.app-settings-hero-decoration {
+  position: absolute;
+  right: 2.25rem;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.app-settings-hero-decoration span {
+  display: block;
+  width: 3.25rem;
+  clip-path: polygon(50% 0, 100% 100%, 66% 100%, 66% 100%, 34% 100%, 34% 100%, 0 100%);
+  background: #064e3b;
+}
+
+.app-settings-hero-decoration span:nth-child(1) {
+  height: 5rem;
+}
+
+.app-settings-hero-decoration span:nth-child(2) {
+  height: 7rem;
+}
+
+.app-settings-hero-decoration span:nth-child(3) {
+  height: 4rem;
+}
+
+.app-settings-hero-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1.15rem;
+  padding: 2rem;
+}
+
+.app-settings-kicker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(6, 78, 59, 0.13);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.66);
+  padding: 0.45rem 0.75rem;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.app-settings-kicker svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.app-settings-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.app-settings-heading h1 {
+  margin: 0;
+  color: #102033;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 850;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.app-settings-heading p {
+  max-width: 44rem;
+  margin-top: 0.8rem;
+  color: #607268;
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.app-settings-status {
+  display: flex;
+  min-width: 230px;
+  align-items: center;
+  gap: 0.85rem;
+  border: 1px solid rgba(6, 78, 59, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.68);
+  padding: 0.85rem 1rem;
+  color: #064e3b;
+  box-shadow:
+    0 14px 34px rgba(6, 78, 59, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.app-settings-status > svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 auto;
+}
+
+.app-settings-status span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.app-settings-status strong {
+  color: #102033;
+  font-size: 0.82rem;
+}
+
+.app-settings-status small {
+  color: #607268;
+  font-size: 0.7rem;
+}
+
+.app-settings-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.app-settings-panel {
+  position: relative;
+  min-width: 0;
+}
+
+.app-settings-panel-accent {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 2;
+  display: grid;
+  width: 2.9rem;
+  height: 2.9rem;
+  place-items: center;
+  border: 1px solid rgba(6, 78, 59, 0.12);
+  border-radius: 16px;
+  background: rgba(231, 242, 233, 0.82);
+  color: #047857;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  pointer-events: none;
+}
+
+.app-settings-panel-accent svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* The existing settings cards keep all business logic.
+   We only restyle their first visual container. */
+.app-settings-panel > div:last-child {
+  min-height: 100%;
+}
+
+.app-settings-panel > div:last-child > div,
+.app-settings-panel > div:last-child > section,
+.app-settings-panel > div:last-child > article,
+.app-settings-panel > div:last-child > form {
+  min-height: 100%;
+  border-color: rgba(6, 78, 59, 0.12) !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(
+      circle at 96% 0%,
+      rgba(190, 242, 100, 0.1),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(247, 252, 249, 0.9)
+    ) !important;
+  box-shadow:
+    0 22px 64px rgba(6, 78, 59, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
+}
+
+/* Fallback when the imported card itself is the first element. */
+.app-settings-panel > div:last-child {
+  border-radius: 28px;
+}
+
+.app-settings-page input,
+.app-settings-page textarea,
+.app-settings-page select {
+  min-height: 3.25rem;
+  border-color: rgba(6, 78, 59, 0.13) !important;
+  border-radius: 14px !important;
+  background: rgba(249, 252, 250, 0.92) !important;
+  color: #102033 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(6, 78, 59, 0.025),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.app-settings-page input:focus,
+.app-settings-page textarea:focus,
+.app-settings-page select:focus {
+  border-color: rgba(5, 150, 105, 0.42) !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 0 0 4px rgba(16, 185, 129, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
+}
+
+.app-settings-page label {
+  color: #526b61 !important;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.app-settings-page button[type="submit"] {
+  min-height: 3rem;
+  border: 1px solid rgba(187, 247, 208, 0.26) !important;
+  border-radius: 14px !important;
+  background:
+    radial-gradient(
+      circle at 24% 14%,
+      rgba(236, 253, 245, 0.18),
+      transparent 36%
+    ),
+    linear-gradient(135deg, #064e3b, #047857 58%, #059669) !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  box-shadow:
+    0 16px 34px rgba(6, 78, 59, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+.app-settings-page button[type="submit"]:hover {
+  transform: translateY(-1px);
+  background:
+    radial-gradient(
+      circle at 24% 14%,
+      rgba(236, 253, 245, 0.22),
+      transparent 36%
+    ),
+    linear-gradient(135deg, #065f46, #059669 58%, #10b981) !important;
+  box-shadow:
+    0 18px 38px rgba(6, 78, 59, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+.app-settings-page button[type="submit"]:focus-visible {
+  outline: 3px solid rgba(16, 185, 129, 0.22);
+  outline-offset: 3px;
+}
+
+.app-settings-page [class*="rounded-full"][class*="bg-gradient"] {
+  box-shadow:
+    0 18px 36px rgba(6, 78, 59, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+@media (min-width: 1280px) {
+  .app-settings-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .app-settings-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .app-settings-status {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-settings-page {
+    gap: 1rem;
+  }
+
+  .app-settings-hero {
+    min-height: 0;
+    border-radius: 24px;
+  }
+
+  .app-settings-hero-content {
+    padding: 1.35rem;
+  }
+
+  .app-settings-hero-decoration {
+    right: 0.5rem;
+    opacity: 0.08;
+  }
+
+  .app-settings-heading h1 {
+    font-size: 2rem;
+  }
+
+  .app-settings-heading p {
+    font-size: 0.9rem;
+  }
+
+  .app-settings-panel-accent {
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+html:not(.sport-theme-nature) .app-settings-hero,
+html:not(.sport-theme-nature) .app-settings-panel > div:last-child > div,
+html:not(.sport-theme-nature) .app-settings-panel > div:last-child > section,
+html:not(.sport-theme-nature) .app-settings-panel > div:last-child > article,
+html:not(.sport-theme-nature) .app-settings-panel > div:last-child > form {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(139, 92, 246, 0.14),
+      transparent 30%
+    ),
+    rgba(24, 25, 34, 0.88) !important;
+  color: #f8fafc !important;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-heading h1,
+html:not(.sport-theme-nature) .app-settings-status strong {
+  color: #ffffff;
+}
+
+html:not(.sport-theme-nature) .app-settings-heading p,
+html:not(.sport-theme-nature) .app-settings-status small {
+  color: #a1a1aa;
+}
+
+html:not(.sport-theme-nature) .app-settings-status,
+html:not(.sport-theme-nature) .app-settings-kicker,
+html:not(.sport-theme-nature) .app-settings-panel-accent {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  color: #c4b5fd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-settings-page *,
+  .app-settings-page *::before,
+  .app-settings-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================================================== */
+/* ParamÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨tres ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â final theme alignment                                         */
+/* Keep this block at the very end of globals.css.                            */
+/* ========================================================================== */
+
+.app-settings-page {
+  gap: 1.25rem;
+}
+
+.app-settings-hero {
+  min-height: 154px;
+  border-radius: 26px;
+}
+
+.app-settings-hero-content {
+  gap: 0.85rem;
+  padding: 1.55rem 1.75rem;
+}
+
+.app-settings-heading h1 {
+  font-size: clamp(1.9rem, 3vw, 2.45rem);
+  letter-spacing: -0.035em;
+}
+
+.app-settings-heading p {
+  margin-top: 0.55rem;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+/* Remove the large white slabs generated by the generic nature overrides. */
+html.sport-theme-nature .app-shell main .app-settings-page > section,
+html.sport-theme-nature .app-shell main .app-settings-page > div,
+html.sport-theme-nature .app-shell main .app-settings-grid,
+html.sport-theme-nature .app-shell main .app-settings-panel {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature .app-shell main .app-settings-hero {
+  border-color: rgba(6, 78, 59, 0.14) !important;
+  background:
+    radial-gradient(circle at 92% 16%, rgba(16, 185, 129, 0.08), transparent 30%),
+    linear-gradient(135deg, rgba(248, 252, 249, 0.9), rgba(234, 244, 237, 0.82)) !important;
+  box-shadow:
+    0 18px 48px rgba(6, 78, 59, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+}
+
+/* Real card surfaces: mint/forest, not opaque white. */
+html.sport-theme-nature
+  .app-settings-panel
+  > div:last-child
+  > div,
+html.sport-theme-nature
+  .app-settings-panel
+  > div:last-child
+  > section,
+html.sport-theme-nature
+  .app-settings-panel
+  > div:last-child
+  > article,
+html.sport-theme-nature
+  .app-settings-panel
+  > div:last-child
+  > form {
+  border-color: rgba(6, 78, 59, 0.16) !important;
+  background:
+    radial-gradient(circle at 94% 6%, rgba(16, 185, 129, 0.09), transparent 30%),
+    linear-gradient(145deg, rgba(236, 247, 240, 0.94), rgba(223, 239, 228, 0.88)) !important;
+  box-shadow:
+    0 20px 56px rgba(6, 78, 59, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74) !important;
+}
+
+/* Inner blocks no longer look like white cards inside white cards. */
+html.sport-theme-nature .app-settings-page form > div,
+html.sport-theme-nature .app-settings-page form > section,
+html.sport-theme-nature .app-settings-page [class*="bg-white"],
+html.sport-theme-nature .app-settings-page [class*="bg-zinc"],
+html.sport-theme-nature .app-settings-page [class*="rounded-2xl"],
+html.sport-theme-nature .app-settings-page [class*="rounded-3xl"] {
+  background-color: transparent !important;
+}
+
+html.sport-theme-nature .app-settings-page input,
+html.sport-theme-nature .app-settings-page textarea,
+html.sport-theme-nature .app-settings-page select {
+  border-color: rgba(6, 78, 59, 0.17) !important;
+  background: rgba(244, 249, 246, 0.86) !important;
+  color: #102033 !important;
+  box-shadow:
+    inset 0 1px 1px rgba(6, 78, 59, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68) !important;
+}
+
+/* Forest CTA: no lime/apple green. */
+html.sport-theme-nature .app-settings-page button[type="submit"] {
+  border-color: rgba(167, 243, 208, 0.24) !important;
+  background:
+    radial-gradient(circle at 26% 14%, rgba(236, 253, 245, 0.14), transparent 36%),
+    linear-gradient(135deg, #052e2b 0%, #065f46 58%, #047857 100%) !important;
+  color: #ecfdf5 !important;
+  box-shadow:
+    0 16px 34px rgba(6, 78, 59, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+html.sport-theme-nature .app-settings-page button[type="submit"]:hover {
+  background:
+    radial-gradient(circle at 26% 14%, rgba(236, 253, 245, 0.18), transparent 36%),
+    linear-gradient(135deg, #064e3b 0%, #047857 58%, #0f766e 100%) !important;
+}
+
+/* Avatar and settings icons follow the same forest palette. */
+html.sport-theme-nature .app-settings-page [class*="bg-gradient"],
+html.sport-theme-nature .app-settings-panel-accent {
+  border-color: rgba(167, 243, 208, 0.22) !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(187, 247, 208, 0.16), transparent 40%),
+    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b) !important;
+  color: #ecfdf5 !important;
+  box-shadow:
+    0 16px 34px rgba(6, 78, 59, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+html.sport-theme-nature .app-settings-page [class*="bg-gradient"] svg,
+html.sport-theme-nature .app-settings-panel-accent svg {
+  color: #ecfdf5 !important;
+  stroke: #ecfdf5 !important;
+}
+
+/* Violet theme: dark translucent surfaces, never bright white fields/cards. */
+html:not(.sport-theme-nature) .app-settings-hero {
+  border-color: rgba(167, 139, 250, 0.12) !important;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(139, 92, 246, 0.12), transparent 30%),
+    linear-gradient(145deg, rgba(20, 18, 30, 0.94), rgba(16, 15, 24, 0.9)) !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-panel
+  > div:last-child
+  > div,
+html:not(.sport-theme-nature)
+  .app-settings-panel
+  > div:last-child
+  > section,
+html:not(.sport-theme-nature)
+  .app-settings-panel
+  > div:last-child
+  > article,
+html:not(.sport-theme-nature)
+  .app-settings-panel
+  > div:last-child
+  > form {
+  border-color: rgba(167, 139, 250, 0.11) !important;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(139, 92, 246, 0.11), transparent 30%),
+    linear-gradient(145deg, rgba(24, 22, 34, 0.96), rgba(16, 15, 24, 0.94)) !important;
+  color: #f8fafc !important;
+  box-shadow:
+    0 24px 66px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-page input,
+html:not(.sport-theme-nature) .app-settings-page textarea,
+html:not(.sport-theme-nature) .app-settings-page select {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: #f8fafc !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-page input:focus,
+html:not(.sport-theme-nature) .app-settings-page textarea:focus,
+html:not(.sport-theme-nature) .app-settings-page select:focus {
+  border-color: rgba(167, 139, 250, 0.48) !important;
+  background: rgba(255, 255, 255, 0.065) !important;
+  box-shadow:
+    0 0 0 4px rgba(139, 92, 246, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-page label {
+  color: #c4b5fd !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-page button[type="submit"] {
+  border-color: rgba(196, 181, 253, 0.2) !important;
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6 58%, #c026d3) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 38px rgba(124, 58, 237, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-page [class*="bg-gradient"] {
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6 58%, #c026d3) !important;
+}
+
+@media (max-width: 640px) {
+  .app-settings-hero-content {
+    padding: 1.2rem;
+  }
+
+  .app-settings-heading h1 {
+    font-size: 1.85rem;
+  }
+}
+
+/* ========================================================================== */
+/* ParamÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨tres ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â clean final correction                                        */
+/* Must remain at the very end of globals.css.                                */
+/* ========================================================================== */
+
+/*
+ * The generic nature rules still target Tailwind gradient classes with a
+ * lime endpoint. These page-specific selectors deliberately have greater
+ * specificity so the settings CTAs always use the Montaro forest palette.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[type="submit"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[class*="from-violet"][type="submit"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[class*="bg-violet"][type="submit"] {
+  border: 1px solid rgba(167, 243, 208, 0.22) !important;
+  background-color: #065f46 !important;
+  background-image: linear-gradient(
+    135deg,
+    #052e2b 0%,
+    #064e3b 52%,
+    #047857 100%
+  ) !important;
+  color: #ecfdf5 !important;
+  box-shadow:
+    0 14px 30px rgba(6, 78, 59, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[type="submit"]:hover {
+  background-color: #047857 !important;
+  background-image: linear-gradient(
+    135deg,
+    #064e3b 0%,
+    #065f46 52%,
+    #0f766e 100%
+  ) !important;
+  box-shadow:
+    0 17px 36px rgba(6, 78, 59, 0.27),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-1px);
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/*
+ * Remove the extra rounded slabs surrounding each field. The input itself
+ * remains the only visible control surface.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  > div,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  > section,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> input),
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> textarea),
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> select) {
+  border-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep clean spacing after removing the visual wrappers. */
+html.sport-theme-nature .app-settings-page form {
+  gap: 1.15rem;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  form
+  div:has(> input),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  div:has(> textarea),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  div:has(> select) {
+  padding: 0 !important;
+}
+
+/* Inputs: discreet neutral mint, no second outline around them. */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  input,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  textarea,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  select {
+  border: 1px solid rgba(6, 78, 59, 0.13) !important;
+  background-color: rgba(248, 251, 249, 0.9) !important;
+  background-image: none !important;
+  color: #102033 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(6, 78, 59, 0.025),
+    0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  input:focus,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  textarea:focus,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  select:focus {
+  border-color: rgba(4, 120, 87, 0.42) !important;
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  box-shadow:
+    0 0 0 4px rgba(4, 120, 87, 0.09),
+    inset 0 1px 1px rgba(6, 78, 59, 0.025) !important;
+  outline: none !important;
+}
+
+/* Remove the pale slab behind the profile photo row too. */
+html.sport-theme-nature
+  .app-settings-profile-panel
+  form
+  > div:first-child,
+html.sport-theme-nature
+  .app-settings-profile-panel
+  form
+  > section:first-child {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Avatar uses the same dark forest identity instead of apple green. */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  [class*="from-emerald"][class*="to-lime"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  [class*="from-green"][class*="to-lime"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  [class*="from-violet"][class*="to-fuchsia"] {
+  background-color: #065f46 !important;
+  background-image: linear-gradient(
+    135deg,
+    #052e2b,
+    #065f46 58%,
+    #047857
+  ) !important;
+  color: #ecfdf5 !important;
+}
+
+/* Violet theme receives the same wrapper cleanup, but keeps dark fields. */
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  > div,
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  > section,
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> input),
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> textarea),
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> select) {
+  border-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> input),
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> textarea),
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  form
+  div:has(> select) {
+  padding: 0 !important;
+}
+
+/* ParamÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¨tres ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â forest buttons definitive override */
+/* Keep this block at the very end of globals.css. */
+
+html.sport-theme-nature {
+  --settings-forest-dark: #052e2b;
+  --settings-forest: #064e3b;
+  --settings-forest-light: #065f46;
+  --settings-forest-hover: #047857;
+  --settings-forest-text: #ecfdf5;
+}
+
+/*
+ * Exact visual treatment used by the small settings icons:
+ * subtle mint highlight + deep forest gradient.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[type="submit"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  button:last-of-type,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[class*="from-violet"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[class*="from-emerald"],
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[class*="to-lime"] {
+  border: 1px solid rgba(187, 247, 208, 0.28) !important;
+  background-color: var(--settings-forest) !important;
+  background-image:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(187, 247, 208, 0.18),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      var(--settings-forest-dark) 0%,
+      var(--settings-forest-light) 58%,
+      var(--settings-forest) 100%
+    ) !important;
+  color: var(--settings-forest-text) !important;
+  box-shadow:
+    0 18px 42px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  text-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  button[type="submit"]:hover,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  form
+  button:last-of-type:hover {
+  background-color: var(--settings-forest-hover) !important;
+  background-image:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(209, 250, 229, 0.24),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      var(--settings-forest) 0%,
+      var(--settings-forest-hover) 58%,
+      var(--settings-forest-light) 100%
+    ) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 20px 46px rgba(6, 78, 59, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-primary-action {
+  border: 1px solid rgba(187, 247, 208, 0.3) !important;
+  background-color: var(--settings-forest) !important;
+  background-image:
+    radial-gradient(
+      circle at 26% 18%,
+      rgba(209, 250, 229, 0.22),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      var(--settings-forest-dark) 0%,
+      var(--settings-forest-light) 56%,
+      var(--settings-forest) 100%
+    ) !important;
+  color: var(--settings-forest-text) !important;
+  box-shadow:
+    0 18px 38px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-primary-action:hover {
+  background-color: var(--settings-forest-hover) !important;
+  background-image:
+    radial-gradient(
+      circle at 26% 18%,
+      rgba(209, 250, 229, 0.28),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      var(--settings-forest) 0%,
+      var(--settings-forest-hover) 58%,
+      var(--settings-forest-light) 100%
+    ) !important;
+  box-shadow:
+    0 20px 44px rgba(6, 78, 59, 0.29),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-avatar-action {
+  border-color: rgba(6, 78, 59, 0.18) !important;
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(236, 253, 245, 0.9),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #d7f2e4, #bdebd4 58%, #a7dfc5) !important;
+  color: var(--settings-forest) !important;
+  box-shadow:
+    0 12px 26px rgba(6, 78, 59, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-avatar-action:hover {
+  border-color: rgba(6, 78, 59, 0.26) !important;
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(236, 253, 245, 0.95),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #e3f7ed, #c9f0dc 58%, #aee5ca) !important;
+  color: #052e2b !important;
+}
+
+/* Neutralize any Tailwind gradient/overlay still painted inside the CTA. */
+html.sport-theme-nature
+  .app-settings-page
+  button[type="submit"]::before,
+html.sport-theme-nature
+  .app-settings-page
+  button[type="submit"]::after,
+html.sport-theme-nature
+  .app-settings-page
+  form
+  button:last-of-type::before,
+html.sport-theme-nature
+  .app-settings-page
+  form
+  button:last-of-type::after {
+  background: transparent !important;
+  background-image: none !important;
+  opacity: 0 !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  button[type="submit"]
+  > .absolute,
+html.sport-theme-nature
+  .app-settings-page
+  form
+  button:last-of-type
+  > .absolute {
+  background: transparent !important;
+  background-image: none !important;
+  opacity: 0 !important;
+}
+
+/* The profile avatar uses the same exact forest finish as the header icons. */
+html.sport-theme-nature
+  .app-settings-profile-panel
+  [class*="rounded"][class*="bg-gradient"],
+html.sport-theme-nature
+  .app-settings-profile-panel
+  [class*="from-green"],
+html.sport-theme-nature
+  .app-settings-profile-panel
+  [class*="from-emerald"],
+html.sport-theme-nature
+  .app-settings-profile-panel
+  [class*="to-lime"] {
+  border-color: rgba(187, 247, 208, 0.28) !important;
+  background-color: var(--settings-forest) !important;
+  background-image:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(187, 247, 208, 0.18),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      var(--settings-forest-dark),
+      var(--settings-forest-light) 58%,
+      var(--settings-forest)
+    ) !important;
+  color: var(--settings-forest-text) !important;
+  box-shadow:
+    0 18px 42px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Final cleanup of the ghost panels surrounding fields. */
+html.sport-theme-nature
+  .app-settings-page
+  form
+  :is(div, section, fieldset):has(> label + input),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  :is(div, section, fieldset):has(> label + textarea),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  :is(div, section, fieldset):has(> label + select),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  :is(div, section, fieldset):has(input),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  :is(div, section, fieldset):has(textarea),
+html.sport-theme-nature
+  .app-settings-page
+  form
+  :is(div, section, fieldset):has(select) {
+  border-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Re-assert the actual input surface after removing parent backgrounds. */
+html.sport-theme-nature
+  .app-settings-page
+  :is(input, textarea, select) {
+  border: 1px solid rgba(6, 78, 59, 0.14) !important;
+  background: rgba(248, 251, 249, 0.94) !important;
+  color: #102033 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(6, 78, 59, 0.025),
+    0 1px 0 rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Settings nature final tone: forest identity, lighter mint finish. */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-primary-action {
+  border-color: rgba(6, 78, 59, 0.18) !important;
+  background-color: #0f766e !important;
+  background-image:
+    radial-gradient(
+      circle at 24% 18%,
+      rgba(236, 253, 245, 0.42),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #064e3b 0%, #0f766e 52%, #34d399 100%) !important;
+  color: #f8fffb !important;
+  box-shadow:
+    0 16px 34px rgba(6, 78, 59, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-primary-action:hover {
+  border-color: rgba(6, 78, 59, 0.24) !important;
+  background-color: #047857 !important;
+  background-image:
+    radial-gradient(
+      circle at 24% 18%,
+      rgba(236, 253, 245, 0.48),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #065f46 0%, #10b981 56%, #6ee7b7 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 38px rgba(6, 78, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.36) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-avatar-action {
+  border-color: rgba(6, 78, 59, 0.16) !important;
+  background-color: #d8f3e6 !important;
+  background-image:
+    radial-gradient(
+      circle at 32% 18%,
+      rgba(255, 255, 255, 0.9),
+      transparent 40%
+    ),
+    linear-gradient(135deg, #ecfdf5 0%, #c7f0dc 58%, #9ee7c7 100%) !important;
+  color: #064e3b !important;
+  box-shadow:
+    0 12px 24px rgba(6, 78, 59, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+html.sport-theme-nature
+  .app-settings-profile-panel
+  .app-settings-panel-accent,
+html.sport-theme-nature
+  .app-settings-profile-panel
+  [class*="h-24"][class*="w-24"][class*="bg-gradient"] {
+  border-color: rgba(6, 78, 59, 0.16) !important;
+  background-color: #d8f3e6 !important;
+  background-image:
+    radial-gradient(
+      circle at 30% 18%,
+      rgba(255, 255, 255, 0.72),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 56%, #34d399 100%) !important;
+  color: #064e3b !important;
+  box-shadow:
+    0 16px 34px rgba(6, 78, 59, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html.sport-theme-nature
+  .app-settings-profile-panel
+  .app-settings-panel-accent
+  svg {
+  color: #064e3b !important;
+  stroke: #064e3b !important;
+}
+
+/* Settings final shell cleanup: remove wrapper slabs, keep only cards visible. */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-grid,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-grid
+  > div,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-panel {
+  border-color: transparent !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-panel
+  > div:not(.app-settings-panel-accent) {
+  border-color: rgba(6, 78, 59, 0.14) !important;
+  background:
+    radial-gradient(circle at 96% 4%, rgba(16, 185, 129, 0.08), transparent 28%),
+    linear-gradient(145deg, rgba(239, 248, 242, 0.96), rgba(226, 241, 232, 0.9)) !important;
+  box-shadow:
+    0 20px 54px rgba(6, 78, 59, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-primary-action {
+  border-color: rgba(196, 181, 253, 0.28) !important;
+  background:
+    radial-gradient(circle at 26% 16%, rgba(255, 255, 255, 0.12), transparent 38%),
+    linear-gradient(135deg, #5b21b6 0%, #7c3aed 58%, #a855f7 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 38px rgba(76, 29, 149, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-primary-action:hover {
+  border-color: rgba(216, 180, 254, 0.34) !important;
+  background:
+    radial-gradient(circle at 26% 16%, rgba(255, 255, 255, 0.16), transparent 38%),
+    linear-gradient(135deg, #6d28d9 0%, #8b5cf6 58%, #c084fc 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Settings page ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â safe outer-card and field-spacing patch */
+/* Added at the end only. No existing global rule above was removed. */
+
+/*
+ * The broad nature rule `main section:not(.grid)` paints every settings panel
+ * white. Neutralize only the outer settings wrappers so the real inner card
+ * remains visible.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div,
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div
+  > section.app-settings-panel:not(.grid),
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  section.app-settings-panel:not(.grid) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/*
+ * Preserve a single visible card surface: the content component itself.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-card-content {
+  border: 1px solid rgba(6, 78, 59, 0.14) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(
+      circle at 96% 4%,
+      rgba(16, 185, 129, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(239, 248, 242, 0.96),
+      rgba(226, 241, 232, 0.9)
+    ) !important;
+  box-shadow:
+    0 20px 54px rgba(6, 78, 59, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/*
+ * Restore spacing explicitly. Older `:has(input)` selectors affect parent
+ * wrappers and can visually glue labels to fields.
+ */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-form-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.625rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > label {
+  display: block !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > input,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > textarea,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > select {
+  margin: 0 !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-actions {
+  margin-top: 0 !important;
+  padding-top: 0.5rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Same structural cleanup in violet mode without changing its palette. */
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div,
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div
+  > section.app-settings-panel:not(.grid),
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  section.app-settings-panel:not(.grid) {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-form-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.625rem !important;
+  padding: 0 !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-actions {
+  margin-top: 0 !important;
+  padding-top: 0.5rem !important;
+}
+
+/* Settings page Ã¢â‚¬â€ flat single-card layout */
+/* Added at the end only. No existing rule above was removed. */
+
+/*
+ * Keep one visual card only: the main settings panel.
+ * All nested wrappers inside become layout-only containers.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  section.app-settings-panel:not(.grid) {
+  overflow: hidden;
+  border: 1px solid rgba(6, 78, 59, 0.14) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(
+      circle at 96% 4%,
+      rgba(16, 185, 129, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(239, 248, 242, 0.96),
+      rgba(226, 241, 232, 0.9)
+    ) !important;
+  box-shadow:
+    0 20px 54px rgba(6, 78, 59, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* FadeIn wrappers stay invisible. */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/*
+ * Remove all nested card treatment from the content component,
+ * avatar row and field wrappers.
+ */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-card-content,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-avatar-row,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-form-stack,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-actions {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* The component provides spacing only; the parent section owns the card. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-card-content {
+  overflow: visible !important;
+  padding: clamp(1.5rem, 2.2vw, 2rem) !important;
+}
+
+/* Profile photo row becomes simple content, not a card. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-avatar-row {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Fields are simple vertical groups. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-form-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.625rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > label {
+  margin: 0 !important;
+}
+
+/* Inputs remain the only smaller bordered surfaces. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > input,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > textarea,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > select {
+  margin: 0 !important;
+  border: 1px solid rgba(6, 78, 59, 0.13) !important;
+  background: rgba(248, 251, 249, 0.9) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(6, 78, 59, 0.025),
+    0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Keep CTA close to the fields without sticking to the bottom. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-actions {
+  margin: 0 !important;
+  padding-top: 0.25rem !important;
+}
+
+/* Same single-card structure in violet mode. */
+html:not(.sport-theme-nature)
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-card-content,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-avatar-row,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-form-stack,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-field,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-actions {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-card-content {
+  overflow: visible !important;
+  padding: clamp(1.5rem, 2.2vw, 2rem) !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-form-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.625rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-actions {
+  margin: 0 !important;
+  padding-top: 0.25rem !important;
+}
+
+/* Settings profile upload: restore the avatar control after flattening nested cards. */
+.app-settings-card-header {
+  margin: 0 0 1.75rem !important;
+  padding-right: 4rem !important;
+}
+
+.app-settings-card-header h2 {
+  margin: 0 !important;
+  font-size: 1.35rem !important;
+  font-weight: 850 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-settings-card-header p {
+  margin: 0.45rem 0 0 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.45 !important;
+}
+
+.app-settings-avatar-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  margin: 0 0 2rem !important;
+  padding: 0 !important;
+}
+
+.app-settings-avatar-shell {
+  position: relative !important;
+  width: 6rem !important;
+  height: 6rem !important;
+  flex: 0 0 6rem !important;
+}
+
+.app-settings-avatar {
+  position: relative !important;
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+}
+
+.app-settings-avatar-initial {
+  display: grid !important;
+  width: 100% !important;
+  height: 100% !important;
+  place-items: center !important;
+  font-size: 2.35rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+}
+
+.app-settings-avatar-action {
+  position: absolute !important;
+  right: -0.7rem !important;
+  bottom: -0.7rem !important;
+  z-index: 2 !important;
+  display: grid !important;
+  width: 2.55rem !important;
+  height: 2.55rem !important;
+  min-width: 2.55rem !important;
+  min-height: 2.55rem !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 16px !important;
+  cursor: pointer !important;
+}
+
+.app-settings-avatar-action:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.64 !important;
+}
+
+.app-settings-avatar-copy h3 {
+  margin: 0 !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-settings-avatar-copy p {
+  margin: 0.45rem 0 0 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.45 !important;
+}
+
+.app-settings-success,
+.app-settings-error {
+  display: block !important;
+  margin-top: 0.55rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 750 !important;
+}
+
+html.sport-theme-nature .app-settings-card-header h2,
+html.sport-theme-nature .app-settings-avatar-copy h3 {
+  color: #102033 !important;
+}
+
+html.sport-theme-nature .app-settings-card-header p,
+html.sport-theme-nature .app-settings-avatar-copy p {
+  color: #607268 !important;
+}
+
+html.sport-theme-nature .app-settings-avatar {
+  border: 1px solid rgba(6, 78, 59, 0.18) !important;
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(236, 253, 245, 0.9),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #d8f7e6 0%, #9fe8c6 58%, #46c99a 100%) !important;
+  color: #064e3b !important;
+  box-shadow:
+    0 18px 34px rgba(6, 78, 59, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html.sport-theme-nature .app-settings-avatar-action {
+  border-color: rgba(6, 78, 59, 0.18) !important;
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(236, 253, 245, 0.95),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #effcf5 0%, #d4f5e4 58%, #b9eccf 100%) !important;
+  color: #064e3b !important;
+  box-shadow:
+    0 12px 26px rgba(6, 78, 59, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+html.sport-theme-nature .app-settings-avatar-action:hover {
+  border-color: rgba(6, 78, 59, 0.26) !important;
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(255, 255, 255, 0.96),
+      transparent 42%
+    ),
+    linear-gradient(135deg, #e9fbf1 0%, #c7f0da 58%, #a7e4c5 100%) !important;
+}
+
+html.sport-theme-nature .app-settings-success {
+  color: #047857 !important;
+}
+
+html.sport-theme-nature .app-settings-error {
+  color: #b91c1c !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-card-header h2,
+html:not(.sport-theme-nature) .app-settings-avatar-copy h3 {
+  color: #f8fafc !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-card-header p,
+html:not(.sport-theme-nature) .app-settings-avatar-copy p {
+  color: rgba(226, 232, 240, 0.72) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-avatar {
+  border: 1px solid rgba(196, 181, 253, 0.2) !important;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(167, 139, 250, 0.24), transparent 38%),
+    linear-gradient(135deg, #312e81 0%, #5b21b6 58%, #7c3aed 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-avatar-action {
+  border-color: rgba(196, 181, 253, 0.22) !important;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(255, 255, 255, 0.16), transparent 38%),
+    linear-gradient(135deg, rgba(76, 29, 149, 0.96), rgba(109, 40, 217, 0.94)) !important;
+  color: #f5f3ff !important;
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-avatar-action:hover {
+  border-color: rgba(221, 214, 254, 0.34) !important;
+  background:
+    radial-gradient(circle at 24% 16%, rgba(255, 255, 255, 0.2), transparent 38%),
+    linear-gradient(135deg, rgba(91, 33, 182, 0.98), rgba(124, 58, 237, 0.96)) !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-success {
+  color: #86efac !important;
+}
+
+html:not(.sport-theme-nature) .app-settings-error {
+  color: #fca5a5 !important;
+}
+
+@media (max-width: 640px) {
+  .app-settings-card-header {
+    padding-right: 3.25rem !important;
+  }
+
+  .app-settings-avatar-row {
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+
+  .app-settings-avatar-shell {
+    width: 5rem !important;
+    height: 5rem !important;
+    flex-basis: 5rem !important;
+  }
+}
+
+/* Settings page â€” final flat content patch */
+/* Added at the very end only. No existing CSS above was modified. */
+
+/*
+ * Keep exactly one card per column:
+ * - the outer `.app-settings-panel` remains the card;
+ * - every wrapper inside it becomes transparent and borderless;
+ * - only inputs/buttons/avatar remain styled controls.
+ */
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  .app-settings-grid
+  > div {
+  border: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-settings-page
+  section.app-settings-panel:not(.grid) {
+  overflow: hidden !important;
+  border: 1px solid rgba(6, 78, 59, 0.14) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(
+      circle at 96% 4%,
+      rgba(16, 185, 129, 0.08),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(239, 248, 242, 0.96),
+      rgba(226, 241, 232, 0.9)
+    ) !important;
+  box-shadow:
+    0 20px 54px rgba(6, 78, 59, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Remove every nested card surface inside Profil / SÃ©curitÃ©. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-panel
+  > *:not(.app-settings-panel-accent),
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-card-content,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-card-header,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-avatar-row,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-avatar-copy,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-form-stack,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-actions,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-panel
+  form,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-panel
+  form
+  > div,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-panel
+  form
+  > section {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* The content wrapper only manages spacing. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-card-content {
+  min-height: 100%;
+  padding: clamp(1.5rem, 2.2vw, 2rem) !important;
+}
+
+/* Header: plain text, no surrounding card. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-card-header {
+  margin: 0 0 1.75rem !important;
+  padding-right: 4rem !important;
+}
+
+/* Photo row: plain content, no rectangle around it. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-avatar-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  margin: 0 0 2rem !important;
+  padding: 0 !important;
+}
+
+/* Form layout: no cards around labels/fields. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-form-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.625rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > label {
+  margin: 0 !important;
+}
+
+/* Inputs remain the only bordered rectangular controls. */
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > input,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > textarea,
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-field
+  > select {
+  margin: 0 !important;
+  border: 1px solid rgba(6, 78, 59, 0.13) !important;
+  border-radius: 18px !important;
+  background: rgba(248, 251, 249, 0.92) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(6, 78, 59, 0.025),
+    0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html.sport-theme-nature
+  .app-settings-page
+  .app-settings-actions {
+  margin: 0 !important;
+  padding-top: 0.25rem !important;
+}
+
+/* Same flat hierarchy in violet mode, without changing its palette. */
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-grid
+  > div,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-panel
+  > *:not(.app-settings-panel-accent),
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-card-content,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-card-header,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-avatar-row,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-avatar-copy,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-form-stack,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-field,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-actions,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-panel
+  form,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-panel
+  form
+  > div,
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-panel
+  form
+  > section {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-card-content {
+  min-height: 100%;
+  padding: clamp(1.5rem, 2.2vw, 2rem) !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-form-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.625rem !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html:not(.sport-theme-nature)
+  .app-settings-page
+  .app-settings-actions {
+  margin: 0 !important;
+  padding-top: 0.25rem !important;
 }
