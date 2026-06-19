@@ -21,21 +21,20 @@ export default function LoginPage() {
         </div>
 
         <div className="app-auth-left relative hidden flex-col justify-center overflow-hidden border-r border-white/5 px-16 py-12 lg:flex">
-          <div className="absolute top-12 left-16 flex items-center gap-4">
+          <div className="app-auth-brand-row absolute top-12 left-16 flex items-center gap-4">
             <div className="app-auth-logo app-brand-logo flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10 backdrop-blur-xl">
               <Mountain className="h-6 w-6 text-violet-400" />
             </div>
             <span className="text-3xl font-semibold tracking-tight">
               Montaro
             </span>
+            <div className="app-auth-brand-kicker ml-2 inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
+              Outdoor • Exploration • Aventure
+            </div>
           </div>
 
           <div className="relative z-10 mx-auto max-w-xl">
             <div className="space-y-10">
-              <div className="inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
-                Outdoor • Exploration • Aventure
-              </div>
-
               <div className="space-y-7">
                 <h1 className="max-w-[700px] text-7xl leading-[0.95] font-bold tracking-[-0.05em]">
                   Continue ton{" "}

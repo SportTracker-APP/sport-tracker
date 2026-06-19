@@ -38,25 +38,21 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitted, touchedFields },
+    formState: { errors, isSubmitting, isSubmitted },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
 
-    mode: "onBlur",
+    mode: "onSubmit",
 
-    reValidateMode: "onBlur",
+    reValidateMode: "onChange",
 
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  const showEmailError = Boolean(
-    errors.email && (touchedFields.email || isSubmitted),
-  );
-  const showPasswordError = Boolean(
-    errors.password && (touchedFields.password || isSubmitted),
-  );
+  const showEmailError = Boolean(errors.email && isSubmitted);
+  const showPasswordError = Boolean(errors.password && isSubmitted);
 
   async function onSubmit(data: LoginSchema) {
     try {
@@ -98,7 +94,7 @@ export function LoginForm() {
       </div>
 
       {/* FORM */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* EMAIL */}
         <div className="space-y-2">
           <label className="text-sm text-zinc-300">Email</label>

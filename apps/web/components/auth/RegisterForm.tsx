@@ -55,23 +55,17 @@ export function RegisterForm() {
     register: formRegister,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting, isSubmitted, isValid, touchedFields },
+    formState: { errors, isSubmitting, isSubmitted },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
-    mode: "onBlur",
-    reValidateMode: "onBlur",
+    mode: "onSubmit",
+    reValidateMode: "onChange",
   });
 
   const password = watch("password") || "";
-  const showFirstNameError = Boolean(
-    errors.firstName && (touchedFields.firstName || isSubmitted),
-  );
-  const showEmailError = Boolean(
-    errors.email && (touchedFields.email || isSubmitted),
-  );
-  const showPasswordError = Boolean(
-    errors.password && (touchedFields.password || isSubmitted),
-  );
+  const showFirstNameError = Boolean(errors.firstName && isSubmitted);
+  const showEmailError = Boolean(errors.email && isSubmitted);
+  const showPasswordError = Boolean(errors.password && isSubmitted);
 
   const passwordStrength = useMemo(
     () => getPasswordStrength(password),
@@ -122,7 +116,7 @@ export function RegisterForm() {
         <p className="text-zinc-400">Commence gratuitement dès aujourd'hui.</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* FIRST NAME */}
         <div className="space-y-2">
           <label className="text-sm text-zinc-300">Prénom</label>
@@ -229,7 +223,7 @@ export function RegisterForm() {
         {/* BUTTON */}
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting}
+          disabled={isSubmitting}
           className="h-12 w-full rounded-xl bg-violet-500 text-base font-medium text-white transition-all hover:bg-violet-400"
         >
           {isSubmitting ? (
