@@ -34,6 +34,7 @@ export interface Goal {
   startDate: string;
   endDate: string;
   isActive: boolean;
+  isPrimary?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -47,6 +48,7 @@ export type CreateGoalInput = {
   startDate: string;
   endDate: string;
   isActive?: boolean;
+  isPrimary?: boolean;
 };
 
 export type UpdateGoalInput = Partial<CreateGoalInput>;

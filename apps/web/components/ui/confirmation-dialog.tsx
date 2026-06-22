@@ -7,7 +7,7 @@ import { AlertTriangle, Loader2, X } from "lucide-react";
 
 import styles from "./confirmation-dialog.module.css";
 
-type ConfirmationDialogTone = "default" | "danger" | "warning";
+type ConfirmationDialogTone = "default" | "danger" | "warning" | "success";
 
 type ConfirmationDialogProps = {
   open: boolean;

@@ -15,6 +15,14 @@ export type GoalProgress = {
 
 export const DEFAULT_MONTHLY_DISTANCE_TARGET = 30;
 
+type GoalProgressOptions = {
+  bounds?: {
+    startDate: Date;
+    endDate: Date;
+  };
+  useStoredDates?: boolean;
+};
+
 function startOfMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
@@ -124,20 +132,70 @@ export function getCurrentMonthSuggestedGoal(): GoalLike {
   };
 }
 
+export function getGoalPeriodBounds(goal: GoalLike, referenceDate = new Date()) {
+  if (goal.period === "WEEKLY") {
+    return {
+      startDate: startOfWeek(referenceDate),
+      endDate: endOfWeek(referenceDate),
+    };
+  }
+
+  if (goal.period === "MONTHLY") {
+    return {
+      startDate: startOfMonth(referenceDate),
+      endDate: endOfMonth(referenceDate),
+    };
+  }
+
+  return {
+    startDate: new Date(goal.startDate),
+    endDate: new Date(goal.endDate),
+  };
+}
+
+export function getStoredGoalPeriodBounds(goal: GoalLike) {
+  return {
+    startDate: new Date(goal.startDate),
+    endDate: new Date(goal.endDate),
+  };
+}
+
+export function getGoalPeriodEndDate(goal: GoalLike) {
+  return getGoalPeriodBounds(goal).endDate;
+}
+
 export function selectPrimaryGoal(goals: Goal[]) {
   const now = Date.now();
   const activeGoals = goals
-    .filter((goal) => goal.isActive)
+    .filter((goal) => {
+      if (!goal.isActive) {
+        return false;
+      }
+
+      if (goal.period === "WEEKLY" || goal.period === "MONTHLY") {
+        return true;
+      }
+
+      const { startDate, endDate } = getGoalPeriodBounds(goal);
+
+      return startDate.getTime() <= now && endDate.getTime() >= now;
+    })
     .sort((firstGoal, secondGoal) => {
+      const firstBounds = getGoalPeriodBounds(firstGoal);
+      const secondBounds = getGoalPeriodBounds(secondGoal);
       const firstIsCurrent =
-        new Date(firstGoal.startDate).getTime() <= now &&
-        new Date(firstGoal.endDate).getTime() >= now;
+        firstBounds.startDate.getTime() <= now &&
+        firstBounds.endDate.getTime() >= now;
       const secondIsCurrent =
-        new Date(secondGoal.startDate).getTime() <= now &&
-        new Date(secondGoal.endDate).getTime() >= now;
+        secondBounds.startDate.getTime() <= now &&
+        secondBounds.endDate.getTime() >= now;
 
       if (firstIsCurrent !== secondIsCurrent) {
         return firstIsCurrent ? -1 : 1;
+      }
+
+      if (Boolean(firstGoal.isPrimary) !== Boolean(secondGoal.isPrimary)) {
+        return firstGoal.isPrimary ? -1 : 1;
       }
 
       if (firstGoal.type !== secondGoal.type) {
@@ -145,8 +203,7 @@ export function selectPrimaryGoal(goals: Goal[]) {
       }
 
       const endDateDiff =
-        new Date(firstGoal.endDate).getTime() -
-        new Date(secondGoal.endDate).getTime();
+        firstBounds.endDate.getTime() - secondBounds.endDate.getTime();
 
       if (endDateDiff !== 0) {
         return endDateDiff;
@@ -161,9 +218,16 @@ export function selectPrimaryGoal(goals: Goal[]) {
   return activeGoals[0] ?? getCurrentMonthSuggestedGoal();
 }
 
-export function calculateGoalProgress(goal: GoalLike, activities: Activity[]) {
-  const startDate = new Date(goal.startDate);
-  const endDate = new Date(goal.endDate);
+export function calculateGoalProgress(
+  goal: GoalLike,
+  activities: Activity[],
+  options: GoalProgressOptions = {},
+) {
+  const { startDate, endDate } =
+    options.bounds ??
+    (options.useStoredDates
+      ? getStoredGoalPeriodBounds(goal)
+      : getGoalPeriodBounds(goal));
 
   const goalActivities = activities.filter((activity) => {
     if (activity.status === "PLANNED") {

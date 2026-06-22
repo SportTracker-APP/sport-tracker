@@ -37,4 +37,8 @@ export class CreateGoalDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isPrimary?: boolean;
 }

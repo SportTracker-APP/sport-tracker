@@ -83,6 +83,61 @@
   color: #b91c1c !important;
 }
 
+.matchSuggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-radius: 20px;
+  background: rgba(236, 253, 245, 0.96);
+  color: #064e3b;
+  box-shadow: 0 18px 48px rgba(6, 78, 59, 0.08);
+}
+
+.matchSuggestion p {
+  margin: 0;
+  color: #047857;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.matchSuggestion h2 {
+  margin: 0.25rem 0;
+  color: #052e24;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.matchSuggestion span {
+  color: #166534;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.matchSuggestion button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0 0.95rem;
+  border-radius: 13px;
+  background: #047857;
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.matchSuggestion button svg {
+  width: 16px;
+  height: 16px;
+}
+
 .hero {
   position: relative;
   isolation: isolate;

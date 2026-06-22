@@ -15,6 +15,18 @@ export interface Activity {
 
   status: string;
 
+  plannedWorkoutId: string | null;
+
+  completedActivityId: string | null;
+
+  completedAt: string | null;
+
+  celebrationSeenAt: string | null;
+
+  plannedWorkout?: Activity | null;
+
+  completedActivity?: Activity | null;
+
   distance: number | null;
 
   duration: number;
@@ -72,6 +84,8 @@ export interface Activity {
   startedAt: string;
 
   createdAt: string;
+
+  updatedAt: string;
 }
 
 export async function getActivities() {
@@ -82,6 +96,40 @@ export async function getActivities() {
 
 export async function getActivity(id: string) {
   const { data } = await api.get<Activity>(`/activities/${id}`);
+
+  return data;
+}
+
+export async function deleteActivity(id: string) {
+  await api.delete(`/activities/${id}`);
+}
+
+export async function completePlannedWorkout(
+  plannedWorkoutId: string,
+  activityId: string,
+) {
+  const { data } = await api.post<Activity>(
+    `/activities/planned-workouts/${plannedWorkoutId}/complete`,
+    { activityId },
+  );
+
+  return data;
+}
+
+export async function markPlannedWorkoutCelebrationSeen(
+  plannedWorkoutId: string,
+) {
+  const { data } = await api.patch<Activity>(
+    `/activities/planned-workouts/${plannedWorkoutId}/celebration-seen`,
+  );
+
+  return data;
+}
+
+export async function getPlannedWorkoutSuggestion(activityId: string) {
+  const { data } = await api.get<Activity | null>(
+    `/activities/${activityId}/planned-workout-suggestion`,
+  );
 
   return data;
 }

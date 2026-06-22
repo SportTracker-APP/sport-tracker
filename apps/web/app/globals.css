@@ -3328,925 +3328,6 @@ html.sport-theme-nature .app-pagination-shell button:not(:disabled):hover {
   background: rgba(236, 253, 245, 0.96) !important;
 }
 
-html .app-statistics-page .app-statistics-forest-panel {
-  color: #ffffff;
-}
-
-html.sport-theme-nature .app-statistics-page {
-  --stats-forest-ink: #0f172a;
-}
-
-html.sport-theme-nature .app-statistics-page::before {
-  content: "";
-  display: none;
-  position: absolute;
-  inset: -36px -32px -48px;
-  z-index: -1;
-  border-radius: 42px;
-  background:
-    radial-gradient(circle at 8% 10%, rgba(6, 95, 70, 0.32), transparent 34%),
-    radial-gradient(
-      circle at 92% 4%,
-      rgba(132, 204, 22, 0.26),
-      transparent 32%
-    ),
-    radial-gradient(circle at 58% 86%, rgba(4, 120, 87, 0.34), transparent 42%),
-    linear-gradient(
-      135deg,
-      rgba(209, 240, 219, 0.98),
-      rgba(164, 211, 177, 0.88) 44%,
-      rgba(119, 177, 130, 0.8)
-    );
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero {
-  min-height: 320px;
-  border-color: rgba(220, 252, 231, 0.34) !important;
-  background: #071610 !important;
-  box-shadow:
-    0 34px 96px rgba(6, 78, 59, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html .app-statistics-page .app-statistics-hero-photo {
-  z-index: 0;
-  background-image: url("https://images.pexels.com/photos/1365425/pexels-photo-1365425.jpeg?auto=compress&cs=tinysrgb&w=1600");
-  background-position: center 48%;
-  background-size: cover;
-  opacity: 0.48;
-  transform: scale(1.02);
-  pointer-events: none;
-}
-
-html .app-statistics-page .app-statistics-hero-wash {
-  z-index: 1;
-  background:
-    radial-gradient(
-      circle at 16% 20%,
-      rgba(139, 92, 246, 0.26),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 92% 26%,
-      rgba(16, 185, 129, 0.2),
-      transparent 34%
-    ),
-    linear-gradient(
-      108deg,
-      rgba(7, 6, 12, 0.94),
-      rgba(15, 16, 24, 0.74) 48%,
-      rgba(7, 6, 12, 0.68)
-    );
-  pointer-events: none;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero-photo {
-  background-image: url("https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1600");
-  background-position: center 54%;
-  opacity: 0.66;
-  filter: saturate(1.12) contrast(1.04) brightness(0.9);
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero-wash {
-  background:
-    radial-gradient(
-      circle at 18% 22%,
-      rgba(16, 185, 129, 0.32),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 88% 18%,
-      rgba(132, 204, 22, 0.24),
-      transparent 32%
-    ),
-    linear-gradient(
-      105deg,
-      rgba(4, 22, 16, 0.9) 0%,
-      rgba(6, 45, 32, 0.76) 46%,
-      rgba(5, 20, 16, 0.58) 100%
-    );
-}
-
-html .app-statistics-page .app-statistics-hero > .relative {
-  position: relative;
-  z-index: 2;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero h1,
-html.sport-theme-nature .app-statistics-page .app-statistics-hero .text-white {
-  color: #ffffff !important;
-  text-shadow:
-    0 2px 24px rgba(0, 0, 0, 0.48),
-    0 10px 42px rgba(0, 0, 0, 0.36);
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero-chip {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background: rgba(6, 78, 59, 0.58) !important;
-  color: #bbf7d0 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero p,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-hero
-  .text-white\/68,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-hero
-  .text-white\/58,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-hero
-  .text-white\/52 {
-  color: rgba(240, 253, 244, 0.82) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero-card {
-  border-color: rgba(220, 252, 231, 0.3) !important;
-  background:
-    radial-gradient(
-      circle at 86% 10%,
-      rgba(132, 204, 22, 0.2),
-      transparent 34%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(3, 18, 14, 0.78),
-      rgba(10, 48, 35, 0.72) 56%,
-      rgba(4, 31, 27, 0.82)
-    ) !important;
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.26),
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-hero-note {
-  border-color: rgba(187, 247, 208, 0.2) !important;
-  background: rgba(3, 18, 14, 0.38) !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-metric-card,
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-card {
-  border-color: rgba(187, 247, 208, 0.34) !important;
-  background-color: #f6fff8 !important;
-  background:
-    radial-gradient(
-      circle at 86% 12%,
-      rgba(132, 204, 22, 0.2),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 0% 100%,
-      rgba(20, 184, 166, 0.14),
-      transparent 38%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.94),
-      rgba(230, 249, 235, 0.9) 54%,
-      rgba(203, 238, 211, 0.84)
-    ) !important;
-  color: #0f172a !important;
-  box-shadow:
-    0 24px 68px rgba(6, 78, 59, 0.18),
-    0 12px 28px rgba(4, 47, 46, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.76),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94),
-    inset 5px 0 0 rgba(16, 185, 129, 0.72) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  > section.grid
-  .app-statistics-metric-card {
-  background:
-    radial-gradient(
-      circle at 86% 12%,
-      rgba(132, 204, 22, 0.2),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 0% 100%,
-      rgba(20, 184, 166, 0.14),
-      transparent 38%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.94),
-      rgba(230, 249, 235, 0.9) 54%,
-      rgba(203, 238, 211, 0.84)
-    ) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-metric-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 185, 129, 0.035) 1px, transparent 1px);
-  background-size: 42px 42px;
-  opacity: 0.36;
-  pointer-events: none;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-metric-card
-  > div:not(.absolute) {
-  position: relative;
-  z-index: 1;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-card p,
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-card span,
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-card h2 {
-  color: #64748b !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-label {
-  color: #047857 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-value {
-  color: #0f172a !important;
-  text-shadow: none;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-detail {
-  color: #64748b !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-card svg {
-  color: #047857 !important;
-  stroke: #047857 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-icon {
-  border-color: rgba(255, 255, 255, 0.18) !important;
-  background:
-    radial-gradient(
-      circle at 30% 20%,
-      rgba(255, 255, 255, 0.34),
-      transparent 42%
-    ),
-    linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(132, 204, 22, 0.16)) !important;
-  color: #047857 !important;
-  box-shadow:
-    0 16px 34px rgba(16, 185, 129, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-metric-icon svg {
-  color: #047857 !important;
-  stroke: #047857 !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-metric-card
-  [class*="bg-white"] {
-  border-color: rgba(255, 255, 255, 0.16) !important;
-  background: rgba(255, 255, 255, 0.12) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card {
-  border-color: rgba(16, 185, 129, 0.22) !important;
-  background:
-    radial-gradient(
-      circle at 88% 14%,
-      rgba(132, 204, 22, 0.22),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 0% 100%,
-      rgba(14, 165, 233, 0.1),
-      transparent 34%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(246, 255, 249, 0.88),
-      rgba(219, 244, 225, 0.82) 54%,
-      rgba(195, 229, 205, 0.74)
-    ) !important;
-  color: #0f172a !important;
-  box-shadow:
-    0 24px 70px rgba(6, 78, 59, 0.16),
-    0 0 0 1px rgba(255, 255, 255, 0.76),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card h2,
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card h3,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-white {
-  color: #0f172a !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card p,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-zinc-400,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-zinc-500 {
-  color: #64748b !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  [class*="bg-white"] {
-  border-color: rgba(16, 185, 129, 0.16) !important;
-  background: rgba(255, 255, 255, 0.72) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-panel {
-  border-color: rgba(187, 247, 208, 0.28) !important;
-  background: #071610 !important;
-  box-shadow:
-    0 34px 94px rgba(6, 78, 59, 0.3),
-    0 14px 32px rgba(4, 47, 46, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-panel h2,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-forest-panel
-  .text-white {
-  color: #ffffff !important;
-  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.32);
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-panel p {
-  color: rgba(236, 253, 245, 0.78) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary {
-  border-color: rgba(220, 252, 231, 0.22) !important;
-  background:
-    radial-gradient(
-      circle at 88% 10%,
-      rgba(132, 204, 22, 0.18),
-      transparent 36%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(3, 18, 14, 0.62),
-      rgba(10, 48, 35, 0.58) 58%,
-      rgba(4, 31, 27, 0.68)
-    ) !important;
-  box-shadow:
-    0 20px 54px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-note {
-  border-color: rgba(187, 247, 208, 0.18) !important;
-  background:
-    radial-gradient(circle at 8% 0%, rgba(132, 204, 22, 0.12), transparent 34%),
-    rgba(3, 18, 14, 0.42) !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 16px 34px rgba(0, 0, 0, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-note p,
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-note div {
-  color: rgba(236, 253, 245, 0.82) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-forest-note
-  .text-emerald-100 {
-  color: #bbf7d0 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-data-tile {
-  border-color: rgba(16, 185, 129, 0.2) !important;
-  background:
-    radial-gradient(
-      circle at 90% 14%,
-      rgba(132, 204, 22, 0.14),
-      transparent 32%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.95),
-      rgba(241, 253, 245, 0.92) 54%,
-      rgba(225, 248, 231, 0.86)
-    ) !important;
-  box-shadow:
-    0 18px 44px rgba(6, 78, 59, 0.12),
-    0 0 0 1px rgba(255, 255, 255, 0.74),
-    inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-data-tile
-  .text-white {
-  color: #0f172a !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-data-tile
-  .text-zinc-500 {
-  color: #64748b !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-data-tile svg {
-  color: #047857 !important;
-  stroke: #047857 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-lines {
-  border-color: rgba(6, 95, 70, 0.12) !important;
-  background: rgba(255, 255, 255, 0.42) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.74),
-    0 14px 30px rgba(6, 78, 59, 0.055) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-row {
-  border-color: rgba(6, 95, 70, 0.1) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-label {
-  color: #0f172a !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-detail {
-  color: #64748b !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-value {
-  color: #047857 !important;
-  font-size: clamp(1.25rem, 1.75vw, 1.65rem) !important;
-  font-weight: 850 !important;
-  line-height: 1.05 !important;
-  letter-spacing: 0 !important;
-  text-shadow: none !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-icon {
-  border-color: rgba(16, 185, 129, 0.18) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(209, 250, 229, 0.82),
-    rgba(236, 253, 245, 0.92)
-  ) !important;
-  color: #047857 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-icon svg {
-  color: #047857 !important;
-  stroke: #047857 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-progress-track {
-  background: rgba(6, 95, 70, 0.12) !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(6, 95, 70, 0.08),
-    inset 0 1px 2px rgba(6, 78, 59, 0.08) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
-  background: linear-gradient(90deg, #10b981, #84cc16) !important;
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.18) !important;
-}
-
-/* Statistiques nature: reprise propre, proche de la page Sorties.
-   Ce bloc doit rester en fin de fichier pour neutraliser les surfaces globales. */
-html.sport-theme-nature .app-shell main .app-statistics-page {
-  background: transparent !important;
-  color: #0f172a !important;
-}
-
-html.sport-theme-nature .app-shell main .app-statistics-page > section,
-html.sport-theme-nature .app-shell main .app-statistics-page > div,
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-insights-grid {
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-panel {
-  border-color: rgba(187, 247, 208, 0.2) !important;
-  background: #0b2119 !important;
-  padding: clamp(1.45rem, 2.4vw, 2.15rem) !important;
-  box-shadow:
-    0 32px 78px rgba(6, 78, 59, 0.22),
-    0 16px 34px rgba(4, 47, 46, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-panel
-  > .absolute:nth-child(1) {
-  background:
-    radial-gradient(
-      circle at 18% 22%,
-      rgba(16, 185, 129, 0.2),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 86% 26%,
-      rgba(132, 204, 22, 0.16),
-      transparent 34%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(5, 24, 18, 0.96),
-      rgba(12, 44, 33, 0.82) 54%,
-      rgba(5, 24, 18, 0.94)
-    ) !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-panel
-  > .absolute:nth-child(2) {
-  opacity: 0.74 !important;
-  filter: saturate(1.12) contrast(1.02) brightness(0.84) !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-panel
-  > .absolute:nth-child(3) {
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) !important;
-  opacity: 0.42 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-chip {
-  border-color: rgba(187, 247, 208, 0.3) !important;
-  background: rgba(6, 95, 70, 0.52) !important;
-  color: #d1fae5 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-copy h2 {
-  max-width: 56rem !important;
-  color: #ffffff !important;
-  font-size: clamp(2.25rem, 3vw, 2.75rem) !important;
-  font-weight: 700 !important;
-  line-height: 1.08 !important;
-  text-shadow: 0 8px 34px rgba(0, 0, 0, 0.38) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-copy p {
-  max-width: 48rem !important;
-  color: rgba(236, 253, 245, 0.82) !important;
-  font-size: 0.875rem !important;
-  font-weight: 400 !important;
-  line-height: 1.75rem !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary {
-  width: min(100%, 420px) !important;
-  border-color: rgba(187, 247, 208, 0.22) !important;
-  background:
-    radial-gradient(
-      circle at 95% 8%,
-      rgba(132, 204, 22, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(3, 18, 14, 0.78),
-      rgba(12, 52, 38, 0.7) 58%,
-      rgba(7, 33, 27, 0.76)
-    ) !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 22px 58px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-summary p {
-  color: rgba(236, 253, 245, 0.78) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .uppercase {
-  color: rgba(209, 250, 229, 0.76) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-distance {
-  color: #ffffff !important;
-  font-size: 1.875rem !important;
-  font-weight: 700 !important;
-  line-height: 2.25rem !important;
-  text-shadow: 0 10px 32px rgba(0, 0, 0, 0.28) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-note {
-  max-width: 380px !important;
-  border-color: rgba(187, 247, 208, 0.16) !important;
-  background: rgba(4, 29, 22, 0.58) !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 16px 34px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-note div {
-  color: #bbf7d0 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-forest-note p {
-  color: rgba(236, 253, 245, 0.76) !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .app-statistics-forest-note {
-  border-color: rgba(187, 247, 208, 0.24) !important;
-  background:
-    radial-gradient(
-      circle at 10% 0%,
-      rgba(132, 204, 22, 0.14),
-      transparent 34%
-    ),
-    linear-gradient(145deg, rgba(3, 18, 14, 0.9), rgba(6, 48, 37, 0.82)) !important;
-  color: #ecfdf5 !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .app-statistics-forest-note
-  div {
-  color: #bbf7d0 !important;
-}
-
-html.sport-theme-nature
-  .app-shell
-  main
-  .app-statistics-page
-  .app-statistics-forest-summary
-  .app-statistics-forest-note
-  p {
-  color: rgba(236, 253, 245, 0.86) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card {
-  border-color: rgba(6, 95, 70, 0.22) !important;
-  background:
-    radial-gradient(
-      circle at 90% 8%,
-      rgba(132, 204, 22, 0.16),
-      transparent 32%
-    ),
-    radial-gradient(circle at 6% 92%, rgba(20, 184, 166, 0.1), transparent 36%),
-    linear-gradient(
-      145deg,
-      rgba(247, 253, 249, 0.78),
-      rgba(226, 246, 232, 0.76) 56%,
-      rgba(214, 239, 222, 0.7)
-    ) !important;
-  color: #0f172a !important;
-  box-shadow:
-    0 24px 66px rgba(6, 78, 59, 0.14),
-    0 0 0 1px rgba(255, 255, 255, 0.68),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card::before,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card::after {
-  display: none !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card h2,
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card h3,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-white {
-  color: #0f172a !important;
-  text-shadow: none !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-insight-card p,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-zinc-400,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-insight-card
-  .text-zinc-500 {
-  color: #5f7087 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-refuge-card {
-  border-color: rgba(187, 247, 208, 0.22) !important;
-  background: #071610 !important;
-  color: #ecfdf5 !important;
-  box-shadow:
-    0 24px 66px rgba(6, 78, 59, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-refuge-card h2,
-html.sport-theme-nature .app-statistics-page .app-statistics-refuge-card p,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-white {
-  color: #ffffff !important;
-  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.34) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-emerald-50\/70,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-emerald-50\/72,
-html.sport-theme-nature
-  .app-statistics-page
-  .app-statistics-refuge-card
-  .text-emerald-50\/62 {
-  color: rgba(236, 253, 245, 0.78) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-year-pill,
-html.sport-theme-nature .app-statistics-page .app-statistics-mini-fact {
-  border-color: rgba(6, 95, 70, 0.16) !important;
-  background: rgba(255, 255, 255, 0.44) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.74),
-    0 10px 24px rgba(6, 78, 59, 0.08) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-lines {
-  border-color: rgba(6, 95, 70, 0.16) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.54),
-    rgba(236, 253, 245, 0.42)
-  ) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.76),
-    0 16px 34px rgba(6, 78, 59, 0.08) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-row {
-  border-color: rgba(6, 95, 70, 0.12) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-icon {
-  border-color: rgba(6, 95, 70, 0.16) !important;
-  background: rgba(255, 255, 255, 0.54) !important;
-  color: #047857 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-icon svg {
-  color: #047857 !important;
-  stroke: #047857 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-label {
-  color: #102033 !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-detail {
-  color: #63748b !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-stat-value {
-  color: #047857 !important;
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  line-height: 2rem !important;
-  text-shadow: none !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-progress-track {
-  background: rgba(6, 95, 70, 0.12) !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(6, 95, 70, 0.08),
-    inset 0 1px 2px rgba(6, 78, 59, 0.08) !important;
-}
-
-html.sport-theme-nature .app-statistics-page .app-statistics-progress-fill {
-  background: linear-gradient(90deg, #047857 0%, #10b981 54%, #6ee7b7 100%) !important;
-  box-shadow:
-    0 0 18px rgba(16, 185, 129, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
-}
-
-.app-statistics-dashboard-modules {
-  width: 100%;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  align-items: stretch;
-}
-
-.app-statistics-dashboard-modules > * {
-  min-width: 0;
-  height: 100%;
-}
-
-.app-statistics-dashboard-modules [class*="activityPanel"],
-.app-statistics-dashboard-modules [class*="heatmapPanel"] {
-  height: 100%;
-  min-height: 470px;
-}
-
-html.sport-theme-nature
-  .app-statistics-dashboard-modules
-  [class*="heatmapLevel1"] {
-  border-color: rgba(16, 185, 129, 0.16) !important;
-  background: linear-gradient(145deg, #e5f8ee, #d6f4e5) !important;
-  color: #047857 !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-dashboard-modules
-  [class*="heatmapLevel2"] {
-  border-color: rgba(6, 95, 70, 0.18) !important;
-  background: linear-gradient(145deg, #b9f1d3, #6ee7b7) !important;
-  color: #064e3b !important;
-  box-shadow: 0 8px 20px rgba(6, 78, 59, 0.1) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-dashboard-modules
-  [class*="heatmapLevel3"] {
-  border-color: rgba(16, 185, 129, 0.3) !important;
-  background: linear-gradient(145deg, #a7f3d0, #6ee7b7) !important;
-  color: #064e3b !important;
-  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.1) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-dashboard-modules
-  [class*="legendMedium"] {
-  background: linear-gradient(145deg, #b9f1d3, #6ee7b7) !important;
-}
-
-html.sport-theme-nature
-  .app-statistics-dashboard-modules
-  [class*="legendHigh"] {
-  background: linear-gradient(145deg, #a7f3d0, #6ee7b7) !important;
-}
-
 /* IntÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©gration Strava: correction nature ciblÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©e.
    On neutralise les fonds gÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©riques pour ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬ ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â©viter les rectangles blancs parasites. */
 html.sport-theme-nature .app-shell main .app-strava-page {
@@ -4530,12 +3611,43 @@ html .app-calendar-hero-metric-v2 {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
+html .app-calendar-hero-metric-v2 span,
+html .app-calendar-hero-metric-v2 svg,
+html.sport-theme-nature .app-shell main .app-calendar-hero-metric-v2 span,
+html.sport-theme-nature .app-shell main .app-calendar-hero-metric-v2 svg {
+  color: rgba(236, 253, 245, 0.72) !important;
+}
+
+html .app-calendar-hero-metric-v2 strong,
+html.sport-theme-nature .app-shell main .app-calendar-hero-metric-v2 strong {
+  color: #ffffff !important;
+}
+
 html .app-calendar-next-card-v2 {
   border-color: rgba(255, 255, 255, 0.16);
   background: rgba(3, 18, 14, 0.58);
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+html .app-calendar-next-card-v2 p,
+html .app-calendar-next-card-v2 span,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 p,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 span {
+  color: rgba(236, 253, 245, 0.74) !important;
+}
+
+html .app-calendar-next-card-v2 p.text-xl,
+html .app-calendar-next-card-v2 .font-semibold,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 p.text-xl,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 .font-semibold {
+  color: #ffffff !important;
+}
+
+html .app-calendar-next-card-v2 svg,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 svg {
+  color: #bbf7d0 !important;
 }
 
 html.sport-theme-nature .app-shell main .app-calendar-toolbar-v2,
@@ -4652,6 +3764,32 @@ html.sport-theme-nature .app-shell main .app-calendar-activity-planned-v2 {
     rgba(236, 253, 245, 0.94),
     rgba(240, 253, 244, 0.82)
   ) !important;
+}
+
+html .app-calendar-activity-completed-v2,
+html.sport-theme-nature .app-shell main .app-calendar-activity-completed-v2 {
+  border-color: rgba(34, 197, 94, 0.24) !important;
+  background: rgba(240, 253, 244, 0.95) !important;
+}
+
+html .app-calendar-activity-muted-v2,
+html.sport-theme-nature .app-shell main .app-calendar-activity-muted-v2 {
+  border-color: rgba(100, 116, 139, 0.16) !important;
+  background: rgba(248, 250, 252, 0.78) !important;
+  opacity: 0.78;
+}
+
+html .app-calendar-activity-canceled-v2,
+html.sport-theme-nature .app-shell main .app-calendar-activity-canceled-v2 {
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.88),
+    rgba(248, 250, 252, 0.88) 8px,
+    rgba(226, 232, 240, 0.66) 8px,
+    rgba(226, 232, 240, 0.66) 16px
+  ) !important;
+  opacity: 0.82;
 }
 
 html .app-calendar-activity-icon-v2,
@@ -7279,6 +6417,66 @@ html:not(.sport-theme-nature)
   .app-settings-actions {
   margin: 0 !important;
   padding-top: 0.25rem !important;
+}
+
+/* Calendar hero must stay light on its dark photographic background. */
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2,
+html.sport-theme-nature .app-shell main section.app-calendar-hero-v2 {
+  background: #071610 !important;
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 h1,
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 h2,
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 h3,
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 .text-white,
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 p,
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 span,
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 [class*="text-emerald"] {
+  color: rgba(236, 253, 245, 0.78) !important;
+}
+
+html.sport-theme-nature .app-shell main .app-calendar-hero-v2 svg {
+  color: #bbf7d0 !important;
+}
+
+html.sport-theme-nature .app-shell main .app-calendar-hero-metric-v2 .font-bold,
+html.sport-theme-nature .app-shell main .app-calendar-hero-metric-v2 [class*="text-white"],
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 .font-bold,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 .font-semibold,
+html.sport-theme-nature .app-shell main .app-calendar-next-card-v2 [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-calendar-hero-metric-v2
+  > span:last-child
+  > span:first-child {
+  color: rgba(236, 253, 245, 0.72) !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-calendar-hero-metric-v2
+  > span:last-child
+  > span:last-child {
+  color: #ffffff !important;
+}
+
+html.sport-theme-nature
+  .app-shell
+  main
+  .app-calendar-hero-metric-v2
+  > span:first-child
+  svg {
+  color: #059669 !important;
 }
 
 /* Settings profile upload: restore the avatar control after flattening nested cards. */

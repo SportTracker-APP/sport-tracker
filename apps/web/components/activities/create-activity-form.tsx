@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -26,6 +27,7 @@ import {
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { api } from "@/lib/api";
 import {
   createActivitySchema,
@@ -41,6 +43,11 @@ import { SportSelector } from "./sport-selector";
 import styles from "./create-activity-form.module.css";
 
 type ActivityMode = "COMPLETED" | "PLANNED";
+
+type SaveConfirmation = {
+  title: string;
+  description: string;
+};
 
 type FormSectionProps = {
   eyebrow: string;
@@ -172,14 +179,22 @@ function formatMetric(
 export function CreateActivityForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   const plannedDate = searchParams.get("date");
+  const plannedWorkoutId = searchParams.get("plannedWorkoutId");
+  const plannedTitle = searchParams.get("title");
+  const plannedSport = searchParams.get("sport");
+  const plannedDuration = searchParams.get("duration");
+  const plannedDistance = searchParams.get("distance");
   const requestedStatus = searchParams.get("status");
   const safeReturnTo = getSafeReturnPath(
     searchParams.get("returnTo"),
   );
   const initialMode: ActivityMode =
-    requestedStatus === "PLANNED"
+    plannedWorkoutId
+      ? "COMPLETED"
+      : requestedStatus === "PLANNED"
       ? "PLANNED"
       : "COMPLETED";
 
@@ -190,6 +205,15 @@ export function CreateActivityForm() {
   const [submitError, setSubmitError] = useState<
     string | null
   >(null);
+  const [saveConfirmation, setSaveConfirmation] =
+    useState<SaveConfirmation | null>(null);
+  const lockedToPlannedWorkout = Boolean(plannedWorkoutId);
+  const parsedPlannedDuration = plannedDuration
+    ? Number.parseInt(plannedDuration, 10)
+    : 0;
+  const parsedPlannedDistance = plannedDistance
+    ? Number.parseFloat(plannedDistance)
+    : 0;
 
   const {
     register,
@@ -201,17 +225,23 @@ export function CreateActivityForm() {
   } = useForm<CreateActivityInput>({
     resolver: zodResolver(createActivitySchema),
     defaultValues: {
-      sport: "TRAIL",
+      sport: getActivitySport(plannedSport ?? "TRAIL").value,
       status: initialMode,
       title:
-        initialMode === "PLANNED" ? "Séance prévue" : "",
-      distance: 0,
-      duration: 0,
+        plannedTitle ??
+        (initialMode === "PLANNED" ? "Séance prévue" : ""),
+      distance: Number.isFinite(parsedPlannedDistance)
+        ? parsedPlannedDistance
+        : 0,
+      duration: Number.isFinite(parsedPlannedDuration)
+        ? parsedPlannedDuration
+        : 0,
       elevationGain: 0,
       calories: 0,
       startedAt: getDefaultStartedAt(plannedDate),
       notes: "",
       returnTo: safeReturnTo,
+      plannedWorkoutId: plannedWorkoutId ?? undefined,
     },
   });
 
@@ -226,6 +256,28 @@ export function CreateActivityForm() {
   const isPlannedMode = activityMode === "PLANNED";
   const sport = getActivitySport(selectedSport);
   const SportIcon = sport.icon;
+  const isStrengthSport = selectedSport === "GYM" || selectedSport === "FITNESS";
+  const shouldShowPerformanceMetrics = !isPlannedMode && !isStrengthSport;
+
+  useEffect(() => {
+    if (Number.isFinite(parsedPlannedDuration) && parsedPlannedDuration > 0) {
+      setHours(Math.floor(parsedPlannedDuration / 60));
+      setMinutes(parsedPlannedDuration % 60);
+    }
+  }, [parsedPlannedDuration]);
+
+  useEffect(() => {
+    if (!isStrengthSport) {
+      return;
+    }
+
+    setHours(0);
+    setMinutes(0);
+    setValue("distance", 0, { shouldDirty: true });
+    setValue("duration", 0, { shouldDirty: true });
+    setValue("elevationGain", 0, { shouldDirty: true });
+    setValue("calories", 0, { shouldDirty: true });
+  }, [isStrengthSport, setValue]);
 
   const summary = useMemo(
     () => [
@@ -249,16 +301,19 @@ export function CreateActivityForm() {
         icon: Clock3,
       },
       {
-        label: "Durée",
-        value: isPlannedMode
+        label: isStrengthSport ? "Suivi" : "Durée",
+        value: isStrengthSport
+          ? "Notes et exercices"
+          : isPlannedMode
           ? "À compléter après la sortie"
           : formatDuration(hours, minutes),
-        icon: Gauge,
+        icon: isStrengthSport ? NotebookPen : Gauge,
       },
     ],
     [
       hours,
       isPlannedMode,
+      isStrengthSport,
       minutes,
       sport,
       startedAt,
@@ -296,6 +351,7 @@ export function CreateActivityForm() {
       const {
         notes: activityNotes,
         returnTo: _returnTo,
+        plannedWorkoutId: submittedPlannedWorkoutId,
         ...activityData
       } = data;
 
@@ -303,31 +359,33 @@ export function CreateActivityForm() {
         ...activityData,
         type: "TRAINING",
         description: activityNotes || undefined,
-        distance: isPlannedMode
-          ? 0
-          : activityData.distance,
-        duration: isPlannedMode
-          ? 0
-          : totalDuration,
-        elevationGain: isPlannedMode
-          ? 0
-          : activityData.elevationGain,
-        calories: isPlannedMode
-          ? 0
-          : activityData.calories,
+        distance: shouldShowPerformanceMetrics ? activityData.distance : 0,
+        duration: shouldShowPerformanceMetrics ? totalDuration : 0,
+        elevationGain: shouldShowPerformanceMetrics
+          ? activityData.elevationGain
+          : 0,
+        calories: shouldShowPerformanceMetrics ? activityData.calories : 0,
+        plannedWorkoutId: submittedPlannedWorkoutId || undefined,
       });
+
+      await queryClient.invalidateQueries({ queryKey: ["activities"] });
 
       reset();
       setHours(0);
       setMinutes(0);
 
-      window.alert(
-        isPlannedMode
-          ? "Séance ajoutée au calendrier."
-          : "Activité enregistrée.",
-      );
-
-      router.push(safeReturnTo);
+      setSaveConfirmation({
+        title: submittedPlannedWorkoutId
+          ? "Sortie planifiée terminée"
+          : isPlannedMode
+            ? "Sortie planifiée"
+            : "Activité enregistrée",
+        description: submittedPlannedWorkoutId
+          ? `Votre séance “${title || "planifiée"}” est maintenant reliée à l’activité réalisée.`
+          : isPlannedMode
+            ? `Votre sortie “${title || "sans titre"}” est bien ajoutée au planning.`
+            : `Votre activité “${title || "sans titre"}” est bien enregistrée.`,
+      });
     } catch (error) {
       console.error(error);
       setSubmitError(
@@ -337,8 +395,17 @@ export function CreateActivityForm() {
   }
 
   function updateMode(mode: ActivityMode) {
+    if (lockedToPlannedWorkout) {
+      return;
+    }
+
     setSubmitError(null);
     setActivityMode(mode);
+  }
+
+  function goToPlanning() {
+    setSaveConfirmation(null);
+    router.push("/calendrier");
   }
 
   return (
@@ -349,6 +416,7 @@ export function CreateActivityForm() {
     >
       <input type="hidden" {...register("status")} />
       <input type="hidden" {...register("returnTo")} />
+      <input type="hidden" {...register("plannedWorkoutId")} />
 
       <div className={styles.formLayout}>
         <div className={styles.formCard}>
@@ -370,6 +438,7 @@ export function CreateActivityForm() {
                     type="button"
                     data-selected={isSelected}
                     aria-pressed={isSelected}
+                    disabled={lockedToPlannedWorkout}
                     onClick={() =>
                       updateMode(mode.value)
                     }
@@ -443,7 +512,7 @@ export function CreateActivityForm() {
             </div>
           </FormSection>
 
-          {!isPlannedMode ? (
+          {shouldShowPerformanceMetrics ? (
             <FormSection
               eyebrow="Étape 4"
               title="Résultats de la sortie"
@@ -560,6 +629,20 @@ export function CreateActivityForm() {
                 />
               </div>
             </FormSection>
+          ) : isStrengthSport ? (
+            <div className={styles.plannedNotice}>
+              <span>
+                <Dumbbell aria-hidden="true" />
+              </span>
+              <div>
+                <strong>Une séance de musculation se suit au carnet</strong>
+                <p>
+                  Pas besoin de distance, de kilomètres ou de dénivelé ici.
+                  Notez plutôt les exercices, séries, charges et sensations dans
+                  le carnet de séance.
+                </p>
+              </div>
+            </div>
           ) : (
             <div className={styles.plannedNotice}>
               <span>
@@ -577,9 +660,13 @@ export function CreateActivityForm() {
           )}
 
           <FormSection
-            eyebrow={isPlannedMode ? "Étape 4" : "Étape 5"}
+            eyebrow={shouldShowPerformanceMetrics ? "Étape 5" : "Étape 4"}
             title="Carnet de séance"
-            description="Ajoutez le contexte qui donnera du sens aux chiffres."
+            description={
+              isStrengthSport
+                ? "Notez les exercices, séries, charges ou sensations de la séance."
+                : "Ajoutez le contexte qui donnera du sens aux chiffres."
+            }
             icon={<NotebookPen aria-hidden="true" />}
           >
             <div className={styles.notesField}>
@@ -589,14 +676,24 @@ export function CreateActivityForm() {
               <textarea
                 id="activity-notes"
                 rows={5}
-                placeholder="Terrain, météo, ressenti, points forts, difficulté rencontrée..."
+                placeholder={
+                  isStrengthSport
+                    ? "Ex. Squat 4x8 à 80 kg, développé couché 3x10, gainage, ressenti..."
+                    : "Terrain, météo, ressenti, points forts, difficulté rencontrée..."
+                }
                 aria-invalid={Boolean(errors.notes)}
                 {...register("notes")}
               />
               <div className={styles.notesMeta}>
                 <span>
-                  <MapPin aria-hidden="true" />
-                  Décrivez le terrain ou le lieu dans vos notes.
+                  {isStrengthSport ? (
+                    <Dumbbell aria-hidden="true" />
+                  ) : (
+                    <MapPin aria-hidden="true" />
+                  )}
+                  {isStrengthSport
+                    ? "Détaillez les exercices et les charges utiles."
+                    : "Décrivez le terrain ou le lieu dans vos notes."}
                 </span>
                 <span>
                   {notes?.length ?? 0} caractère
@@ -688,7 +785,7 @@ export function CreateActivityForm() {
               })}
             </div>
 
-            {!isPlannedMode ? (
+            {shouldShowPerformanceMetrics ? (
               <div className={styles.summaryMetrics}>
                 <div>
                   <span>Distance</span>
@@ -749,6 +846,25 @@ export function CreateActivityForm() {
           </div>
         </aside>
       </div>
+
+      <ConfirmationDialog
+        open={saveConfirmation !== null}
+        title={saveConfirmation?.title ?? "Enregistrement confirmé"}
+        description={
+          saveConfirmation?.description ??
+          "Votre sortie a bien été enregistrée."
+        }
+        confirmLabel="Voir le planning"
+        cancelLabel="Rester ici"
+        tone="success"
+        icon={<CheckCircle2 aria-hidden="true" />}
+        onConfirm={goToPlanning}
+        onOpenChange={(open) => {
+          if (!open) {
+            goToPlanning();
+          }
+        }}
+      />
     </form>
   );
 }

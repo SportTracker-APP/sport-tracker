@@ -33,6 +33,7 @@ import {
   Target,
   Timer,
   Trophy,
+  X,
   Zap,
 } from "lucide-react";
 import {
@@ -49,13 +50,17 @@ import {
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { FadeIn } from "@/components/ui/fade-in";
-import { useActivities } from "@/hooks/use-activities";
+import {
+  useActivities,
+  useMarkPlannedWorkoutCelebrationSeen,
+} from "@/hooks/use-activities";
 import { useGoals } from "@/hooks/use-goals";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
 import {
   calculateGoalProgress,
   formatGoalValue,
+  getGoalPeriodEndDate,
   selectPrimaryGoal,
 } from "@/lib/goal-progress";
 
@@ -160,6 +165,19 @@ function getLocalDateKey(value: Date | string) {
 function getGoalDeadline(goal: unknown) {
   if (!isRecord(goal)) {
     return null;
+  }
+
+  if (
+    "period" in goal &&
+    (goal.period === "WEEKLY" ||
+      goal.period === "MONTHLY" ||
+      goal.period === "CUSTOM") &&
+    "startDate" in goal &&
+    "endDate" in goal
+  ) {
+    return getGoalPeriodEndDate(
+      goal as unknown as Parameters<typeof getGoalPeriodEndDate>[0],
+    );
   }
 
   const candidateKeys = [
@@ -456,12 +474,31 @@ function isChartMetric(value: string | null): value is ChartMetric {
 
 function getCompletedActivities(activities: SportActivity[]) {
   return activities
-    .filter((activity) => activity.status !== "PLANNED")
+    .filter(
+      (activity) =>
+        activity.status === "COMPLETED" && !activity.completedActivityId,
+    )
     .sort(
       (firstActivity, secondActivity) =>
         new Date(secondActivity.startedAt).getTime() -
         new Date(firstActivity.startedAt).getTime(),
     );
+}
+
+function getPendingCelebration(activities: SportActivity[]) {
+  return activities
+    .filter(
+      (activity) =>
+        activity.status === "COMPLETED" &&
+        Boolean(activity.completedActivityId) &&
+        !activity.celebrationSeenAt,
+    )
+    .sort((firstActivity, secondActivity) => {
+      const firstDate = firstActivity.completedAt ?? firstActivity.updatedAt;
+      const secondDate = secondActivity.completedAt ?? secondActivity.updatedAt;
+
+      return new Date(secondDate).getTime() - new Date(firstDate).getTime();
+    })[0] ?? null;
 }
 
 function getActivitiesBetween(
@@ -1103,9 +1140,66 @@ function StravaConnectionCard({ compact }: { compact: boolean }) {
   );
 }
 
+function PlannedWorkoutCelebrationCard({
+  plannedWorkout,
+  onHide,
+  isHiding,
+}: {
+  plannedWorkout: SportActivity;
+  onHide: () => void;
+  isHiding: boolean;
+}) {
+  const completedActivity = plannedWorkout.completedActivity;
+
+  if (!completedActivity) {
+    return null;
+  }
+
+  return (
+    <FadeIn delay={0.04}>
+      <section className={styles.celebrationCard} role="status">
+        <div className={styles.celebrationIcon}>
+          <CheckCircle2 aria-hidden="true" />
+        </div>
+        <div className={styles.celebrationContent}>
+          <p className={styles.celebrationKicker}>Sortie accomplie</p>
+          <h2>{plannedWorkout.title ?? "Séance planifiée terminée"}</h2>
+          <p>Vous aviez prévu cette sortie. Vous l’avez réalisée.</p>
+          <div className={styles.celebrationMetrics}>
+            <span>{getSportLabel(completedActivity)}</span>
+            <span>{formatDistance(completedActivity.distance || 0, 1)}</span>
+            <span>{formatDuration(completedActivity.duration)}</span>
+            {completedActivity.elevationGain ? (
+              <span>{formatNumber(completedActivity.elevationGain)} m D+</span>
+            ) : null}
+          </div>
+        </div>
+        <div className={styles.celebrationActions}>
+          <Link
+            href={`/activites/${completedActivity.id}`}
+            className={styles.celebrationPrimaryAction}
+          >
+            Voir l’activité
+          </Link>
+          <button
+            type="button"
+            className={styles.celebrationHideAction}
+            onClick={onHide}
+            disabled={isHiding}
+          >
+            <X aria-hidden="true" />
+            Masquer
+          </button>
+        </div>
+      </section>
+    </FadeIn>
+  );
+}
+
 export default function DashboardPage() {
   const { data: activities = [], isLoading, error } = useActivities();
   const { data: goals = [] } = useGoals();
+  const markCelebrationSeen = useMarkPlannedWorkoutCelebrationSeen();
   const [stravaStatus, setStravaStatus] = useState<StravaStatus | null>(null);
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
   const [chartMetric, setChartMetric] = useState<ChartMetric>("distance");
@@ -1315,6 +1409,7 @@ export default function DashboardPage() {
   const goalCurrentLabel = formatGoalValue(goalProgress.current, primaryGoal.type);
   const goalTargetLabel = formatGoalValue(goalProgress.target, primaryGoal.type);
   const goalRemainingLabel = formatGoalValue(goalProgress.remaining, primaryGoal.type);
+  const isGoalCompleted = goalProgress.remaining <= 0;
   const goalDeadline = useMemo(
     () => getGoalDeadline(primaryGoal),
     [primaryGoal],
@@ -1327,6 +1422,10 @@ export default function DashboardPage() {
       Boolean(activity.stravaActivityId),
     );
   const hasAnyActivity = dashboardData.completedActivities.length > 0;
+  const pendingCelebration = useMemo(
+    () => getPendingCelebration(activities),
+    [activities],
+  );
   const showStravaConnectionCard =
     !isLoadingStravaStatus && !hasStravaIntegration;
   const weeklyDelta =
@@ -1434,14 +1533,24 @@ export default function DashboardPage() {
       tone: "success",
     },
     {
-      title: goalProgress.progress >= 80 ? "Objectif à portée" : "Cap encore ouvert",
+      title: isGoalCompleted
+        ? "Objectif validé"
+        : goalProgress.progress >= 80
+          ? "Objectif à portée"
+          : "Cap encore ouvert",
       description:
-        goalProgress.progress >= 80
+        isGoalCompleted
+          ? "Ce cap est terminé pour la période en cours."
+          : goalProgress.progress >= 80
           ? "Vous êtes dans la dernière ligne droite des 30 jours."
           : `${goalRemainingLabel} restent à aller chercher.`,
       icon: Target,
       href: "/objectifs",
-      label: goalProgress.progress >= 80 ? "Continue comme ça !" : "Voir le cap",
+      label: isGoalCompleted
+        ? "Voir les défis"
+        : goalProgress.progress >= 80
+          ? "Continue comme ça !"
+          : "Voir le cap",
       tone: "success",
     },
     {
@@ -1481,6 +1590,16 @@ export default function DashboardPage() {
         <>
           {showStravaConnectionCard ? (
             <StravaConnectionCard compact={hasAnyActivity} />
+          ) : null}
+
+          {pendingCelebration ? (
+            <PlannedWorkoutCelebrationCard
+              plannedWorkout={pendingCelebration}
+              isHiding={markCelebrationSeen.isPending}
+              onHide={() => {
+                markCelebrationSeen.mutate(pendingCelebration.id);
+              }}
+            />
           ) : null}
 
             <FadeIn delay={0.1}>
@@ -1558,8 +1677,9 @@ export default function DashboardPage() {
                     <p className={styles.heroGoalKicker}>Cap en cours</p>
                     <h2>{primaryGoal.title}</h2>
                     <p className={styles.heroGoalText}>
-                      {goalCurrentLabel} déjà validés sur {goalTargetLabel}. Encore {goalRemainingLabel}
-                      à aller chercher sans dramatiser. Enfin… un peu.
+                      {isGoalCompleted
+                        ? `${goalCurrentLabel} validés sur ${goalTargetLabel}. Objectif atteint pour cette période.`
+                        : `${goalCurrentLabel} déjà validés sur ${goalTargetLabel}. Encore ${goalRemainingLabel} à aller chercher sans dramatiser. Enfin… un peu.`}
                     </p>
                     <div className={styles.heroProgressHeader}>
                       <span>Progression</span>
@@ -1683,7 +1803,9 @@ export default function DashboardPage() {
                       <h3>{primaryGoal.title}</h3>
                       <p>{goalCurrentLabel} / {goalTargetLabel}</p>
                       <span className={styles.goalRemaining}>
-                        Encore {goalRemainingLabel} à aller chercher.
+                        {isGoalCompleted
+                          ? "Objectif atteint pour cette période."
+                          : `Encore ${goalRemainingLabel} à aller chercher.`}
                       </span>
                       <div className={styles.goalDeadline}>
                         <CalendarDays aria-hidden="true" />

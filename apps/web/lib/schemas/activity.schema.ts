@@ -22,6 +22,8 @@ export const createActivitySchema = z.object({
 
   returnTo: z.string().optional(),
 
+  plannedWorkoutId: z.string().optional(),
+
   notes: z.string().max(500, "Maximum 500 caractères").optional(),
 });
 

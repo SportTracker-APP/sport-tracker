@@ -146,11 +146,38 @@ model Activity {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  plannedWorkoutCompletion PlannedWorkoutCompletion? @relation("PlannedWorkout")
+
+  completedWorkoutLink PlannedWorkoutCompletion? @relation("CompletedActivity")
+
   @@index([userId])
   @@index([type])
   @@index([sport])
   @@index([startedAt])
   @@index([createdAt])
+}
+
+model PlannedWorkoutCompletion {
+  id String @id @default(cuid())
+
+  plannedWorkoutId String @unique
+
+  completedActivityId String @unique
+
+  completedAt DateTime @default(now())
+
+  celebrationSeenAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  plannedWorkout Activity @relation("PlannedWorkout", fields: [plannedWorkoutId], references: [id], onDelete: Cascade)
+
+  completedActivity Activity @relation("CompletedActivity", fields: [completedActivityId], references: [id], onDelete: Cascade)
+
+  @@index([plannedWorkoutId])
+  @@index([completedActivityId])
 }
 
 model Goal {
@@ -172,6 +199,8 @@ model Goal {
 
   isActive Boolean @default(true)
 
+  isPrimary Boolean @default(false)
+
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
@@ -183,6 +212,7 @@ model Goal {
   @@index([userId])
   @@index([type])
   @@index([isActive])
+  @@index([isPrimary])
   @@index([startDate])
   @@index([endDate])
 }
@@ -198,6 +228,7 @@ enum ActivityStatus {
   PLANNED
   COMPLETED
   MISSED
+  CANCELED
 }
 
 enum SportType {

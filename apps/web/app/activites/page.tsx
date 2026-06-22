@@ -41,7 +41,11 @@ export default function ActivitiesPage() {
   const { data: activities = [], isLoading, error } = useActivities();
 
   const completedActivities = useMemo(
-    () => activities.filter((activity) => activity.status !== "PLANNED"),
+    () =>
+      activities.filter(
+        (activity) =>
+          activity.status === "COMPLETED" && !activity.completedActivityId,
+      ),
     [activities],
   );
 

@@ -9,6 +9,7 @@ import type { CSSProperties, ElementType } from "react";
 import {
   ArrowLeft,
   CalendarDays,
+  CheckCircle2,
   ChevronRight,
   Ellipsis,
   Flame,
@@ -32,7 +33,11 @@ import {
 import { MiniRouteMap } from "@/components/activities/mini-route-map";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { FadeIn } from "@/components/ui/fade-in";
-import { useActivity } from "@/hooks/use-activities";
+import {
+  useActivity,
+  useCompletePlannedWorkout,
+  usePlannedWorkoutSuggestion,
+} from "@/hooks/use-activities";
 import { pickRandomActivityFallbackImage } from "@/lib/activity-fallback-images";
 import type { Activity as ActivityModel } from "@/lib/activities";
 
@@ -976,6 +981,9 @@ export default function ActivityDetailsPage() {
   const params = useParams<{ id: string }>();
   const activityId = params.id;
   const { data: activity, isLoading, error } = useActivity(activityId);
+  const { data: plannedWorkoutSuggestion } =
+    usePlannedWorkoutSuggestion(activityId);
+  const completePlannedWorkout = useCompletePlannedWorkout();
   const [heroPanel, setHeroPanel] = useState<"map" | "photos">("map");
   const [heroImage, setHeroImage] = useState<string | null>(null);
 
@@ -1057,6 +1065,33 @@ export default function ActivityDetailsPage() {
         {activity ? (
           <FadeIn>
             <div className={styles.content}>
+              {plannedWorkoutSuggestion ? (
+                <section className={styles.matchSuggestion}>
+                  <div>
+                    <p>Correspondance possible</p>
+                    <h2>
+                      Cette activité semble correspondre à votre séance
+                      planifiée “{plannedWorkoutSuggestion.title ??
+                        "Séance planifiée"}”.
+                    </h2>
+                    <span>Souhaitez-vous les associer ?</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      completePlannedWorkout.mutate({
+                        plannedWorkoutId: plannedWorkoutSuggestion.id,
+                        activityId: activity.id,
+                      })
+                    }
+                    disabled={completePlannedWorkout.isPending}
+                  >
+                    <CheckCircle2 aria-hidden="true" />
+                    Associer
+                  </button>
+                </section>
+              ) : null}
+
               <div className={styles.hero} style={heroStyle}>
                 <div className={styles.heroShade} aria-hidden="true" />
 

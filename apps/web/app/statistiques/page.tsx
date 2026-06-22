@@ -36,6 +36,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useActivities } from "@/hooks/use-activities";
 import type { Activity as SportActivity } from "@/lib/activities";
 import styles from "@/features/dashboard/dashboard.module.css";
+import statStyles from "./statistiques.module.css";
 
 type Totals = {
   count: number;
@@ -903,7 +904,9 @@ export default function StatisticsPage() {
 
   return (
     <DashboardLayout>
-      <div className="app-statistics-page relative isolate space-y-6 pb-8">
+      <div
+        className={`${statStyles.statisticsPage} app-statistics-page relative isolate space-y-6 pb-8`}
+      >
         {isLoading && (
           <div className="app-premium-surface rounded-[24px] border border-white/[0.08] bg-[#181922]/90 p-6 text-sm text-zinc-400">
             Chargement des statistiques réelles...
@@ -1201,7 +1204,7 @@ export default function StatisticsPage() {
               />
             </section>
 
-            <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
+            <section className="grid items-start gap-4 lg:grid-cols-[1fr_360px]">
               <div className="app-statistics-refuge-card app-statistics-insight-card relative overflow-hidden rounded-[28px] border border-white/[0.1] bg-[#10140f] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
                 <div
                   className="absolute inset-0 bg-cover bg-center opacity-45"
@@ -1242,7 +1245,7 @@ export default function StatisticsPage() {
                     {refugeInsights.map((insight) => (
                       <div
                         key={insight.label}
-                        className="rounded-[18px] border border-white/10 bg-black/22 px-4 py-3 backdrop-blur-md"
+                        className="app-statistics-refuge-metric rounded-[18px] border border-white/10 bg-black/22 px-4 py-3 backdrop-blur-md"
                       >
                         <p className="text-xs text-emerald-50/62">
                           {insight.label}

@@ -16,6 +16,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ActivitiesService } from './activities.service';
 
 import { CreateActivityDto } from './dto/create-activity.dto';
+import { CompletePlannedWorkoutDto } from './dto/complete-planned-workout.dto';
 
 import { UpdateActivityDto } from './dto/update-activity.dto';
 
@@ -43,6 +44,17 @@ export class ActivitiesController {
     return this.activitiesService.findAll(userId);
   }
 
+  @Get(':id/planned-workout-suggestion')
+  findPlannedWorkoutSuggestion(
+    @CurrentUser('id')
+    userId: string,
+
+    @Param('id')
+    activityId: string,
+  ) {
+    return this.activitiesService.findPlannedWorkoutSuggestion(userId, activityId);
+  }
+
   @Get(':id')
   findOne(
     @CurrentUser('id')
@@ -52,6 +64,35 @@ export class ActivitiesController {
     activityId: string,
   ) {
     return this.activitiesService.findOne(userId, activityId);
+  }
+
+  @Post('planned-workouts/:id/complete')
+  completePlannedWorkout(
+    @CurrentUser('id')
+    userId: string,
+
+    @Param('id')
+    plannedWorkoutId: string,
+
+    @Body()
+    dto: CompletePlannedWorkoutDto,
+  ) {
+    return this.activitiesService.completePlannedWorkout(
+      userId,
+      plannedWorkoutId,
+      dto,
+    );
+  }
+
+  @Patch('planned-workouts/:id/celebration-seen')
+  markCelebrationSeen(
+    @CurrentUser('id')
+    userId: string,
+
+    @Param('id')
+    plannedWorkoutId: string,
+  ) {
+    return this.activitiesService.markCelebrationSeen(userId, plannedWorkoutId);
   }
 
   @Patch(':id')

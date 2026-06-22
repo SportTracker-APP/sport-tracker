@@ -16,6 +16,7 @@ import {
   PauseCircle,
   Plus,
   Sparkles,
+  Star,
   Target,
   Trash2,
   Trophy,
@@ -36,9 +37,13 @@ import type { Activity as SportActivity } from "@/lib/activities";
 import {
   calculateGoalProgress,
   formatGoalValue,
+  getGoalPeriodBounds,
+  getGoalPeriodEndDate,
   getGoalPeriodLabel,
+  getStoredGoalPeriodBounds,
   getGoalTypeLabel,
   selectPrimaryGoal,
+  type GoalProgress,
 } from "@/lib/goal-progress";
 import type {
   Goal,
@@ -49,7 +54,7 @@ import type {
 
 import styles from "./goals-page.module.css";
 
-type GoalFilter = "ACTIVE" | "PAUSED" | "ALL";
+type GoalFilter = "ACTIVE" | "PAUSED" | "COMPLETED" | "ALL";
 
 type GoalTypeOption = {
   value: GoalType;
@@ -216,8 +221,8 @@ function getDefaultTitle(
   return `Objectif calories${sportLabel} ${periodLabel}`;
 }
 
-function formatGoalEndDate(endDate: string) {
-  const date = new Date(endDate);
+function formatGoalEndDate(endDate: string | Date) {
+  const date = endDate instanceof Date ? endDate : new Date(endDate);
 
   if (Number.isNaN(date.getTime())) {
     return "Échéance à définir";
@@ -228,6 +233,123 @@ function formatGoalEndDate(endDate: string) {
     month: "short",
     year: "numeric",
   }).format(date);
+}
+
+function formatGoalPeriodRange(
+  period: GoalPeriod,
+  startDate: Date,
+  endDate: Date,
+) {
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    return "Période à définir";
+  }
+
+  const prefix =
+    period === "WEEKLY"
+      ? "Semaine"
+      : period === "MONTHLY"
+        ? "Mois"
+        : "Période";
+  const sameMonth =
+    startDate.getFullYear() === endDate.getFullYear() &&
+    startDate.getMonth() === endDate.getMonth();
+  const startLabel = sameMonth
+    ? new Intl.DateTimeFormat("fr-FR", { day: "numeric" }).format(startDate)
+    : new Intl.DateTimeFormat("fr-FR", {
+        day: "numeric",
+        month: "long",
+      }).format(startDate);
+  const endLabel = new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "long",
+  }).format(endDate);
+
+  return `${prefix} du ${startLabel} au ${endLabel}`;
+}
+
+type GoalDisplaySnapshot = {
+  progress: GoalProgress;
+  startDate: Date;
+  endDate: Date;
+  statusLabel: string;
+  isArchived: boolean;
+};
+
+function getNextGoalPeriodStart(period: GoalPeriod, startDate: Date) {
+  const nextDate = new Date(startDate);
+
+  if (period === "MONTHLY") {
+    nextDate.setMonth(nextDate.getMonth() + 1, 1);
+    nextDate.setHours(0, 0, 0, 0);
+
+    return nextDate;
+  }
+
+  nextDate.setDate(nextDate.getDate() + 7);
+  nextDate.setHours(0, 0, 0, 0);
+
+  return nextDate;
+}
+
+function getCompletedGoalSnapshots(
+  goal: Goal,
+  activities: SportActivity[],
+) {
+  const snapshots: Array<{ goal: Goal; snapshot: GoalDisplaySnapshot }> = [];
+
+  if (goal.period === "CUSTOM") {
+    const bounds = getStoredGoalPeriodBounds(goal);
+    const progress = calculateGoalProgress(goal, activities, { bounds });
+
+    if (progress.remaining <= 0) {
+      snapshots.push({
+        goal,
+        snapshot: {
+          progress,
+          ...bounds,
+          statusLabel: "Terminé",
+          isArchived: bounds.endDate.getTime() < Date.now(),
+        },
+      });
+    }
+
+    return snapshots;
+  }
+
+  const firstPeriod = getStoredGoalPeriodBounds(goal);
+  const currentPeriod = getGoalPeriodBounds(goal);
+  let periodStart = firstPeriod.startDate;
+  let guard = 0;
+
+  while (
+    periodStart.getTime() <= currentPeriod.startDate.getTime() &&
+    guard < 180
+  ) {
+    const bounds = getGoalPeriodBounds(goal, periodStart);
+    const progress = calculateGoalProgress(goal, activities, { bounds });
+
+    if (progress.remaining <= 0) {
+      snapshots.push({
+        goal,
+        snapshot: {
+          progress,
+          ...bounds,
+          statusLabel: "Terminé",
+          isArchived:
+            bounds.endDate.getTime() < currentPeriod.startDate.getTime(),
+        },
+      });
+    }
+
+    periodStart = getNextGoalPeriodStart(goal.period, periodStart);
+    guard += 1;
+  }
+
+  return snapshots.sort(
+    (firstSnapshot, secondSnapshot) =>
+      secondSnapshot.snapshot.endDate.getTime() -
+      firstSnapshot.snapshot.endDate.getTime(),
+  );
 }
 
 function getErrorMessage(unknownError: unknown) {
@@ -262,22 +384,32 @@ function getErrorMessage(unknownError: unknown) {
 function GoalCard({
   goal,
   activities,
+  snapshot,
   onToggle,
+  onMakePrimary,
   onDelete,
   onEdit,
   isBusy,
 }: {
   goal: Goal;
   activities: SportActivity[];
+  snapshot?: GoalDisplaySnapshot;
   onToggle: (goal: Goal) => void;
+  onMakePrimary: (goal: Goal) => void;
   onDelete: (goal: Goal) => void;
   onEdit: (goal: Goal) => void;
   isBusy: boolean;
 }) {
-  const progress = calculateGoalProgress(goal, activities ?? []);
+  const progress = snapshot?.progress ?? calculateGoalProgress(goal, activities ?? []);
   const progressPercent = Math.max(0, Math.min(progress.progress, 100));
   const Icon = goalIcons[goal.type];
   const isCompleted = progress.remaining <= 0;
+  const periodLabel = snapshot
+    ? formatGoalPeriodRange(goal.period, snapshot.startDate, snapshot.endDate)
+    : getGoalPeriodLabel(goal.period);
+  const footerPeriodLabel = snapshot
+    ? periodLabel
+    : formatGoalEndDate(getGoalPeriodEndDate(goal));
   const progressStyle = {
     "--goal-progress": `${progressPercent}%`,
   } as CSSProperties;
@@ -304,7 +436,7 @@ function GoalCard({
                 </>
               )}
               <span aria-hidden="true">•</span>
-              <span>{getGoalPeriodLabel(goal.period)}</span>
+              <span>{periodLabel}</span>
             </div>
             <h3>{goal.title}</h3>
           </div>
@@ -313,10 +445,17 @@ function GoalCard({
         <div className={styles.goalHeaderActions}>
           <span
             className={`${styles.statusBadge} ${
-              goal.isActive ? styles.statusActive : styles.statusPaused
+              snapshot
+                ? styles.statusActive
+                : goal.isPrimary
+                ? styles.statusPrimary
+                : goal.isActive
+                  ? styles.statusActive
+                  : styles.statusPaused
             }`}
           >
-            {goal.isActive ? "Actif" : "En pause"}
+            {snapshot?.statusLabel ??
+              (goal.isPrimary ? "Principal" : goal.isActive ? "Actif" : "En pause")}
           </span>
 
           <details className={styles.goalMenu}>
@@ -325,6 +464,22 @@ function GoalCard({
             </summary>
 
             <div className={styles.goalMenuContent}>
+              {!snapshot && (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.currentTarget
+                      .closest("details")
+                      ?.removeAttribute("open");
+                    onMakePrimary(goal);
+                  }}
+                  disabled={isBusy || Boolean(goal.isPrimary)}
+                >
+                  <Star aria-hidden="true" />
+                  {goal.isPrimary ? "Déjà principal" : "Choisir comme principal"}
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => onEdit(goal)}
@@ -384,7 +539,9 @@ function GoalCard({
       <div className={styles.goalFooter}>
         <p className={isCompleted ? styles.completedMessage : undefined}>
           {isCompleted
-            ? "Objectif atteint. Beau travail."
+            ? snapshot?.isArchived
+              ? "Objectif terminé sur cette période."
+              : "Objectif atteint. Beau travail."
             : `Encore ${formatGoalValue(
                 progress.remaining,
                 goal.type,
@@ -393,7 +550,7 @@ function GoalCard({
 
         <span>
           <CalendarDays aria-hidden="true" />
-          {formatGoalEndDate(goal.endDate)}
+          {footerPeriodLabel}
         </span>
       </div>
     </article>
@@ -442,11 +599,34 @@ export default function GoalsPage() {
       ),
     [activities, goals],
   );
+  const goalPeriodSnapshotById = useMemo(
+    () =>
+      new Map(
+        goals.map((goal) => {
+          const progress =
+            goalProgressById.get(goal.id) ??
+            calculateGoalProgress(goal, activities);
+          const { startDate, endDate } = getGoalPeriodBounds(goal);
+
+          return [
+            goal.id,
+            {
+              progress,
+              startDate,
+              endDate,
+              statusLabel: progress.remaining <= 0 ? "Terminé" : "Actif",
+              isArchived: false,
+            } satisfies GoalDisplaySnapshot,
+          ];
+        }),
+      ),
+    [activities, goalProgressById, goals],
+  );
 
   const activeGoals = goals.filter((goal) => goal.isActive);
   const pausedGoals = goals.filter((goal) => !goal.isActive);
-  const completedGoals = goals.filter(
-    (goal) => (goalProgressById.get(goal.id)?.remaining ?? 1) <= 0,
+  const completedGoalSnapshots = goals.flatMap((goal) =>
+    getCompletedGoalSnapshots(goal, activities),
   );
   const visibleGoals = goals.filter((goal) => {
     if (filter === "ACTIVE") {
@@ -455,6 +635,10 @@ export default function GoalsPage() {
 
     if (filter === "PAUSED") {
       return !goal.isActive;
+    }
+
+    if (filter === "COMPLETED") {
+      return false;
     }
 
     return true;
@@ -553,6 +737,16 @@ export default function GoalsPage() {
       id: goal.id,
       input: {
         isActive: !goal.isActive,
+      },
+    });
+  }
+
+  async function handleMakePrimary(goal: Goal) {
+    await updateGoalMutation.mutateAsync({
+      id: goal.id,
+      input: {
+        isActive: true,
+        isPrimary: true,
       },
     });
   }
@@ -740,6 +934,14 @@ export default function GoalsPage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setFilter("COMPLETED")}
+                  aria-pressed={filter === "COMPLETED"}
+                >
+                  Terminés
+                  <span>{completedGoalSnapshots.length}</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => setFilter("ALL")}
                   aria-pressed={filter === "ALL"}
                 >
@@ -791,19 +993,42 @@ export default function GoalsPage() {
               </div>
             )}
 
-            {!isLoading && goals.length > 0 && visibleGoals.length === 0 && (
+            {!isLoading &&
+              goals.length > 0 &&
+              (filter === "COMPLETED"
+                ? completedGoalSnapshots.length === 0
+                : visibleGoals.length === 0) && (
               <div className={styles.filterEmptyState}>
                 Aucun objectif dans cette catégorie.
               </div>
             )}
 
             <div className={styles.goalsList}>
-              {visibleGoals.map((goal, index) => (
+              {filter === "COMPLETED"
+                ? completedGoalSnapshots.map(({ goal, snapshot }, index) => (
+                    <FadeIn
+                      key={`${goal.id}-${snapshot.startDate.toISOString()}`}
+                      delay={0.05 * index}
+                    >
+                      <GoalCard
+                        goal={goal}
+                        activities={activities}
+                        snapshot={snapshot}
+                        onToggle={handleToggle}
+                        onMakePrimary={handleMakePrimary}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                        isBusy={isBusy}
+                      />
+                    </FadeIn>
+                  ))
+                : visibleGoals.map((goal, index) => (
                 <FadeIn key={goal.id} delay={0.05 * index}>
                   <GoalCard
                     goal={goal}
                     activities={activities}
                     onToggle={handleToggle}
+                    onMakePrimary={handleMakePrimary}
                     onDelete={handleDelete}
                     onEdit={handleEdit}
                     isBusy={isBusy}
@@ -983,16 +1208,22 @@ export default function GoalsPage() {
                   <History aria-hidden="true" />
                   <h2>Objectifs accomplis</h2>
                 </div>
-                <span>{completedGoals.length}</span>
+                <span>{completedGoalSnapshots.length}</span>
               </div>
 
-              {completedGoals.length > 0 ? (
+              {completedGoalSnapshots.length > 0 ? (
                 <div className={styles.historyList}>
-                  {completedGoals.slice(0, 3).map((goal) => (
-                    <div key={goal.id}>
+                  {completedGoalSnapshots.slice(0, 3).map(({ goal, snapshot }) => (
+                    <div key={`${goal.id}-${snapshot.startDate.toISOString()}`}>
                       <div>
                         <strong>{goal.title}</strong>
-                        <span>{formatGoalEndDate(goal.endDate)}</span>
+                        <span>
+                          {formatGoalPeriodRange(
+                            goal.period,
+                            snapshot.startDate,
+                            snapshot.endDate,
+                          )}
+                        </span>
                       </div>
                       <CheckCircle2 aria-hidden="true" />
                     </div>

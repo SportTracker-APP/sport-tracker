@@ -9,12 +9,19 @@ import {
 } from 'class-validator';
 
 export enum SportType {
-  TRAIL = 'TRAIL',
   RUNNING = 'RUNNING',
+  TRAIL = 'TRAIL',
   HIKING = 'HIKING',
-  MTB = 'MTB',
   WALKING = 'WALKING',
+  ROAD_CYCLING = 'ROAD_CYCLING',
+  MTB = 'MTB',
+  GRAVEL = 'GRAVEL',
+  SWIMMING = 'SWIMMING',
   GYM = 'GYM',
+  FITNESS = 'FITNESS',
+  SKI = 'SKI',
+  SNOWBOARD = 'SNOWBOARD',
+  CLIMBING = 'CLIMBING',
 }
 
 export enum ActivityType {
@@ -28,6 +35,7 @@ export enum ActivityStatus {
   PLANNED = 'PLANNED',
   COMPLETED = 'COMPLETED',
   MISSED = 'MISSED',
+  CANCELED = 'CANCELED',
 }
 
 export class CreateActivityDto {
@@ -101,4 +109,8 @@ export class CreateActivityDto {
 
   @IsDateString()
   startedAt: string;
+
+  @IsOptional()
+  @IsString()
+  plannedWorkoutId?: string;
 }

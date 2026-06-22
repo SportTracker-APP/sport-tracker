@@ -9,20 +9,28 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
+  CheckCircle2,
   Clock3,
   Dumbbell,
   Footprints,
   Mountain,
   Plus,
   Route,
+  RotateCcw,
   Sparkles,
   Target,
+  Trash2,
+  XCircle,
   type LucideIcon,
 } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { FadeIn } from "@/components/ui/fade-in";
-import { useActivities } from "@/hooks/use-activities";
+import {
+  useActivities,
+  useDeleteActivity,
+} from "@/hooks/use-activities";
 import type { Activity } from "@/lib/activities";
 
 const dayFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -157,14 +165,28 @@ function getActivityDate(activity: Activity) {
 }
 
 function getActivityStatus(activity: Activity) {
-  return activity.status === "PLANNED"
-    ? { label: "Planifiée", tone: "planned" as const }
-    : { label: "Terminée", tone: "completed" as const };
+  if (activity.status === "PLANNED") {
+    return { label: "Planifiée", tone: "planned" as const, icon: CalendarDays };
+  }
+
+  if (activity.status === "MISSED") {
+    return { label: "Manquée", tone: "missed" as const, icon: RotateCcw };
+  }
+
+  if (activity.status === "CANCELED") {
+    return { label: "Annulée", tone: "canceled" as const, icon: XCircle };
+  }
+
+  return { label: "Terminée", tone: "completed" as const, icon: CheckCircle2 };
 }
 
 export default function CalendarPage() {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
+    null,
+  );
   const { data: activities = [], isLoading, error } = useActivities();
+  const deleteActivityMutation = useDeleteActivity();
 
   const today = useMemo(() => new Date(), []);
   const weekDays = useMemo(
@@ -178,6 +200,7 @@ export default function CalendarPage() {
       weekDays.map((day) => ({
         day,
         activities: activities
+          .filter((activity) => !activity.plannedWorkoutId)
           .filter((activity) => isSameDay(getActivityDate(activity), day))
           .sort(
             (firstActivity, secondActivity) =>
@@ -194,7 +217,11 @@ export default function CalendarPage() {
   );
 
   const completedActivities = useMemo(
-    () => weekActivities.filter((activity) => activity.status !== "PLANNED"),
+    () =>
+      weekActivities.filter(
+        (activity) =>
+          activity.status === "COMPLETED" && !activity.completedActivityId,
+      ),
     [weekActivities],
   );
 
@@ -229,6 +256,7 @@ export default function CalendarPage() {
   const nextActivity = useMemo(
     () =>
       activities
+        .filter((activity) => activity.status === "PLANNED")
         .filter((activity) => getActivityDate(activity).getTime() >= Date.now())
         .sort(
           (firstActivity, secondActivity) =>
@@ -248,6 +276,15 @@ export default function CalendarPage() {
 
   function goToCurrentWeek() {
     setWeekStart(startOfWeek(new Date()));
+  }
+
+  async function handleConfirmDelete() {
+    if (!activityToDelete) {
+      return;
+    }
+
+    await deleteActivityMutation.mutateAsync(activityToDelete.id);
+    setActivityToDelete(null);
   }
 
   return (
@@ -414,6 +451,7 @@ export default function CalendarPage() {
                       day={day}
                       today={today}
                       activities={dayActivities}
+                      onDeletePlannedActivity={setActivityToDelete}
                     />
                   ))}
                 </div>
@@ -421,6 +459,27 @@ export default function CalendarPage() {
             </section>
           </FadeIn>
         )}
+
+        <ConfirmationDialog
+          open={activityToDelete !== null}
+          title="Supprimer cette sortie prévue ?"
+          description={
+            activityToDelete
+              ? `La séance “${activityToDelete.title ?? "sans titre"}” sera retirée du planning.`
+              : "Cette séance sera retirée du planning."
+          }
+          confirmLabel="Supprimer du planning"
+          cancelLabel="Garder la séance"
+          tone="danger"
+          icon={<Trash2 aria-hidden="true" />}
+          isLoading={deleteActivityMutation.isPending}
+          onConfirm={handleConfirmDelete}
+          onOpenChange={(open) => {
+            if (!open && !deleteActivityMutation.isPending) {
+              setActivityToDelete(null);
+            }
+          }}
+        />
       </main>
     </DashboardLayout>
   );
@@ -454,9 +513,15 @@ type DayColumnProps = {
   day: Date;
   today: Date;
   activities: Activity[];
+  onDeletePlannedActivity: (activity: Activity) => void;
 };
 
-function DayColumn({ day, today, activities }: DayColumnProps) {
+function DayColumn({
+  day,
+  today,
+  activities,
+  onDeletePlannedActivity,
+}: DayColumnProps) {
   const isToday = isSameDay(day, today);
   const plannedCount = activities.filter(
     (activity) => activity.status === "PLANNED",
@@ -510,7 +575,11 @@ function DayColumn({ day, today, activities }: DayColumnProps) {
           <EmptyDay day={day} />
         ) : (
           activities.map((activity) => (
-            <CalendarActivity key={activity.id} activity={activity} />
+            <CalendarActivity
+              key={activity.id}
+              activity={activity}
+              onDeletePlannedActivity={onDeletePlannedActivity}
+            />
           ))
         )}
       </div>
@@ -539,54 +608,130 @@ function EmptyDay({ day }: { day: Date }) {
   );
 }
 
-function CalendarActivity({ activity }: { activity: Activity }) {
+function CalendarActivity({
+  activity,
+  onDeletePlannedActivity,
+}: {
+  activity: Activity;
+  onDeletePlannedActivity: (activity: Activity) => void;
+}) {
   const activityDate = getActivityDate(activity);
   const SportIcon = getSportIcon(activity.sport);
   const status = getActivityStatus(activity);
+  const StatusIcon = status.icon;
   const hasDistance = Boolean(activity.distance && activity.distance > 0);
   const hasDuration = activity.duration > 0;
+  const activityHref = activity.completedActivityId
+    ? `/activites/${activity.completedActivityId}`
+    : `/activites/${activity.id}`;
+  const recordHref = `/activites/nouvelle?${new URLSearchParams({
+    plannedWorkoutId: activity.id,
+    status: "COMPLETED",
+    date: formatDateInput(activityDate),
+    sport: activity.sport,
+    title: activity.title ?? "Séance planifiée",
+    duration: String(activity.duration ?? 0),
+    distance: String(activity.distance ?? 0),
+    returnTo: "/calendrier",
+  }).toString()}`;
+  const replanHref = `/activites/nouvelle?${new URLSearchParams({
+    status: "PLANNED",
+    date: formatDateInput(new Date()),
+    sport: activity.sport,
+    title: activity.title ?? "Séance planifiée",
+    duration: String(activity.duration ?? 0),
+    distance: String(activity.distance ?? 0),
+    returnTo: "/calendrier",
+  }).toString()}`;
 
   return (
-    <Link
-      href={`/activites/${activity.id}`}
+    <article
       className={`app-calendar-activity-v2 group block rounded-[18px] border p-3 transition hover:-translate-y-0.5 ${
         status.tone === "planned" ? "app-calendar-activity-planned-v2" : ""
+      } ${
+        status.tone === "completed" ? "app-calendar-activity-completed-v2" : ""
+      } ${
+        status.tone === "missed" ? "app-calendar-activity-muted-v2" : ""
+      } ${
+        status.tone === "canceled" ? "app-calendar-activity-canceled-v2" : ""
       }`}
     >
-      <div className="flex items-start gap-2.5">
+      <div className="flex items-center gap-2.5">
         <span className="app-calendar-activity-icon-v2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
           <SportIcon className="h-4 w-4" />
         </span>
 
         <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 items-center justify-between gap-2">
+          <div className="flex min-w-0 flex-wrap items-center justify-between gap-1.5">
             <p className="truncate text-[0.66rem] font-semibold text-slate-500">
               {timeFormatter.format(activityDate)} ·{" "}
               {sportLabels[activity.sport] ?? activity.sport}
             </p>
             <span
-              className={`shrink-0 rounded-full px-2 py-1 text-[0.55rem] font-bold uppercase tracking-[0.1em] ${
-                status.tone === "planned"
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-slate-100 text-slate-600"
-              }`}
+              className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-1 text-[0.5rem] font-bold uppercase tracking-[0.08em] text-emerald-700"
             >
+              <StatusIcon className="h-3 w-3" aria-hidden="true" />
               {status.label}
             </span>
           </div>
-
-          <p className="mt-1.5 line-clamp-2 text-sm font-bold leading-5 text-slate-950 transition group-hover:text-emerald-800">
-            {activity.title ?? "Séance sans titre"}
-          </p>
-
-          {(hasDistance || hasDuration) && (
-            <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.68rem] font-semibold text-slate-500">
-              {hasDistance && <span>{formatDistance(activity.distance)}</span>}
-              {hasDuration && <span>{formatDuration(activity.duration)}</span>}
-            </div>
-          )}
         </div>
       </div>
-    </Link>
+
+      <Link
+        href={activityHref}
+        className="mx-auto mt-3 line-clamp-2 block max-w-[12rem] text-center text-[0.92rem] font-bold leading-6 text-slate-950 transition group-hover:text-emerald-800"
+        title={activity.title ?? "Séance sans titre"}
+      >
+        {activity.title ?? "Séance sans titre"}
+      </Link>
+
+      {(hasDistance || hasDuration) && (
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.68rem] font-semibold text-slate-500">
+          {hasDistance && <span>{formatDistance(activity.distance)}</span>}
+          {hasDuration && <span>{formatDuration(activity.duration)}</span>}
+        </div>
+      )}
+
+      {activity.status === "COMPLETED" && activity.completedActivityId ? (
+        <Link
+          href={activityHref}
+          className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"
+        >
+          Voir l’activité
+        </Link>
+      ) : null}
+
+      {activity.status === "MISSED" ? (
+        <Link
+          href={replanHref}
+          className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+        >
+          Replanifier
+        </Link>
+      ) : null}
+
+      {activity.status === "PLANNED" ? (
+        <div className="mt-3 grid gap-1.5">
+          <Link
+            href={recordHref}
+            className="inline-flex min-h-9 min-w-0 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-2 text-[0.72rem] font-bold leading-tight text-emerald-800 transition hover:bg-emerald-100"
+            aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée et saisir ses résultats`}
+          >
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">Sortie faite</span>
+          </Link>
+          <button
+            type="button"
+            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-red-100 bg-red-50/70 px-2 text-[0.68rem] font-bold text-red-700 transition hover:bg-red-100"
+            onClick={() => onDeletePlannedActivity(activity)}
+            aria-label={`Supprimer la séance prévue ${activity.title ?? "sans titre"} du planning`}
+            title="Supprimer du planning"
+          >
+            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="truncate">Supprimer</span>
+          </button>
+        </div>
+      ) : null}
+    </article>
   );
 }

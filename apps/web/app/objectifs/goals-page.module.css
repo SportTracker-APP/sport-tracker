@@ -632,6 +632,12 @@
   color: var(--goals-success-strong);
 }
 
+.statusPrimary {
+  border-color: rgba(245, 158, 11, 0.28);
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
 .statusPaused {
   border-color: var(--goals-border);
   background: var(--goals-surface-soft);

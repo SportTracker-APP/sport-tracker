@@ -253,12 +253,42 @@
   box-shadow: 0 16px 34px rgba(109, 40, 217, 0.24);
 }
 
+.dialog[data-tone="success"] .confirmButton {
+  border-color: rgba(167, 243, 208, 0.28);
+  background: linear-gradient(135deg, #065f46, #059669 60%, #10b981);
+  box-shadow:
+    0 16px 34px rgba(5, 150, 105, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.dialog[data-tone="success"] .icon {
+  border-color: rgba(16, 185, 129, 0.24);
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+}
+
 :global(html.sport-theme-nature)
   .dialog[data-tone="default"]
   .confirmButton {
   border-color: rgba(167, 243, 208, 0.26);
   background: linear-gradient(135deg, #064e3b, #047857 58%, #0f766e);
   box-shadow: 0 16px 34px rgba(6, 78, 59, 0.24);
+}
+
+:global(html.sport-theme-nature)
+  .dialog[data-tone="success"]
+  .confirmButton {
+  border-color: rgba(167, 243, 208, 0.3);
+  background: linear-gradient(135deg, #064e3b, #047857 58%, #0f766e);
+  box-shadow: 0 16px 34px rgba(6, 78, 59, 0.24);
+}
+
+:global(html.sport-theme-nature)
+  .dialog[data-tone="success"]
+  .icon {
+  border-color: rgba(6, 95, 70, 0.18);
+  background: rgba(220, 252, 231, 0.86);
+  color: #047857;
 }
 
 .cancelButton:focus-visible,

@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Activity, ActivityStatus, PlannedWorkoutCompletion, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { StravaService } from '../strava/strava.service';
 
 import { CreateActivityDto } from './dto/create-activity.dto';
+import { CompletePlannedWorkoutDto } from './dto/complete-planned-workout.dto';
 
 import { UpdateActivityDto } from './dto/update-activity.dto';
 
@@ -15,9 +22,15 @@ export class ActivitiesService {
   ) {}
 
   async create(userId: string, dto: CreateActivityDto) {
+    if (dto.plannedWorkoutId) {
+      return this.createFromPlannedWorkout(userId, dto);
+    }
+
+    const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
+
     return this.prisma.activity.create({
       data: {
-        ...dto,
+        ...activityData,
 
         startedAt: new Date(dto.startedAt),
 
@@ -27,7 +40,7 @@ export class ActivitiesService {
   }
 
   async findAll(userId: string) {
-    return this.prisma.activity.findMany({
+    const activities = await this.prisma.activity.findMany({
       where: {
         userId,
       },
@@ -36,6 +49,8 @@ export class ActivitiesService {
         startedAt: 'desc',
       },
     });
+
+    return this.withCompletionData(activities);
   }
 
   async findOne(userId: string, activityId: string) {
@@ -51,7 +66,7 @@ export class ActivitiesService {
     }
 
     if (!activity.stravaActivityId) {
-      return activity;
+      return (await this.withCompletionData([activity]))[0];
     }
 
     try {
@@ -60,7 +75,10 @@ export class ActivitiesService {
         activity.stravaActivityId,
       );
 
+      const decoratedActivity = (await this.withCompletionData([activity]))[0];
+
       return {
+        ...decoratedActivity,
         ...activity,
         ...enrichment,
         coverImageUrl: enrichment.coverImageUrl ?? activity.coverImageUrl,
@@ -75,11 +93,12 @@ export class ActivitiesService {
       });
     }
 
-    return activity;
+    return (await this.withCompletionData([activity]))[0];
   }
 
   async update(userId: string, activityId: string, dto: UpdateActivityDto) {
     await this.findOne(userId, activityId);
+    const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
 
     return this.prisma.activity.update({
       where: {
@@ -87,11 +106,107 @@ export class ActivitiesService {
       },
 
       data: {
-        ...dto,
+        ...activityData,
 
         ...(dto.startedAt && {
           startedAt: new Date(dto.startedAt),
         }),
+      },
+    });
+  }
+
+  async completePlannedWorkout(
+    userId: string,
+    plannedWorkoutId: string,
+    dto: CompletePlannedWorkoutDto,
+  ) {
+    return this.prisma.$transaction((tx) =>
+      this.linkCompletedActivity(tx, userId, plannedWorkoutId, dto.activityId),
+    );
+  }
+
+  async markCelebrationSeen(userId: string, plannedWorkoutId: string) {
+    const plannedWorkout = await this.prisma.activity.findFirst({
+      where: {
+        id: plannedWorkoutId,
+        userId,
+      },
+    });
+
+    if (!plannedWorkout) {
+      throw new NotFoundException('Séance planifiée introuvable');
+    }
+
+    const completion = await this.prisma.plannedWorkoutCompletion.findUnique({
+      where: {
+        plannedWorkoutId,
+      },
+    });
+
+    if (!completion) {
+      throw new NotFoundException('Réalisation de séance introuvable');
+    }
+
+    await this.prisma.plannedWorkoutCompletion.update({
+      where: {
+        plannedWorkoutId,
+      },
+      data: {
+        celebrationSeenAt: new Date(),
+      },
+    });
+
+    return (await this.withCompletionData([plannedWorkout]))[0];
+  }
+
+  async findPlannedWorkoutSuggestion(userId: string, activityId: string) {
+    const activity = await this.prisma.activity.findFirst({
+      where: {
+        id: activityId,
+        userId,
+      },
+    });
+
+    if (!activity) {
+      throw new NotFoundException('Activité introuvable');
+    }
+
+    if (activity.status !== ActivityStatus.COMPLETED) {
+      return null;
+    }
+
+    const existingLink = await this.findCompletionForActivity(activity.id);
+
+    if (existingLink) {
+      return null;
+    }
+
+    const startedAt = new Date(activity.startedAt);
+    const from = new Date(startedAt);
+    from.setHours(from.getHours() - 36);
+    const to = new Date(startedAt);
+    to.setHours(to.getHours() + 36);
+
+    const completions = await this.findCompletionRowsForUser(userId);
+    const completedPlannedWorkoutIds = new Set(
+      completions.map((completion) => completion.plannedWorkoutId),
+    );
+
+    return this.prisma.activity.findFirst({
+      where: {
+        userId,
+        sport: activity.sport,
+        status: ActivityStatus.PLANNED,
+        id: {
+          notIn: Array.from(completedPlannedWorkoutIds),
+        },
+        startedAt: {
+          gte: from,
+          lte: to,
+        },
+      },
+      orderBy: {
+        startedAt: 'asc',
       },
     });
   }
@@ -104,5 +219,231 @@ export class ActivitiesService {
         id: activityId,
       },
     });
+  }
+
+  private async createFromPlannedWorkout(userId: string, dto: CreateActivityDto) {
+    const { plannedWorkoutId, ...activityData } = dto;
+
+    if (!plannedWorkoutId) {
+      throw new BadRequestException('Séance planifiée manquante');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const activity = await tx.activity.create({
+        data: {
+          ...activityData,
+          status: ActivityStatus.COMPLETED,
+          startedAt: new Date(dto.startedAt),
+          userId,
+        },
+      });
+
+      return this.linkCompletedActivity(tx, userId, plannedWorkoutId, activity.id);
+    });
+  }
+
+  private async linkCompletedActivity(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    plannedWorkoutId: string,
+    activityId: string,
+  ) {
+    const plannedWorkout = await tx.activity.findFirst({
+      where: {
+        id: plannedWorkoutId,
+        userId,
+      },
+    });
+
+    if (!plannedWorkout) {
+      throw new NotFoundException('Séance planifiée introuvable');
+    }
+
+    if (plannedWorkout.status === ActivityStatus.COMPLETED) {
+      throw new ConflictException('Cette séance est déjà terminée');
+    }
+
+    if (plannedWorkout.status === ActivityStatus.CANCELED) {
+      throw new ConflictException(
+        'Cette séance est annulée et ne peut pas être terminée directement',
+      );
+    }
+
+    if (plannedWorkout.status !== ActivityStatus.PLANNED) {
+      throw new BadRequestException('Cette séance ne peut pas être terminée');
+    }
+
+    const activity = await tx.activity.findFirst({
+      where: {
+        id: activityId,
+        userId,
+      },
+    });
+
+    if (!activity) {
+      throw new NotFoundException('Activité introuvable');
+    }
+
+    if (activity.status !== ActivityStatus.COMPLETED) {
+      throw new BadRequestException('Seule une activité terminée peut valider une séance');
+    }
+
+    const existingActivityLink = await tx.plannedWorkoutCompletion.findFirst({
+      where: {
+        completedActivityId: activity.id,
+      },
+    });
+
+    if (
+      existingActivityLink &&
+      existingActivityLink.plannedWorkoutId !== plannedWorkoutId
+    ) {
+      throw new ConflictException('Cette activité est déjà associée à une séance');
+    }
+
+    const completedAt = new Date();
+
+    await tx.plannedWorkoutCompletion.create({
+      data: {
+        plannedWorkoutId,
+        completedActivityId: activity.id,
+        completedAt,
+      },
+    });
+
+    const completedWorkout = await tx.activity.update({
+      where: {
+        id: plannedWorkout.id,
+      },
+      data: {
+        status: ActivityStatus.COMPLETED,
+      },
+    });
+
+    return this.decorateActivity(completedWorkout, {
+      plannedWorkoutId,
+      completedActivityId: activity.id,
+      completedAt,
+      celebrationSeenAt: null,
+      completedActivity: activity,
+      plannedWorkout: null,
+    });
+  }
+
+  private async withCompletionData(activities: Activity[]) {
+    if (activities.length === 0) {
+      return [];
+    }
+
+    try {
+      const activityIds = activities.map((activity) => activity.id);
+      const completions = await this.prisma.plannedWorkoutCompletion.findMany({
+        where: {
+          OR: [
+            {
+              plannedWorkoutId: {
+                in: activityIds,
+              },
+            },
+            {
+              completedActivityId: {
+                in: activityIds,
+              },
+            },
+          ],
+        },
+        include: {
+          plannedWorkout: true,
+          completedActivity: true,
+        },
+      });
+
+      return activities.map((activity) => {
+        const completion = completions.find(
+          (item) =>
+            item.plannedWorkoutId === activity.id ||
+            item.completedActivityId === activity.id,
+        );
+
+        if (!completion) {
+          return this.decorateActivity(activity);
+        }
+
+        return this.decorateActivity(activity, {
+          plannedWorkoutId:
+            completion.completedActivityId === activity.id
+              ? completion.plannedWorkoutId
+              : null,
+          completedActivityId:
+            completion.plannedWorkoutId === activity.id
+              ? completion.completedActivityId
+              : null,
+          completedAt: completion.completedAt,
+          celebrationSeenAt: completion.celebrationSeenAt,
+          plannedWorkout:
+            completion.completedActivityId === activity.id
+              ? completion.plannedWorkout
+              : null,
+          completedActivity:
+            completion.plannedWorkoutId === activity.id
+              ? completion.completedActivity
+              : null,
+        });
+      });
+    } catch (error) {
+      console.warn('Planned workout completion data skipped:', {
+        message: error instanceof Error ? error.message : String(error),
+      });
+
+      return activities.map((activity) => this.decorateActivity(activity));
+    }
+  }
+
+  private decorateActivity(
+    activity: Activity,
+    completion?: {
+      plannedWorkoutId: string | null;
+      completedActivityId: string | null;
+      completedAt: Date | null;
+      celebrationSeenAt: Date | null;
+      plannedWorkout: Activity | null;
+      completedActivity: Activity | null;
+    },
+  ) {
+    return {
+      ...activity,
+      plannedWorkoutId: completion?.plannedWorkoutId ?? null,
+      completedActivityId: completion?.completedActivityId ?? null,
+      completedAt: completion?.completedAt ?? null,
+      celebrationSeenAt: completion?.celebrationSeenAt ?? null,
+      plannedWorkout: completion?.plannedWorkout ?? null,
+      completedActivity: completion?.completedActivity ?? null,
+    };
+  }
+
+  private async findCompletionForActivity(activityId: string) {
+    try {
+      return await this.prisma.plannedWorkoutCompletion.findFirst({
+        where: {
+          completedActivityId: activityId,
+        },
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  private async findCompletionRowsForUser(userId: string) {
+    try {
+      return await this.prisma.plannedWorkoutCompletion.findMany({
+        where: {
+          plannedWorkout: {
+            userId,
+          },
+        },
+      });
+    } catch {
+      return [] as PlannedWorkoutCompletion[];
+    }
   }
 }
