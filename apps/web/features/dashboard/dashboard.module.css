@@ -4069,3 +4069,259 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Responsive foundation pass: dashboard only, desktop preserved. */
+@media (max-width: 1023px) {
+  .dashboardPage {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .heroContent,
+  .dashboardGrid,
+  .metricsGrid,
+  .recommendationGrid,
+  .chartSummary,
+  .quickStats,
+  .badgeGrid {
+    min-width: 0;
+  }
+
+  .hero {
+    background-position: center center !important;
+  }
+
+  .metricCard,
+  .surface,
+  .traceItem,
+  .recommendationItem,
+  .stravaConnectionCard,
+  .celebrationCard {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroContent {
+    padding: 1.45rem;
+  }
+
+  .heroGoalCard {
+    max-width: none;
+  }
+
+  .dashboardGrid {
+    gap: 0.75rem;
+  }
+
+  .surfaceHeader,
+  .goalPanelHeader,
+  .chartToolbar {
+    gap: 0.7rem;
+  }
+
+  .chartToolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .chartTabs {
+    width: 100%;
+  }
+
+  .chartTabs button {
+    flex: 1 1 0;
+    min-height: 38px;
+  }
+
+  .traceItem,
+  .recommendationItem {
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardPage {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  .syncBanner,
+  .stravaConnectionCard,
+  .celebrationCard {
+    border-radius: 18px;
+    padding: 0.85rem;
+  }
+
+  .hero {
+    border-radius: 20px;
+  }
+
+  .heroContent {
+    padding: 1.05rem;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(1.55rem, 10vw, 1.95rem);
+    letter-spacing: -0.02em;
+  }
+
+  .heroCopy > p {
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  .heroMiniStats {
+    grid-template-columns: 1fr;
+  }
+
+  .heroMiniStats > div,
+  .metricCard,
+  .surface {
+    border-radius: 16px;
+  }
+
+  .metricCard {
+    min-height: 76px;
+    padding: 0.85rem;
+  }
+
+  .metricIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .metricValue {
+    font-size: 1.35rem;
+  }
+
+  .surface {
+    padding: 0.82rem;
+  }
+
+  .surfaceHeader,
+  .goalPanelHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .rangeButton,
+  .textLink,
+  .goalPanelHeader a {
+    min-height: 40px;
+    align-self: flex-start;
+  }
+
+  .chartArea {
+    height: 205px;
+  }
+
+  .chartSummary > div {
+    padding: 0.62rem;
+  }
+
+  .traceItem {
+    padding: 0.58rem;
+  }
+
+  .traceMeta {
+    row-gap: 0.18rem;
+  }
+
+  .goalPanelContent {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .goalRing {
+    width: 56px;
+    height: 56px;
+  }
+
+  .goalRingInner {
+    width: 44px;
+    height: 44px;
+    font-size: 0.86rem;
+  }
+
+  .heatmapWeekdays,
+  .heatmapRow {
+    grid-template-columns: 20px repeat(7, minmax(0, 1fr));
+    gap: 0.2rem;
+  }
+
+  .heatmapWeekdays {
+    padding-left: 20px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .heatmapCell {
+    min-height: 24px;
+    border-radius: 7px;
+  }
+
+  .messagePanel {
+    min-height: 220px;
+  }
+
+  .messagePanel > div {
+    max-width: 100%;
+  }
+
+  .forestIllustration {
+    opacity: 0.42;
+  }
+
+  .recommendationItem {
+    grid-template-columns: 34px minmax(0, 1fr) 14px;
+    padding: 0.7rem 0;
+  }
+
+  .emptyDashboard {
+    min-height: 420px;
+    padding: 1.4rem;
+    border-radius: 22px;
+  }
+
+  .emptyDashboardActions,
+  .stravaConnectionCard .emptyDashboardActions {
+    width: 100%;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .heroContent {
+    padding: 0.9rem;
+  }
+
+  .heroActions,
+  .celebrationActions {
+    gap: 0.55rem;
+  }
+
+  .heroKicker,
+  .contextPill {
+    max-width: 100%;
+  }
+
+  .chartTabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chartTabs button {
+    width: 100%;
+  }
+
+  .heatmapWeekdays span {
+    font-size: 0.48rem;
+  }
+
+  .heatmapCell {
+    min-height: 21px;
+  }
+}

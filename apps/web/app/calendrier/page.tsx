@@ -443,8 +443,8 @@ export default function CalendarPage() {
         {!isLoading && !error && (
           <FadeIn delay={0.08}>
             <section className="app-calendar-week-shell-v2 overflow-hidden rounded-[30px] border p-3 shadow-[0_24px_70px_rgba(15,118,110,0.1)]">
-              <div className="overflow-x-auto pb-1">
-                <div className="grid min-w-[1120px] grid-cols-7 gap-3">
+              <div className="app-calendar-week-scroll-v2 overflow-x-auto pb-1">
+                <div className="app-calendar-week-grid-v2 grid min-w-[1120px] grid-cols-7 gap-3">
                   {activitiesByDay.map(({ day, activities: dayActivities }) => (
                     <DayColumn
                       key={day.toISOString()}

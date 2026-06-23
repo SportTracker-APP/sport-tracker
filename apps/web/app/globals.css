@@ -15,6 +15,159 @@ body {
   color: var(--foreground);
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+.app-scroll {
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 640px) {
+  @supports (padding: max(0px)) {
+    .app-content-container {
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+    }
+  }
+
+  [data-slot="button"]:not([data-size^="icon"]) {
+    min-height: 44px;
+  }
+}
+
+.app-mobile-bottom-nav {
+  pointer-events: none;
+}
+
+.app-mobile-bottom-nav > div {
+  pointer-events: auto;
+}
+
+.app-mobile-bottom-nav-shell {
+  position: relative;
+  overflow: visible;
+  border-color: rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.045)),
+    rgba(10, 12, 18, 0.78);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.42),
+    0 8px 22px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(26px) saturate(1.25);
+  backdrop-filter: blur(26px) saturate(1.25);
+}
+
+.app-mobile-bottom-nav-shell::before {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(110, 231, 183, 0.14), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%);
+  content: "";
+}
+
+.app-mobile-bottom-nav-item {
+  z-index: 1;
+}
+
+.app-mobile-bottom-active-pill {
+  border: 1px solid rgba(110, 231, 183, 0.16);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(110, 231, 183, 0.18), transparent 58%),
+    rgba(16, 185, 129, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 22px rgba(16, 185, 129, 0.08);
+}
+
+.app-mobile-bottom-primary {
+  border-color: rgba(187, 247, 208, 0.34);
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 32% 18%, rgba(236, 253, 245, 0.38), transparent 38%),
+    linear-gradient(135deg, #10b981 0%, #16a34a 54%, #a3e635 100%);
+  box-shadow:
+    0 16px 34px rgba(16, 185, 129, 0.36),
+    0 0 0 6px rgba(16, 185, 129, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.app-mobile-bottom-nav-item[aria-current="page"] .app-mobile-bottom-primary {
+  box-shadow:
+    0 18px 38px rgba(16, 185, 129, 0.42),
+    0 0 0 7px rgba(16, 185, 129, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+}
+
+html.sport-theme-nature .app-mobile-bottom-nav-shell {
+  border-color: rgba(6, 95, 70, 0.14) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(244, 251, 247, 0.74)),
+    rgba(251, 254, 249, 0.78) !important;
+  box-shadow:
+    0 22px 62px rgba(6, 78, 59, 0.17),
+    0 8px 22px rgba(6, 78, 59, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84) !important;
+}
+
+html.sport-theme-nature .app-mobile-bottom-active-pill {
+  border-color: rgba(4, 120, 87, 0.14) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.16), transparent 56%),
+    rgba(236, 253, 245, 0.82) !important;
+}
+
+html.sport-theme-nature .app-mobile-bottom-primary {
+  border-color: rgba(4, 120, 87, 0.18) !important;
+  background:
+    radial-gradient(circle at 32% 18%, rgba(236, 253, 245, 0.48), transparent 38%),
+    linear-gradient(135deg, #047857 0%, #10b981 58%, #84cc16 100%) !important;
+  box-shadow:
+    0 16px 34px rgba(6, 78, 59, 0.28),
+    0 0 0 6px rgba(16, 185, 129, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+html.sport-theme-nature
+  .app-mobile-bottom-nav-item:not([aria-current="page"]) {
+  color: #64748b !important;
+}
+
+html.sport-theme-nature .app-mobile-bottom-nav-item[aria-current="page"] {
+  color: #047857 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-mobile-bottom-nav *,
+  .app-mobile-bottom-nav *::before,
+  .app-mobile-bottom-nav *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 .app-auth-page {
   --auth-photo-position: right center;
 }
@@ -4529,7 +4682,10 @@ html.sport-theme-nature .app-topbar [class*="bg-violet-400"] {
 }
 
 html.sport-theme-nature .app-mobile-sidebar {
-  position: relative;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
   isolation: isolate;
   overflow: hidden;
   border-color: var(--montaro-shell-border) !important;
@@ -6417,6 +6573,266 @@ html:not(.sport-theme-nature)
   .app-settings-actions {
   margin: 0 !important;
   padding-top: 0.25rem !important;
+}
+
+/* Responsive page pass: shared page surfaces only below desktop. */
+@media (max-width: 1023px) {
+  .app-activities-page,
+  .app-map-page,
+  .app-calendar-page-v2,
+  .app-settings-page,
+  .app-statistics-page {
+    min-width: 0;
+  }
+
+  .app-activities-hero,
+  .app-map-hero,
+  .app-calendar-hero-v2,
+  .app-premium-surface,
+  .app-settings-hero,
+  .app-statistics-forest-panel,
+  .app-statistics-insight-card,
+  .app-atlas-map,
+  .app-route-detail-panel,
+  .app-calendar-week-shell-v2 {
+    max-width: 100%;
+  }
+
+  .app-activity-card,
+  .app-map-stat-card,
+  .app-activities-summary-card,
+  .app-activities-summary-stat,
+  .app-calendar-day-v2,
+  .app-calendar-activity-v2,
+  .app-statistics-dashboard-modules,
+  .app-statistics-stat-row,
+  .app-settings-panel {
+    min-width: 0;
+  }
+
+  .app-filter-shell,
+  .app-map-control-panel,
+  .app-calendar-toolbar-v2 {
+    position: relative;
+    top: auto;
+  }
+
+  .app-calendar-week-shell-v2 {
+    overflow: hidden;
+  }
+
+  .app-calendar-week-scroll-v2 {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-activities-page,
+  .app-map-page,
+  .app-calendar-page-v2 {
+    gap: 1rem;
+  }
+
+  .app-activities-hero,
+  .app-map-hero,
+  .app-calendar-hero-v2,
+  .app-premium-surface,
+  .app-settings-hero {
+    border-radius: 22px !important;
+    padding: 1.1rem !important;
+  }
+
+  .app-activities-hero h1,
+  .app-map-hero h1,
+  .app-calendar-hero-v2 h1,
+  .app-premium-surface h1,
+  .app-settings-hero h1 {
+    font-size: clamp(1.8rem, 9vw, 2.35rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .app-activities-hero p,
+  .app-map-hero p,
+  .app-calendar-hero-v2 p,
+  .app-premium-surface p,
+  .app-settings-hero p {
+    font-size: 0.88rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .app-statistics-forest-panel,
+  .app-statistics-insight-card,
+  .app-statistics-refuge-card {
+    border-radius: 22px !important;
+    padding: 1rem !important;
+  }
+
+  .app-statistics-forest-panel h1,
+  .app-statistics-insight-card h2 {
+    font-size: clamp(1.55rem, 8vw, 2.15rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  .app-statistics-forest-summary {
+    width: 100%;
+  }
+
+  .app-activities-hero-cta,
+  .app-calendar-primary-button-v2 {
+    width: 100% !important;
+  }
+
+  .app-activity-filters,
+  .app-calendar-toolbar-v2 > div:first-child,
+  .app-map-control-panel .flex.flex-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    margin-inline: -0.15rem;
+    overflow-x: auto;
+    padding: 0.15rem 0.15rem 0.35rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .app-activity-filters::-webkit-scrollbar,
+  .app-calendar-toolbar-v2 > div:first-child::-webkit-scrollbar,
+  .app-map-control-panel .flex.flex-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-activity-filters button,
+  .app-calendar-toolbar-v2 button,
+  .app-map-control-panel button {
+    min-height: 44px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .app-activity-card {
+    border-radius: 20px !important;
+    padding: 1rem !important;
+  }
+
+  .app-activity-card .app-activity-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .app-activity-map-frame {
+    min-height: 180px;
+  }
+
+  .app-activities-summary-card,
+  .app-activities-summary-stat,
+  .app-map-stat-card,
+  .app-route-detail-panel,
+  .app-atlas-map {
+    border-radius: 22px !important;
+    padding: 1rem !important;
+  }
+
+  .app-mapbox-frame:not(.app-mapbox-frame-compact) {
+    height: min(68vh, 430px) !important;
+    min-height: 320px;
+    border-radius: 22px !important;
+  }
+
+  .app-mapbox-frame-compact {
+    height: 220px !important;
+  }
+
+  .app-calendar-toolbar-v2 {
+    border-radius: 22px !important;
+  }
+
+  .app-calendar-toolbar-v2 > div:first-child {
+    width: 100%;
+  }
+
+  .app-calendar-toolbar-v2 > a {
+    width: 100%;
+  }
+
+  .app-calendar-week-shell-v2 {
+    margin-inline: 0;
+    overflow: visible !important;
+    border-radius: 22px !important;
+    padding: 0.75rem !important;
+  }
+
+  .app-calendar-week-scroll-v2 {
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+  }
+
+  .app-calendar-week-grid-v2 {
+    min-width: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .app-calendar-day-v2 {
+    min-height: 0 !important;
+    border-radius: 20px !important;
+    padding: 0.9rem !important;
+  }
+
+  .app-calendar-activity-v2 {
+    border-radius: 16px !important;
+    padding: 0.85rem !important;
+  }
+
+  .app-settings-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-activities-hero,
+  .app-map-hero,
+  .app-calendar-hero-v2,
+  .app-premium-surface,
+  .app-settings-hero {
+    padding: 0.95rem !important;
+  }
+
+  .app-activities-hero-chips span {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .app-activity-card .app-activity-metric {
+    padding: 0.72rem !important;
+  }
+
+  .app-pagination-shell {
+    align-items: stretch;
+  }
+
+  .app-pagination-shell > div {
+    justify-content: space-between;
+  }
+
+  .app-map-message-card .grid,
+  .app-calendar-next-card-v2 .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .app-statistics-stat-row,
+  .app-statistics-refuge-card .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .app-statistics-stat-value {
+    text-align: left !important;
+  }
+
+  .app-calendar-week-grid-v2 {
+    min-width: 0 !important;
+  }
 }
 
 /* Calendar hero must stay light on its dark photographic background. */

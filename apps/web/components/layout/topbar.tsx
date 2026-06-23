@@ -79,7 +79,7 @@ export function Topbar() {
   };
 
   return (
-    <header className="app-topbar relative z-[100] flex h-20 items-center justify-between overflow-visible border-b border-white/[0.05] bg-[#0b0b0f]/95 px-4 backdrop-blur-2xl sm:px-8">
+    <header className="app-topbar relative z-[100] flex h-16 items-center justify-between overflow-visible border-b border-white/[0.05] bg-[#0b0b0f]/95 px-3 pt-[env(safe-area-inset-top)] backdrop-blur-2xl sm:h-20 sm:px-8 sm:pt-0">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-[-120px] left-[10%] h-[220px] w-[220px] rounded-full bg-violet-500/5 blur-3xl" />
         <div className="absolute top-[-80px] right-[5%] h-[180px] w-[180px] rounded-full bg-fuchsia-500/5 blur-3xl" />
@@ -118,7 +118,7 @@ export function Topbar() {
           >
             <span className="absolute inset-0 rounded-full bg-violet-500/20 opacity-0 blur-xl transition-all duration-500 group-hover:opacity-100" />
 
-            <span className="relative h-12 w-12 overflow-hidden rounded-full border border-white/[0.08] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(139,92,246,0.25)]">
+            <span className="relative h-11 w-11 overflow-hidden rounded-full border border-white/[0.08] bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-[0_0_20px_rgba(139,92,246,0.25)] sm:h-12 sm:w-12">
               {user?.avatarUrl ? (
                 <Image
                   src={user.avatarUrl}
