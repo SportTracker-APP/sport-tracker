@@ -38,8 +38,6 @@ import {
   calculateGoalProgress,
   formatGoalValue,
   getGoalPeriodBounds,
-  getGoalPeriodEndDate,
-  getGoalPeriodLabel,
   getStoredGoalPeriodBounds,
   getGoalTypeLabel,
   selectPrimaryGoal,
@@ -221,20 +219,6 @@ function getDefaultTitle(
   return `Objectif calories${sportLabel} ${periodLabel}`;
 }
 
-function formatGoalEndDate(endDate: string | Date) {
-  const date = endDate instanceof Date ? endDate : new Date(endDate);
-
-  if (Number.isNaN(date.getTime())) {
-    return "Échéance à définir";
-  }
-
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
-
 function formatGoalPeriodRange(
   period: GoalPeriod,
   startDate: Date,
@@ -404,12 +388,14 @@ function GoalCard({
   const progressPercent = Math.max(0, Math.min(progress.progress, 100));
   const Icon = goalIcons[goal.type];
   const isCompleted = progress.remaining <= 0;
-  const periodLabel = snapshot
-    ? formatGoalPeriodRange(goal.period, snapshot.startDate, snapshot.endDate)
-    : getGoalPeriodLabel(goal.period);
-  const footerPeriodLabel = snapshot
-    ? periodLabel
-    : formatGoalEndDate(getGoalPeriodEndDate(goal));
+  const activeBounds = getGoalPeriodBounds(goal);
+  const displayStartDate = snapshot?.startDate ?? activeBounds.startDate;
+  const displayEndDate = snapshot?.endDate ?? activeBounds.endDate;
+  const periodLabel = formatGoalPeriodRange(
+    goal.period,
+    displayStartDate,
+    displayEndDate,
+  );
   const progressStyle = {
     "--goal-progress": `${progressPercent}%`,
   } as CSSProperties;
@@ -418,7 +404,7 @@ function GoalCard({
     <article
       className={`${styles.goalCard} ${
         goal.isActive ? "" : styles.goalCardPaused
-      }`}
+      } ${goal.isPrimary && !snapshot ? styles.goalCardPrimary : ""}`}
     >
       <div className={styles.goalCardHeader}>
         <div className={styles.goalIdentity}>
@@ -454,6 +440,7 @@ function GoalCard({
                   : styles.statusPaused
             }`}
           >
+            {!snapshot && goal.isPrimary ? <Star aria-hidden="true" /> : null}
             {snapshot?.statusLabel ??
               (goal.isPrimary ? "Principal" : goal.isActive ? "Actif" : "En pause")}
           </span>
@@ -550,7 +537,7 @@ function GoalCard({
 
         <span>
           <CalendarDays aria-hidden="true" />
-          {footerPeriodLabel}
+          {periodLabel}
         </span>
       </div>
     </article>

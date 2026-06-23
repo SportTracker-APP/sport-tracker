@@ -8,6 +8,6 @@
     "check:backend": "npm --prefix backend run build",
     "check:web": "npm --prefix apps/web run typecheck",
     "db:generate": "npm --prefix backend exec prisma generate",
-    "db:migrate": "npm --prefix backend exec prisma migrate deploy"
+    "db:migrate": "npm --prefix backend run db:migrate"
   }
 }

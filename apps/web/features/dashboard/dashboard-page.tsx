@@ -51,6 +51,10 @@ import {
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { FadeIn } from "@/components/ui/fade-in";
 import {
+  SUMMIT_CELEBRATION_DASHBOARD_EVENT_KEY,
+  type SummitCelebrationEvent,
+} from "@/components/summits/summit-celebration-monitor";
+import {
   useActivities,
   useMarkPlannedWorkoutCelebrationSeen,
 } from "@/hooks/use-activities";
@@ -1196,6 +1200,109 @@ function PlannedWorkoutCelebrationCard({
   );
 }
 
+type StoredDashboardSummitEvent = SummitCelebrationEvent & {
+  dismissed?: boolean;
+  shownAt?: string;
+};
+
+function readDashboardSummitEvent() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(
+      SUMMIT_CELEBRATION_DASHBOARD_EVENT_KEY,
+    );
+
+    if (!rawValue) {
+      return null;
+    }
+
+    const event = JSON.parse(rawValue) as StoredDashboardSummitEvent;
+
+    if (
+      event.type !== "SUMMIT_DISCOVERY" ||
+      event.dismissed ||
+      event.shownAt ||
+      !event.summitName
+    ) {
+      return null;
+    }
+
+    return event;
+  } catch {
+    return null;
+  }
+}
+
+function markDashboardSummitEventRead(event: StoredDashboardSummitEvent) {
+  window.localStorage.setItem(
+    SUMMIT_CELEBRATION_DASHBOARD_EVENT_KEY,
+    JSON.stringify({
+      ...event,
+      shownAt: event.shownAt ?? new Date().toISOString(),
+    }),
+  );
+}
+
+function dismissDashboardSummitEvent(event: StoredDashboardSummitEvent) {
+  window.localStorage.setItem(
+    SUMMIT_CELEBRATION_DASHBOARD_EVENT_KEY,
+    JSON.stringify({
+      ...event,
+      dismissed: true,
+      shownAt: event.shownAt ?? new Date().toISOString(),
+    }),
+  );
+}
+
+function SummitDiscoveryCelebrationCard({
+  event,
+  onHide,
+}: {
+  event: StoredDashboardSummitEvent;
+  onHide: () => void;
+}) {
+  return (
+    <FadeIn delay={0.04}>
+      <section className={styles.celebrationCard} role="status" data-summit-celebration="true">
+        <div className={styles.celebrationIcon}>
+          <Mountain aria-hidden="true" />
+        </div>
+        <div className={styles.celebrationContent}>
+          <p className={styles.celebrationKicker}>Nouveau sommet découvert</p>
+          <h2>{event.summitName}</h2>
+          <p>
+            {event.summitName} rejoint votre carnet grâce à{" "}
+            {event.activityTitle ?? "une activité"}.
+          </p>
+          <div className={styles.celebrationMetrics}>
+            {typeof event.altitude === "number" ? (
+              <span>{formatNumber(event.altitude)} m</span>
+            ) : null}
+            <span>{event.massif}</span>
+            {event.activityTitle ? <span>{event.activityTitle}</span> : null}
+          </div>
+        </div>
+        <div className={styles.celebrationActions}>
+          <Link href="/sommets" className={styles.celebrationPrimaryAction}>
+            Voir le sommet
+          </Link>
+          <button
+            type="button"
+            className={styles.celebrationHideAction}
+            onClick={onHide}
+          >
+            <X aria-hidden="true" />
+            Masquer
+          </button>
+        </div>
+      </section>
+    </FadeIn>
+  );
+}
+
 export default function DashboardPage() {
   const { data: activities = [], isLoading, error } = useActivities();
   const { data: goals = [] } = useGoals();
@@ -1204,6 +1311,8 @@ export default function DashboardPage() {
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
   const [chartMetric, setChartMetric] = useState<ChartMetric>("distance");
   const [refugeMessage, setRefugeMessage] = useState(REFUGE_MESSAGES[0]);
+  const [summitCelebrationEvent, setSummitCelebrationEvent] =
+    useState<StoredDashboardSummitEvent | null>(null);
 
   useEffect(() => {
     const storedMetric = window.localStorage.getItem(CHART_METRIC_STORAGE_KEY);
@@ -1215,6 +1324,42 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setRefugeMessage(getDailyRefugeMessage(new Date()));
+  }, []);
+
+  useEffect(() => {
+    const storedEvent = readDashboardSummitEvent();
+
+    if (storedEvent) {
+      setSummitCelebrationEvent(storedEvent);
+      markDashboardSummitEventRead(storedEvent);
+    }
+
+    function handleSummitCelebration(event: Event) {
+      const customEvent = event as CustomEvent<SummitCelebrationEvent>;
+      const celebrationEvent = customEvent.detail;
+
+      if (
+        celebrationEvent?.type !== "SUMMIT_DISCOVERY" ||
+        !celebrationEvent.summitName
+      ) {
+        return;
+      }
+
+      setSummitCelebrationEvent(celebrationEvent);
+      markDashboardSummitEventRead(celebrationEvent);
+    }
+
+    window.addEventListener(
+      "montaro:summit-celebration",
+      handleSummitCelebration,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "montaro:summit-celebration",
+        handleSummitCelebration,
+      );
+    };
   }, []);
 
   const handleChartMetricChange = (metric: ChartMetric) => {
@@ -1598,6 +1743,16 @@ export default function DashboardPage() {
               isHiding={markCelebrationSeen.isPending}
               onHide={() => {
                 markCelebrationSeen.mutate(pendingCelebration.id);
+              }}
+            />
+          ) : null}
+
+          {summitCelebrationEvent ? (
+            <SummitDiscoveryCelebrationCard
+              event={summitCelebrationEvent}
+              onHide={() => {
+                dismissDashboardSummitEvent(summitCelebrationEvent);
+                setSummitCelebrationEvent(null);
               }}
             />
           ) : null}

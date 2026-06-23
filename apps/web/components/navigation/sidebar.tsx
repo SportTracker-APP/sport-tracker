@@ -50,14 +50,19 @@ const navigationItems = [
     icon: Activity,
   },
   {
-    title: "Statistiques",
-    href: "/statistiques",
-    icon: ChartColumn,
+    title: "Sommets",
+    href: "/sommets",
+    icon: Mountain,
   },
   {
     title: "Exploration",
     href: "/carte",
     icon: Map,
+  },
+  {
+    title: "Statistiques",
+    href: "/statistiques",
+    icon: ChartColumn,
   },
   {
     title: "Défis",

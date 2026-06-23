@@ -190,12 +190,12 @@ export function selectPrimaryGoal(goals: Goal[]) {
         secondBounds.startDate.getTime() <= now &&
         secondBounds.endDate.getTime() >= now;
 
-      if (firstIsCurrent !== secondIsCurrent) {
-        return firstIsCurrent ? -1 : 1;
-      }
-
       if (Boolean(firstGoal.isPrimary) !== Boolean(secondGoal.isPrimary)) {
         return firstGoal.isPrimary ? -1 : 1;
+      }
+
+      if (firstIsCurrent !== secondIsCurrent) {
+        return firstIsCurrent ? -1 : 1;
       }
 
       if (firstGoal.type !== secondGoal.type) {

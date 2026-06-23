@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/navigation/sidebar";
+import { SummitCelebrationMonitor } from "@/components/summits/summit-celebration-monitor";
 import { Topbar } from "@/components/layout/topbar";
 import { PageTransition } from "@/components/ui/page-transition";
 
@@ -9,6 +10,7 @@ type DashboardLayoutProps = {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="app-shell relative flex h-screen overflow-hidden bg-[#09090C] text-white">
+      <SummitCelebrationMonitor />
       {/* PREMIUM ATMOSPHERIC BACKGROUND */}
       <div className="app-shell-background pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#0B0B10_0%,#111118_40%,#15131B_100%)]" />

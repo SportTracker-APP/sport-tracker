@@ -32,14 +32,19 @@ const links = [
     icon: Activity,
   },
   {
-    label: "Statistiques",
-    href: "/statistiques",
-    icon: ChartColumn,
+    label: "Sommets",
+    href: "/sommets",
+    icon: Mountain,
   },
   {
     label: "Exploration",
     href: "/carte",
     icon: Map,
+  },
+  {
+    label: "Statistiques",
+    href: "/statistiques",
+    icon: ChartColumn,
   },
   {
     label: "Défis",

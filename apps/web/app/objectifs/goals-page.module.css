@@ -535,6 +535,17 @@
   box-shadow: var(--goals-shadow);
 }
 
+.goalCardPrimary {
+  border-color: rgba(245, 158, 11, 0.34);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(245, 158, 11, 0.18), transparent 30%),
+    radial-gradient(circle at 94% 0%, var(--goals-accent-soft), transparent 28%),
+    var(--goals-surface-strong);
+  box-shadow:
+    0 22px 70px rgba(245, 158, 11, 0.12),
+    var(--goals-shadow-soft);
+}
+
 .goalCardPaused {
   opacity: 0.76;
 }
@@ -619,11 +630,17 @@
   display: inline-flex;
   min-height: 26px;
   align-items: center;
+  gap: 0.28rem;
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 0 0.65rem;
   font-size: 0.66rem;
   font-weight: 720;
+}
+
+.statusBadge svg {
+  width: 0.78rem;
+  height: 0.78rem;
 }
 
 .statusActive {

@@ -30,7 +30,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { MiniRouteMap } from "@/components/activities/mini-route-map";
+import { ActivityMapboxRoute } from "@/components/activities/activity-mapbox-route";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { FadeIn } from "@/components/ui/fade-in";
 import {
@@ -1175,10 +1175,12 @@ export default function ActivityDetailsPage() {
 
                   <div className={styles.mapViewport}>
                     {heroPanel === "map" ? (
-                      <MiniRouteMap
-                        display="wide"
+                      <ActivityMapboxRoute
+                        city={activity.city}
+                        country={activity.country}
+                        distance={activity.distance}
                         polyline={activity.routePolyline}
-                        size="large"
+                        title={activity.title || "Sortie sans titre"}
                       />
                     ) : coverImageUrl ? (
                       <div className={styles.photoViewport}>

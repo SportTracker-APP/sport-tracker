@@ -103,12 +103,6 @@ type GeoJSONFeatureCollection = {
   }>;
 };
 
-declare global {
-  interface Window {
-    mapboxgl?: MapboxLike;
-  }
-}
-
 const OUTDOOR_SPORTS = new Set([
   "RUNNING",
   "TRAIL",
@@ -275,8 +269,10 @@ function matchesFilter(route: ProjectedRoute, selectedFilter: string) {
 
 function loadMapbox() {
   return new Promise<MapboxLike>((resolve, reject) => {
-    if (window.mapboxgl) {
-      resolve(window.mapboxgl);
+    const mapboxWindow = window as unknown as { mapboxgl?: MapboxLike };
+
+    if (mapboxWindow.mapboxgl) {
+      resolve(mapboxWindow.mapboxgl);
       return;
     }
 
@@ -294,8 +290,8 @@ function loadMapbox() {
 
     if (existingScript) {
       existingScript.addEventListener("load", () => {
-        if (window.mapboxgl) {
-          resolve(window.mapboxgl);
+        if (mapboxWindow.mapboxgl) {
+          resolve(mapboxWindow.mapboxgl);
         } else {
           reject(new Error("Mapbox indisponible"));
         }
@@ -311,8 +307,8 @@ function loadMapbox() {
     script.src = `https://api.mapbox.com/mapbox-gl-js/${MAPBOX_VERSION}/mapbox-gl.js`;
     script.async = true;
     script.onload = () => {
-      if (window.mapboxgl) {
-        resolve(window.mapboxgl);
+      if (mapboxWindow.mapboxgl) {
+        resolve(mapboxWindow.mapboxgl);
       } else {
         reject(new Error("Mapbox indisponible"));
       }
