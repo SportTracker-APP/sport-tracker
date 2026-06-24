@@ -164,7 +164,7 @@ export function MobileSidebar() {
 
       <SheetContent
         side="left"
-        className="app-mobile-sidebar !fixed !top-0 !bottom-0 !left-0 w-[min(22rem,calc(100vw-1rem))] border-zinc-800 bg-black p-0"
+        className="app-mobile-sidebar !fixed !top-16 !bottom-0 !left-0 w-[min(22rem,calc(100vw-1rem))] border-zinc-800 bg-black p-0"
       >
         <div className="flex h-full flex-col">
           {/* Logo */}

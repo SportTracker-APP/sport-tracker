@@ -192,8 +192,8 @@ export default function ActivitiesPage() {
 
         {/* CONTENT */}
         {!isLoading && !error && (
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-            <div className="space-y-4">
+          <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="min-w-0 space-y-4">
               <div className="app-filter-shell sticky top-0 z-10 rounded-[24px] border border-white/[0.08] bg-[#11131a]/90 p-4 backdrop-blur-xl">
                 <ActivityFilters
                   activeFilter={activeFilter}
@@ -201,7 +201,7 @@ export default function ActivitiesPage() {
                 />
               </div>
 
-              <div className="space-y-4">
+              <div className="min-w-0 space-y-4">
                 {filteredActivities.length === 0 ? (
                   <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center">
                     <h3 className="text-lg font-semibold text-white">

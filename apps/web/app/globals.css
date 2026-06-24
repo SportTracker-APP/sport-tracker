@@ -1190,6 +1190,18 @@ html.sport-theme-nature .app-mobile-menu-trigger {
   box-shadow: 0 12px 28px rgba(21, 128, 61, 0.1) !important;
 }
 
+.app-mobile-sidebar {
+  top: 4rem !important;
+  height: calc(100dvh - 4rem) !important;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .app-mobile-sidebar {
+    top: 5rem !important;
+    height: calc(100dvh - 5rem) !important;
+  }
+}
+
 html.sport-theme-nature .app-mobile-sidebar {
   border-color: var(--nature-border) !important;
   background:
@@ -4683,9 +4695,10 @@ html.sport-theme-nature .app-topbar [class*="bg-violet-400"] {
 
 html.sport-theme-nature .app-mobile-sidebar {
   position: fixed !important;
-  top: 0 !important;
+  top: 4rem !important;
   bottom: 0 !important;
   left: 0 !important;
+  height: calc(100dvh - 4rem) !important;
   isolation: isolate;
   overflow: hidden;
   border-color: var(--montaro-shell-border) !important;
@@ -4723,6 +4736,13 @@ html.sport-theme-nature .app-mobile-sidebar a {
 html.sport-theme-nature .app-mobile-sidebar a:hover {
   background: rgba(255, 255, 255, 0.42) !important;
   color: var(--montaro-shell-forest) !important;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  html.sport-theme-nature .app-mobile-sidebar {
+    top: 5rem !important;
+    height: calc(100dvh - 5rem) !important;
+  }
 }
 
 /* Account dropdown ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬ ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â avatar menu */
@@ -6573,6 +6593,70 @@ html:not(.sport-theme-nature)
   .app-settings-actions {
   margin: 0 !important;
   padding-top: 0.25rem !important;
+}
+
+/* Calendar mobile hard stop: desktop week grid must never survive below lg. */
+@media (max-width: 1023px) {
+  html .app-shell main .app-calendar-page-v2,
+  html.sport-theme-nature .app-shell main .app-calendar-page-v2 {
+    overflow-x: hidden !important;
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  html .app-shell main .app-calendar-week-shell-v2,
+  html.sport-theme-nature .app-shell main .app-calendar-week-shell-v2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  html .app-shell main .app-calendar-week-scroll-v2,
+  html.sport-theme-nature .app-shell main .app-calendar-week-scroll-v2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+  }
+
+  html .app-shell main .app-calendar-week-grid-v2,
+  html.sport-theme-nature .app-shell main .app-calendar-week-grid-v2 {
+    display: grid !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  html .app-shell main .app-calendar-week-grid-v2 > *,
+  html.sport-theme-nature .app-shell main .app-calendar-week-grid-v2 > * {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html .app-shell main .app-calendar-day-v2,
+  html.sport-theme-nature .app-shell main .app-calendar-day-v2 {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  html .app-shell main .app-calendar-activity-v2,
+  html.sport-theme-nature .app-shell main .app-calendar-activity-v2 {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere;
+  }
+
+  html .app-shell main .app-calendar-activity-v2 *,
+  html.sport-theme-nature .app-shell main .app-calendar-activity-v2 * {
+    min-width: 0;
+  }
 }
 
 /* Responsive page pass: shared page surfaces only below desktop. */

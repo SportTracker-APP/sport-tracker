@@ -134,14 +134,14 @@ export function ActivityCard({
   return (
     <Link
       href={`/activites/${id}`}
-      className="app-activity-card group relative block overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#171922]/92 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14] hover:bg-[#1b1d28]/95 focus:ring-2 focus:ring-violet-400/60 focus:outline-none"
+      className="app-activity-card group relative block w-full min-w-0 max-w-full overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#171922]/92 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14] hover:bg-[#1b1d28]/95 focus:ring-2 focus:ring-violet-400/60 focus:outline-none"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.10),transparent_34%)] opacity-80" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.035),transparent_30%)]" />
 
-      <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_260px] xl:items-center">
+      <div className="relative grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_260px] xl:items-center">
         <div className="min-w-0">
-          <div className="flex items-start gap-4">
+          <div className="flex min-w-0 items-start gap-4">
             <div className="app-activity-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-violet-300 transition-colors group-hover:text-white">
               <Icon size={22} />
             </div>
@@ -177,7 +177,7 @@ export function ActivityCard({
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="mt-5 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="app-activity-metric rounded-2xl border border-white/[0.06] bg-white/[0.025] px-3 py-3">
               <div className="flex items-center gap-2 text-xs text-zinc-500">
                 <MapPin className="h-3.5 w-3.5 text-sky-300" />

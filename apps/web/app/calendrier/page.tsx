@@ -443,8 +443,8 @@ export default function CalendarPage() {
         {!isLoading && !error && (
           <FadeIn delay={0.08}>
             <section className="app-calendar-week-shell-v2 overflow-hidden rounded-[30px] border p-3 shadow-[0_24px_70px_rgba(15,118,110,0.1)]">
-              <div className="app-calendar-week-scroll-v2 overflow-x-auto pb-1">
-                <div className="app-calendar-week-grid-v2 grid min-w-[1120px] grid-cols-7 gap-3">
+              <div className="app-calendar-week-scroll-v2 overflow-x-auto pb-1 max-lg:overflow-visible max-lg:pb-0">
+                <div className="app-calendar-week-grid-v2 grid min-w-[1120px] grid-cols-7 gap-3 max-lg:min-w-0 max-lg:grid-cols-1 max-lg:gap-3">
                   {activitiesByDay.map(({ day, activities: dayActivities }) => (
                     <DayColumn
                       key={day.toISOString()}
@@ -529,7 +529,7 @@ function DayColumn({
 
   return (
     <article
-      className={`app-calendar-day-v2 flex min-h-[340px] min-w-0 flex-col rounded-[24px] border p-3.5 transition duration-200 hover:-translate-y-0.5 ${
+      className={`app-calendar-day-v2 flex min-h-[340px] min-w-0 flex-col rounded-[24px] border p-3.5 transition duration-200 hover:-translate-y-0.5 max-lg:w-full max-lg:min-w-0 ${
         isToday ? "app-calendar-day-today-v2" : ""
       }`}
     >
@@ -646,7 +646,7 @@ function CalendarActivity({
 
   return (
     <article
-      className={`app-calendar-activity-v2 group block rounded-[18px] border p-3 transition hover:-translate-y-0.5 ${
+      className={`app-calendar-activity-v2 group block w-full min-w-0 rounded-[18px] border p-3 transition hover:-translate-y-0.5 ${
         status.tone === "planned" ? "app-calendar-activity-planned-v2" : ""
       } ${
         status.tone === "completed" ? "app-calendar-activity-completed-v2" : ""
@@ -663,12 +663,12 @@ function CalendarActivity({
 
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-1.5">
-            <p className="truncate text-[0.66rem] font-semibold text-slate-500">
+            <p className="min-w-0 break-words text-[0.66rem] font-semibold text-slate-500">
               {timeFormatter.format(activityDate)} ·{" "}
               {sportLabels[activity.sport] ?? activity.sport}
             </p>
             <span
-              className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-1 text-[0.5rem] font-bold uppercase tracking-[0.08em] text-emerald-700"
+              className="inline-flex min-w-0 shrink items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-1 text-[0.5rem] font-bold uppercase tracking-[0.08em] text-emerald-700"
             >
               <StatusIcon className="h-3 w-3" aria-hidden="true" />
               {status.label}
@@ -679,7 +679,7 @@ function CalendarActivity({
 
       <Link
         href={activityHref}
-        className="mx-auto mt-3 line-clamp-2 block max-w-[12rem] text-center text-[0.92rem] font-bold leading-6 text-slate-950 transition group-hover:text-emerald-800"
+        className="mx-auto mt-3 line-clamp-2 block max-w-full text-center text-[0.92rem] font-bold leading-6 text-slate-950 transition group-hover:text-emerald-800"
         title={activity.title ?? "Séance sans titre"}
       >
         {activity.title ?? "Séance sans titre"}
@@ -718,7 +718,7 @@ function CalendarActivity({
             aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée et saisir ses résultats`}
           >
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">Sortie faite</span>
+            <span className="min-w-0 whitespace-normal text-center">Sortie faite</span>
           </Link>
           <button
             type="button"
@@ -728,7 +728,7 @@ function CalendarActivity({
             title="Supprimer du planning"
           >
             <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="truncate">Supprimer</span>
+            <span className="min-w-0 whitespace-normal text-center">Supprimer</span>
           </button>
         </div>
       ) : null}

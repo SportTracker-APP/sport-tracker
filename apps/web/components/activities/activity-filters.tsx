@@ -20,7 +20,7 @@ export function ActivityFilters({
   onFilterChange,
 }: ActivityFiltersProps) {
   return (
-    <div className="app-activity-filters flex flex-wrap gap-3">
+    <div className="app-activity-filters flex min-w-0 max-w-full flex-wrap gap-3">
       {filters.map((filter) => {
         const isActive = activeFilter === filter;
 
