@@ -18,6 +18,8 @@ import { AdminModule } from './modules/admin/admin.module';
 
 import { GoalsModule } from './modules/goals/goals.module';
 
+import { MailModule } from './mail/mail.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,6 +42,8 @@ import { GoalsModule } from './modules/goals/goals.module';
     AdminModule,
 
     GoalsModule,
+
+    MailModule,
   ],
 })
 export class AppModule {}
