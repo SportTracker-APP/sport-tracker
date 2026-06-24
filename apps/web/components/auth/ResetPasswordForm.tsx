@@ -3,18 +3,20 @@
 import { useMemo, useState } from "react";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, ShieldCheck } from "lucide-react";
 
-import { registerUser } from "@/lib/auth";
+import { resetPassword } from "@/lib/auth";
 
-import { useAuthStore } from "@/store/auth-store";
-
-import { registerSchema, RegisterSchema } from "@/lib/schemas/auth.schema";
+import {
+  resetPasswordSchema,
+  ResetPasswordSchema,
+} from "@/lib/schemas/auth.schema";
 
 import { Button } from "@/components/ui/button";
 
@@ -22,49 +24,60 @@ import { Input } from "@/components/ui/input";
 
 import { getPasswordStrength } from "./password-strength";
 
-export function RegisterForm() {
-  const setAuth = useAuthStore((state) => state.setAuth);
+export function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? "";
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [serverError, setServerError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const {
-    register: formRegister,
+    register,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting, isSubmitted },
-  } = useForm<RegisterSchema>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<ResetPasswordSchema>({
+    resolver: zodResolver(resetPasswordSchema),
     mode: "onSubmit",
     reValidateMode: "onChange",
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const password = watch("password") || "";
-  const showFirstNameError = Boolean(errors.firstName && isSubmitted);
-  const showEmailError = Boolean(errors.email && isSubmitted);
-  const showPasswordError = Boolean(errors.password && isSubmitted);
-
   const passwordStrength = useMemo(
     () => getPasswordStrength(password),
     [password],
   );
+  const showPasswordError = Boolean(errors.password && isSubmitted);
+  const showConfirmPasswordError = Boolean(
+    errors.confirmPassword && isSubmitted,
+  );
 
-  async function onSubmit(data: RegisterSchema) {
+  async function onSubmit(data: ResetPasswordSchema) {
+    if (!token) {
+      setServerError("Lien invalide ou expiré.");
+      return;
+    }
+
     try {
       setServerError(null);
+      setSuccessMessage(null);
 
-      const response = await registerUser(
-        data.firstName,
-        data.email,
+      const response = await resetPassword(
+        token,
         data.password,
+        data.confirmPassword,
       );
 
-      setAuth(response.accessToken, response.user);
-
-      window.location.href = "/";
+      setSuccessMessage(response.message);
+      window.setTimeout(() => router.push("/login"), 1200);
     } catch (error: unknown) {
-      setServerError("Une erreur est survenue");
+      setServerError("Lien invalide, expiré ou déjà utilisé.");
     }
   }
 
@@ -73,73 +86,35 @@ export function RegisterForm() {
       <div className="mb-8 space-y-3 text-center">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-violet-500/20">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500">
-            <Lock className="h-6 w-6 text-white" />
+            <ShieldCheck className="h-6 w-6 text-white" />
           </div>
         </div>
 
         <h2 className="text-4xl font-bold tracking-tight text-white">
-          Créer un compte
+          Nouveau mot de passe
         </h2>
 
-        <p className="text-zinc-400">Commence gratuitement dès aujourd'hui.</p>
+        <p className="text-zinc-400">
+          Choisis un mot de passe solide pour sécuriser ton compte.
+        </p>
       </div>
 
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* FIRST NAME */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-300">Prénom</label>
-
-          <div className="relative">
-            <User className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
-
-            <Input
-              type="text"
-              placeholder="Ton prénom"
-              autoComplete="given-name"
-              className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
-              {...formRegister("firstName")}
-            />
-          </div>
-
-          {showFirstNameError && (
-            <p className="text-sm text-red-400">{errors.firstName?.message}</p>
-          )}
-        </div>
-        {/* EMAIL */}
-        <div className="space-y-2">
-          <label className="text-sm text-zinc-300">Email</label>
-
-          <div className="relative">
-            <Mail className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
-
-            <Input
-              type="email"
-              placeholder="ton@email.com"
-              autoComplete="email"
-              className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
-              {...formRegister("email")}
-            />
-          </div>
-
-          {showEmailError && (
-            <p className="text-sm text-red-400">{errors.email?.message}</p>
-          )}
-        </div>
-
-        {/* PASSWORD */}
         <div className="space-y-3">
           <div className="space-y-2">
-            <label className="text-sm text-zinc-300">Mot de passe</label>
+            <label className="text-sm text-zinc-300">
+              Nouveau mot de passe
+            </label>
 
             <div className="relative">
               <Lock className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
 
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder="Minimum 6 caractères"
+                placeholder="Minimum 8 caractères"
                 autoComplete="new-password"
                 className="h-12 border-white/10 bg-black/30 pr-12 pl-12 text-white placeholder:text-zinc-500"
-                {...formRegister("password")}
+                {...register("password")}
               />
 
               <button
@@ -179,37 +154,63 @@ export function RegisterForm() {
           )}
         </div>
 
-        {/* SERVER ERROR */}
+        <div className="space-y-2">
+          <label className="text-sm text-zinc-300">
+            Confirmer le mot de passe
+          </label>
+
+          <div className="relative">
+            <Lock className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-500" />
+
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirme ton mot de passe"
+              autoComplete="new-password"
+              className="h-12 border-white/10 bg-black/30 pl-12 text-white placeholder:text-zinc-500"
+              {...register("confirmPassword")}
+            />
+          </div>
+
+          {showConfirmPasswordError && (
+            <p className="text-sm text-red-400">
+              {errors.confirmPassword?.message}
+            </p>
+          )}
+        </div>
+
         {serverError && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+          <div className="app-auth-alert app-auth-alert-error">
             {serverError}
           </div>
         )}
 
-        {/* BUTTON */}
+        {successMessage && (
+          <div className="app-auth-alert app-auth-alert-success">
+            {successMessage}
+          </div>
+        )}
+
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !token}
           className="h-12 w-full rounded-xl bg-violet-500 text-base font-medium text-white transition-all hover:bg-violet-400"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Création...
+              Mise à jour...
             </span>
           ) : (
-            "Créer mon compte"
+            "Réinitialiser le mot de passe"
           )}
         </Button>
 
-        {/* FOOTER */}
         <p className="pt-4 text-center text-sm text-zinc-500">
-          Déjà un compte ?{" "}
           <Link
             href="/login"
             className="text-violet-400 transition hover:text-violet-300"
           >
-            Se connecter
+            Retour à la connexion
           </Link>
         </p>
       </form>

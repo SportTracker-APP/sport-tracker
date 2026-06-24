@@ -46,6 +46,40 @@ export async function login(
   return data;
 }
 
+export interface GenericAuthMessageResponse {
+  message: string;
+}
+
+export async function forgotPassword(
+  email: string,
+): Promise<GenericAuthMessageResponse> {
+  const { data } = await api.post<GenericAuthMessageResponse>(
+    "/auth/forgot-password",
+    {
+      email,
+    },
+  );
+
+  return data;
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+  confirmPassword: string,
+): Promise<GenericAuthMessageResponse> {
+  const { data } = await api.post<GenericAuthMessageResponse>(
+    "/auth/reset-password",
+    {
+      token,
+      password,
+      confirmPassword,
+    },
+  );
+
+  return data;
+}
+
 export async function getMe(): Promise<AuthUser> {
   const { data } = await api.get<AuthUser>("/users/me");
 
