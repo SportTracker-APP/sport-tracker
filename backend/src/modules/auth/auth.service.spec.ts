@@ -1,6 +1,7 @@
 import { BadRequestException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { createHash } from 'crypto';
 
 import { MailService } from '../../mail/mail.service';
@@ -13,6 +14,8 @@ type UserMock = {
   email: string;
   firstName: string;
   password: string;
+  role: 'USER' | 'ADMIN';
+  isBlocked: boolean;
 };
 
 type PasswordResetTokenMock = {
@@ -42,6 +45,10 @@ type MailMock = {
   sendPasswordChangedEmail: jest.Mock;
 };
 
+type JwtMock = {
+  signAsync: jest.Mock;
+};
+
 const genericForgotPasswordMessage =
   'Si un compte correspond à cette adresse, un email de réinitialisation a été envoyé.';
 
@@ -50,6 +57,8 @@ const user: UserMock = {
   email: 'camille@example.test',
   firstName: 'Camille',
   password: 'old-hash',
+  role: 'USER',
+  isBlocked: false,
 };
 
 function hashToken(token: string): string {
@@ -90,7 +99,20 @@ function makeMailMock(): MailMock {
   };
 }
 
-function makeService(prisma = makePrismaMock(), mail = makeMailMock()) {
+function makeJwtMock(): JwtMock {
+  return {
+    signAsync: jest
+      .fn()
+      .mockResolvedValueOnce('access-token')
+      .mockResolvedValueOnce('refresh-token'),
+  };
+}
+
+function makeService(
+  prisma = makePrismaMock(),
+  mail = makeMailMock(),
+  jwt = makeJwtMock(),
+) {
   const configService = {
     get: jest.fn((key: string) => {
       const values: Record<string, string> = {
@@ -105,9 +127,10 @@ function makeService(prisma = makePrismaMock(), mail = makeMailMock()) {
   return {
     prisma,
     mail,
+    jwt,
     service: new AuthService(
       prisma as unknown as PrismaService,
-      {} as unknown as JwtService,
+      jwt as unknown as JwtService,
       configService as unknown as ConfigService,
       mail as unknown as MailService,
     ),
@@ -399,6 +422,79 @@ describe('AuthService password reset', () => {
         deviceName: 'Appareil non identifié',
         location: 'Localisation non disponible',
         businessId: 'reset-token-1',
+      }),
+    );
+  });
+
+  it('rejects the old password after reset', async () => {
+    const { service, prisma } = makeService();
+    prisma.passwordResetToken.findUnique.mockResolvedValue(makeResetToken());
+
+    await service.resetPassword({
+      token: 'valid-token',
+      password: 'NewPassword1',
+      confirmPassword: 'NewPassword1',
+    });
+
+    const updatePayload = prisma.user.update.mock.calls[0]?.[0] as
+      | {
+          data?: {
+            password?: string;
+          };
+        }
+      | undefined;
+
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      password: updatePayload?.data?.password,
+    });
+
+    await expect(service.login(user.email, 'OldPassword1')).rejects.toThrow(
+      'Email ou mot de passe incorrect',
+    );
+  });
+
+  it('accepts the new password after reset', async () => {
+    const { service, prisma } = makeService();
+    prisma.passwordResetToken.findUnique.mockResolvedValue(makeResetToken());
+
+    await service.resetPassword({
+      token: 'valid-token',
+      password: 'NewPassword1',
+      confirmPassword: 'NewPassword1',
+    });
+
+    const updatePayload = prisma.user.update.mock.calls[0]?.[0] as
+      | {
+          data?: {
+            password?: string;
+          };
+        }
+      | undefined;
+
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      password: updatePayload?.data?.password,
+    });
+
+    await expect(service.login(user.email, 'NewPassword1')).resolves.toEqual({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+    expect(prisma.user.update).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: {
+          id: user.id,
+        },
+        data: expect.objectContaining({
+          refreshToken: expect.stringMatching(/^\$2[ab]\$/),
+        }),
       }),
     );
   });
