@@ -24,11 +24,26 @@ export async function registerUser(
   firstName: string,
   email: string,
   password: string,
+): Promise<GenericAuthMessageResponse> {
+  const { data } = await api.post<GenericAuthMessageResponse>(
+    "/auth/register",
+    {
+      firstName,
+      email,
+      password,
+    },
+  );
+
+  return data;
+}
+
+export async function verifyEmail(
+  token: string,
 ): Promise<AuthResponse> {
-  const { data } = await api.post<AuthResponse>("/auth/register", {
-    firstName,
-    email,
-    password,
+  const { data } = await api.get<AuthResponse>("/auth/verify-email", {
+    params: {
+      token,
+    },
   });
 
   return data;

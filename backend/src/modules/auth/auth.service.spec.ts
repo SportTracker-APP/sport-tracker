@@ -16,6 +16,7 @@ type UserMock = {
   password: string;
   role: 'USER' | 'ADMIN';
   isBlocked: boolean;
+  emailVerifiedAt: Date | null;
 };
 
 type PasswordResetTokenMock = {
@@ -27,10 +28,25 @@ type PasswordResetTokenMock = {
   user: Pick<UserMock, 'id' | 'email' | 'firstName'>;
 };
 
+type EmailVerificationTokenMock = {
+  id: string;
+  userId: string;
+  tokenHash: string;
+  expiresAt: Date;
+  usedAt: Date | null;
+  user: Pick<UserMock, 'id' | 'email' | 'firstName' | 'role' | 'emailVerifiedAt'>;
+};
+
 type PrismaMock = {
   user: {
+    create: jest.Mock;
     findUnique: jest.Mock;
     update: jest.Mock;
+  };
+  emailVerificationToken: {
+    create: jest.Mock;
+    findUnique: jest.Mock;
+    updateMany: jest.Mock;
   };
   passwordResetToken: {
     create: jest.Mock;
@@ -41,6 +57,8 @@ type PrismaMock = {
 };
 
 type MailMock = {
+  sendEmailVerification: jest.Mock;
+  sendWelcomeEmail: jest.Mock;
   sendPasswordResetEmail: jest.Mock;
   sendPasswordChangedEmail: jest.Mock;
 };
@@ -51,6 +69,8 @@ type JwtMock = {
 
 const genericForgotPasswordMessage =
   'Si un compte correspond à cette adresse, un email de réinitialisation a été envoyé.';
+const registerMessage =
+  'Compte créé. Vérifiez votre boîte mail pour activer votre compte.';
 
 const user: UserMock = {
   id: 'user-1',
@@ -59,6 +79,7 @@ const user: UserMock = {
   password: 'old-hash',
   role: 'USER',
   isBlocked: false,
+  emailVerifiedAt: new Date('2026-06-24T12:00:00.000Z'),
 };
 
 function hashToken(token: string): string {
@@ -68,8 +89,14 @@ function hashToken(token: string): string {
 function makePrismaMock(): PrismaMock {
   const prisma: PrismaMock = {
     user: {
+      create: jest.fn().mockResolvedValue(user),
       findUnique: jest.fn(),
       update: jest.fn(),
+    },
+    emailVerificationToken: {
+      create: jest.fn().mockResolvedValue({ id: 'verify-token-1' }),
+      findUnique: jest.fn(),
+      updateMany: jest.fn(),
     },
     passwordResetToken: {
       create: jest.fn().mockResolvedValue({ id: 'reset-token-1' }),
@@ -88,6 +115,14 @@ function makePrismaMock(): PrismaMock {
 
 function makeMailMock(): MailMock {
   return {
+    sendEmailVerification: jest.fn().mockResolvedValue({
+      skipped: false,
+      resendId: 'email-0',
+    }),
+    sendWelcomeEmail: jest.fn().mockResolvedValue({
+      skipped: false,
+      resendId: 'email-welcome',
+    }),
     sendPasswordResetEmail: jest.fn().mockResolvedValue({
       skipped: false,
       resendId: 'email-1',
@@ -117,6 +152,8 @@ function makeService(
     get: jest.fn((key: string) => {
       const values: Record<string, string> = {
         APP_BASE_URL: 'http://localhost:3000',
+        EMAIL_VERIFICATION_TOKEN_TTL_MINUTES: '1440',
+        EMAIL_VERIFICATION_URL: 'http://localhost:3000/verify-email',
         PASSWORD_RESET_TOKEN_TTL_MINUTES: '30',
       };
 
@@ -155,6 +192,26 @@ function makeResetToken(
   };
 }
 
+function makeEmailVerificationToken(
+  overrides: Partial<EmailVerificationTokenMock> = {},
+): EmailVerificationTokenMock {
+  return {
+    id: 'verify-token-1',
+    userId: user.id,
+    tokenHash: hashToken('valid-verification-token'),
+    expiresAt: new Date(Date.now() + 24 * 60 * 60_000),
+    usedAt: null,
+    user: {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      role: user.role,
+      emailVerifiedAt: null,
+    },
+    ...overrides,
+  };
+}
+
 describe('AuthService password reset', () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -170,6 +227,149 @@ describe('AuthService password reset', () => {
       message: genericForgotPasswordMessage,
     });
     expect(mail.sendPasswordResetEmail).not.toHaveBeenCalled();
+  });
+
+  it('creates an email verification token and sends the verification email on register', async () => {
+    const { service, prisma, mail } = makeService();
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      ...user,
+      emailVerifiedAt: null,
+    });
+
+    await expect(
+      service.register({
+        firstName: user.firstName,
+        email: user.email,
+        password: 'Password1',
+      }),
+    ).resolves.toEqual({
+      message: registerMessage,
+    });
+
+    expect(prisma.emailVerificationToken.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          userId: user.id,
+          tokenHash: expect.not.stringContaining('verify-email'),
+        }),
+        select: {
+          id: true,
+        },
+      }),
+    );
+    expect(mail.sendEmailVerification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: user.email,
+        userName: user.firstName,
+        verifyUrl: expect.stringMatching(
+          /^http:\/\/localhost:3000\/verify-email\?token=/,
+        ),
+        expirationMinutes: 1440,
+        businessId: 'verify-token-1',
+      }),
+    );
+  });
+
+  it('does not fail registration when the verification email fails', async () => {
+    const { service, prisma, mail } = makeService();
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      ...user,
+      emailVerifiedAt: null,
+    });
+    mail.sendEmailVerification.mockRejectedValue(new Error('Resend failed'));
+
+    await expect(
+      service.register({
+        firstName: user.firstName,
+        email: user.email,
+        password: 'Password1',
+      }),
+    ).resolves.toEqual({
+      message: registerMessage,
+    });
+  });
+
+  it('marks the email as verified, returns a session, and sends the welcome email with a valid token', async () => {
+    const { service, prisma, mail } = makeService();
+    prisma.emailVerificationToken.findUnique.mockResolvedValue(
+      makeEmailVerificationToken(),
+    );
+
+    await expect(
+      service.verifyEmail({ token: 'valid-verification-token' }),
+    ).resolves.toEqual({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: {
+        id: user.id,
+      },
+      data: {
+        emailVerifiedAt: expect.objectContaining({}),
+      },
+    });
+    expect(prisma.emailVerificationToken.updateMany).toHaveBeenCalledWith({
+      where: {
+        userId: user.id,
+        usedAt: null,
+      },
+      data: {
+        usedAt: expect.objectContaining({}),
+      },
+    });
+    expect(mail.sendWelcomeEmail).toHaveBeenCalledWith({
+      to: user.email,
+      userName: user.firstName,
+      businessId: user.id,
+    });
+  });
+
+  it('rejects login before email verification', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      emailVerifiedAt: null,
+    });
+
+    await expect(service.login(user.email, 'Password1')).rejects.toThrow(
+      'Veuillez vérifier votre adresse email',
+    );
+  });
+
+  it('rejects an expired email verification token', async () => {
+    const { service, prisma } = makeService();
+    prisma.emailVerificationToken.findUnique.mockResolvedValue(
+      makeEmailVerificationToken({
+        expiresAt: new Date(Date.now() - 1_000),
+      }),
+    );
+
+    await expect(
+      service.verifyEmail({ token: 'valid-verification-token' }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('rejects an already used email verification token', async () => {
+    const { service, prisma } = makeService();
+    prisma.emailVerificationToken.findUnique.mockResolvedValue(
+      makeEmailVerificationToken({
+        usedAt: new Date(),
+      }),
+    );
+
+    await expect(
+      service.verifyEmail({ token: 'valid-verification-token' }),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('creates a reset token and sends the reset email for an existing account', async () => {

@@ -20,11 +20,14 @@ import { buildDefaultGoals } from '../goals/default-goals';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 
 const FORGOT_PASSWORD_MESSAGE =
   'Si un compte correspond à cette adresse, un email de réinitialisation a été envoyé.';
+const REGISTER_MESSAGE =
+  'Compte créé. Vérifiez votre boîte mail pour activer votre compte.';
 
-const RESET_TOKEN_BYTES = 32;
+const SECURE_TOKEN_BYTES = 32;
 const RESET_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const RESET_RATE_LIMIT_MAX_ATTEMPTS = 3;
 
@@ -115,33 +118,149 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prisma.user.create({
-      data: {
-        firstName: dto.firstName,
+    const { user, verificationToken } = await this.prisma.$transaction(
+      async (tx) => {
+        const createdUser = await tx.user.create({
+          data: {
+            firstName: dto.firstName,
 
-        email: dto.email,
+            email: dto.email,
 
-        password: hashedPassword,
+            password: hashedPassword,
 
-        goals: {
-          create: buildDefaultGoals(),
-        },
+            goals: {
+              create: buildDefaultGoals(),
+            },
+          },
+        });
+
+        const rawToken = this.generateSecureToken();
+        const tokenHash = this.hashToken(rawToken);
+        const createdVerificationToken = await tx.emailVerificationToken.create(
+          {
+            data: {
+              userId: createdUser.id,
+              tokenHash,
+              expiresAt: new Date(
+                Date.now() +
+                  this.getEmailVerificationTokenTtlMinutes() * 60_000,
+              ),
+            },
+            select: {
+              id: true,
+            },
+          },
+        );
+
+        return {
+          user: createdUser,
+          verificationToken: {
+            id: createdVerificationToken.id,
+            rawToken,
+          },
+        };
       },
+    );
+
+    try {
+      await this.mailService.sendEmailVerification({
+        to: user.email,
+        userName: user.firstName,
+        verifyUrl: this.buildEmailVerificationUrl(verificationToken.rawToken),
+        expirationMinutes: this.getEmailVerificationTokenTtlMinutes(),
+        businessId: verificationToken.id,
+      });
+    } catch {
+      this.logger.warn({
+        emailType: 'auth.verify_email',
+        recipient: maskEmailAddress(user.email),
+        message: 'Email verification email failed',
+      });
+    }
+
+    return {
+      message: REGISTER_MESSAGE,
+    };
+  }
+
+  async verifyEmail(dto: VerifyEmailDto) {
+    const tokenHash = this.hashToken(dto.token);
+    const verificationToken =
+      await this.prisma.emailVerificationToken.findUnique({
+        where: {
+          tokenHash,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              role: true,
+              emailVerifiedAt: true,
+            },
+          },
+        },
+      });
+
+    if (
+      !verificationToken ||
+      verificationToken.usedAt ||
+      verificationToken.expiresAt.getTime() <= Date.now()
+    ) {
+      throw new BadRequestException('Lien de vérification invalide ou expiré');
+    }
+
+    const now = new Date();
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: {
+          id: verificationToken.userId,
+        },
+        data: {
+          emailVerifiedAt: verificationToken.user.emailVerifiedAt ?? now,
+        },
+      });
+
+      await tx.emailVerificationToken.updateMany({
+        where: {
+          userId: verificationToken.userId,
+          usedAt: null,
+        },
+        data: {
+          usedAt: now,
+        },
+      });
     });
 
     const accessToken = await this.generateAccessToken(
-      user.id,
-      user.email,
-      user.role,
+      verificationToken.user.id,
+      verificationToken.user.email,
+      verificationToken.user.role,
     );
 
     const refreshToken = await this.generateRefreshToken(
-      user.id,
-      user.email,
-      user.role,
+      verificationToken.user.id,
+      verificationToken.user.email,
+      verificationToken.user.role,
     );
 
-    await this.updateRefreshToken(user.id, refreshToken);
+    await this.updateRefreshToken(verificationToken.user.id, refreshToken);
+
+    try {
+      await this.mailService.sendWelcomeEmail({
+        to: verificationToken.user.email,
+        userName: verificationToken.user.firstName,
+        businessId: verificationToken.user.id,
+      });
+    } catch {
+      this.logger.warn({
+        emailType: 'auth.welcome',
+        recipient: maskEmailAddress(verificationToken.user.email),
+        message: 'Welcome email failed',
+      });
+    }
 
     return {
       accessToken,
@@ -149,13 +268,13 @@ export class AuthService {
       refreshToken,
 
       user: {
-        id: user.id,
+        id: verificationToken.user.id,
 
-        firstName: user.firstName,
+        firstName: verificationToken.user.firstName,
 
-        email: user.email,
+        email: verificationToken.user.email,
 
-        role: user.role,
+        role: verificationToken.user.role,
       },
     };
   }
@@ -173,6 +292,10 @@ export class AuthService {
 
     if (user.isBlocked) {
       throw new UnauthorizedException('Compte bloqué');
+    }
+
+    if (!user.emailVerifiedAt) {
+      throw new UnauthorizedException('Veuillez vérifier votre adresse email');
     }
 
     const passwordMatches = await bcrypt.compare(password, user.password);
@@ -241,8 +364,8 @@ export class AuthService {
       };
     }
 
-    const rawToken = randomBytes(RESET_TOKEN_BYTES).toString('hex');
-    const tokenHash = this.hashResetToken(rawToken);
+    const rawToken = this.generateSecureToken();
+    const tokenHash = this.hashToken(rawToken);
     const expiresAt = new Date(
       Date.now() + this.getResetTokenTtlMinutes() * 60_000,
     );
@@ -301,7 +424,7 @@ export class AuthService {
 
     this.assertPasswordPolicy(dto.password);
 
-    const tokenHash = this.hashResetToken(dto.token);
+    const tokenHash = this.hashToken(dto.token);
     const resetToken = await this.prisma.passwordResetToken.findUnique({
       where: {
         tokenHash,
@@ -398,7 +521,11 @@ export class AuthService {
     return email.trim().toLowerCase();
   }
 
-  private hashResetToken(token: string): string {
+  private generateSecureToken(): string {
+    return randomBytes(SECURE_TOKEN_BYTES).toString('hex');
+  }
+
+  private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
   }
 
@@ -415,6 +542,19 @@ export class AuthService {
     return parsedValue;
   }
 
+  private getEmailVerificationTokenTtlMinutes(): number {
+    const configuredValue = this.configService.get<string>(
+      'EMAIL_VERIFICATION_TOKEN_TTL_MINUTES',
+    );
+    const parsedValue = Number(configuredValue ?? 1440);
+
+    if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+      return 1440;
+    }
+
+    return parsedValue;
+  }
+
   private buildResetPasswordUrl(token: string): string {
     const appBaseUrl =
       this.configService.get<string>('APP_BASE_URL') ?? 'http://localhost:3000';
@@ -422,6 +562,26 @@ export class AuthService {
     resetUrl.searchParams.set('token', token);
 
     return resetUrl.toString();
+  }
+
+  private buildEmailVerificationUrl(token: string): string {
+    const configuredUrl = this.configService.get<string>(
+      'EMAIL_VERIFICATION_URL',
+    );
+
+    if (configuredUrl) {
+      const url = new URL(configuredUrl);
+      url.searchParams.set('token', token);
+
+      return url.toString();
+    }
+
+    const appBaseUrl =
+      this.configService.get<string>('APP_BASE_URL') ?? 'http://localhost:3000';
+    const verificationUrl = new URL('/verify-email', appBaseUrl);
+    verificationUrl.searchParams.set('token', token);
+
+    return verificationUrl.toString();
   }
 
   private assertPasswordPolicy(password: string) {
