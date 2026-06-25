@@ -71,7 +71,7 @@ export function PasswordSettingsCard() {
     <div className="app-settings-card-content">
       <header className="app-settings-card-header">
         <h2>Sécurité</h2>
-        <p>Modifiez votre mot de passe.</p>
+        <p>Modifie ton mot de passe.</p>
       </header>
 
       <div className="app-settings-form-stack">

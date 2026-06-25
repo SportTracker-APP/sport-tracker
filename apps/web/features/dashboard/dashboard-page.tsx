@@ -1127,9 +1127,9 @@ function StravaConnectionCard({ compact }: { compact: boolean }) {
       <div className={styles.emptyDashboardIcon}><Link2 aria-hidden="true" /></div>
       <div className={styles.stravaConnectionContent}>
         <p className={styles.emptyDashboardKicker}>Strava non synchronisé</p>
-        <h2>Synchronisez automatiquement vos sorties avec Strava</h2>
+        <h2>Synchronisez automatiquement tes sorties avec Strava</h2>
         <p>
-          Montaro fonctionne aussi avec vos activités ajoutées manuellement.
+          Montaro fonctionne aussi avec tes activités ajoutées manuellement.
         </p>
       </div>
       <div className={styles.emptyDashboardActions}>
@@ -1274,7 +1274,7 @@ function SummitDiscoveryCelebrationCard({
           <p className={styles.celebrationKicker}>Nouveau sommet découvert</p>
           <h2>{event.summitName}</h2>
           <p>
-            {event.summitName} rejoint votre carnet grâce à{" "}
+            {event.summitName} rejoint ton carnet grâce à{" "}
             {event.activityTitle ?? "une activité"}.
           </p>
           <div className={styles.celebrationMetrics}>
@@ -1671,7 +1671,7 @@ export default function DashboardPage() {
       title: hasStravaIntegration ? "Strava synchronisé" : "Strava à connecter",
       description: hasStravaIntegration
         ? "Les données du dashboard sont alimentées automatiquement."
-        : "Le dashboard utilise encore vos activités manuelles.",
+        : "Le dashboard utilise encore tes activités manuelles.",
       icon: hasStravaIntegration ? CheckCircle2 : AlertTriangle,
       href: "/integrations/strava",
       label: hasStravaIntegration ? "OK" : "Connecter",
@@ -1723,7 +1723,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className={styles.dashboardPage} data-dashboard-theme="adaptive">
         {isLoading ? (
-          <div className={styles.loadingState}>Chargement de votre dashboard…</div>
+          <div className={styles.loadingState}>Chargement de ton dashboard…</div>
         ) : null}
 
         {error ? (
@@ -1767,7 +1767,7 @@ export default function DashboardPage() {
                       Carnet d’exploration
                     </div>
                     <h1>
-                      Bienvenue dans votre refuge <span>outdoor.</span>
+                      Bienvenue dans ton refuge <span>outdoor.</span>
                     </h1>
                     <p>
                       {formatNumber(dashboardData.exploredSectors)} secteurs run,
@@ -1776,7 +1776,7 @@ export default function DashboardPage() {
                         1,
                       )} parcourus et {formatNumber(
                         dashboardData.rollingElevation,
-                      )} m D+ gravis sur vos 30 derniers jours.
+                      )} m D+ gravis sur tes 30 derniers jours.
                     </p>
                     <p>
                       Prochaine aventure : {nextAdventure}. Un terrain de jeu pour
@@ -1877,7 +1877,7 @@ export default function DashboardPage() {
                 <div className={`${styles.surface} ${styles.activityPanel}`}>
                   <SurfaceHeader
                     title="Activité sur les 30 derniers jours"
-                    description="Vos sorties réelles, jour par jour."
+                    description="Tes sorties réelles, jour par jour."
                     action={
                       <button type="button" className={styles.rangeButton}>
                         30 derniers jours <ChevronDown aria-hidden="true" />
@@ -1919,7 +1919,7 @@ export default function DashboardPage() {
                   <ActivityChart data={dashboardData.chartData} metric={chartMetric} />
                   <div className={styles.chartInsight}>
                     <Mountain aria-hidden="true" />
-                    Votre meilleure trace sur la période atteint
+                    Ta meilleure trace sur la période atteint
                     <strong>
                       {dashboardData.bestActivity
                         ? formatDistance(dashboardData.bestActivity.distance || 0, 1)
@@ -1935,7 +1935,7 @@ export default function DashboardPage() {
                 <div className={`${styles.surface} ${styles.tracesPanel}`}>
                   <SurfaceHeader
                     title="Dernières traces"
-                    description="Les sorties qui construisent votre terrain de jeu."
+                    description="Les sorties qui construisent ton terrain de jeu."
                   />
                   <RecentTraceList
                     activities={dashboardData.recentActivities}

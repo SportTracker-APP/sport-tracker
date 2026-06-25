@@ -26,7 +26,7 @@ export const REFUGE_MESSAGES: readonly RefugeMessage[] = [
   },
   {
     title: "Le lac est toujours là.",
-    body: "Votre prochain tour aussi. Le paysage n’est pas pressé, profitez-en.",
+    body: "Ton prochain tour aussi. Le paysage n’est pas pressé, profite-en.",
   },
   {
     title: "Un peu de D+, beaucoup de tête libre.",
@@ -42,11 +42,11 @@ export const REFUGE_MESSAGES: readonly RefugeMessage[] = [
   },
   {
     title: "La météo choisit l’ambiance.",
-    body: "Vous choisissez l’allure, l’itinéraire et la satisfaction de rentrer avec une nouvelle trace.",
+    body: "Tu choisis l’allure, l’itinéraire et la satisfaction de rentrer avec une nouvelle trace.",
   },
   {
     title: "Le sommet n’est jamais pressé.",
-    body: "Prenez le rythme qui vous ressemble. L’important est de continuer à monter.",
+    body: "Prends le rythme qui te ressemble. L’important est de continuer à monter.",
   },
   {
     title: "Les mollets ont signé sans lire les petites lignes.",
@@ -57,16 +57,16 @@ export const REFUGE_MESSAGES: readonly RefugeMessage[] = [
     body: "Tous les kilomètres n’ont pas besoin d’être rapides pour faire avancer l’histoire.",
   },
   {
-    title: "Le vent a gardé une place pour vous.",
-    body: "Prenez-la avant qu’il ne change d’avis, puis laissez la route faire le reste.",
+    title: "Le vent a gardé une place pour toi.",
+    body: "Prends-la avant qu’il ne change d’avis, puis laisse la route faire le reste.",
   },
   {
     title: "La prochaine trace commence près de la porte.",
     body: "Le plus difficile reste parfois de mettre les chaussures. Après, le terrain prend le relais.",
   },
   {
-    title: "Le refuge garde votre place au chaud.",
-    body: "Revenez avec de la boue, du dénivelé ou simplement une bonne raison de sourire.",
+    title: "Le refuge garde ta place au chaud.",
+    body: "Reviens avec de la boue, du dénivelé ou simplement une bonne raison de sourire.",
   },
   {
     title: "Aujourd’hui peut devenir un bon souvenir.",
@@ -78,10 +78,10 @@ export const REFUGE_MESSAGES: readonly RefugeMessage[] = [
   },
   {
     title: "Le terrain de jeu est déjà ouvert.",
-    body: "Course, trail, vélo ou marche : choisissez votre porte d’entrée, Montaro gardera la trace.",
+    body: "Course, trail, vélo ou marche : choisis ta porte d’entrée, Montaro gardera la trace.",
   },
   {
-    title: "Le paysage fait rarement de mauvais conseils.",
+    title: "Le paysage donne rarement de mauvais conseils.",
     body: "Ralentir, respirer, regarder plus loin : parfois, la meilleure progression commence comme ça.",
   },
 ] as const;
@@ -107,7 +107,9 @@ function getLocalDayKey(date: Date) {
 
 export function getDailyRefugeMessage(date: Date) {
   const dayKey = getLocalDayKey(date);
-  const index = hashString(`montaro-refuge:${dayKey}`) % REFUGE_MESSAGES.length;
+  const index =
+    hashString(`montaro-refuge:${dayKey}`) %
+    REFUGE_MESSAGES.length;
 
   return REFUGE_MESSAGES[index];
 }

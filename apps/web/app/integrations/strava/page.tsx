@@ -316,7 +316,7 @@ export default function StravaIntegrationPage() {
 
       if (getErrorStatus(error) === 401) {
         setMessage({
-          text: "Votre session a expiré. Reconnectez-vous, puis relancez la connexion Strava.",
+          text: "Ta session a expiré. Reconnecte-toi, puis relance la connexion Strava.",
           variant: "warning",
         });
 
@@ -347,7 +347,7 @@ export default function StravaIntegrationPage() {
 
       if (getErrorStatus(error) === 401) {
         setMessage({
-          text: "Votre session a expiré. Reconnectez-vous avant de connecter Strava.",
+          text: "Ta session a expiré. Reconnecte-toi avant de connecter Strava.",
           variant: "warning",
         });
 
@@ -384,7 +384,7 @@ export default function StravaIntegrationPage() {
 
       if (getErrorStatus(error) === 401) {
         setMessage({
-          text: "Votre session a expiré. Reconnectez-vous avant de synchroniser Strava.",
+          text: "Ta session a expiré. Reconnecte-toi avant de synchroniser Strava.",
           variant: "warning",
         });
 
@@ -445,12 +445,12 @@ export default function StravaIntegrationPage() {
               </div>
 
               <h1 className="text-4xl font-bold tracking-tight text-white">
-                Connectez votre compte Strava
+                Connecte ton compte Strava
               </h1>
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
-                Importez automatiquement vos activités, vos performances et
-                votre historique sportif dans Sport Tracker.
+                Importez automatiquement tes activités, tes performances et
+                ton historique sportif dans Sport Tracker.
               </p>
             </div>
 
@@ -582,7 +582,7 @@ export default function StravaIntegrationPage() {
                 </p>
               ) : (
                 <p className="mt-2 text-sm text-zinc-400">
-                  Synchronisez Strava pour afficher votre dernière activité
+                  Synchronisez Strava pour afficher ta dernière activité
                   importée.
                 </p>
               )}

@@ -27,8 +27,8 @@ export default function SettingsPage() {
                 <div>
                   <h1>Paramètres</h1>
                   <p>
-                    Gérez votre profil, votre identité Montaro et la sécurité de
-                    votre compte.
+                    Gére ton profil, ton identité Montaro et la sécurité de
+                    ton compte.
                   </p>
                 </div>
 
@@ -36,7 +36,7 @@ export default function SettingsPage() {
                   <ShieldCheck aria-hidden="true" />
                   <span>
                     <strong>Compte protégé</strong>
-                    <small>Vos données restent privées</small>
+                    <small>Tes données restent privées</small>
                   </span>
                 </div>
               </div>

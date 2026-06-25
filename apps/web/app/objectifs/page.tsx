@@ -786,7 +786,7 @@ export default function GoalsPage() {
                   Objectifs du moment
                 </div>
 
-                <h1>Gardez le cap, avancez à votre rythme.</h1>
+                <h1>Garde le cap, avance à ton rythme.</h1>
                 <p>
                   Des objectifs simples, lisibles et motivants pour transformer
                   chaque sortie en progression concrète.
@@ -874,7 +874,7 @@ export default function GoalsPage() {
 
                   <div className={styles.priorityStatus}>
                     <Sparkles aria-hidden="true" />
-                    Définissez votre prochain cap quand vous serez prêt.
+                    Définis ton prochain cap quand tu seras prêt.
                   </div>
 
                   <button
@@ -899,7 +899,7 @@ export default function GoalsPage() {
                   <Target aria-hidden="true" />
                   <h2>Caps en cours</h2>
                 </div>
-                <p>Suivez ce qui compte, sans surcharger votre tableau de bord.</p>
+                <p>Suis ce qui compte, sans surcharger ton tableau de bord.</p>
               </div>
 
               <div className={styles.filters} role="group" aria-label="Filtrer les objectifs">
@@ -940,7 +940,7 @@ export default function GoalsPage() {
 
             {isError && (
               <div className={styles.errorState}>
-                Impossible de charger vos objectifs : {getErrorMessage(error)}
+                Impossible de charger tes objectifs : {getErrorMessage(error)}
               </div>
             )}
 
@@ -953,7 +953,7 @@ export default function GoalsPage() {
             {isLoading && (
               <div className={styles.loadingState}>
                 <span />
-                Chargement de vos objectifs…
+                Chargement de tes objectifs…
               </div>
             )}
 
@@ -963,10 +963,10 @@ export default function GoalsPage() {
                   <CheckCircle2 aria-hidden="true" />
                 </div>
                 <div>
-                  <h3>Votre prochain cap commence ici.</h3>
+                  <h3>Ton prochain cap commence ici.</h3>
                   <p>
-                    Aucun objectif n’est imposé. Créez uniquement le cap qui vous
-                    correspond, au moment qui vous convient.
+                    Aucun objectif n’est imposé. Créez uniquement le cap qui te
+                    correspond, au moment qui te convient.
                   </p>
                   <button
                     type="button"
@@ -1035,7 +1035,7 @@ export default function GoalsPage() {
                   <h2>{editingGoal ? "Modifier l’objectif" : "Créer un objectif"}</h2>
                   <p>
                     {editingGoal
-                      ? "Ajustez la cible sans perdre votre progression."
+                      ? "Ajuste la cible sans perdre ta progression."
                       : "Un cap clair, mesurable et motivant."}
                   </p>
                 </div>
@@ -1080,8 +1080,8 @@ export default function GoalsPage() {
                     ))}
                   </select>
                   <small className={styles.fieldHint}>
-                    Choisissez un sport pour ne compter que ses activités, ou
-                    laissez “Tous les sports”.
+                    Choisis un sport pour filtrer tes activités, ou
+                    laisse “Tous les sports”.
                   </small>
                 </label>
 
@@ -1218,7 +1218,7 @@ export default function GoalsPage() {
                 </div>
               ) : (
                 <p className={styles.historyEmpty}>
-                  Votre premier objectif terminé apparaîtra ici.
+                  Ton premier objectif terminé apparaîtra ici.
                 </p>
               )}
             </section>

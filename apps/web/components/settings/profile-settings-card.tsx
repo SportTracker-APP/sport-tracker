@@ -39,7 +39,7 @@ export function ProfileSettingsCard() {
     <div className="app-settings-card-content">
       <header className="app-settings-card-header">
         <h2>Profil</h2>
-        <p>Modifiez vos informations personnelles.</p>
+        <p>Modifie tes informations personnelles.</p>
       </header>
 
       <AvatarUpload

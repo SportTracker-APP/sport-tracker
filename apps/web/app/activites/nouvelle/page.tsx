@@ -98,7 +98,7 @@ export default function NewActivityPage() {
       tone: styles.statViolet,
     },
     {
-      label: "Temps sportif",
+      label: "Temps en mouvement",
       value: isLoading
         ? "…"
         : formatDuration(recentDuration),
@@ -133,7 +133,7 @@ export default function NewActivityPage() {
                 )}
                 {isPlanning
                   ? "Planifier une sortie"
-                  : "Ajouter une activité passée"}
+                  : "Ajouter une sortie passée"}
               </div>
 
               <h1>
@@ -144,7 +144,7 @@ export default function NewActivityPage() {
                   </>
                 ) : (
                   <>
-                    Ajoutez une activité déjà{" "}
+                    Ajoutez une sortie déjà{" "}
                     <span>réalisée.</span>
                   </>
                 )}
@@ -153,7 +153,7 @@ export default function NewActivityPage() {
               <p>
                 {isPlanning
                   ? "Préparez votre séance, choisissez son créneau et retrouvez-la dans votre calendrier. Vous pourrez compléter ses résultats après la sortie."
-                  : "Renseignez les données d’une séance terminée pour enrichir vos statistiques, votre progression et votre carnet outdoor."}
+                  : "Renseignez les données d’une sortie terminée pour enrichir vos statistiques, votre progression et votre carnet outdoor."}
               </p>
 
               <div className={styles.sportPills}>
@@ -201,7 +201,7 @@ export default function NewActivityPage() {
             <h2>
               {isPlanning
                 ? "Construisez votre séance"
-                : "Consignez votre performance"}
+                : "Consignez votre sortie"}
             </h2>
             <span>
               Le formulaire s’adapte automatiquement au

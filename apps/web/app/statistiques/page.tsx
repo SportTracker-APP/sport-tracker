@@ -712,7 +712,7 @@ function DashboardActivityPanel({
       <ActivityChart data={chartData} metric={activeMetric} />
       <div className={styles.chartInsight}>
         <Mountain aria-hidden="true" />
-        Votre meilleure trace sur la période atteint
+        Ta meilleure trace sur la période atteint
         <strong>
           {bestActivity ? `${formatDistance(bestActivity.distance ?? 0)} km` : "0 km"}
         </strong>
@@ -892,7 +892,7 @@ export default function StatisticsPage() {
       ? `${topSport.label} devant ${secondarySport.label}, avec ${sportDistribution.length} sports actifs.`
       : topSport
         ? `${topSport.label} porte l'essentiel du volume récent.`
-        : "Ajoutez quelques sorties pour faire apparaître votre mix.";
+        : "Ajoute quelques sorties pour faire apparaître ton mix.";
   const heatmapMonthLabel = new Intl.DateTimeFormat("fr-FR", {
     month: "long",
     year: "numeric",
@@ -948,12 +948,12 @@ export default function StatisticsPage() {
                     Statistiques réelles
                   </div>
                   <h2 className="mt-5 max-w-3xl text-4xl leading-tight font-bold tracking-tight text-white xl:text-[44px]">
-                    Vos sorties racontent votre progression.
+                    Tes sorties racontent ta progression.
                   </h2>
                   <p className="mt-5 max-w-2xl text-sm leading-7 text-emerald-50/68">
                     Distance, D+, régularité et terrain préféré sont calculés
-                    depuis vos vraies activités. Le but : savoir où vous
-                    progressez, et où le prochain sentier vous attend.
+                    depuis tes vraies activités. Le but : savoir où tu
+                    progresses, et où le prochain sentier t'attend.
                   </p>
                 </div>
 
@@ -998,7 +998,7 @@ export default function StatisticsPage() {
                       Lecture du terrain
                     </p>
                     <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-                      Ce que vos sorties disent de vous.
+                      Ce que tes sorties disent de toi.
                     </h2>
                   </div>
 
@@ -1106,7 +1106,7 @@ export default function StatisticsPage() {
                       Répartition
                     </p>
                     <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-                      Votre mix outdoor.
+                      Ton mix outdoor.
                     </h2>
                   </div>
                   <Navigation className="h-6 w-6 text-emerald-300" />
@@ -1237,7 +1237,7 @@ export default function StatisticsPage() {
                     </p>
                     <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/72">
                       Le résumé mélange volume, régularité et dénivelé pour
-                      donner une humeur à votre bloc récent.
+                      donner une humeur à ton bloc récent.
                     </p>
                   </div>
 

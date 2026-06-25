@@ -40,7 +40,7 @@ export default function JournalPage() {
               </div>
 
               <h1 className="mt-5 text-4xl font-bold tracking-tight text-white md:text-5xl">
-                Votre carnet de bord, sans blabla inutile.
+                Ton carnet de bord, sans blabla inutile.
               </h1>
 
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">

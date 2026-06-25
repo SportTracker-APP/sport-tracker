@@ -143,12 +143,12 @@ export default function ActivitiesPage() {
               </div>
 
               <h1 className="mt-5 max-w-3xl text-4xl font-bold tracking-tight text-white">
-                Vos sorties, vos traces, votre progression.
+                Tes sorties, tes traces, ta progression.
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
                 Route, sentier, lac ou montagne : chaque sortie garde sa trace
-                et raconte un bout de terrain. Ici, votre carnet reste rapide,
+                et raconte un bout de terrain. Ici, ton carnet reste rapide,
                 lisible et prêt à donner envie de repartir.
               </p>
 
@@ -209,7 +209,7 @@ export default function ActivitiesPage() {
                     </h3>
 
                     <p className="mt-2 text-zinc-400">
-                      Commencez par créer votre première activité.
+                      Commencez par créer ta première activité.
                     </p>
                   </div>
                 ) : (

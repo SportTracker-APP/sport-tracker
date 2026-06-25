@@ -767,7 +767,7 @@ function MapboxOutdoorMap({
               {mapStatus === "error"
                 ? "Vérifiez la clé publique Mapbox ou la connexion réseau, puis rechargez la page."
                 : MAPBOX_TOKEN
-                  ? "Mapbox Outdoor prépare le relief et vos traces."
+                  ? "Mapbox Outdoor prépare le relief et tes traces."
                   : "Ajoutez NEXT_PUBLIC_MAPBOX_TOKEN dans l'environnement web pour afficher Mapbox Outdoor 3D."}
             </p>
           </div>
@@ -978,12 +978,12 @@ export default function MapPage() {
               </div>
 
               <h1 className="mt-5 max-w-3xl text-4xl font-bold tracking-tight text-white md:text-5xl">
-                Votre terrain de jeu, vu d’en haut.
+                Ton terrain de jeu, vu d’en haut.
               </h1>
 
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-200/82 md:text-base">
                 Lac, route, sentier, forêt ou montagne : chaque sortie ajoute
-                une ligne à votre atlas personnel. L’idée est simple : voir ce
+                une ligne à ton atlas personnel. L’idée est simple : voir ce
                 qui est déjà exploré, et repérer le prochain coin à aller
                 chercher.
               </p>
@@ -1022,7 +1022,7 @@ export default function MapPage() {
 
         {error && (
           <div className="rounded-[28px] border border-red-500/20 bg-red-500/10 p-8 text-center text-red-300">
-            Impossible de charger vos parcours.
+            Impossible de charger tes parcours.
           </div>
         )}
 
@@ -1157,7 +1157,7 @@ export default function MapPage() {
                         Trace sélectionnée
                       </h2>
                       <p className="text-sm text-zinc-400">
-                        Cliquez dans la liste pour isoler une aventure.
+                        Clique dans la liste pour isoler une aventure.
                       </p>
                     </div>
                   </div>

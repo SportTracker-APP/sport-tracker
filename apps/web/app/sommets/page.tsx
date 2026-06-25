@@ -363,7 +363,7 @@ function NextSummitCard({ summit }: { summit: SummitView | undefined }) {
       <div className={styles.nextSummitAside}>
         <strong>
           {summit.closestDistance !== null
-            ? `Votre trace est passée à ${formatDistanceMeters(
+            ? `Ta trace est passée à ${formatDistanceMeters(
                 summit.closestDistance,
               )} à vol d’oiseau`
             : "À placer dans une prochaine boucle"}
@@ -649,11 +649,11 @@ export default function SummitsPage() {
                   <Mountain aria-hidden="true" />
                   Carnet des sommets
                 </div>
-                <h1>Les sommets que vos traces ont déjà révélés.</h1>
+                <h1>Les sommets que tes traces ont déjà révélés.</h1>
                 <p>
                   Chaque sortie avec un tracé est comparée aux sommets du
                   catalogue. Quand la trace passe près d’un sommet, il entre dans
-                  votre collection.
+                  ta collection.
                 </p>
 
                 <div className={styles.heroProgress}>
@@ -695,7 +695,7 @@ export default function SummitsPage() {
             <div className={styles.sectionTitle}>
               <div>
                 <span>Zones à compléter</span>
-                <h2>Votre carte de conquête prend forme.</h2>
+                <h2>Ta carte de conquête prend forme.</h2>
               </div>
               <p>
                 Chaque massif devient une petite collection à remplir au fil des
@@ -851,7 +851,7 @@ export default function SummitsPage() {
 
         {error ? (
           <div className={styles.emptyState}>
-            Impossible de charger vos sorties pour analyser les sommets.
+            Impossible de charger tes sorties pour analyser les sommets.
           </div>
         ) : null}
 
