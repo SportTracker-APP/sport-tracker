@@ -37,9 +37,7 @@ export async function registerUser(
   return data;
 }
 
-export async function verifyEmail(
-  token: string,
-): Promise<AuthResponse> {
+export async function verifyEmail(token: string): Promise<AuthResponse> {
   const { data } = await api.get<AuthResponse>("/auth/verify-email", {
     params: {
       token,

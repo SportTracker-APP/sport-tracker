@@ -8,11 +8,17 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
+import {
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Mail,
+  User,
+} from "lucide-react";
 
 import { registerUser } from "@/lib/auth";
-
-import { useAuthStore } from "@/store/auth-store";
 
 import { registerSchema, RegisterSchema } from "@/lib/schemas/auth.schema";
 
@@ -23,11 +29,15 @@ import { Input } from "@/components/ui/input";
 import { getPasswordStrength } from "./password-strength";
 
 export function RegisterForm() {
-  const setAuth = useAuthStore((state) => state.setAuth);
-
   const [showPassword, setShowPassword] = useState(false);
 
   const [serverError, setServerError] = useState<string | null>(null);
+  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(
+    null,
+  );
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(
+    null,
+  );
 
   const {
     register: formRegister,
@@ -60,12 +70,53 @@ export function RegisterForm() {
         data.password,
       );
 
-      setAuth(response.accessToken, response.user);
-
-      window.location.href = "/";
+      setConfirmationEmail(data.email);
+      setConfirmationMessage(response.message);
     } catch (error: unknown) {
       setServerError("Une erreur est survenue");
     }
+  }
+
+  if (confirmationEmail) {
+    return (
+      <div className="app-auth-card rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
+        <div className="mb-8 space-y-3 text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-violet-500/20">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500">
+              <CheckCircle2 className="h-6 w-6 text-white" />
+            </div>
+          </div>
+
+          <h2 className="text-4xl font-bold tracking-tight text-white">
+            Vérifiez votre boîte mail
+          </h2>
+
+          <p className="text-zinc-400">
+            Nous avons envoyé un lien d’activation à {confirmationEmail}.
+          </p>
+        </div>
+
+        {confirmationMessage && (
+          <div className="app-auth-alert app-auth-alert-success">
+            {confirmationMessage}
+          </div>
+        )}
+
+        <p className="pt-6 text-center text-sm text-zinc-500">
+          Une fois l’adresse validée, vous serez connecté automatiquement.
+        </p>
+
+        <p className="pt-4 text-center text-sm text-zinc-500">
+          Déjà validé ?{" "}
+          <Link
+            href="/login"
+            className="text-violet-400 transition hover:text-violet-300"
+          >
+            Se connecter
+          </Link>
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -181,7 +232,7 @@ export function RegisterForm() {
 
         {/* SERVER ERROR */}
         {serverError && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+          <div className="app-auth-alert app-auth-alert-error">
             {serverError}
           </div>
         )}

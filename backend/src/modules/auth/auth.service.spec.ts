@@ -34,7 +34,10 @@ type EmailVerificationTokenMock = {
   tokenHash: string;
   expiresAt: Date;
   usedAt: Date | null;
-  user: Pick<UserMock, 'id' | 'email' | 'firstName' | 'role' | 'emailVerifiedAt'>;
+  user: Pick<
+    UserMock,
+    'id' | 'email' | 'firstName' | 'role' | 'emailVerifiedAt'
+  >;
 };
 
 type PrismaMock = {
