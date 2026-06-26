@@ -12,5 +12,7 @@ export const MAIL_TEMPLATE_DEFAULTS = {
   authResetPassword: 'auth-reset-password',
   authPasswordChanged: 'auth-password-changed',
   activityFirstCreated: 'activity-first-created',
+  activityUpcomingReminder: 'activity-upcoming-reminder',
+  activityCompletedCongratulations: 'activity-completed-congratulations',
   summitFirstValidated: 'summit-first-validated',
 } as const;

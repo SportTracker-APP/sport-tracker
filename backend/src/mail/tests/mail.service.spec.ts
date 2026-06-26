@@ -8,12 +8,15 @@ const mailConfig: MailConfig = {
   from: 'Votre carnet outdoor <sender@example.test>',
   replyTo: 'support@example.test',
   appBaseUrl: 'http://localhost:3000',
+  defaultTimezone: 'Europe/Paris',
   templates: {
     authVerify: 'auth-verify-email',
     authWelcome: 'auth-welcome',
     authResetPassword: 'auth-reset-password',
     authPasswordChanged: 'auth-password-changed',
     activityFirstCreated: 'activity-first-created',
+    activityUpcomingReminder: 'activity-upcoming-reminder',
+    activityCompletedCongratulations: 'activity-completed-congratulations',
     summitFirstValidated: 'summit-first-validated',
   },
 };
@@ -197,6 +200,74 @@ describe('MailService', () => {
         ELEVATION_GAIN: '900 m D+',
         SUMMIT_URL: 'http://localhost:3000/sommets/summit-1',
         SUMMITS_URL: 'http://localhost:3000/sommets',
+      }),
+    });
+  });
+
+  it('maps upcoming activity reminder data to activity template variables', async () => {
+    const provider = makeProvider();
+    const service = new MailService(mailConfig, provider);
+
+    await service.sendActivityUpcomingReminderEmail({
+      to: 'user@example.test',
+      userName: 'Camille',
+      activityName: 'Sortie longue',
+      sportName: 'Trail',
+      activityDate: 'samedi 27 juin 2026',
+      activityTime: '08:30',
+      activityLocation: 'Annecy, France',
+      activityUrl: 'http://localhost:3000/activites/activity-1',
+      businessId: 'scheduled-email-1',
+    });
+
+    expect(provider.sendTemplate).toHaveBeenCalledWith({
+      type: 'activity.upcoming_reminder',
+      to: 'user@example.test',
+      templateId: 'activity-upcoming-reminder',
+      businessId: 'scheduled-email-1',
+      variables: expect.objectContaining({
+        USER_NAME: 'Camille',
+        ACTIVITY_NAME: 'Sortie longue',
+        SPORT_NAME: 'Trail',
+        ACTIVITY_DATE: 'samedi 27 juin 2026',
+        ACTIVITY_TIME: '08:30',
+        ACTIVITY_LOCATION: 'Annecy, France',
+        ACTIVITY_URL: 'http://localhost:3000/activites/activity-1',
+      }),
+    });
+  });
+
+  it('maps completed activity congratulations data to activity template variables', async () => {
+    const provider = makeProvider();
+    const service = new MailService(mailConfig, provider);
+
+    await service.sendActivityCompletedCongratulationsEmail({
+      to: 'user@example.test',
+      userName: 'Camille',
+      activityName: 'Sortie longue',
+      sportName: 'Trail',
+      activityDate: 'samedi 27 juin 2026',
+      distance: '12,4 km',
+      duration: '1 h 42',
+      elevationGain: '640 m D+',
+      activityUrl: 'http://localhost:3000/activites/activity-1',
+      businessId: 'scheduled-email-2',
+    });
+
+    expect(provider.sendTemplate).toHaveBeenCalledWith({
+      type: 'activity.completed_congratulations',
+      to: 'user@example.test',
+      templateId: 'activity-completed-congratulations',
+      businessId: 'scheduled-email-2',
+      variables: expect.objectContaining({
+        USER_NAME: 'Camille',
+        ACTIVITY_NAME: 'Sortie longue',
+        SPORT_NAME: 'Trail',
+        ACTIVITY_DATE: 'samedi 27 juin 2026',
+        DISTANCE: '12,4 km',
+        DURATION: '1 h 42',
+        ELEVATION_GAIN: '640 m D+',
+        ACTIVITY_URL: 'http://localhost:3000/activites/activity-1',
       }),
     });
   });

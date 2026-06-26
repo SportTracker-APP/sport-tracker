@@ -5,10 +5,11 @@ import { ActivitiesController } from './activities.controller';
 import { ActivitiesService } from './activities.service';
 
 import { PrismaModule } from '../../prisma/prisma.module';
+import { MailModule } from '../../mail/mail.module';
 import { StravaModule } from '../strava/strava.module';
 
 @Module({
-  imports: [PrismaModule, StravaModule],
+  imports: [PrismaModule, StravaModule, MailModule],
 
   controllers: [ActivitiesController],
 

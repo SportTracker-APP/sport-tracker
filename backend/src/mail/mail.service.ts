@@ -4,6 +4,8 @@ import { MAIL_APP_NAME, MAIL_CONFIG, MAIL_PROVIDER } from './mail.constants';
 import type { MailProvider } from './mail-provider.interface';
 import type {
   EmailVerificationMailInput,
+  ActivityCompletedCongratulationsMailInput,
+  ActivityUpcomingReminderMailInput,
   FirstActivityCreatedMailInput,
   FirstSummitValidatedMailInput,
   MailConfig,
@@ -108,6 +110,49 @@ export class MailService {
         ELEVATION_GAIN: input.elevationGain,
         ACTIVITY_URL: input.activityUrl,
         STATS_URL: this.buildAppUrl('/statistiques'),
+      },
+    });
+  }
+
+  sendActivityUpcomingReminderEmail(
+    input: ActivityUpcomingReminderMailInput,
+  ): Promise<MailSendResult> {
+    return this.provider.sendTemplate({
+      type: 'activity.upcoming_reminder',
+      to: input.to,
+      templateId: this.config.templates.activityUpcomingReminder,
+      businessId: input.businessId,
+      variables: {
+        ...this.commonVariables(),
+        USER_NAME: input.userName,
+        ACTIVITY_NAME: input.activityName,
+        SPORT_NAME: input.sportName,
+        ACTIVITY_DATE: input.activityDate,
+        ACTIVITY_TIME: input.activityTime,
+        ACTIVITY_LOCATION: input.activityLocation,
+        ACTIVITY_URL: input.activityUrl,
+      },
+    });
+  }
+
+  sendActivityCompletedCongratulationsEmail(
+    input: ActivityCompletedCongratulationsMailInput,
+  ): Promise<MailSendResult> {
+    return this.provider.sendTemplate({
+      type: 'activity.completed_congratulations',
+      to: input.to,
+      templateId: this.config.templates.activityCompletedCongratulations,
+      businessId: input.businessId,
+      variables: {
+        ...this.commonVariables(),
+        USER_NAME: input.userName,
+        ACTIVITY_NAME: input.activityName,
+        SPORT_NAME: input.sportName,
+        ACTIVITY_DATE: input.activityDate,
+        DISTANCE: input.distance,
+        DURATION: input.duration,
+        ELEVATION_GAIN: input.elevationGain,
+        ACTIVITY_URL: input.activityUrl,
       },
     });
   }

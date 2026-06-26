@@ -53,6 +53,8 @@ model User {
 
   emailVerificationTokens EmailVerificationToken[]
 
+  scheduledEmails ScheduledEmail[]
+
   // DATES
   createdAt DateTime @default(now())
 
@@ -194,6 +196,8 @@ model Activity {
 
   completedWorkoutLink PlannedWorkoutCompletion? @relation("CompletedActivity")
 
+  scheduledEmails ScheduledEmail[]
+
   @@index([userId])
   @@index([type])
   @@index([sport])
@@ -222,6 +226,43 @@ model PlannedWorkoutCompletion {
 
   @@index([plannedWorkoutId])
   @@index([completedActivityId])
+}
+
+model ScheduledEmail {
+  id String @id @default(cuid())
+
+  userId String
+
+  activityId String
+
+  type ScheduledEmailType
+
+  status ScheduledEmailStatus @default(PENDING)
+
+  scheduledAt DateTime
+
+  sentAt DateTime?
+
+  attemptCount Int @default(0)
+
+  lastError String?
+
+  processingStartedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([activityId, type])
+  @@index([userId])
+  @@index([activityId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([status, scheduledAt])
 }
 
 model Goal {
@@ -303,6 +344,19 @@ enum WeatherType {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum ScheduledEmailType {
+  ACTIVITY_UPCOMING_REMINDER
+  ACTIVITY_COMPLETED_CONGRATULATIONS
+}
+
+enum ScheduledEmailStatus {
+  PENDING
+  PROCESSING
+  SENT
+  CANCELLED
+  FAILED
 }
 
 enum GoalType {

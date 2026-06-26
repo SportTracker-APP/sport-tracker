@@ -7,6 +7,7 @@ import {
 import { Activity, ActivityStatus, PlannedWorkoutCompletion, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { ActivityMailSchedulerService } from '../../mail/scheduling/activity-mail-scheduler.service';
 import { StravaService } from '../strava/strava.service';
 
 import { CreateActivityDto } from './dto/create-activity.dto';
@@ -19,6 +20,7 @@ export class ActivitiesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly stravaService: StravaService,
+    private readonly activityMailScheduler: ActivityMailSchedulerService,
   ) {}
 
   async create(userId: string, dto: CreateActivityDto) {
@@ -28,7 +30,7 @@ export class ActivitiesService {
 
     const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
 
-    return this.prisma.activity.create({
+    const activity = await this.prisma.activity.create({
       data: {
         ...activityData,
 
@@ -37,6 +39,14 @@ export class ActivitiesService {
         userId,
       },
     });
+
+    if (activity.status === ActivityStatus.PLANNED) {
+      await this.activityMailScheduler.scheduleUpcomingActivityReminder(
+        activity.id,
+      );
+    }
+
+    return activity;
   }
 
   async findAll(userId: string) {
@@ -97,10 +107,10 @@ export class ActivitiesService {
   }
 
   async update(userId: string, activityId: string, dto: UpdateActivityDto) {
-    await this.findOne(userId, activityId);
+    const currentActivity = await this.findOne(userId, activityId);
     const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
 
-    return this.prisma.activity.update({
+    const updatedActivity = await this.prisma.activity.update({
       where: {
         id: activityId,
       },
@@ -113,6 +123,18 @@ export class ActivitiesService {
         }),
       },
     });
+
+    if (updatedActivity.status === ActivityStatus.PLANNED) {
+      await this.activityMailScheduler.rescheduleUpcomingActivityReminder(
+        updatedActivity.id,
+      );
+    } else if (currentActivity.status === ActivityStatus.PLANNED) {
+      await this.activityMailScheduler.cancelUpcomingActivityReminder(
+        updatedActivity.id,
+      );
+    }
+
+    return updatedActivity;
   }
 
   async completePlannedWorkout(
@@ -120,9 +142,22 @@ export class ActivitiesService {
     plannedWorkoutId: string,
     dto: CompletePlannedWorkoutDto,
   ) {
-    return this.prisma.$transaction((tx) =>
+    const completedWorkout = await this.prisma.$transaction((tx) =>
       this.linkCompletedActivity(tx, userId, plannedWorkoutId, dto.activityId),
     );
+
+    await this.activityMailScheduler.cancelUpcomingActivityReminder(
+      plannedWorkoutId,
+    );
+
+    if (completedWorkout.completedAt) {
+      await this.activityMailScheduler.scheduleCompletedActivityCongratulations({
+        activityId: plannedWorkoutId,
+        completedAt: completedWorkout.completedAt,
+      });
+    }
+
+    return completedWorkout;
   }
 
   async markCelebrationSeen(userId: string, plannedWorkoutId: string) {
@@ -213,6 +248,7 @@ export class ActivitiesService {
 
   async remove(userId: string, activityId: string) {
     await this.findOne(userId, activityId);
+    await this.activityMailScheduler.cancelUpcomingActivityReminder(activityId);
 
     return this.prisma.activity.delete({
       where: {
@@ -228,7 +264,7 @@ export class ActivitiesService {
       throw new BadRequestException('Séance planifiée manquante');
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const completedWorkout = await this.prisma.$transaction(async (tx) => {
       const activity = await tx.activity.create({
         data: {
           ...activityData,
@@ -240,6 +276,19 @@ export class ActivitiesService {
 
       return this.linkCompletedActivity(tx, userId, plannedWorkoutId, activity.id);
     });
+
+    await this.activityMailScheduler.cancelUpcomingActivityReminder(
+      plannedWorkoutId,
+    );
+
+    if (completedWorkout.completedAt) {
+      await this.activityMailScheduler.scheduleCompletedActivityCongratulations({
+        activityId: plannedWorkoutId,
+        completedAt: completedWorkout.completedAt,
+      });
+    }
+
+    return completedWorkout;
   }
 
   private async linkCompletedActivity(

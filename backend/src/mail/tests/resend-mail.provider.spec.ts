@@ -1,24 +1,21 @@
 import { Logger } from '@nestjs/common';
-import { CreateEmailOptions, CreateEmailRequestOptions } from 'resend';
+import {
+  CreateEmailOptions,
+  CreateEmailRequestOptions,
+  CreateEmailResponse,
+} from 'resend';
 
 import { MailConfig, MailSendRequest } from '../mail.types';
 import {
   maskEmailAddress,
+  ResendEmailClient,
   ResendMailProvider,
 } from '../providers/resend-mail.provider';
 
 type ResendEmailClientMock = {
   emails: {
     send: jest.Mock<
-      Promise<{
-        data: { id: string } | null;
-        error: {
-          name: 'validation_error';
-          message: string;
-          statusCode: number;
-        } | null;
-        headers: Record<string, string> | null;
-      }>,
+      ReturnType<ResendEmailClient['emails']['send']>,
       [CreateEmailOptions, CreateEmailRequestOptions?]
     >;
   };
@@ -30,12 +27,15 @@ const enabledConfig: MailConfig = {
   from: 'Votre carnet outdoor <sender@example.test>',
   replyTo: 'support@example.test',
   appBaseUrl: 'http://localhost:3000',
+  defaultTimezone: 'Europe/Paris',
   templates: {
     authVerify: 'auth-verify-email',
     authWelcome: 'auth-welcome',
     authResetPassword: 'auth-reset-password',
     authPasswordChanged: 'auth-password-changed',
     activityFirstCreated: 'activity-first-created',
+    activityUpcomingReminder: 'activity-upcoming-reminder',
+    activityCompletedCongratulations: 'activity-completed-congratulations',
     summitFirstValidated: 'summit-first-validated',
   },
 };
@@ -52,13 +52,15 @@ const request: MailSendRequest = {
 };
 
 function makeResendMock(): ResendEmailClientMock {
+  const response = {
+    data: { id: 'resend-email-1' },
+    error: null,
+    headers: null,
+  } satisfies CreateEmailResponse;
+
   return {
     emails: {
-      send: jest.fn().mockResolvedValue({
-        data: { id: 'resend-email-1' },
-        error: null,
-        headers: null,
-      }),
+      send: jest.fn().mockResolvedValue(response),
     },
   };
 }
@@ -123,7 +125,7 @@ describe('ResendMailProvider', () => {
         statusCode: 422,
       },
       headers: null,
-    });
+    } satisfies CreateEmailResponse);
     const errorSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation();
     const provider = new ResendMailProvider(enabledConfig, resend);
 

@@ -4,6 +4,8 @@ export type MailTemplateKey =
   | 'authResetPassword'
   | 'authPasswordChanged'
   | 'activityFirstCreated'
+  | 'activityUpcomingReminder'
+  | 'activityCompletedCongratulations'
   | 'summitFirstValidated';
 
 export type MailEmailType =
@@ -12,6 +14,8 @@ export type MailEmailType =
   | 'auth.reset_password'
   | 'auth.password_changed'
   | 'activity.first_created'
+  | 'activity.upcoming_reminder'
+  | 'activity.completed_congratulations'
   | 'summit.first_validated';
 
 export type MailTemplateVariables = Record<string, string | number>;
@@ -25,6 +29,7 @@ export type MailConfig = {
   replyTo?: string;
   testRecipient?: string;
   appBaseUrl: string;
+  defaultTimezone: string;
   templates: MailTemplatesConfig;
 };
 
@@ -83,6 +88,31 @@ export type FirstActivityCreatedMailInput = {
   sportName: string;
   activityDate: string;
   activityName: string;
+  distance: string;
+  duration: string;
+  elevationGain: string;
+  activityUrl: string;
+  businessId?: string;
+};
+
+export type ActivityUpcomingReminderMailInput = {
+  to: string;
+  userName: string;
+  activityName: string;
+  sportName: string;
+  activityDate: string;
+  activityTime: string;
+  activityLocation: string;
+  activityUrl: string;
+  businessId?: string;
+};
+
+export type ActivityCompletedCongratulationsMailInput = {
+  to: string;
+  userName: string;
+  activityName: string;
+  sportName: string;
+  activityDate: string;
   distance: string;
   duration: string;
   elevationGain: string;

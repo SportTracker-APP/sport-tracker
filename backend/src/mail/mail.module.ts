@@ -8,8 +8,12 @@ import {
   MAIL_TEMPLATE_DEFAULTS,
   RESEND_CLIENT,
 } from './mail.constants';
+import { ActivityMailSchedulerService } from './scheduling/activity-mail-scheduler.service';
+import { ActivityMailTimeService } from './scheduling/activity-mail-time.service';
+import { ActivityMailWorkerService } from './scheduling/activity-mail-worker.service';
 import { MailService } from './mail.service';
 import { MailConfig } from './mail.types';
+import { PrismaModule } from '../prisma/prisma.module';
 import {
   createResendClient,
   ResendMailProvider,
@@ -46,6 +50,12 @@ const mailEnvSchema = z
       z.string().trim().email().optional(),
     ),
     APP_BASE_URL: z.string().trim().url().default('http://localhost:3000'),
+    FRONTEND_URL: z.string().trim().url().default('http://localhost:3000'),
+    APP_DEFAULT_TIMEZONE: z
+      .string()
+      .trim()
+      .min(1)
+      .default('Europe/Paris'),
     RESEND_TEMPLATE_AUTH_VERIFY: z
       .string()
       .trim()
@@ -71,6 +81,16 @@ const mailEnvSchema = z
       .trim()
       .min(1)
       .default(MAIL_TEMPLATE_DEFAULTS.activityFirstCreated),
+    RESEND_ACTIVITY_UPCOMING_REMINDER_TEMPLATE_ID: z
+      .string()
+      .trim()
+      .min(1)
+      .default(MAIL_TEMPLATE_DEFAULTS.activityUpcomingReminder),
+    RESEND_ACTIVITY_COMPLETED_TEMPLATE_ID: z
+      .string()
+      .trim()
+      .min(1)
+      .default(MAIL_TEMPLATE_DEFAULTS.activityCompletedCongratulations),
     RESEND_TEMPLATE_SUMMIT_FIRST_VALIDATED: z
       .string()
       .trim()
@@ -88,7 +108,7 @@ const mailEnvSchema = z
   });
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, PrismaModule],
   providers: [
     {
       provide: MAIL_CONFIG,
@@ -101,6 +121,8 @@ const mailEnvSchema = z
           MAIL_REPLY_TO: configService.get<string>('MAIL_REPLY_TO'),
           MAIL_TEST_RECIPIENT: configService.get<string>('MAIL_TEST_RECIPIENT'),
           APP_BASE_URL: configService.get<string>('APP_BASE_URL'),
+          FRONTEND_URL: configService.get<string>('FRONTEND_URL'),
+          APP_DEFAULT_TIMEZONE: configService.get<string>('APP_DEFAULT_TIMEZONE'),
           RESEND_TEMPLATE_AUTH_VERIFY: configService.get<string>(
             'RESEND_TEMPLATE_AUTH_VERIFY',
           ),
@@ -116,6 +138,13 @@ const mailEnvSchema = z
           RESEND_TEMPLATE_ACTIVITY_FIRST_CREATED: configService.get<string>(
             'RESEND_TEMPLATE_ACTIVITY_FIRST_CREATED',
           ),
+          RESEND_ACTIVITY_UPCOMING_REMINDER_TEMPLATE_ID:
+            configService.get<string>(
+              'RESEND_ACTIVITY_UPCOMING_REMINDER_TEMPLATE_ID',
+            ),
+          RESEND_ACTIVITY_COMPLETED_TEMPLATE_ID: configService.get<string>(
+            'RESEND_ACTIVITY_COMPLETED_TEMPLATE_ID',
+          ),
           RESEND_TEMPLATE_SUMMIT_FIRST_VALIDATED: configService.get<string>(
             'RESEND_TEMPLATE_SUMMIT_FIRST_VALIDATED',
           ),
@@ -127,13 +156,18 @@ const mailEnvSchema = z
           from: parsed.MAIL_FROM,
           replyTo: parsed.MAIL_REPLY_TO,
           testRecipient: parsed.MAIL_TEST_RECIPIENT,
-          appBaseUrl: parsed.APP_BASE_URL,
+          appBaseUrl: parsed.FRONTEND_URL || parsed.APP_BASE_URL,
+          defaultTimezone: parsed.APP_DEFAULT_TIMEZONE,
           templates: {
             authVerify: parsed.RESEND_TEMPLATE_AUTH_VERIFY,
             authWelcome: parsed.RESEND_TEMPLATE_AUTH_WELCOME,
             authResetPassword: parsed.RESEND_TEMPLATE_AUTH_RESET_PASSWORD,
             authPasswordChanged: parsed.RESEND_TEMPLATE_AUTH_PASSWORD_CHANGED,
             activityFirstCreated: parsed.RESEND_TEMPLATE_ACTIVITY_FIRST_CREATED,
+            activityUpcomingReminder:
+              parsed.RESEND_ACTIVITY_UPCOMING_REMINDER_TEMPLATE_ID,
+            activityCompletedCongratulations:
+              parsed.RESEND_ACTIVITY_COMPLETED_TEMPLATE_ID,
             summitFirstValidated: parsed.RESEND_TEMPLATE_SUMMIT_FIRST_VALIDATED,
           },
         };
@@ -149,7 +183,10 @@ const mailEnvSchema = z
       useClass: ResendMailProvider,
     },
     MailService,
+    ActivityMailTimeService,
+    ActivityMailSchedulerService,
+    ActivityMailWorkerService,
   ],
-  exports: [MailService],
+  exports: [MailService, ActivityMailSchedulerService],
 })
 export class MailModule {}
