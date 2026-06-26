@@ -20,13 +20,13 @@ function applyTheme(theme: AppTheme) {
 }
 
 export function AuthThemeToggle() {
-  const [theme, setTheme] = useState<AppTheme>("nature");
+  const [theme, setTheme] = useState<AppTheme>("violet");
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);
 
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    const initialTheme = savedTheme === "violet" ? "violet" : "nature";
+    const initialTheme = savedTheme === "nature" ? "nature" : "violet";
 
     setTheme(initialTheme);
     applyTheme(initialTheme);

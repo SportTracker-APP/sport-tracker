@@ -51,10 +51,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
               try {
                 localStorage.removeItem("sport-tracker-theme");
 
-                if (localStorage.getItem("sport-tracker-theme-v2") === "violet") {
-                  document.documentElement.classList.remove("sport-theme-nature");
-                } else {
+                if (localStorage.getItem("sport-tracker-theme-v2") === "nature") {
                   document.documentElement.classList.add("sport-theme-nature");
+                } else {
+                  document.documentElement.classList.remove("sport-theme-nature");
                 }
               } catch {}
             `,

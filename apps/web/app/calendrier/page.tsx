@@ -27,10 +27,7 @@ import {
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { FadeIn } from "@/components/ui/fade-in";
-import {
-  useActivities,
-  useDeleteActivity,
-} from "@/hooks/use-activities";
+import { useActivities, useDeleteActivity } from "@/hooks/use-activities";
 import type { Activity } from "@/lib/activities";
 
 const dayFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -340,7 +337,7 @@ export default function CalendarPage() {
               <div className="app-calendar-next-card-v2 rounded-[26px] border p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[0.68rem] font-bold uppercase tracking-[0.28em] text-emerald-100/65">
+                    <p className="text-[0.68rem] font-bold tracking-[0.28em] text-emerald-100/65 uppercase">
                       Semaine affichée
                     </p>
                     <p className="mt-2 text-xl font-bold text-white">
@@ -353,12 +350,12 @@ export default function CalendarPage() {
                 </div>
 
                 <div className="mt-5 border-t border-white/12 pt-4">
-                  <p className="text-[0.68rem] font-bold uppercase tracking-[0.25em] text-emerald-100/60">
+                  <p className="text-[0.68rem] font-bold tracking-[0.25em] text-emerald-100/60 uppercase">
                     Prochaine séance
                   </p>
                   {nextActivity ? (
                     <div className="mt-3 min-w-0">
-                      <p className="line-clamp-2 font-semibold leading-6 text-white">
+                      <p className="line-clamp-2 leading-6 font-semibold text-white">
                         {nextActivity.title ?? "Séance planifiée"}
                       </p>
                       <p className="mt-2 text-sm text-emerald-50/72">
@@ -369,8 +366,8 @@ export default function CalendarPage() {
                     </div>
                   ) : (
                     <p className="mt-3 text-sm leading-6 text-emerald-50/72">
-                      Aucune séance à venir. Ta prochaine aventure peut commencer
-                      ici.
+                      Aucune séance à venir. Ta prochaine aventure peut
+                      commencer ici.
                     </p>
                   )}
                 </div>
@@ -391,8 +388,8 @@ export default function CalendarPage() {
                 <ChevronLeft className="h-5 w-5" />
               </button>
 
-              <div className="min-w-[190px] rounded-2xl border border-emerald-950/10 bg-white/75 px-4 py-2.5">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-slate-500">
+              <div className="app-calendar-week-label-v2 min-w-[190px] rounded-2xl border border-emerald-950/10 bg-white/75 px-4 py-2.5">
+                <p className="text-[0.65rem] font-bold tracking-[0.25em] text-slate-500 uppercase">
                   Semaine
                 </p>
                 <p className="mt-0.5 text-sm font-bold text-slate-950">
@@ -443,7 +440,7 @@ export default function CalendarPage() {
         {!isLoading && !error && (
           <FadeIn delay={0.08}>
             <section className="app-calendar-week-shell-v2 overflow-hidden rounded-[30px] border p-3 shadow-[0_24px_70px_rgba(15,118,110,0.1)]">
-              <div className="app-calendar-week-scroll-v2 overflow-x-auto pb-1 max-lg:overflow-visible max-lg:pb-0">
+              <div className="app-calendar-week-scroll-v2 overflow-x-auto pt-1 pb-1 max-lg:overflow-visible max-lg:pt-0 max-lg:pb-0">
                 <div className="app-calendar-week-grid-v2 grid min-w-[1120px] grid-cols-7 gap-3 max-lg:min-w-0 max-lg:grid-cols-1 max-lg:gap-3">
                   {activitiesByDay.map(({ day, activities: dayActivities }) => (
                     <DayColumn
@@ -498,7 +495,7 @@ function HeroMetric({ icon: Icon, label, value }: HeroMetricProps) {
         <Icon className="h-4 w-4" />
       </span>
       <span className="min-w-0">
-        <span className="block text-[0.62rem] font-bold uppercase tracking-[0.18em] text-emerald-50/58">
+        <span className="block text-[0.62rem] font-bold tracking-[0.18em] text-emerald-50/58 uppercase">
           {label}
         </span>
         <span className="mt-0.5 block truncate text-sm font-bold text-white">
@@ -536,13 +533,14 @@ function DayColumn({
       <header className="flex items-start justify-between gap-2 border-b border-emerald-950/8 pb-3">
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-2">
-            <p className="truncate text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
-              {dayFormatter.format(day).replace(".", "")}
-            </p>
-            {isToday && (
-              <span className="rounded-full bg-emerald-100 px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.12em] text-emerald-700">
+            {isToday ? (
+              <span className="rounded-full bg-emerald-100 px-2 py-1 text-[0.58rem] font-bold tracking-[0.12em] text-emerald-700 uppercase">
                 Aujourd’hui
               </span>
+            ) : (
+              <p className="truncate text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">
+                {dayFormatter.format(day).replace(".", "")}
+              </p>
             )}
           </div>
           <p className="mt-1 text-3xl font-black tracking-[-0.04em] text-slate-950">
@@ -559,7 +557,7 @@ function DayColumn({
         </Link>
       </header>
 
-      <div className="mt-3 flex items-center justify-between gap-2 text-[0.68rem] font-semibold text-slate-500">
+      <div className="app-calendar-day-summary-v2 mt-3 flex items-center justify-between gap-2 text-[0.68rem] font-semibold text-slate-500">
         <span>
           {activities.length === 0
             ? "Journée libre"
@@ -589,9 +587,11 @@ function DayColumn({
 
 function EmptyDay({ day }: { day: Date }) {
   return (
-    <div className="flex flex-1 flex-col justify-between rounded-[18px] border border-dashed border-emerald-900/12 bg-white/38 p-3.5">
+    <div className="app-calendar-empty-day-v2 flex flex-1 flex-col justify-between rounded-[18px] border border-dashed border-emerald-900/12 bg-white/38 p-3.5">
       <div>
-        <p className="text-sm font-semibold text-slate-700">Repos ou liberté.</p>
+        <p className="text-sm font-semibold text-slate-700">
+          Repos ou liberté.
+        </p>
         <p className="mt-1 text-xs leading-5 text-slate-500">
           Garde la journée légère ou pose une nouvelle sortie.
         </p>
@@ -621,6 +621,8 @@ function CalendarActivity({
   const StatusIcon = status.icon;
   const hasDistance = Boolean(activity.distance && activity.distance > 0);
   const hasDuration = activity.duration > 0;
+  const plannedNote =
+    activity.status === "PLANNED" ? activity.description?.trim() : null;
   const activityHref = activity.completedActivityId
     ? `/activites/${activity.completedActivityId}`
     : `/activites/${activity.id}`;
@@ -650,9 +652,7 @@ function CalendarActivity({
         status.tone === "planned" ? "app-calendar-activity-planned-v2" : ""
       } ${
         status.tone === "completed" ? "app-calendar-activity-completed-v2" : ""
-      } ${
-        status.tone === "missed" ? "app-calendar-activity-muted-v2" : ""
-      } ${
+      } ${status.tone === "missed" ? "app-calendar-activity-muted-v2" : ""} ${
         status.tone === "canceled" ? "app-calendar-activity-canceled-v2" : ""
       }`}
     >
@@ -663,13 +663,11 @@ function CalendarActivity({
 
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-1.5">
-            <p className="min-w-0 break-words text-[0.66rem] font-semibold text-slate-500">
+            <p className="min-w-0 text-[0.66rem] font-semibold break-words text-slate-500">
               {timeFormatter.format(activityDate)} ·{" "}
               {sportLabels[activity.sport] ?? activity.sport}
             </p>
-            <span
-              className="inline-flex min-w-0 shrink items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-1 text-[0.5rem] font-bold uppercase tracking-[0.08em] text-emerald-700"
-            >
+            <span className="app-calendar-status-badge-v2 inline-flex min-w-0 shrink items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald-700 uppercase">
               <StatusIcon className="h-3 w-3" aria-hidden="true" />
               {status.label}
             </span>
@@ -679,14 +677,20 @@ function CalendarActivity({
 
       <Link
         href={activityHref}
-        className="mx-auto mt-3 line-clamp-2 block max-w-full text-center text-[0.92rem] font-bold leading-6 text-slate-950 transition group-hover:text-emerald-800"
+        className="app-calendar-activity-title-v2 mx-auto mt-3 line-clamp-2 block max-w-full text-center text-[0.92rem] leading-6 font-bold text-slate-950 transition group-hover:text-emerald-800"
         title={activity.title ?? "Séance sans titre"}
       >
         {activity.title ?? "Séance sans titre"}
       </Link>
 
+      {plannedNote ? (
+        <p className="app-calendar-activity-note-v2 mx-auto mt-1.5 line-clamp-2 max-w-full text-center text-[0.68rem] leading-5 text-slate-500">
+          {plannedNote}
+        </p>
+      ) : null}
+
       {(hasDistance || hasDuration) && (
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.68rem] font-semibold text-slate-500">
+        <div className="app-calendar-activity-metrics-v2 mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.68rem] font-semibold text-slate-500">
           {hasDistance && <span>{formatDistance(activity.distance)}</span>}
           {hasDuration && <span>{formatDuration(activity.duration)}</span>}
         </div>
@@ -695,7 +699,7 @@ function CalendarActivity({
       {activity.status === "COMPLETED" && activity.completedActivityId ? (
         <Link
           href={activityHref}
-          className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"
+          className="app-calendar-action-view-v2 mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"
         >
           Voir l’activité
         </Link>
@@ -704,7 +708,7 @@ function CalendarActivity({
       {activity.status === "MISSED" ? (
         <Link
           href={replanHref}
-          className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+          className="app-calendar-action-replan-v2 mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
         >
           Replanifier
         </Link>
@@ -714,21 +718,25 @@ function CalendarActivity({
         <div className="mt-3 grid gap-1.5">
           <Link
             href={recordHref}
-            className="inline-flex min-h-9 min-w-0 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-2 text-[0.72rem] font-bold leading-tight text-emerald-800 transition hover:bg-emerald-100"
+            className="app-calendar-action-record-v2 inline-flex min-h-9 min-w-0 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-2 text-[0.72rem] leading-tight font-bold text-emerald-800 transition hover:bg-emerald-100"
             aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée et saisir ses résultats`}
           >
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-            <span className="min-w-0 whitespace-normal text-center">Sortie faite</span>
+            <span className="min-w-0 text-center whitespace-normal">
+              Sortie faite
+            </span>
           </Link>
           <button
             type="button"
-            className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-red-100 bg-red-50/70 px-2 text-[0.68rem] font-bold text-red-700 transition hover:bg-red-100"
+            className="app-calendar-action-delete-v2 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-red-100 bg-red-50/70 px-2 text-[0.68rem] font-bold text-red-700 transition hover:bg-red-100"
             onClick={() => onDeletePlannedActivity(activity)}
             aria-label={`Supprimer la séance prévue ${activity.title ?? "sans titre"} du planning`}
             title="Supprimer du planning"
           >
             <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="min-w-0 whitespace-normal text-center">Supprimer</span>
+            <span className="min-w-0 text-center whitespace-normal">
+              Supprimer
+            </span>
           </button>
         </div>
       ) : null}

@@ -1,4 +1,5 @@
 import { ArrowRight, Mountain, Shield, Target } from "lucide-react";
+import Link from "next/link";
 
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { AuthThemeToggle } from "@/components/theme/auth-theme-toggle";
@@ -44,9 +45,8 @@ export default function RegisterPage() {
                 </h1>
 
                 <p className="max-w-sm text-lg leading-relaxed text-zinc-400">
-                  <span className="font-medium text-zinc-200">
-                  </span>{" "}
-                 Retrouve tes sorties, sommets et explorations au même endroit.
+                  <span className="font-medium text-zinc-200"></span> Retrouve
+                  tes sorties, sommets et explorations au même endroit.
                 </p>
               </div>
 
@@ -73,12 +73,18 @@ export default function RegisterPage() {
           <div className="absolute right-16 bottom-10 left-16 flex items-center justify-between text-sm text-zinc-600">
             <span>© 2026 Montara</span>
             <div className="flex items-center gap-8">
-              <button className="transition hover:text-zinc-400">
+              <Link
+                href="/confidentialite"
+                className="transition hover:text-zinc-400"
+              >
                 Confidentialité
-              </button>
-              <button className="transition hover:text-zinc-400">
+              </Link>
+              <Link
+                href="/conditions"
+                className="transition hover:text-zinc-400"
+              >
                 Conditions
-              </button>
+              </Link>
             </div>
           </div>
         </div>

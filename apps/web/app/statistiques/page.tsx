@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { ReactNode } from "react";
 
@@ -569,6 +570,7 @@ function ExplorationHeatmap({ activities }: { activities: SportActivity[] }) {
       day,
       intensity,
       Icon,
+      activityId: firstActivity?.id ?? null,
       isInsideDisplayedMonthRange,
       title:
         dayActivities.length > 0
@@ -592,21 +594,37 @@ function ExplorationHeatmap({ activities }: { activities: SportActivity[] }) {
             <span className={styles.heatmapWeek}>S{week + 1}</span>
             {cells.slice(week * 7, week * 7 + 7).map((cell) => {
               const Icon = cell.Icon;
+              const cellClassName = `${styles.heatmapCell} ${
+                styles[`heatmapLevel${cell.intensity}`]
+              } ${
+                cell.isInsideDisplayedMonthRange
+                  ? ""
+                  : styles.heatmapOutsideMonth
+              }`;
+              const cellContent = Icon ? <Icon aria-hidden="true" /> : null;
+
+              if (cell.activityId) {
+                return (
+                  <Link
+                    className={cellClassName}
+                    href={`/activites/${cell.activityId}`}
+                    key={cell.id}
+                    title={cell.title}
+                    aria-label={`${cell.title}. Ouvrir la fiche de l’activité.`}
+                  >
+                    {cellContent}
+                  </Link>
+                );
+              }
 
               return (
                 <div
-                  className={`${styles.heatmapCell} ${
-                    styles[`heatmapLevel${cell.intensity}`]
-                  } ${
-                    cell.isInsideDisplayedMonthRange
-                      ? ""
-                      : styles.heatmapOutsideMonth
-                  }`}
+                  className={cellClassName}
                   key={cell.id}
                   title={cell.title}
                   aria-label={cell.title}
                 >
-                  {Icon ? <Icon aria-hidden="true" /> : null}
+                  {cellContent}
                 </div>
               );
             })}

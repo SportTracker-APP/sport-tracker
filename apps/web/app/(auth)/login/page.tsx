@@ -1,4 +1,15 @@
-import { ArrowRight, Shield, Zap, BookOpen, Mountain, Map, TrendingUp, Trophy, Award } from "lucide-react";
+import {
+  ArrowRight,
+  Shield,
+  Zap,
+  BookOpen,
+  Mountain,
+  Map,
+  TrendingUp,
+  Trophy,
+  Award,
+} from "lucide-react";
+import Link from "next/link";
 
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthThemeToggle } from "@/components/theme/auth-theme-toggle";
@@ -44,7 +55,8 @@ export default function LoginPage() {
                 </h1>
 
                 <p className="max-w-sm text-lg leading-relaxed text-zinc-400">
-                  Retrouve tes sorties, tes sommets et les sentiers qui construisent ton histoire outdoor.
+                  Retrouve tes sorties, tes sommets et les sentiers qui
+                  construisent ton histoire outdoor.
                 </p>
               </div>
 
@@ -79,12 +91,18 @@ export default function LoginPage() {
           <div className="absolute right-16 bottom-10 left-16 flex items-center justify-between text-sm text-zinc-600">
             <span>© 2026 Montara</span>
             <div className="flex items-center gap-8">
-              <button className="transition hover:text-zinc-400">
+              <Link
+                href="/confidentialite"
+                className="transition hover:text-zinc-400"
+              >
                 Confidentialité
-              </button>
-              <button className="transition hover:text-zinc-400">
+              </Link>
+              <Link
+                href="/conditions"
+                className="transition hover:text-zinc-400"
+              >
                 Conditions
-              </button>
+              </Link>
             </div>
           </div>
         </div>

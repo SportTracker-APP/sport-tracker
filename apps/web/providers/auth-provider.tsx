@@ -10,7 +10,14 @@ import { getMe } from "@/lib/auth";
 
 import { useAuthStore } from "@/store/auth-store";
 
-const publicRoutes = ["/login", "/register", "/verify-email", "/theme-lab"];
+const publicRoutes = [
+  "/login",
+  "/register",
+  "/verify-email",
+  "/theme-lab",
+  "/confidentialite",
+  "/conditions",
+];
 
 const authEntryRoutes = ["/login", "/register", "/verify-email"];
 

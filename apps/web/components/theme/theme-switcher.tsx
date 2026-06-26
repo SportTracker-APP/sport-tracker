@@ -13,12 +13,12 @@ export type AppTheme = "violet" | "nature";
 
 function getStoredTheme(): AppTheme {
   if (typeof window === "undefined") {
-    return "nature";
+    return "violet";
   }
 
-  return localStorage.getItem(THEME_STORAGE_KEY) === "violet"
-    ? "violet"
-    : "nature";
+  return localStorage.getItem(THEME_STORAGE_KEY) === "nature"
+    ? "nature"
+    : "violet";
 }
 
 function applyTheme(theme: AppTheme) {
@@ -36,7 +36,7 @@ function applyTheme(theme: AppTheme) {
 }
 
 export function useAppTheme() {
-  const [theme, setThemeState] = useState<AppTheme>("nature");
+  const [theme, setThemeState] = useState<AppTheme>("violet");
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);

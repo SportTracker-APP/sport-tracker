@@ -2682,10 +2682,20 @@
 .heatmapCell {
   position: relative;
   cursor: default;
+  text-decoration: none;
   transition:
     transform 150ms ease,
     border-color 150ms ease,
     box-shadow 150ms ease;
+}
+
+.heatmapCell[href] {
+  cursor: pointer;
+}
+
+.heatmapCell[href]:focus-visible {
+  outline: 2px solid rgba(5, 150, 105, 0.55);
+  outline-offset: 3px;
 }
 
 .heatmapCell:not(.heatmapOutsideMonth):hover {
