@@ -7,6 +7,7 @@ import {
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { BCRYPT_COST } from '../auth/auth-security.constants';
 
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
@@ -79,7 +80,7 @@ export class UsersService {
       throw new BadRequestException('Mot de passe actuel incorrect');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+    const hashedPassword = await bcrypt.hash(dto.newPassword, BCRYPT_COST);
 
     await this.prisma.user.update({
       where: {
@@ -88,6 +89,7 @@ export class UsersService {
 
       data: {
         password: hashedPassword,
+        refreshToken: null,
       },
     });
 

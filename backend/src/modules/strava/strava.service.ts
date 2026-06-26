@@ -16,7 +16,7 @@ import {
   SportType,
 } from '@prisma/client';
 
-import { createHmac, randomBytes } from 'crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -783,9 +783,7 @@ export class StravaService {
   }
 
   private verifyState(encodedState: string) {
-    const payload = JSON.parse(
-      Buffer.from(encodedState, 'base64url').toString('utf8'),
-    ) as StravaStatePayload;
+    const payload = this.parseState(encodedState);
 
     if (payload.expiresAt < Date.now()) {
       throw new BadRequestException('Lien Strava expiré');
@@ -797,11 +795,33 @@ export class StravaService {
       payload.nonce,
     );
 
-    if (payload.signature !== expectedSignature) {
+    if (!safeEqualHex(payload.signature, expectedSignature)) {
       throw new BadRequestException('Signature Strava invalide');
     }
 
     return payload;
+  }
+
+  private parseState(encodedState: string): StravaStatePayload {
+    const parsedPayload = JSON.parse(
+      Buffer.from(encodedState, 'base64url').toString('utf8'),
+    ) as Partial<StravaStatePayload>;
+
+    if (
+      typeof parsedPayload.userId !== 'string' ||
+      typeof parsedPayload.expiresAt !== 'number' ||
+      typeof parsedPayload.nonce !== 'string' ||
+      typeof parsedPayload.signature !== 'string'
+    ) {
+      throw new BadRequestException('State Strava invalide');
+    }
+
+    return {
+      userId: parsedPayload.userId,
+      expiresAt: parsedPayload.expiresAt,
+      nonce: parsedPayload.nonce,
+      signature: parsedPayload.signature,
+    };
   }
 
   private signState(userId: string, expiresAt: number, nonce: string) {
@@ -821,11 +841,7 @@ export class StravaService {
   }
 
   private getStateSecret() {
-    return (
-      this.configService.get<string>('STRAVA_STATE_SECRET') ||
-      this.configService.get<string>('JWT_ACCESS_SECRET') ||
-      'strava-state-secret'
-    );
+    return this.configService.getOrThrow<string>('STRAVA_STATE_SECRET');
   }
 
   private getStravaCallbackUrl() {
@@ -850,4 +866,18 @@ export class StravaService {
       message: error instanceof Error ? error.message : String(error),
     });
   }
+}
+
+function safeEqualHex(left: string, right: string): boolean {
+  if (!/^[a-f0-9]+$/i.test(left) || !/^[a-f0-9]+$/i.test(right)) {
+    return false;
+  }
+
+  const leftBuffer = Buffer.from(left, 'hex');
+  const rightBuffer = Buffer.from(right, 'hex');
+
+  return (
+    leftBuffer.length === rightBuffer.length &&
+    timingSafeEqual(leftBuffer, rightBuffer)
+  );
 }

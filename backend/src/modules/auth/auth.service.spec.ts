@@ -157,10 +157,25 @@ function makeService(
         APP_BASE_URL: 'http://localhost:3000',
         EMAIL_VERIFICATION_TOKEN_TTL_MINUTES: '1440',
         EMAIL_VERIFICATION_URL: 'http://localhost:3000/verify-email',
+        JWT_ACCESS_SECRET: 'test-access-secret',
+        JWT_REFRESH_SECRET: 'test-refresh-secret',
         PASSWORD_RESET_TOKEN_TTL_MINUTES: '30',
       };
 
       return values[key];
+    }),
+    getOrThrow: jest.fn((key: string) => {
+      const values: Record<string, string> = {
+        JWT_ACCESS_SECRET: 'test-access-secret',
+        JWT_REFRESH_SECRET: 'test-refresh-secret',
+      };
+      const value = values[key];
+
+      if (!value) {
+        throw new Error(`${key} missing`);
+      }
+
+      return value;
     }),
   };
 
@@ -274,6 +289,30 @@ describe('AuthService password reset', () => {
     );
   });
 
+  it('normalizes email before registering a user', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue(null);
+
+    await service.register({
+      firstName: user.firstName,
+      email: '  CAMILLE@EXAMPLE.TEST ',
+      password: 'Password1',
+    });
+
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: {
+        email: user.email,
+      },
+    });
+    expect(prisma.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          email: user.email,
+        }),
+      }),
+    );
+  });
+
   it('does not fail registration when the verification email fails', async () => {
     const { service, prisma, mail } = makeService();
     prisma.user.findUnique.mockResolvedValue(null);
@@ -346,6 +385,21 @@ describe('AuthService password reset', () => {
 
     await expect(service.login(user.email, 'Password1')).rejects.toThrow(
       'Veuillez vérifier votre adresse email',
+    );
+  });
+
+  it('rate limits repeated login attempts for the same email', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue(null);
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      await expect(service.login(user.email, 'bad-password')).rejects.toThrow(
+        'Email ou mot de passe incorrect',
+      );
+    }
+
+    await expect(service.login(user.email, 'bad-password')).rejects.toThrow(
+      'Trop de tentatives. Réessayez plus tard.',
     );
   });
 

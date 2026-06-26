@@ -14,6 +14,7 @@ import {
   KeyRound,
   Link2,
   LockKeyhole,
+  Trash2,
   Search,
   ShieldCheck,
   Sparkles,
@@ -134,6 +135,7 @@ export default function AdminPage() {
   const [passwordByUserId, setPasswordByUserId] = useState<
     Record<string, string>
   >({});
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const [createForm, setCreateForm] = useState({
     firstName: "",
     lastName: "",
@@ -376,6 +378,37 @@ export default function AdminPage() {
       setNotice("Mot de passe mis à jour.");
     } catch {
       setError("Impossible de changer le mot de passe.");
+    }
+  }
+
+  async function deleteUser(adminUser: AdminUser) {
+    if (adminUser.id === user?.id) {
+      setError("Vous ne pouvez pas supprimer votre propre compte.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Supprimer définitivement le compte de ${adminUser.firstName} ${adminUser.lastName ?? ""} ?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setNotice(null);
+    setError(null);
+    setDeletingUserId(adminUser.id);
+
+    try {
+      await api.delete(`/admin/users/${adminUser.id}`);
+      setAdminUsers((currentUsers) =>
+        currentUsers.filter((currentUser) => currentUser.id !== adminUser.id),
+      );
+      await refreshAfterAction("Utilisateur supprimé.");
+    } catch {
+      setError("Impossible de supprimer cet utilisateur.");
+    } finally {
+      setDeletingUserId(null);
     }
   }
 
@@ -845,6 +878,23 @@ export default function AdminPage() {
                                   <Ban className="h-4 w-4" />
                                 )}
                                 {adminUser.isBlocked ? "Débloquer" : "Bloquer"}
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={
+                                  deletingUserId === adminUser.id ||
+                                  adminUser.id === user?.id
+                                }
+                                onClick={() => void deleteUser(adminUser)}
+                                className={`${buttonClass} border border-red-500/25 bg-red-500/10 text-red-300 hover:bg-red-500/15 md:col-span-2`}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                {deletingUserId === adminUser.id
+                                  ? "Suppression..."
+                                  : adminUser.id === user?.id
+                                    ? "Compte actuel"
+                                    : "Supprimer l'utilisateur"}
                               </button>
 
                               <div className="relative md:col-span-2">

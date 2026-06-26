@@ -4,11 +4,17 @@ import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
+const avatarMimeExtensions: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+};
 
 @Injectable()
 export class UploadService {
-  private supabase;
+  private supabase: SupabaseClient;
 
   constructor(
     private readonly configService: ConfigService,
@@ -21,12 +27,16 @@ export class UploadService {
     );
   }
 
-  async uploadAvatar(userId: string, file: any) {
+  async uploadAvatar(userId: string, file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('File is required');
     }
 
-    const fileExtension = file.originalname.split('.').pop();
+    const fileExtension = avatarMimeExtensions[file.mimetype];
+
+    if (!fileExtension) {
+      throw new BadRequestException('Type de fichier avatar non autorisé');
+    }
 
     const filePath = `avatars/${userId}-${Date.now()}.${fileExtension}`;
 

@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
+import { BCRYPT_COST } from '../auth/auth-security.constants';
 import { buildDefaultGoals } from '../goals/default-goals';
 
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
@@ -137,7 +138,7 @@ export class AdminService {
       throw new BadRequestException('Email déjà utilisé');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, BCRYPT_COST);
 
     const user = await this.prisma.user.create({
       data: {
@@ -230,7 +231,7 @@ export class AdminService {
   }
 
   async updateUserPassword(userId: string, dto: UpdateAdminUserPasswordDto) {
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, BCRYPT_COST);
 
     await this.prisma.user.update({
       where: {
@@ -239,6 +240,24 @@ export class AdminService {
       data: {
         password: hashedPassword,
         refreshToken: null,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  }
+
+  async deleteUser(adminUserId: string, userId: string) {
+    if (adminUserId === userId) {
+      throw new ForbiddenException(
+        'Impossible de supprimer votre propre compte',
+      );
+    }
+
+    await this.prisma.user.deleteMany({
+      where: {
+        id: userId,
       },
     });
 

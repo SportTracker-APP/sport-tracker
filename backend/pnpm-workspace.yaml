@@ -5,3 +5,6 @@ allowBuilds:
   bcrypt: true
   prisma: false
   unrs-resolver: false
+
+overrides:
+  multer: 2.2.0

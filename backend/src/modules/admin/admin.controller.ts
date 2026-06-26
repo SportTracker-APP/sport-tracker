@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -53,5 +54,13 @@ export class AdminController {
     @Body() dto: UpdateAdminUserPasswordDto,
   ) {
     return this.adminService.updateUserPassword(userId, dto);
+  }
+
+  @Delete('users/:id')
+  deleteUser(
+    @Req() req: { user: { id: string } },
+    @Param('id') userId: string,
+  ) {
+    return this.adminService.deleteUser(req.user.id, userId);
   }
 }

@@ -17,6 +17,14 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 import { buildDefaultGoals } from '../goals/default-goals';
 
+import {
+  AUTH_RATE_LIMIT_MAX_ATTEMPTS,
+  AUTH_RATE_LIMIT_WINDOW_MS,
+  BCRYPT_COST,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS,
+} from './auth-security.constants';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
@@ -28,9 +36,6 @@ const REGISTER_MESSAGE =
   'Compte créé. Vérifiez votre boîte mail pour activer votre compte.';
 
 const SECURE_TOKEN_BYTES = 32;
-const RESET_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const RESET_RATE_LIMIT_MAX_ATTEMPTS = 3;
-
 type ForgotPasswordRequestMeta = {
   ip?: string;
 };
@@ -44,7 +49,7 @@ type RateLimitEntry = {
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  private readonly forgotPasswordRateLimits = new Map<string, RateLimitEntry>();
+  private readonly authRateLimits = new Map<string, RateLimitEntry>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -65,9 +70,9 @@ export class AuthService {
         role,
       },
       {
-        secret: process.env.JWT_ACCESS_SECRET || 'access-secret',
-
+        secret: this.getRequiredConfig('JWT_ACCESS_SECRET'),
         expiresIn: '15m',
+        algorithm: 'HS256',
       },
     );
   }
@@ -84,15 +89,15 @@ export class AuthService {
         role,
       },
       {
-        secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
-
+        secret: this.getRequiredConfig('JWT_REFRESH_SECRET'),
         expiresIn: '7d',
+        algorithm: 'HS256',
       },
     );
   }
 
   private async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, BCRYPT_COST);
 
     await this.prisma.user.update({
       where: {
@@ -106,17 +111,23 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
+    const email = this.normalizeEmail(dto.email);
+
+    this.assertAuthRateLimit(`register:${email}`);
+
     const existingUser = await this.prisma.user.findUnique({
       where: {
-        email: dto.email,
+        email,
       },
     });
 
     if (existingUser) {
-      throw new BadRequestException('Email already used');
+      throw new BadRequestException(
+        'Inscription impossible avec ces informations',
+      );
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, BCRYPT_COST);
 
     const { user, verificationToken } = await this.prisma.$transaction(
       async (tx) => {
@@ -124,7 +135,7 @@ export class AuthService {
           data: {
             firstName: dto.firstName,
 
-            email: dto.email,
+            email,
 
             password: hashedPassword,
 
@@ -184,6 +195,8 @@ export class AuthService {
   }
 
   async verifyEmail(dto: VerifyEmailDto) {
+    this.assertAuthRateLimit(`verify-email:${dto.token}`);
+
     const tokenHash = this.hashToken(dto.token);
     const verificationToken =
       await this.prisma.emailVerificationToken.findUnique({
@@ -280,9 +293,13 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
+    const normalizedEmail = this.normalizeEmail(email);
+
+    this.assertAuthRateLimit(`login:${normalizedEmail}`);
+
     const user = await this.prisma.user.findUnique({
       where: {
-        email,
+        email: normalizedEmail,
       },
     });
 
@@ -418,6 +435,8 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto) {
+    this.assertAuthRateLimit(`reset-password:${dto.token}`);
+
     if (dto.password !== dto.confirmPassword) {
       throw new BadRequestException('Les mots de passe ne correspondent pas');
     }
@@ -448,7 +467,7 @@ export class AuthService {
       throw new BadRequestException('Lien invalide ou expiré');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, BCRYPT_COST);
     const now = new Date();
 
     await this.prisma.$transaction(async (tx) => {
@@ -586,7 +605,8 @@ export class AuthService {
 
   private assertPasswordPolicy(password: string) {
     if (
-      password.length < 8 ||
+      password.length < PASSWORD_MIN_LENGTH ||
+      password.length > PASSWORD_MAX_LENGTH ||
       !/[A-Za-z]/.test(password) ||
       !/\d/.test(password)
     ) {
@@ -597,14 +617,24 @@ export class AuthService {
   }
 
   private isForgotPasswordRateLimited(email: string, ip?: string): boolean {
-    const key = `${email}:${ip ?? 'unknown'}`;
+    const key = `forgot-password:${email}:${ip ?? 'unknown'}`;
+    return this.isRateLimited(key, PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS);
+  }
+
+  private assertAuthRateLimit(key: string): void {
+    if (this.isRateLimited(key, AUTH_RATE_LIMIT_MAX_ATTEMPTS)) {
+      throw new BadRequestException('Trop de tentatives. Réessayez plus tard.');
+    }
+  }
+
+  private isRateLimited(key: string, maxAttempts: number): boolean {
     const now = Date.now();
-    const entry = this.forgotPasswordRateLimits.get(key);
+    const entry = this.authRateLimits.get(key);
 
     if (!entry || entry.resetAt <= now) {
-      this.forgotPasswordRateLimits.set(key, {
+      this.authRateLimits.set(key, {
         count: 1,
-        resetAt: now + RESET_RATE_LIMIT_WINDOW_MS,
+        resetAt: now + AUTH_RATE_LIMIT_WINDOW_MS,
       });
 
       return false;
@@ -612,6 +642,10 @@ export class AuthService {
 
     entry.count += 1;
 
-    return entry.count > RESET_RATE_LIMIT_MAX_ATTEMPTS;
+    return entry.count > maxAttempts;
+  }
+
+  private getRequiredConfig(key: string): string {
+    return this.configService.getOrThrow<string>(key);
   }
 }
