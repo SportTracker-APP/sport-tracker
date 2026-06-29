@@ -98,6 +98,8 @@ type StravaCallbackFailureReason =
 
 @Injectable()
 export class StravaService {
+  private readonly syncCooldownMs = 60 * 60 * 1000;
+
   private readonly authorizationEndpoint =
     'https://www.strava.com/oauth/authorize';
 
@@ -124,6 +126,7 @@ export class StravaService {
           athleteId: true,
           expiresAt: true,
           updatedAt: true,
+          lastSyncAttemptAt: true,
         },
       }),
       this.prisma.activity.count({
@@ -149,6 +152,10 @@ export class StravaService {
       athleteId: connection.athleteId,
       expiresAt: connection.expiresAt,
       lastUpdatedAt: connection.updatedAt,
+      lastSyncAttemptAt: connection.lastSyncAttemptAt,
+      nextSyncAllowedAt: connection.lastSyncAttemptAt
+        ? new Date(connection.lastSyncAttemptAt.getTime() + this.syncCooldownMs)
+        : null,
       syncedActivitiesCount,
       hasSyncedActivities: syncedActivitiesCount > 0,
     };
@@ -243,6 +250,8 @@ export class StravaService {
   }
 
   async syncActivities(userId: string) {
+    await this.claimSyncAttempt(userId);
+
     const connection = await this.getValidConnection(userId);
 
     let activities: StravaActivity[];
@@ -261,6 +270,7 @@ export class StravaService {
       return {
         imported: 0,
         fetched: 0,
+        latestImportedActivityTitle: null,
       };
     }
 
@@ -281,6 +291,9 @@ export class StravaService {
       existingActivities
         .filter((activity) => activity.stravaActivityId)
         .map((activity) => [activity.stravaActivityId as string, activity]),
+    );
+    const newActivities = activities.filter(
+      (activity) => !existingActivitiesByStravaId.has(activity.id.toString()),
     );
 
     try {
@@ -341,10 +354,9 @@ export class StravaService {
     }
 
     return {
-      imported: activities.filter(
-        (activity) => !existingActivitiesByStravaId.has(activity.id.toString()),
-      ).length,
+      imported: newActivities.length,
       fetched: activities.length,
+      latestImportedActivityTitle: newActivities[0]?.name ?? null,
     };
   }
 
@@ -415,6 +427,58 @@ export class StravaService {
         expiresAt: new Date(refreshed.expires_at * 1000),
       },
     });
+  }
+
+  private async claimSyncAttempt(userId: string) {
+    const attemptedAt = new Date();
+    const cooldownStartedAt = new Date(
+      attemptedAt.getTime() - this.syncCooldownMs,
+    );
+    const claim = await this.prisma.stravaConnection.updateMany({
+      where: {
+        userId,
+        OR: [
+          { lastSyncAttemptAt: null },
+          { lastSyncAttemptAt: { lte: cooldownStartedAt } },
+        ],
+      },
+      data: {
+        lastSyncAttemptAt: attemptedAt,
+      },
+    });
+
+    if (claim.count === 1) {
+      return;
+    }
+
+    const connection = await this.prisma.stravaConnection.findUnique({
+      where: { userId },
+      select: { lastSyncAttemptAt: true },
+    });
+
+    if (!connection) {
+      throw new NotFoundException('Aucun compte Strava connecté');
+    }
+
+    const nextSyncAllowedAt = new Date(
+      (connection.lastSyncAttemptAt?.getTime() ?? attemptedAt.getTime()) +
+        this.syncCooldownMs,
+    );
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil((nextSyncAllowedAt.getTime() - attemptedAt.getTime()) / 1000),
+    );
+    const retryAfterMinutes = Math.ceil(retryAfterSeconds / 60);
+
+    throw new HttpException(
+      {
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+        message: `Une synchronisation Strava est autorisée par heure. Réessayez dans ${retryAfterMinutes} minute${retryAfterMinutes > 1 ? 's' : ''}.`,
+        retryAfterSeconds,
+        nextSyncAllowedAt: nextSyncAllowedAt.toISOString(),
+      },
+      HttpStatus.TOO_MANY_REQUESTS,
+    );
   }
 
   private async exchangeAuthorizationCode(code: string) {

@@ -188,6 +188,183 @@
   height: 15px;
 }
 
+.summitCelebrationCard {
+  position: relative;
+  isolation: isolate;
+  min-height: 96px;
+  gap: 0.9rem;
+  overflow: visible;
+  padding: 0.52rem 1rem;
+  border-color: var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+}
+
+.summitCelebrationCard::before {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: -1px;
+  width: 2px;
+  border-radius: 999px;
+  background: #34d399;
+  box-shadow: 0 0 16px rgba(52, 211, 153, 0.36);
+  content: "";
+}
+
+.summitCelebrationCard[data-summit-celebration="true"] {
+  animation: summitNotificationEnter 220ms ease-out both;
+}
+
+.summitCelebrationIcon {
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(52, 211, 153, 0.24);
+  border-radius: 14px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.1);
+}
+
+.summitCelebrationContent h2 {
+  margin-top: 6px;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.summitCelebrationContent > p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  opacity: 0.88;
+}
+
+.summitCelebrationKicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.09);
+  color: #6ee7b7;
+  font-size: 0.61rem;
+  letter-spacing: 0.08em;
+}
+
+.summitCelebrationMetrics {
+  gap: 0.75rem;
+  margin-top: 8px;
+}
+
+.summitCelebrationMetrics span {
+  position: relative;
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.summitCelebrationMetrics span + span::before {
+  position: absolute;
+  top: 50%;
+  left: -0.45rem;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #34d399;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.summitCelebrationActions {
+  gap: 0.65rem;
+}
+
+.summitCelebrationPrimaryAction {
+  min-height: 38px;
+  border: 1px solid rgba(var(--d2-accent-rgb), 0.3);
+  border-radius: 11px;
+  background: var(--d2-accent-deep);
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(var(--d2-accent-rgb), 0.16);
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.summitCelebrationPrimaryAction:hover {
+  border-color: rgba(var(--d2-accent-rgb), 0.48);
+  background: var(--d2-accent-strong);
+  box-shadow: 0 10px 28px rgba(var(--d2-accent-rgb), 0.22);
+  transform: translateY(-1px);
+}
+
+.summitCelebrationHideAction {
+  position: relative;
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-color: var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.summitCelebrationHideAction:hover {
+  border-color: rgba(var(--d2-accent-rgb), 0.3);
+  background: rgba(var(--d2-accent-rgb), 0.09);
+  color: var(--ink);
+}
+
+.summitCelebrationTooltip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  width: max-content;
+  max-width: 190px;
+  padding: 0.42rem 0.58rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-ivory);
+  color: var(--ink);
+  box-shadow: var(--shadow-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(3px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.summitCelebrationHideAction:hover .summitCelebrationTooltip,
+.summitCelebrationHideAction:focus-visible .summitCelebrationTooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes summitNotificationEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes summitCelebrationEnter {
   0% {
     opacity: 0;
@@ -1651,6 +1828,41 @@
   .celebrationPrimaryAction,
   .celebrationHideAction {
     flex: 1 1 150px;
+  }
+
+  .summitCelebrationCard {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.7rem 0.8rem;
+    min-height: 0;
+    padding: 0.9rem 2.9rem 0.9rem 0.9rem;
+  }
+
+  .summitCelebrationIcon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .summitCelebrationContent > p {
+    overflow-wrap: anywhere;
+  }
+
+  .summitCelebrationActions {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .summitCelebrationPrimaryAction {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .summitCelebrationHideAction {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    width: 34px;
+    min-height: 34px;
+    flex: 0 0 34px;
   }
 
   .contextBar {
@@ -4160,6 +4372,10 @@
   .celebrationCard {
     border-radius: 18px;
     padding: 0.85rem;
+  }
+
+  .summitCelebrationCard {
+    padding: 0.9rem 2.9rem 0.9rem 0.9rem;
   }
 
   .hero {

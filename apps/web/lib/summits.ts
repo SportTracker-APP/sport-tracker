@@ -109,11 +109,12 @@ export const SUMMIT_CATALOG: Summit[] = [
   {
     id: "pointe-de-talamarche",
     name: "Pointe de Talamarche",
+    aliases: ["Talamarche"],
     altitude: 1852,
     massif: "Bornes",
     difficulty: "Difficile",
     type: "Sommet",
-    coordinates: [6.284, 45.877],
+    coordinates: [6.25734, 45.85981],
     imageUrl:
       "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=1400",
     imageCredit: "Image montagne",
@@ -325,9 +326,7 @@ export function getDistanceMeters(
   const deltaLng = ((secondPoint.lng - firstPoint.lng) * Math.PI) / 180;
   const a =
     Math.sin(deltaLat / 2) ** 2 +
-    Math.cos(firstLat) *
-      Math.cos(secondLat) *
-      Math.sin(deltaLng / 2) ** 2;
+    Math.cos(firstLat) * Math.cos(secondLat) * Math.sin(deltaLng / 2) ** 2;
 
   return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }

@@ -27,7 +27,11 @@ import {
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { FadeIn } from "@/components/ui/fade-in";
-import { useActivities, useDeleteActivity } from "@/hooks/use-activities";
+import {
+  useActivities,
+  useDeleteActivity,
+  useMarkPlannedWorkoutCompleted,
+} from "@/hooks/use-activities";
 import type { Activity } from "@/lib/activities";
 
 const dayFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -623,19 +627,10 @@ function CalendarActivity({
   const hasDuration = activity.duration > 0;
   const plannedNote =
     activity.status === "PLANNED" ? activity.description?.trim() : null;
+  const completePlannedWorkoutMutation = useMarkPlannedWorkoutCompleted();
   const activityHref = activity.completedActivityId
     ? `/activites/${activity.completedActivityId}`
     : `/activites/${activity.id}`;
-  const recordHref = `/activites/nouvelle?${new URLSearchParams({
-    plannedWorkoutId: activity.id,
-    status: "COMPLETED",
-    date: formatDateInput(activityDate),
-    sport: activity.sport,
-    title: activity.title ?? "Séance planifiée",
-    duration: String(activity.duration ?? 0),
-    distance: String(activity.distance ?? 0),
-    returnTo: "/calendrier",
-  }).toString()}`;
   const replanHref = `/activites/nouvelle?${new URLSearchParams({
     status: "PLANNED",
     date: formatDateInput(new Date()),
@@ -716,16 +711,25 @@ function CalendarActivity({
 
       {activity.status === "PLANNED" ? (
         <div className="mt-3 grid gap-1.5">
-          <Link
-            href={recordHref}
+          <button
+            type="button"
             className="app-calendar-action-record-v2 inline-flex min-h-9 min-w-0 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-2 text-[0.72rem] leading-tight font-bold text-emerald-800 transition hover:bg-emerald-100"
-            aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée et saisir ses résultats`}
+            aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée`}
+            disabled={completePlannedWorkoutMutation.isPending}
+            onClick={() => completePlannedWorkoutMutation.mutate(activity.id)}
           >
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
             <span className="min-w-0 text-center whitespace-normal">
-              Sortie faite
+              {completePlannedWorkoutMutation.isPending
+                ? "Validation…"
+                : "Sortie faite"}
             </span>
-          </Link>
+          </button>
+          {completePlannedWorkoutMutation.isError ? (
+            <p className="px-1 text-center text-[0.65rem] font-semibold text-red-600">
+              Impossible de valider la sortie.
+            </p>
+          ) : null}
           <button
             type="button"
             className="app-calendar-action-delete-v2 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-red-100 bg-red-50/70 px-2 text-[0.68rem] font-bold text-red-700 transition hover:bg-red-100"

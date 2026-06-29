@@ -1241,7 +1241,6 @@ function readDashboardSummitEvent() {
     if (
       event.type !== "SUMMIT_DISCOVERY" ||
       event.dismissed ||
-      event.shownAt ||
       !event.summitName
     ) {
       return null;
@@ -1283,36 +1282,56 @@ function SummitDiscoveryCelebrationCard({
 }) {
   return (
     <FadeIn delay={0.04}>
-      <section className={styles.celebrationCard} role="status" data-summit-celebration="true">
-        <div className={styles.celebrationIcon}>
+      <section
+        className={`${styles.celebrationCard} ${styles.summitCelebrationCard}`}
+        role="status"
+        data-summit-celebration="true"
+      >
+        <div className={`${styles.celebrationIcon} ${styles.summitCelebrationIcon}`}>
           <Mountain aria-hidden="true" />
         </div>
-        <div className={styles.celebrationContent}>
-          <p className={styles.celebrationKicker}>Nouveau sommet découvert</p>
+        <div className={`${styles.celebrationContent} ${styles.summitCelebrationContent}`}>
+          <p className={`${styles.celebrationKicker} ${styles.summitCelebrationKicker}`}>
+            Nouveau sommet
+          </p>
           <h2>{event.summitName}</h2>
           <p>
-            {event.summitName} rejoint ton carnet grâce à{" "}
-            {event.activityTitle ?? "une activité"}.
+            {event.activityTitle
+              ? `Ajoutée à ton carnet lors de ta sortie « ${event.activityTitle} ».`
+              : "Ajoutée à ton carnet lors de ta dernière sortie."}
           </p>
-          <div className={styles.celebrationMetrics}>
+          <div className={`${styles.celebrationMetrics} ${styles.summitCelebrationMetrics}`}>
             {typeof event.altitude === "number" ? (
-              <span>{formatNumber(event.altitude)} m</span>
+              <span>
+                {formatNumber(event.altitude).replace(/\u202f/g, "\u00a0")} m
+              </span>
             ) : null}
             <span>{event.massif}</span>
-            {event.activityTitle ? <span>{event.activityTitle}</span> : null}
           </div>
         </div>
-        <div className={styles.celebrationActions}>
-          <Link href="/sommets" className={styles.celebrationPrimaryAction}>
+        <div className={`${styles.celebrationActions} ${styles.summitCelebrationActions}`}>
+          <Link
+            href="/sommets"
+            className={`${styles.celebrationPrimaryAction} ${styles.summitCelebrationPrimaryAction}`}
+            onClick={onHide}
+          >
             Voir le sommet
           </Link>
           <button
             type="button"
-            className={styles.celebrationHideAction}
+            className={`${styles.celebrationHideAction} ${styles.summitCelebrationHideAction}`}
             onClick={onHide}
+            aria-label="Masquer la notification"
+            aria-describedby="summit-notification-dismiss-tooltip"
           >
             <X aria-hidden="true" />
-            Masquer
+            <span
+              id="summit-notification-dismiss-tooltip"
+              role="tooltip"
+              className={styles.summitCelebrationTooltip}
+            >
+              Masquer la notification
+            </span>
           </button>
         </div>
       </section>

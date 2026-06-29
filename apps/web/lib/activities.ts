@@ -104,6 +104,14 @@ export async function deleteActivity(id: string) {
   await api.delete(`/activities/${id}`);
 }
 
+export async function markPlannedWorkoutCompleted(activityId: string) {
+  const { data } = await api.patch<Activity>(`/activities/${activityId}`, {
+    status: "COMPLETED",
+  });
+
+  return data;
+}
+
 export async function completePlannedWorkout(
   plannedWorkoutId: string,
   activityId: string,

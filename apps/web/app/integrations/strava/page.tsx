@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { AxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Activity,
@@ -33,6 +34,7 @@ interface StravaStatus {
 interface SyncResult {
   imported: number;
   fetched: number;
+  latestImportedActivityTitle: string | null;
 }
 
 interface LastSyncedActivity {
@@ -212,6 +214,8 @@ function formatElevation(elevationGain?: number) {
 }
 
 export default function StravaIntegrationPage() {
+  const queryClient = useQueryClient();
+
   const [status, setStatus] = useState<StravaStatus>({
     connected: false,
   });
@@ -373,10 +377,16 @@ export default function StravaIntegrationPage() {
 
       setSyncResult(data);
       setMessage({
-        text: `${data.fetched} activité${data.fetched > 1 ? "s" : ""} récupérée${data.fetched > 1 ? "s" : ""}.`,
+        text:
+          data.imported === 0
+            ? "Aucune nouvelle sortie à synchroniser."
+            : data.imported === 1
+              ? `1 sortie synchronisée${data.latestImportedActivityTitle ? ` : ${data.latestImportedActivityTitle}` : ""}.`
+              : `${data.imported} sorties synchronisées${data.latestImportedActivityTitle ? `, dont ${data.latestImportedActivityTitle}` : ""}.`,
         variant: "success",
       });
 
+      await queryClient.invalidateQueries({ queryKey: ["activities"] });
       await refreshStatus();
       await refreshLastSyncedActivity();
     } catch (error) {
@@ -449,8 +459,8 @@ export default function StravaIntegrationPage() {
               </h1>
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
-                Importez automatiquement tes activités, tes performances et
-                ton historique sportif dans Sport Tracker.
+                Importez automatiquement tes activités, tes performances et ton
+                historique sportif dans Sport Tracker.
               </p>
             </div>
 
