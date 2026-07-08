@@ -2,13 +2,20 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Activity, ActivityStatus, PlannedWorkoutCompletion, Prisma } from '@prisma/client';
+import {
+  Activity,
+  ActivityStatus,
+  PlannedWorkoutCompletion,
+  Prisma,
+} from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { ActivityMailSchedulerService } from '../../mail/scheduling/activity-mail-scheduler.service';
 import { StravaService } from '../strava/strava.service';
+import { SummitsService } from '../summits/summits.service';
 
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { CompletePlannedWorkoutDto } from './dto/complete-planned-workout.dto';
@@ -17,10 +24,13 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 
 @Injectable()
 export class ActivitiesService {
+  private readonly logger = new Logger(ActivitiesService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly stravaService: StravaService,
     private readonly activityMailScheduler: ActivityMailSchedulerService,
+    private readonly summitsService: SummitsService,
   ) {}
 
   async create(userId: string, dto: CreateActivityDto) {
@@ -44,6 +54,10 @@ export class ActivitiesService {
       await this.activityMailScheduler.scheduleUpcomingActivityReminder(
         activity.id,
       );
+    }
+
+    if (activity.status === ActivityStatus.COMPLETED) {
+      await this.processSummitsSafely(userId, [activity.id]);
     }
 
     return activity;
@@ -134,6 +148,10 @@ export class ActivitiesService {
       );
     }
 
+    if (updatedActivity.status === ActivityStatus.COMPLETED) {
+      await this.processSummitsSafely(userId, [updatedActivity.id]);
+    }
+
     return updatedActivity;
   }
 
@@ -151,10 +169,18 @@ export class ActivitiesService {
     );
 
     if (completedWorkout.completedAt) {
-      await this.activityMailScheduler.scheduleCompletedActivityCongratulations({
-        activityId: plannedWorkoutId,
-        completedAt: completedWorkout.completedAt,
-      });
+      await this.activityMailScheduler.scheduleCompletedActivityCongratulations(
+        {
+          activityId: plannedWorkoutId,
+          completedAt: completedWorkout.completedAt,
+        },
+      );
+    }
+
+    if (completedWorkout.completedActivityId) {
+      await this.processSummitsSafely(userId, [
+        completedWorkout.completedActivityId,
+      ]);
     }
 
     return completedWorkout;
@@ -257,7 +283,10 @@ export class ActivitiesService {
     });
   }
 
-  private async createFromPlannedWorkout(userId: string, dto: CreateActivityDto) {
+  private async createFromPlannedWorkout(
+    userId: string,
+    dto: CreateActivityDto,
+  ) {
     const { plannedWorkoutId, ...activityData } = dto;
 
     if (!plannedWorkoutId) {
@@ -274,7 +303,12 @@ export class ActivitiesService {
         },
       });
 
-      return this.linkCompletedActivity(tx, userId, plannedWorkoutId, activity.id);
+      return this.linkCompletedActivity(
+        tx,
+        userId,
+        plannedWorkoutId,
+        activity.id,
+      );
     });
 
     await this.activityMailScheduler.cancelUpcomingActivityReminder(
@@ -282,10 +316,18 @@ export class ActivitiesService {
     );
 
     if (completedWorkout.completedAt) {
-      await this.activityMailScheduler.scheduleCompletedActivityCongratulations({
-        activityId: plannedWorkoutId,
-        completedAt: completedWorkout.completedAt,
-      });
+      await this.activityMailScheduler.scheduleCompletedActivityCongratulations(
+        {
+          activityId: plannedWorkoutId,
+          completedAt: completedWorkout.completedAt,
+        },
+      );
+    }
+
+    if (completedWorkout.completedActivityId) {
+      await this.processSummitsSafely(userId, [
+        completedWorkout.completedActivityId,
+      ]);
     }
 
     return completedWorkout;
@@ -334,7 +376,9 @@ export class ActivitiesService {
     }
 
     if (activity.status !== ActivityStatus.COMPLETED) {
-      throw new BadRequestException('Seule une activité terminée peut valider une séance');
+      throw new BadRequestException(
+        'Seule une activité terminée peut valider une séance',
+      );
     }
 
     const existingActivityLink = await tx.plannedWorkoutCompletion.findFirst({
@@ -347,7 +391,9 @@ export class ActivitiesService {
       existingActivityLink &&
       existingActivityLink.plannedWorkoutId !== plannedWorkoutId
     ) {
-      throw new ConflictException('Cette activité est déjà associée à une séance');
+      throw new ConflictException(
+        'Cette activité est déjà associée à une séance',
+      );
     }
 
     const completedAt = new Date();
@@ -493,6 +539,21 @@ export class ActivitiesService {
       });
     } catch {
       return [] as PlannedWorkoutCompletion[];
+    }
+  }
+
+  private async processSummitsSafely(
+    userId: string,
+    activityIds: string[],
+  ): Promise<void> {
+    try {
+      await this.summitsService.processActivities(userId, activityIds);
+    } catch (error) {
+      this.logger.warn({
+        activityCount: activityIds.length,
+        errorName: error instanceof Error ? error.name : 'UnknownError',
+        message: 'Summit detection skipped after activity change',
+      });
     }
   }
 }

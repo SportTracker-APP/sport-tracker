@@ -3,6 +3,7 @@ import { ActivityStatus, ActivityType, SportType } from '@prisma/client';
 
 import { ActivityMailSchedulerService } from '../../mail/scheduling/activity-mail-scheduler.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { SummitsService } from '../summits/summits.service';
 import { StravaService } from '../strava/strava.service';
 
 import { ActivitiesService } from './activities.service';
@@ -99,7 +100,9 @@ function makeSchedulerMock(): ActivityMailSchedulerMock {
     scheduleUpcomingActivityReminder: jest.fn().mockResolvedValue(undefined),
     rescheduleUpcomingActivityReminder: jest.fn().mockResolvedValue(undefined),
     cancelUpcomingActivityReminder: jest.fn().mockResolvedValue(undefined),
-    scheduleCompletedActivityCongratulations: jest.fn().mockResolvedValue(undefined),
+    scheduleCompletedActivityCongratulations: jest
+      .fn()
+      .mockResolvedValue(undefined),
   };
 }
 
@@ -111,6 +114,9 @@ function makeService(
     prisma as unknown as PrismaService,
     {} as unknown as StravaService,
     scheduler as unknown as ActivityMailSchedulerService,
+    {
+      processActivities: jest.fn().mockResolvedValue(undefined),
+    } as unknown as SummitsService,
   );
 }
 
@@ -333,7 +339,9 @@ describe('ActivitiesService planned workout completion', () => {
       data: { celebrationSeenAt: Date };
     };
 
-    expect(updatePayload.where).toEqual({ plannedWorkoutId: plannedWorkout.id });
+    expect(updatePayload.where).toEqual({
+      plannedWorkoutId: plannedWorkout.id,
+    });
     expect(updatePayload.data.celebrationSeenAt).toBeInstanceOf(Date);
   });
 });

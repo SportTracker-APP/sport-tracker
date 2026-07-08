@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import {
   Activity,
   Home,
+  Map,
   Mountain,
-  Plus,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,25 +20,24 @@ type MobileNavItem = {
 
 const navigationItems: MobileNavItem[] = [
   {
-    label: "Accueil",
+    label: "Refuge",
     href: "/",
     icon: Home,
-  },
-  {
-    label: "Sorties",
-    href: "/activites",
-    icon: Activity,
-  },
-  {
-    label: "Ajouter",
-    href: "/activites/nouvelle",
-    icon: Plus,
-    isPrimary: true,
   },
   {
     label: "Sommets",
     href: "/sommets",
     icon: Mountain,
+  },
+  {
+    label: "Exploration",
+    href: "/carte",
+    icon: Map,
+  },
+  {
+    label: "Sorties",
+    href: "/activites",
+    icon: Activity,
   },
 ];
 
@@ -55,14 +54,7 @@ function isActiveRoute(pathname: string, href: string) {
   }
 
   if (target === "/activites") {
-    return current === target || (
-      current.startsWith(`${target}/`) &&
-      !current.startsWith("/activites/nouvelle")
-    );
-  }
-
-  if (target === "/activites/nouvelle") {
-    return current === target;
+    return current === target || current.startsWith(`${target}/`);
   }
 
   return current === target || current.startsWith(`${target}/`);

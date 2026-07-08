@@ -19,6 +19,8 @@ import {
 import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { SummitsService } from '../summits/summits.service';
+import { StravaTokenEncryptionService } from './strava-token-encryption.service';
 
 interface StravaStatePayload {
   userId: string;
@@ -114,6 +116,8 @@ export class StravaService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+    private readonly summitsService: SummitsService,
+    private readonly tokenEncryption: StravaTokenEncryptionService,
   ) {}
 
   async getStatus(userId: string) {
@@ -222,6 +226,15 @@ export class StravaService {
     }
 
     try {
+      const encryptedAccessToken = this.tokenEncryption.encrypt(
+        tokenResponse.access_token,
+        { userId: state.userId, tokenType: 'access' },
+      );
+      const encryptedRefreshToken = this.tokenEncryption.encrypt(
+        tokenResponse.refresh_token,
+        { userId: state.userId, tokenType: 'refresh' },
+      );
+
       await this.prisma.stravaConnection.upsert({
         where: {
           userId: state.userId,
@@ -229,14 +242,14 @@ export class StravaService {
         create: {
           userId: state.userId,
           athleteId: tokenResponse.athlete.id.toString(),
-          accessToken: tokenResponse.access_token,
-          refreshToken: tokenResponse.refresh_token,
+          accessToken: encryptedAccessToken,
+          refreshToken: encryptedRefreshToken,
           expiresAt: new Date(tokenResponse.expires_at * 1000),
         },
         update: {
           athleteId: tokenResponse.athlete.id.toString(),
-          accessToken: tokenResponse.access_token,
-          refreshToken: tokenResponse.refresh_token,
+          accessToken: encryptedAccessToken,
+          refreshToken: encryptedRefreshToken,
           expiresAt: new Date(tokenResponse.expires_at * 1000),
         },
       });
@@ -295,6 +308,10 @@ export class StravaService {
     const newActivities = activities.filter(
       (activity) => !existingActivitiesByStravaId.has(activity.id.toString()),
     );
+    const newStravaActivityIds = new Set(
+      newActivities.map((activity) => activity.id.toString()),
+    );
+    const importedActivityIds: string[] = [];
 
     try {
       for (const activity of activities) {
@@ -311,7 +328,7 @@ export class StravaService {
           continue;
         }
 
-        await this.prisma.activity.upsert({
+        const persistedActivity = await this.prisma.activity.upsert({
           where: {
             stravaActivityId,
           },
@@ -342,6 +359,10 @@ export class StravaService {
             startedAt: mappedActivity.startedAt,
           },
         });
+
+        if (newStravaActivityIds.has(stravaActivityId)) {
+          importedActivityIds.push(persistedActivity.id);
+        }
       }
     } catch (error) {
       console.error('Strava sync database failed:', {
@@ -351,6 +372,20 @@ export class StravaService {
       throw new BadRequestException(
         "L'import en base a échoué pendant la synchronisation Strava.",
       );
+    }
+
+    if (importedActivityIds.length > 0) {
+      try {
+        await this.summitsService.processActivities(
+          userId,
+          importedActivityIds,
+        );
+      } catch (error) {
+        console.warn('Summit detection skipped after Strava sync:', {
+          importedActivities: importedActivityIds.length,
+          errorName: error instanceof Error ? error.name : 'UnknownError',
+        });
+      }
     }
 
     return {
@@ -409,24 +444,48 @@ export class StravaService {
       throw new NotFoundException('Aucun compte Strava connecté');
     }
 
+    const accessToken = this.tokenEncryption.decrypt(connection.accessToken, {
+      userId,
+      tokenType: 'access',
+    });
+    const refreshToken = this.tokenEncryption.decrypt(
+      connection.refreshToken,
+      { userId, tokenType: 'refresh' },
+    );
+
     const expiresSoon = connection.expiresAt.getTime() <= Date.now() + 60_000;
 
     if (!expiresSoon) {
-      return connection;
+      return { ...connection, accessToken, refreshToken };
     }
 
-    const refreshed = await this.refreshAccessToken(connection.refreshToken);
+    const refreshed = await this.refreshAccessToken(refreshToken);
 
-    return this.prisma.stravaConnection.update({
+    const encryptedAccessToken = this.tokenEncryption.encrypt(
+      refreshed.access_token,
+      { userId, tokenType: 'access' },
+    );
+    const encryptedRefreshToken = this.tokenEncryption.encrypt(
+      refreshed.refresh_token,
+      { userId, tokenType: 'refresh' },
+    );
+
+    const updatedConnection = await this.prisma.stravaConnection.update({
       where: {
         userId,
       },
       data: {
-        accessToken: refreshed.access_token,
-        refreshToken: refreshed.refresh_token,
+        accessToken: encryptedAccessToken,
+        refreshToken: encryptedRefreshToken,
         expiresAt: new Date(refreshed.expires_at * 1000),
       },
     });
+
+    return {
+      ...updatedConnection,
+      accessToken: refreshed.access_token,
+      refreshToken: refreshed.refresh_token,
+    };
   }
 
   private async claimSyncAttempt(userId: string) {

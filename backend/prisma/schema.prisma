@@ -55,6 +55,10 @@ model User {
 
   scheduledEmails ScheduledEmail[]
 
+  summitDiscoveries SummitDiscovery[]
+
+  badges UserBadge[]
+
   // DATES
   createdAt DateTime @default(now())
 
@@ -198,6 +202,8 @@ model Activity {
 
   scheduledEmails ScheduledEmail[]
 
+  summitDiscoveries SummitDiscovery[]
+
   @@index([userId])
   @@index([type])
   @@index([sport])
@@ -302,6 +308,144 @@ model Goal {
   @@index([endDate])
 }
 
+model Summit {
+  id String @id
+
+  name String
+
+  aliases String[]
+
+  altitude Int
+
+  massif String
+
+  difficulty String
+
+  type String
+
+  longitude Float
+
+  latitude Float
+
+  imageUrl String?
+
+  imageCredit String?
+
+  sourceUrl String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  discoveries SummitDiscovery[]
+
+  @@index([massif])
+  @@index([altitude])
+  @@index([isActive])
+}
+
+model SummitDiscovery {
+  id String @id @default(cuid())
+
+  userId String
+
+  summitId String
+
+  activityId String
+
+  status SummitDiscoveryStatus @default(PENDING)
+
+  confidence Float
+
+  closestDistance Int
+
+  altitudeMatched Boolean
+
+  titleMatched Boolean
+
+  detectedAt DateTime @default(now())
+
+  confirmedAt DateTime?
+
+  dismissedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  summit Summit @relation(fields: [summitId], references: [id], onDelete: Cascade)
+
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  unlockedBadges UserBadge[]
+
+  @@unique([summitId, activityId])
+  @@index([userId, status])
+  @@index([userId, summitId])
+  @@index([activityId])
+  @@index([detectedAt])
+}
+
+model Badge {
+  id String @id
+
+  name String
+
+  description String
+
+  hint String
+
+  icon String
+
+  tone String
+
+  sortOrder Int
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  users UserBadge[]
+
+  @@index([sortOrder])
+  @@index([isActive])
+}
+
+model UserBadge {
+  id String @id @default(cuid())
+
+  userId String
+
+  badgeId String
+
+  sourceDiscoveryId String?
+
+  unlockedAt DateTime @default(now())
+
+  notificationSentAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  sourceDiscovery SummitDiscovery? @relation(fields: [sourceDiscoveryId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, badgeId])
+  @@index([badgeId])
+  @@index([sourceDiscoveryId])
+  @@index([unlockedAt])
+}
+
 enum ActivityType {
   TRAINING
   RACE
@@ -371,6 +515,12 @@ enum GoalPeriod {
   WEEKLY
   MONTHLY
   CUSTOM
+}
+
+enum SummitDiscoveryStatus {
+  PENDING
+  CONFIRMED
+  DISMISSED
 }
 
 model StravaConnection {

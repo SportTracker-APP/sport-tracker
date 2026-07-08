@@ -14,10 +14,8 @@ import {
   ChevronDown,
   ChevronRight,
   CircleGauge,
-  CloudRain,
   Compass,
   Droplets,
-  Flame,
   Footprints,
   Gauge,
   HeartPulse,
@@ -28,8 +26,6 @@ import {
   Quote,
   Route,
   ShieldCheck,
-  Snowflake,
-  Sunrise,
   Target,
   Timer,
   Trophy,
@@ -59,8 +55,10 @@ import {
   useMarkPlannedWorkoutCelebrationSeen,
 } from "@/hooks/use-activities";
 import { useGoals } from "@/hooks/use-goals";
+import { useSummitBadges } from "@/hooks/use-summits";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
+import { getBadgeIcon } from "@/lib/badge-icons";
 import {
   calculateGoalProgress,
   formatGoalValue,
@@ -597,85 +595,6 @@ function getAdventureName(activities: SportActivity[]) {
   }
 
   return "la prochaine trace à explorer";
-}
-
-function getUnlockedBadges(
-  activities: SportActivity[],
-  rollingActivities: SportActivity[],
-): BadgeDefinition[] {
-  const hasSummit = activities.some(
-    (activity) =>
-      ["TRAIL", "HIKING"].includes(activity.sport) &&
-      (activity.elevationGain || 0) >= 300,
-  );
-  const rollingDistance = rollingActivities.reduce(
-    (total, activity) => total + (activity.distance || 0),
-    0,
-  );
-  const hasSunrise = activities.some((activity) => {
-    const hour = new Date(activity.startedAt).getHours();
-    return hour >= 4 && hour <= 8;
-  });
-  const hasWinter = activities.some((activity) => {
-    const month = new Date(activity.startedAt).getMonth();
-    return month === 11 || month <= 1;
-  });
-  const hasRain = activities.some((activity) =>
-    `${activity.title ?? ""} ${activity.description ?? ""}`
-      .toLowerCase()
-      .includes("pluie"),
-  );
-
-  return [
-    {
-      title: "Premier sommet",
-      icon: Mountain,
-      unlocked: hasSummit,
-      hint: "Une sortie trail ou randonnée avec du D+.",
-      unlockedText: "La première bosse est cochée.",
-      tone: "summit",
-    },
-    {
-      title: "100 km",
-      icon: Flame,
-      unlocked: rollingDistance >= 100,
-      hint: "100 km sur 30 jours.",
-      unlockedText: "Le compteur commence à chauffer.",
-      tone: "fire",
-    },
-    {
-      title: "10 sorties en 30j",
-      icon: Zap,
-      unlocked: rollingActivities.length >= 10,
-      hint: "La régularité qui paie.",
-      unlockedText: "La discipline fait son petit effet.",
-      tone: "energy",
-    },
-    {
-      title: "Lever de soleil",
-      icon: Sunrise,
-      unlocked: hasSunrise,
-      hint: "Sortie lancée entre 4 h et 8 h.",
-      unlockedText: "Parti avant que la ville se réveille.",
-      tone: "sunrise",
-    },
-    {
-      title: "Sortie hivernale",
-      icon: Snowflake,
-      unlocked: hasWinter,
-      hint: "Décembre, janvier ou février.",
-      unlockedText: "Le froid n’a pas gagné.",
-      tone: "winter",
-    },
-    {
-      title: "Sous la pluie",
-      icon: CloudRain,
-      unlocked: hasRain,
-      hint: "La sortie où le mental signe aussi.",
-      unlockedText: "Sortie validée, météo vexée.",
-      tone: "rain",
-    },
-  ];
 }
 
 function SurfaceHeader({
@@ -1342,6 +1261,7 @@ function SummitDiscoveryCelebrationCard({
 export default function DashboardPage() {
   const { data: activities = [], isLoading, error } = useActivities();
   const { data: goals = [] } = useGoals();
+  const { data: summitBadges = [] } = useSummitBadges();
   const markCelebrationSeen = useMarkPlannedWorkoutCelebrationSeen();
   const [stravaStatus, setStravaStatus] = useState<StravaStatus | null>(null);
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
@@ -1615,13 +1535,27 @@ export default function DashboardPage() {
   const daysSinceLastActivity = getDaysSinceLastActivity(
     dashboardData.latestActivity,
   );
-  const unlockedBadges = getUnlockedBadges(
-    dashboardData.completedActivities,
-    dashboardData.rollingActivities,
-  );
+  const unlockedBadges: BadgeDefinition[] = summitBadges.map((badge) => ({
+    title: badge.name,
+    icon: getBadgeIcon(badge.icon),
+    unlocked: badge.unlocked,
+    hint: badge.hint,
+    unlockedText: badge.description,
+    tone: badge.tone,
+  }));
   const unlockedBadgesCount = unlockedBadges.filter(
     (badge) => badge.unlocked,
   ).length;
+  const badgePreview = unlockedBadges
+    .slice()
+    .sort((firstBadge, secondBadge) =>
+      firstBadge.unlocked === secondBadge.unlocked
+        ? 0
+        : firstBadge.unlocked
+          ? -1
+          : 1,
+    )
+    .slice(0, 6);
   const averageElevation =
     dashboardData.rollingActivities.length > 0
       ? dashboardData.rollingElevation / dashboardData.rollingActivities.length
@@ -2050,13 +1984,18 @@ export default function DashboardPage() {
                     title="Badges du refuge"
                     description="Des jalons visibles, sans transformer l’app en carnaval."
                     action={
-                      <span className={styles.badgeCount}>
-                        <ShieldCheck aria-hidden="true" /> {unlockedBadgesCount} / 6 débloqués
-                      </span>
+                      <div className={styles.badgeHeaderActions}>
+                        <span className={styles.badgeCount}>
+                          <ShieldCheck aria-hidden="true" /> {unlockedBadgesCount} / {summitBadges.length} débloqués
+                        </span>
+                        <Link href="/badges" className={styles.badgeCatalogLink}>
+                          Voir tous <ArrowUpRight aria-hidden="true" />
+                        </Link>
+                      </div>
                     }
                   />
                   <div className={styles.badgeGrid}>
-                    {unlockedBadges.map((badge) => {
+                    {badgePreview.map((badge) => {
                       const BadgeIcon = badge.icon;
 
                       return (

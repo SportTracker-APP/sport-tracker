@@ -1,0 +1,316 @@
+.page {
+  --badge-bg: #11101a;
+  --badge-surface: rgba(27, 24, 41, 0.82);
+  --badge-border: rgba(196, 181, 253, 0.14);
+  --badge-text: #f8fafc;
+  --badge-muted: #a8a3b8;
+  min-height: 100%;
+  padding: 1.5rem;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  align-items: end;
+  gap: 2rem;
+  border-bottom: 1px solid var(--badge-border);
+  padding: 1rem 0 1.5rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #c4b5fd;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.eyebrow svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.header h1 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1;
+}
+
+.header p {
+  max-width: 620px;
+  margin: 0.7rem 0 0;
+  color: var(--badge-muted);
+  line-height: 1.55;
+}
+
+.progressSummary {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.progressSummary > div:first-child {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.progressSummary span,
+.progressSummary small {
+  color: var(--badge-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.progressSummary strong {
+  font-size: 1.25rem;
+}
+
+.progressTrack {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #8b5cf6;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.categoryFilters,
+.statusFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filters button {
+  min-height: 34px;
+  border: 1px solid var(--badge-border);
+  border-radius: 6px;
+  padding: 0 0.7rem;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--badge-muted);
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.filters button:hover,
+.filters button:focus-visible {
+  border-color: rgba(196, 181, 253, 0.36);
+  color: var(--badge-text);
+  outline: none;
+}
+
+.filters button[aria-pressed="true"] {
+  border-color: rgba(167, 139, 250, 0.42);
+  background: rgba(124, 58, 237, 0.18);
+  color: #ede9fe;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.badge {
+  position: relative;
+  display: grid;
+  min-height: 245px;
+  overflow: hidden;
+  border: 1px solid var(--badge-border);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--badge-surface);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.badge:hover {
+  transform: translateY(-2px);
+  border-color: rgba(196, 181, 253, 0.3);
+}
+
+.locked {
+  opacity: 0.64;
+}
+
+.unlocked {
+  box-shadow: 0 18px 50px rgba(15, 10, 35, 0.24);
+}
+
+.badgeTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  color: var(--badge-muted);
+  font-size: 0.62rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.statusIcon,
+.medallion {
+  display: grid;
+  place-items: center;
+}
+
+.statusIcon svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.medallion {
+  width: 52px;
+  height: 56px;
+  margin-top: 1rem;
+  clip-path: polygon(50% 0, 94% 24%, 94% 76%, 50% 100%, 6% 76%, 6% 24%);
+  background: rgba(139, 92, 246, 0.14);
+  color: #c4b5fd;
+}
+
+.medallion svg {
+  width: 24px;
+  height: 24px;
+}
+
+.tone_fire .medallion {
+  background: rgba(249, 115, 22, 0.14);
+  color: #fdba74;
+}
+.tone_energy .medallion {
+  background: rgba(234, 179, 8, 0.13);
+  color: #fde047;
+}
+.tone_sunrise .medallion {
+  background: rgba(244, 63, 94, 0.13);
+  color: #fda4af;
+}
+.tone_winter .medallion {
+  background: rgba(14, 165, 233, 0.13);
+  color: #7dd3fc;
+}
+.tone_rain .medallion {
+  background: rgba(59, 130, 246, 0.13);
+  color: #93c5fd;
+}
+
+.badge h2 {
+  margin: 0.8rem 0 0;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.badge p {
+  margin: 0.45rem 0 0;
+  color: var(--badge-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.badge footer {
+  align-self: end;
+  margin-top: 1rem;
+  border-top: 1px solid var(--badge-border);
+  padding-top: 0.7rem;
+}
+
+.badge footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--badge-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.badge footer svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: #34d399;
+}
+
+.state {
+  border: 1px dashed var(--badge-border);
+  border-radius: 8px;
+  padding: 2rem;
+  color: var(--badge-muted);
+  text-align: center;
+}
+
+@media (max-width: 1050px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding: 1rem;
+  }
+  .header {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .categoryFilters,
+  .statusFilters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+  .filters button {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    transition: none;
+  }
+}
+
+:global(html.sport-theme-nature) .page {
+  --badge-bg: #f4f7f2;
+  --badge-surface: rgba(255, 255, 255, 0.9);
+  --badge-border: rgba(15, 78, 58, 0.12);
+  --badge-text: #172a25;
+  --badge-muted: #61736d;
+}
+
+:global(html.sport-theme-nature) .filters button[aria-pressed="true"] {
+  border-color: rgba(5, 150, 105, 0.3);
+  background: rgba(5, 150, 105, 0.1);
+  color: #065f46;
+}
+
+:global(html.sport-theme-nature) .progressTrack span {
+  background: #059669;
+}

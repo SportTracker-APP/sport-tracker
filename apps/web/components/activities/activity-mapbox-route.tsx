@@ -4,11 +4,9 @@ import { RotateCw, Route } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import mapboxStyle from "@/app/json_mapbox.json";
-import {
-  SUMMIT_CATALOG,
-  getDistanceMeters,
-  type Summit,
-} from "@/lib/summits";
+import { useSummits } from "@/hooks/use-summits";
+import type { SummitView } from "@/lib/summit-discovery";
+import { getDistanceMeters, type Summit } from "@/lib/summits";
 import { MiniRouteMap } from "./mini-route-map";
 
 import styles from "./mapbox-route-map.module.css";
@@ -218,12 +216,12 @@ function toGeoJson(points: Point[]): RouteFeatureCollection {
   };
 }
 
-function findNearestSummit(points: Point[]) {
-  if (points.length === 0) {
+function findNearestSummit(points: Point[], summits: SummitView[]) {
+  if (points.length === 0 || summits.length === 0) {
     return null;
   }
 
-  const nearestSummits = SUMMIT_CATALOG.map((summit) => {
+  const nearestSummits = summits.map((summit) => {
     const summitPoint = {
       lat: summit.coordinates[1],
       lng: summit.coordinates[0],
@@ -320,13 +318,17 @@ export function ActivityMapboxRoute({
   polyline,
   title,
 }: ActivityMapboxRouteProps) {
+  const { data: summits = [] } = useSummits();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMapLike | null>(null);
   const mapboxRef = useRef<MapboxLike | null>(null);
   const markersRef = useRef<Array<{ remove: () => void }>>([]);
   const points = useMemo(() => decodePolyline(polyline), [polyline]);
   const routeData = useMemo(() => toGeoJson(points), [points]);
-  const nearestSummit = useMemo(() => findNearestSummit(points), [points]);
+  const nearestSummit = useMemo(
+    () => findNearestSummit(points, summits),
+    [points, summits],
+  );
   const startPoint = points[0] ?? null;
   const areaLabel =
     nearestSummit

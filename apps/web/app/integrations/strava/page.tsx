@@ -387,6 +387,8 @@ export default function StravaIntegrationPage() {
       });
 
       await queryClient.invalidateQueries({ queryKey: ["activities"] });
+      await queryClient.invalidateQueries({ queryKey: ["summits"] });
+      await queryClient.invalidateQueries({ queryKey: ["summit-badges"] });
       await refreshStatus();
       await refreshLastSyncedActivity();
     } catch (error) {

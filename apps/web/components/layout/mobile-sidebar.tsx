@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 
 import {
   Activity,
-  BookOpen,
   Calendar,
   ChartColumn,
   Goal,
   LayoutDashboard,
   Link2,
   Map,
+  Medal,
   Menu,
   Mountain,
   ShieldCheck,
@@ -35,11 +35,6 @@ const navigationLinks = [
     icon: LayoutDashboard,
   },
   {
-    label: "Sorties",
-    href: "/activites",
-    icon: Activity,
-  },
-  {
     label: "Sommets",
     href: "/sommets",
     icon: Mountain,
@@ -50,6 +45,14 @@ const navigationLinks = [
     icon: Map,
   },
   {
+    label: "Sorties",
+    href: "/activites",
+    icon: Activity,
+  },
+];
+
+const secondaryLinks = [
+  {
     label: "Statistiques",
     href: "/statistiques",
     icon: ChartColumn,
@@ -59,18 +62,20 @@ const navigationLinks = [
     href: "/objectifs",
     icon: Goal,
   },
-];
-
-const carnetLinks = [
   {
     label: "Planning",
     href: "/calendrier",
     icon: Calendar,
   },
   {
-    label: "Journal",
-    href: "/journal",
-    icon: BookOpen,
+    label: "Badges",
+    href: "/badges",
+    icon: Medal,
+  },
+  {
+    label: "Paramètres",
+    href: "/parametres",
+    icon: Settings,
   },
 ];
 
@@ -82,12 +87,7 @@ const connectionLinks = [
   },
 ];
 
-const settingsLinks = [
-  {
-    label: "Paramètres",
-    href: "/parametres",
-    icon: Settings,
-  },
+const administrationLinks = [
   {
     label: "Admin",
     href: "/admin",
@@ -190,16 +190,16 @@ export function MobileSidebar() {
           <nav className="flex-1 space-y-5 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             <div>
               <p className="mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase">
-                Refuge
+                Principal
               </p>
               <div className="space-y-1">{renderLinks(navigationLinks)}</div>
             </div>
 
             <div>
               <p className="mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase">
-                Carnet
+                Secondaire
               </p>
-              <div className="space-y-1">{renderLinks(carnetLinks)}</div>
+              <div className="space-y-1">{renderLinks(secondaryLinks)}</div>
             </div>
 
             <div>
@@ -209,12 +209,16 @@ export function MobileSidebar() {
               <div className="space-y-1">{renderLinks(connectionLinks)}</div>
             </div>
 
-            <div>
-              <p className="mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase">
-                Réglages
-              </p>
-              <div className="space-y-1">{renderLinks(settingsLinks)}</div>
-            </div>
+            {user?.role === "ADMIN" ? (
+              <div>
+                <p className="mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase">
+                  Administration
+                </p>
+                <div className="space-y-1">
+                  {renderLinks(administrationLinks)}
+                </div>
+              </div>
+            ) : null}
           </nav>
         </div>
       </SheetContent>

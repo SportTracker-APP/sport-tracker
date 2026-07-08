@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-import { useActivities } from "@/hooks/use-activities";
+import { useSummits } from "@/hooks/use-summits";
 import {
   getMassifProgress,
-  getSummitViews,
   type SummitView,
 } from "@/lib/summit-discovery";
 
@@ -126,6 +125,35 @@ function persistDashboardEvent(event: SummitCelebrationEvent) {
   );
 }
 
+export function dismissDashboardCelebrationForSummit(summitId: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(DASHBOARD_EVENT_KEY);
+
+    if (!rawValue) {
+      return;
+    }
+
+    const event = JSON.parse(rawValue) as SummitCelebrationEvent & {
+      dismissed?: boolean;
+    };
+
+    if (event.summitId !== summitId) {
+      return;
+    }
+
+    window.localStorage.setItem(
+      DASHBOARD_EVENT_KEY,
+      JSON.stringify({ ...event, dismissed: true }),
+    );
+  } catch {
+    // A malformed local notification must never block a server-side correction.
+  }
+}
+
 function buildDiscoveryEvent(summit: SummitView): SummitCelebrationEvent | null {
   if (!summit.firstActivity) {
     return null;
@@ -145,12 +173,11 @@ function buildDiscoveryEvent(summit: SummitView): SummitCelebrationEvent | null 
 }
 
 export function SummitCelebrationMonitor() {
-  const { data: activities = [] } = useActivities();
+  const { data: summits = [] } = useSummits();
   const hasHandledInitialLoad = useRef(false);
-  const summits = useMemo(() => getSummitViews(activities), [activities]);
 
   useEffect(() => {
-    if (activities.length === 0 || summits.length === 0) {
+    if (summits.length === 0) {
       return;
     }
 
@@ -217,7 +244,7 @@ export function SummitCelebrationMonitor() {
       initialized: true,
       seenEventKeys: Array.from(seenEventKeys),
     });
-  }, [activities.length, summits]);
+  }, [summits]);
 
   return null;
 }

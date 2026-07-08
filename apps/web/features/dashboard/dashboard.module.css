@@ -1349,6 +1349,35 @@
   height: 14px;
 }
 
+.badgeHeaderActions,
+.badgeCatalogLink {
+  display: inline-flex;
+  align-items: center;
+}
+
+.badgeHeaderActions {
+  gap: 0.65rem;
+}
+
+.badgeCatalogLink {
+  gap: 0.28rem;
+  color: var(--emerald);
+  font-size: 0.62rem;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.badgeCatalogLink svg {
+  width: 13px;
+  height: 13px;
+}
+
+.badgeCatalogLink:hover,
+.badgeCatalogLink:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
 .badgeGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

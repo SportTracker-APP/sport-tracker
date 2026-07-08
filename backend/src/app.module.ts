@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -21,8 +22,13 @@ import { AdminModule } from './modules/admin/admin.module';
 
 import { GoalsModule } from './modules/goals/goals.module';
 
+import { SummitsModule } from './modules/summits/summits.module';
+import { ObservabilityModule } from './observability/observability.module';
+
 @Module({
   imports: [
+    SentryModule.forRoot(),
+
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
@@ -52,8 +58,16 @@ import { GoalsModule } from './modules/goals/goals.module';
     AdminModule,
 
     GoalsModule,
+
+    SummitsModule,
+
+    ObservabilityModule,
   ],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

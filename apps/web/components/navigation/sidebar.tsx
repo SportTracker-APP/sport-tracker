@@ -11,11 +11,11 @@ import {
   Calendar,
   ChartColumn,
   CheckCircle2,
-  BookOpen,
   Goal,
   LayoutDashboard,
   Link2,
   Map,
+  Medal,
   Mountain,
   ShieldCheck,
   Settings,
@@ -45,11 +45,6 @@ const navigationItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Sorties",
-    href: "/activites",
-    icon: Activity,
-  },
-  {
     title: "Sommets",
     href: "/sommets",
     icon: Mountain,
@@ -60,6 +55,14 @@ const navigationItems = [
     icon: Map,
   },
   {
+    title: "Sorties",
+    href: "/activites",
+    icon: Activity,
+  },
+];
+
+const secondaryItems = [
+  {
     title: "Statistiques",
     href: "/statistiques",
     icon: ChartColumn,
@@ -69,24 +72,24 @@ const navigationItems = [
     href: "/objectifs",
     icon: Goal,
   },
-];
-
-const secondaryItems = [
   {
     title: "Planning",
     href: "/calendrier",
     icon: Calendar,
   },
   {
-    title: "Journal",
-    href: "/journal",
-    icon: BookOpen,
+    title: "Badges",
+    href: "/badges",
+    icon: Medal,
   },
   {
     title: "Paramètres",
     href: "/parametres",
     icon: Settings,
   },
+];
+
+const administrationItems = [
   {
     title: "Admin",
     href: "/admin",
@@ -189,10 +192,10 @@ export function Sidebar() {
       </div>
 
       {/* CONTENT */}
-      <div className="relative flex flex-1 flex-col px-4">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6">
         {/* MAIN NAV */}
         <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-          Refuge
+          Principal
         </div>
 
         <nav className="space-y-1">
@@ -246,13 +249,11 @@ export function Sidebar() {
         {/* SECONDARY */}
         <div className="mt-8 border-t border-white/[0.05] pt-6">
           <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-            Carnet
+            Secondaire
           </div>
 
           <nav className="space-y-1">
-            {secondaryItems
-              .filter((item) => !item.adminOnly || user?.role === "ADMIN")
-              .map((item) => {
+            {secondaryItems.map((item) => {
                 const Icon = item.icon;
 
                 const isActive = isActiveRoute(item.href);
@@ -299,6 +300,54 @@ export function Sidebar() {
               })}
           </nav>
         </div>
+
+        {user?.role === "ADMIN" ? (
+          <div className="mt-8 border-t border-white/[0.05] pt-6">
+            <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
+              Administration
+            </div>
+
+            <nav className="space-y-1">
+              {administrationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = isActiveRoute(item.href);
+
+                return (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
+                      isActive
+                        ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
+                        : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+                    }`}
+                  >
+                    {isActive ? (
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
+                    ) : null}
+                    <div
+                      className={`relative h-5 w-1 rounded-full transition-all ${
+                        isActive ? "bg-violet-400 opacity-100" : "opacity-0"
+                      }`}
+                    />
+                    <Icon
+                      size={18}
+                      className={`relative transition-all duration-200 ${
+                        isActive
+                          ? "text-violet-300"
+                          : "text-zinc-500 group-hover:text-zinc-300"
+                      }`}
+                    />
+                    <span className="relative text-sm font-medium">
+                      {item.title}
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        ) : null}
 
         {/* INTEGRATIONS */}
         <div className="mt-8 border-t border-white/[0.05] pt-6">

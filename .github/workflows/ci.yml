@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sport_tracker_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d sport_tracker_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/sport_tracker_test?schema=public
+      JWT_ACCESS_SECRET: ci-access-secret-at-least-32-characters
+      JWT_REFRESH_SECRET: ci-refresh-secret-at-least-32-characters
+      STRAVA_STATE_SECRET: ci-strava-state-secret-at-least-32-characters
+      STRAVA_TOKEN_ENCRYPTION_KEYS: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      STRAVA_CLIENT_ID: ci-client-id
+      STRAVA_CLIENT_SECRET: ci-client-secret
+      STRAVA_CALLBACK_URL: http://localhost:4000/strava/callback
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ci-service-role-key
+      MAIL_ENABLED: "false"
+      METRICS_ENABLED: "false"
+      ALERTS_ENABLED: "false"
+      APP_BASE_URL: http://localhost:3000
+      FRONTEND_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.7.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: backend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Apply database migrations
+        run: pnpm exec prisma migrate deploy
+      - name: Verify migration state
+        run: pnpm exec prisma migrate status
+      - run: pnpm exec prisma generate
+      - run: pnpm typecheck
+      - run: pnpm typecheck:test
+      - run: pnpm exec jest --runInBand
+      - run: pnpm exec jest --config ./test/jest-e2e.json --runInBand
+      - run: pnpm build
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

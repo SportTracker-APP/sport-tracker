@@ -57,6 +57,28 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
+## Observability
+
+- `GET /health/live` verifies that the API process is running.
+- `GET /health/ready` verifies that the API and PostgreSQL are ready.
+- `GET /metrics` exposes Prometheus metrics and requires `Authorization: Bearer <METRICS_TOKEN>`.
+- Sentry is enabled only when `SENTRY_DSN` is configured.
+- Sanitized HTTP 5xx alerts are sent when `ALERTS_ENABLED=true` and `ALERT_WEBHOOK_URL` is configured.
+
+Request bodies, authentication headers, cookies, query strings and user details are excluded from observability payloads.
+
+## Strava token encryption
+
+Strava access and refresh tokens are encrypted at rest with AES-256-GCM. Configure one base64-encoded 32-byte key:
+
+```bash
+openssl rand -base64 32
+```
+
+Store the result in `STRAVA_TOKEN_ENCRYPTION_KEYS`. Existing plaintext tokens are encrypted automatically when the backend starts. Production startup fails when this setting is missing.
+
+To rotate the key, configure `STRAVA_TOKEN_ENCRYPTION_KEYS=new-key,previous-key`, deploy every backend instance, then remove the previous key after all instances have completed startup. Never commit these keys.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.

@@ -856,7 +856,7 @@ export function CreateActivityForm() {
         }
         confirmLabel="Voir le planning"
         cancelLabel="Rester ici"
-        tone="success"
+        tone="default"
         icon={<CheckCircle2 aria-hidden="true" />}
         onConfirm={goToPlanning}
         onOpenChange={(open) => {

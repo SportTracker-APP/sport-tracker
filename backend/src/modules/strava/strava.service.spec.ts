@@ -2,8 +2,17 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { SummitsService } from '../summits/summits.service';
 
 import { StravaService } from './strava.service';
+import { StravaTokenEncryptionService } from './strava-token-encryption.service';
+
+function createTokenEncryptionMock(): StravaTokenEncryptionService {
+  return {
+    encrypt: jest.fn((token: string) => `encrypted:${token}`),
+    decrypt: jest.fn((token: string) => token),
+  } as unknown as StravaTokenEncryptionService;
+}
 
 describe('StravaService security', () => {
   afterEach(() => {
@@ -38,6 +47,8 @@ describe('StravaService security', () => {
           return value;
         }),
       } as unknown as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      createTokenEncryptionMock(),
     );
 
     await expect(
@@ -69,6 +80,8 @@ describe('StravaService security', () => {
         stravaConnection: { updateMany, findUnique },
       } as unknown as PrismaService,
       {} as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      createTokenEncryptionMock(),
     );
 
     await expect(service.syncActivities('user-1')).resolves.toEqual({
@@ -113,6 +126,10 @@ describe('StravaService security', () => {
         activity: { findMany, upsert },
       } as unknown as PrismaService,
       {} as ConfigService,
+      {
+        processActivities: jest.fn().mockResolvedValue(undefined),
+      } as unknown as SummitsService,
+      createTokenEncryptionMock(),
     );
 
     await expect(service.syncActivities('user-1')).resolves.toEqual({
@@ -135,6 +152,8 @@ describe('StravaService security', () => {
         stravaConnection: { updateMany, findUnique },
       } as unknown as PrismaService,
       {} as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      createTokenEncryptionMock(),
     );
 
     try {

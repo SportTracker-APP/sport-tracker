@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
+  Check,
   CheckCircle2,
   Eye,
   Info,
@@ -12,16 +14,23 @@ import {
   Search,
   Sparkles,
   Table2,
+  Trash2,
   Trophy,
+  X,
 } from "lucide-react";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { dismissDashboardCelebrationForSummit } from "@/components/summits/summit-celebration-monitor";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { FadeIn } from "@/components/ui/fade-in";
-import { useActivities } from "@/hooks/use-activities";
+import {
+  useRemoveSummitDiscovery,
+  useSummits,
+  useUpdateSummitDiscovery,
+} from "@/hooks/use-summits";
 import {
   getMassifProgress,
   getSummitSearchNames,
-  getSummitViews,
   type MassifProgress,
   type SummitView,
 } from "@/lib/summit-discovery";
@@ -32,7 +41,7 @@ import {
 
 import styles from "./sommets.module.css";
 
-type Filter = "DISCOVERED" | "ALL" | "MISSING";
+type Filter = "DISCOVERED" | "PENDING" | "ALL" | "MISSING";
 type ViewMode = "CARDS" | "TABLE";
 type AltitudeFilter = "ALL" | "LOW" | "MID" | "HIGH" | "ALPINE";
 type SortMode = "DISCOVERY" | "ALTITUDE_DESC" | "ALTITUDE_ASC" | "NAME" | "PASSES";
@@ -46,6 +55,7 @@ const DEFAULT_SELECT_FILTER = "ALL";
 const FILTER_QUERY_VALUES: Record<Filter, string> = {
   ALL: "tous",
   DISCOVERED: "decouverts",
+  PENDING: "a-confirmer",
   MISSING: "a-decouvrir",
 };
 
@@ -252,10 +262,21 @@ function SummitImage({
   );
 }
 
-function SummitCard({ summit }: { summit: SummitView }) {
+function SummitCard({
+  summit,
+  isUpdating,
+  onRemove,
+  onReview,
+}: {
+  summit: SummitView;
+  isUpdating: boolean;
+  onRemove: (summit: SummitView) => void;
+  onReview: (discoveryId: string, status: "CONFIRMED" | "DISMISSED") => void;
+}) {
   const summitHref = getSummitHref(summit);
   const isNew = summit.discovered && isRecentDiscovery(summit.firstActivity?.startedAt);
   const story = getSummitStory(summit);
+  const pendingDiscovery = summit.pendingDiscoveries?.[0];
 
   return (
     <article
@@ -277,12 +298,30 @@ function SummitCard({ summit }: { summit: SummitView }) {
         >
           {summit.discovered ? (
             <CheckCircle2 aria-hidden="true" />
+          ) : pendingDiscovery ? (
+            <Info aria-hidden="true" />
           ) : (
             <Lock aria-hidden="true" />
           )}
-          {summit.discovered ? "Découvert" : "À découvrir"}
+          {summit.discovered
+            ? "Découvert"
+            : pendingDiscovery
+              ? "À confirmer"
+              : "À découvrir"}
         </span>
         {isNew ? <span className={styles.newBadge}>Nouveau</span> : null}
+        {summit.discovered ? (
+          <button
+            type="button"
+            className={styles.removeDiscoveryButton}
+            disabled={isUpdating}
+            onClick={() => onRemove(summit)}
+            aria-label={`Retirer ${summit.name} de mes découvertes`}
+            title="Retirer de mes découvertes"
+          >
+            <X aria-hidden="true" />
+          </button>
+        ) : null}
         {summit.imageCredit ? (
           <span className={styles.imageCredit}>{summit.imageCredit}</span>
         ) : null}
@@ -306,6 +345,33 @@ function SummitCard({ summit }: { summit: SummitView }) {
         </div>
 
         <p title={story}>{story}</p>
+
+        {pendingDiscovery ? (
+          <div className={styles.reviewPanel}>
+            <div>
+              <strong>Ta trace est passée tout près</strong>
+              <span>{pendingDiscovery.activity.title ?? "Sortie sans titre"}</span>
+            </div>
+            <div className={styles.reviewActions}>
+              <button
+                type="button"
+                disabled={isUpdating}
+                onClick={() => onReview(pendingDiscovery.id, "CONFIRMED")}
+              >
+                <Check aria-hidden="true" />
+                Confirmer
+              </button>
+              <button
+                type="button"
+                disabled={isUpdating}
+                onClick={() => onReview(pendingDiscovery.id, "DISMISSED")}
+              >
+                <X aria-hidden="true" />
+                Ignorer
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         {summit.discovered ? (
           <div className={styles.summitTimeline}>
@@ -436,7 +502,11 @@ function MassifProgressCard({ massif }: { massif: MassifProgress }) {
 }
 
 export default function SummitsPage() {
-  const { data: activities = [], isLoading, error } = useActivities();
+  const { data: summits = [], isLoading, error } = useSummits();
+  const updateDiscovery = useUpdateSummitDiscovery();
+  const removeDiscovery = useRemoveSummitDiscovery();
+  const [summitToRemove, setSummitToRemove] = useState<SummitView | null>(null);
+  const [removeError, setRemoveError] = useState<string | undefined>();
   const [filter, setFilter] = useState<Filter>(DEFAULT_FILTER);
   const [viewMode, setViewMode] = useState<ViewMode>(DEFAULT_VIEW_MODE);
   const [searchQuery, setSearchQuery] = useState("");
@@ -448,9 +518,13 @@ export default function SummitsPage() {
   const [sortMode, setSortMode] = useState<SortMode>(DEFAULT_SORT_MODE);
   const [isUrlStateReady, setIsUrlStateReady] = useState(false);
   const lastSyncedQuery = useRef("");
-  const summits = useMemo(() => getSummitViews(activities), [activities]);
   const discoveredSummits = summits.filter((summit) => summit.discovered);
-  const missingSummits = summits.filter((summit) => !summit.discovered);
+  const pendingSummits = summits.filter(
+    (summit) => !summit.discovered && Boolean(summit.pendingDiscoveries?.length),
+  );
+  const missingSummits = summits.filter(
+    (summit) => !summit.discovered && !summit.pendingDiscoveries?.length,
+  );
   const massifOptions = useMemo(
     () => Array.from(new Set(summits.map((summit) => summit.massif))).sort(),
     [summits],
@@ -466,7 +540,17 @@ export default function SummitsPage() {
         return false;
       }
 
-      if (filter === "MISSING" && summit.discovered) {
+      if (
+        filter === "PENDING" &&
+        (summit.discovered || !summit.pendingDiscoveries?.length)
+      ) {
+        return false;
+      }
+
+      if (
+        filter === "MISSING" &&
+        (summit.discovered || Boolean(summit.pendingDiscoveries?.length))
+      ) {
         return false;
       }
 
@@ -544,9 +628,14 @@ export default function SummitsPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const initialFilter = getFilterFromQuery(params.get("statut"));
 
-    setFilter(getFilterFromQuery(params.get("statut")));
-    setViewMode(getViewModeFromQuery(params.get("vue")));
+    setFilter(initialFilter);
+    setViewMode(
+      initialFilter === "PENDING"
+        ? "CARDS"
+        : getViewModeFromQuery(params.get("vue")),
+    );
     setSearchQuery(params.get("recherche") ?? "");
     setMassifFilter(params.get("massif") ?? DEFAULT_SELECT_FILTER);
     setDifficultyFilter(params.get("difficulte") ?? DEFAULT_SELECT_FILTER);
@@ -725,6 +814,16 @@ export default function SummitsPage() {
               </button>
               <button
                 type="button"
+                aria-pressed={filter === "PENDING"}
+                onClick={() => {
+                  setFilter("PENDING");
+                  setViewMode("CARDS");
+                }}
+              >
+                À confirmer · {pendingSummits.length}
+              </button>
+              <button
+                type="button"
                 aria-pressed={filter === "MISSING"}
                 onClick={() => setFilter("MISSING")}
               >
@@ -851,7 +950,7 @@ export default function SummitsPage() {
 
         {error ? (
           <div className={styles.emptyState}>
-            Impossible de charger tes sorties pour analyser les sommets.
+            Impossible de charger ton carnet de sommets.
           </div>
         ) : null}
 
@@ -865,7 +964,33 @@ export default function SummitsPage() {
           <div className={styles.grid}>
             {visibleSummits.map((summit, index) => (
               <FadeIn key={summit.id} delay={0.04 * index}>
-                <SummitCard summit={summit} />
+                <SummitCard
+                  summit={summit}
+                  isUpdating={
+                    updateDiscovery.isPending || removeDiscovery.isPending
+                  }
+                  onRemove={(selectedSummit) => {
+                    setRemoveError(undefined);
+                    setSummitToRemove(selectedSummit);
+                  }}
+                  onReview={(discoveryId, status) => {
+                    updateDiscovery.mutate(
+                      { discoveryId, status },
+                      {
+                        onSuccess: () =>
+                          toast.success(
+                            status === "CONFIRMED"
+                              ? "Sommet ajouté à ton carnet."
+                              : "Cette détection a été ignorée.",
+                          ),
+                        onError: () =>
+                          toast.error(
+                            "Impossible d’enregistrer cette correction.",
+                          ),
+                      },
+                    );
+                  }}
+                />
               </FadeIn>
             ))}
           </div>
@@ -979,6 +1104,47 @@ export default function SummitsPage() {
           </div>
         ) : null}
       </main>
+
+      <ConfirmationDialog
+        open={Boolean(summitToRemove)}
+        title={
+          summitToRemove
+            ? `Retirer ${summitToRemove.name} de tes découvertes ?`
+            : "Retirer ce sommet de tes découvertes ?"
+        }
+        description="Ce sommet ne sera plus comptabilisé dans ton carnet. Une prochaine sortie passant à proximité pourra toutefois le faire apparaître à nouveau."
+        confirmLabel="Retirer de mes découvertes"
+        cancelLabel="Conserver le sommet"
+        tone="default"
+        icon={<Trash2 />}
+        isLoading={removeDiscovery.isPending}
+        errorMessage={removeError}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSummitToRemove(null);
+            setRemoveError(undefined);
+          }
+        }}
+        onConfirm={() => {
+          if (!summitToRemove) {
+            return;
+          }
+
+          removeDiscovery.mutate(summitToRemove.id, {
+            onSuccess: () => {
+              dismissDashboardCelebrationForSummit(summitToRemove.id);
+              toast.success(`${summitToRemove.name} a été retiré de ton carnet.`);
+              setSummitToRemove(null);
+              setRemoveError(undefined);
+            },
+            onError: () => {
+              setRemoveError(
+                "Impossible de retirer ce sommet pour le moment. Réessaie dans quelques instants.",
+              );
+            },
+          });
+        }}
+      />
     </DashboardLayout>
   );
 }
