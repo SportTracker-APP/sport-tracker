@@ -6,6 +6,7 @@ import { Mountain } from "lucide-react";
 
 import { usePathname, useRouter } from "next/navigation";
 
+import { AUTH_SESSION_EXPIRED_EVENT } from "@/lib/api";
 import { getMe } from "@/lib/auth";
 
 import { useAuthStore } from "@/store/auth-store";
@@ -33,6 +34,22 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const handleExpiredSession = () => {
+      logout();
+      router.replace("/login");
+    };
+
+    window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, handleExpiredSession);
+
+    return () => {
+      window.removeEventListener(
+        AUTH_SESSION_EXPIRED_EVENT,
+        handleExpiredSession,
+      );
+    };
+  }, [logout, router]);
+
+  useEffect(() => {
     const initializeAuth = async () => {
       try {
         const isPublicRoute = publicRoutes.includes(pathname);
@@ -53,7 +70,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
         // VALIDATION TOKEN
         const currentUser = await getMe();
 
-        hydrateAuth(accessToken, currentUser);
+        hydrateAuth(
+          localStorage.getItem("accessToken") ?? accessToken,
+          currentUser,
+        );
 
         // SI connecté et page de connexion/inscription
         if (authEntryRoutes.includes(pathname)) {
@@ -81,7 +101,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             <div className="absolute inset-2 animate-pulse rounded-2xl border border-current opacity-30" />
             <Mountain className="relative h-8 w-8" strokeWidth={2.35} />
           </div>
-          <p className="mt-4 text-sm font-semibold">Montaro</p>
+          <p className="mt-4 text-sm font-semibold">Hovren</p>
           <p className="mt-1 text-xs">Préparation de votre espace...</p>
         </div>
       </div>

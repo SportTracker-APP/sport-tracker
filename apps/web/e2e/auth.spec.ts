@@ -80,7 +80,7 @@ test("un sommet découvert peut être retiré après confirmation sur mobile", a
   await page.addInitScript(() => {
     window.localStorage.setItem("accessToken", "e2e-access-token");
     window.localStorage.setItem(
-      "montaro.summitCelebrations.dashboardEvent.v1",
+      "hovren.summitCelebrations.dashboardEvent.v1",
       JSON.stringify({
         key: "summit-discovery:lanfonnet:activity-1",
         type: "SUMMIT_DISCOVERY",
@@ -157,7 +157,7 @@ test("un sommet découvert peut être retiré après confirmation sur mobile", a
     .poll(async () =>
       page.evaluate(() => {
         const rawValue = window.localStorage.getItem(
-          "montaro.summitCelebrations.dashboardEvent.v1",
+          "hovren.summitCelebrations.dashboardEvent.v1",
         );
 
         return rawValue

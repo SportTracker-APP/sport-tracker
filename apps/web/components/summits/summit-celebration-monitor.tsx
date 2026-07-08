@@ -21,8 +21,8 @@ export type SummitCelebrationEvent = {
   createdAt: string;
 };
 
-const STORAGE_KEY = "montaro.summitCelebrations.v1";
-const DASHBOARD_EVENT_KEY = "montaro.summitCelebrations.dashboardEvent.v1";
+const STORAGE_KEY = "hovren.summitCelebrations.v1";
+const DASHBOARD_EVENT_KEY = "hovren.summitCelebrations.dashboardEvent.v1";
 
 type StoredCelebrations = {
   initialized: boolean;
@@ -119,7 +119,7 @@ function persistDashboardEvent(event: SummitCelebrationEvent) {
   );
 
   window.dispatchEvent(
-    new CustomEvent("montaro:summit-celebration", {
+    new CustomEvent("hovren:summit-celebration", {
       detail: event,
     }),
   );

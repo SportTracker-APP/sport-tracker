@@ -15,8 +15,6 @@ export interface AuthUser {
 export interface AuthResponse {
   accessToken: string;
 
-  refreshToken: string;
-
   user: AuthUser;
 }
 
@@ -57,6 +55,10 @@ export async function login(
   });
 
   return data;
+}
+
+export async function logoutSession(): Promise<void> {
+  await api.post("/auth/logout");
 }
 
 export interface GenericAuthMessageResponse {

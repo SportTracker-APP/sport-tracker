@@ -18,6 +18,8 @@ export type SummitView = Summit & {
   activityCount: number;
   firstActivity: SummitActivitySummary | null;
   latestActivity: SummitActivitySummary | null;
+  firstDiscoveredAt: string | null;
+  latestDiscoveredAt: string | null;
   pendingDiscoveries: Array<{
     id: string;
     confidence: number;

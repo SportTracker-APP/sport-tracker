@@ -11,7 +11,6 @@ import {
   Bike,
   CalendarDays,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   CircleGauge,
   Compass,
@@ -45,6 +44,7 @@ import {
 } from "recharts";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { ActivityPeriodSelect } from "@/components/dashboard/activity-period-select";
 import { FadeIn } from "@/components/ui/fade-in";
 import {
   SUMMIT_CELEBRATION_DASHBOARD_EVENT_KEY,
@@ -58,6 +58,13 @@ import { useGoals } from "@/hooks/use-goals";
 import { useSummitBadges } from "@/hooks/use-summits";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
+import {
+  ACTIVITY_CHART_PERIOD_STORAGE_KEY,
+  getActivityChartSummary,
+  isActivityChartPeriod,
+  type ActivityChartDatum as ChartDatum,
+  type ActivityChartPeriod,
+} from "@/lib/activity-chart-period";
 import { getBadgeIcon } from "@/lib/badge-icons";
 import {
   calculateGoalProgress,
@@ -76,13 +83,6 @@ type StravaStatus = {
   connected: boolean;
   hasSyncedActivities?: boolean;
   syncedActivitiesCount?: number;
-};
-
-type ChartDatum = {
-  day: string;
-  distance: number;
-  elevation: number;
-  duration: number;
 };
 
 type BadgeTone = "summit" | "fire" | "energy" | "sunrise" | "winter" | "rain";
@@ -121,7 +121,7 @@ type ActivityWithMedia = SportActivity & {
   photos?: unknown;
 };
 
-const CHART_METRIC_STORAGE_KEY = "montaro.dashboard2.chartMetric";
+const CHART_METRIC_STORAGE_KEY = "hovren.dashboard2.chartMetric";
 
 function startOfWeek(date: Date) {
   const nextDate = new Date(date);
@@ -144,14 +144,6 @@ function addDays(date: Date, days: number) {
   const nextDate = new Date(date);
   nextDate.setDate(nextDate.getDate() + days);
   return nextDate;
-}
-
-function isSameDay(firstDate: Date, secondDate: Date) {
-  return (
-    firstDate.getFullYear() === secondDate.getFullYear() &&
-    firstDate.getMonth() === secondDate.getMonth() &&
-    firstDate.getDate() === secondDate.getDate()
-  );
 }
 
 function getLocalDateKey(value: Date | string) {
@@ -742,6 +734,7 @@ function ActivityChart({
     },
   } as const;
   const selected = configuration[metric];
+  const tickInterval = data.length <= 8 ? 0 : data.length <= 16 ? 1 : 4;
 
   return (
     <div className={styles.chartArea}>
@@ -771,7 +764,7 @@ function ActivityChart({
             axisLine={false}
             tickLine={false}
             tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
-            interval={4}
+            interval={tickInterval}
           />
           <YAxis
             axisLine={false}
@@ -1065,7 +1058,7 @@ function StravaConnectionCard({ compact }: { compact: boolean }) {
         <p className={styles.emptyDashboardKicker}>Strava non synchronisé</p>
         <h2>Synchronisez automatiquement tes sorties avec Strava</h2>
         <p>
-          Montaro fonctionne aussi avec tes activités ajoutées manuellement.
+          Hovren fonctionne aussi avec tes activités ajoutées manuellement.
         </p>
       </div>
       <div className={styles.emptyDashboardActions}>
@@ -1266,6 +1259,7 @@ export default function DashboardPage() {
   const [stravaStatus, setStravaStatus] = useState<StravaStatus | null>(null);
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
   const [chartMetric, setChartMetric] = useState<ChartMetric>("distance");
+  const [chartPeriod, setChartPeriod] = useState<ActivityChartPeriod>("30d");
   const [refugeMessage, setRefugeMessage] = useState(REFUGE_MESSAGES[0]);
   const [summitCelebrationEvent, setSummitCelebrationEvent] =
     useState<StoredDashboardSummitEvent | null>(null);
@@ -1275,6 +1269,14 @@ export default function DashboardPage() {
 
     if (isChartMetric(storedMetric)) {
       setChartMetric(storedMetric);
+    }
+
+    const storedPeriod = window.localStorage.getItem(
+      ACTIVITY_CHART_PERIOD_STORAGE_KEY,
+    );
+
+    if (isActivityChartPeriod(storedPeriod)) {
+      setChartPeriod(storedPeriod);
     }
   }, []);
 
@@ -1306,13 +1308,13 @@ export default function DashboardPage() {
     }
 
     window.addEventListener(
-      "montaro:summit-celebration",
+      "hovren:summit-celebration",
       handleSummitCelebration,
     );
 
     return () => {
       window.removeEventListener(
-        "montaro:summit-celebration",
+        "hovren:summit-celebration",
         handleSummitCelebration,
       );
     };
@@ -1321,6 +1323,11 @@ export default function DashboardPage() {
   const handleChartMetricChange = (metric: ChartMetric) => {
     setChartMetric(metric);
     window.localStorage.setItem(CHART_METRIC_STORAGE_KEY, metric);
+  };
+
+  const handleChartPeriodChange = (period: ActivityChartPeriod) => {
+    setChartPeriod(period);
+    window.localStorage.setItem(ACTIVITY_CHART_PERIOD_STORAGE_KEY, period);
   };
 
   useEffect(() => {
@@ -1446,33 +1453,11 @@ export default function DashboardPage() {
         ((activity.elevationGain || 0) >= 250 ||
           ["RUNNING", "TRAIL", "HIKING"].includes(activity.sport)),
     ).length;
-    const chartData: ChartDatum[] = Array.from({ length: 31 }, (_, index) => {
-      const day = addDays(rollingPeriodStart, index);
-      const dayActivities = rollingActivities.filter((activity) =>
-        isSameDay(new Date(activity.startedAt), day),
-      );
-
-      return {
-        day: new Intl.DateTimeFormat("fr-FR", {
-          day: "2-digit",
-          month: "2-digit",
-        }).format(day),
-        distance: Number(
-          dayActivities
-            .reduce((total, activity) => total + (activity.distance || 0), 0)
-            .toFixed(2),
-        ),
-        elevation: Math.round(getElevationTotal(dayActivities)),
-        duration: Number(
-          (
-            dayActivities.reduce(
-              (total, activity) => total + activity.duration,
-              0,
-            ) / 60
-          ).toFixed(2),
-        ),
-      };
-    });
+    const activityChart = getActivityChartSummary(
+      completedActivities,
+      chartPeriod,
+      now,
+    );
 
     return {
       completedActivities,
@@ -1493,14 +1478,14 @@ export default function DashboardPage() {
       recentActivities: completedActivities.slice(0, 4),
       exploredSectors,
       currentStreak: calculateCurrentStreak(completedActivities),
-      chartData,
+      activityChart,
       heatmapMonthLabel: formatMonthYear(now),
       heatmapDescription: `Données réelles du 1er au ${Math.min(
         28,
         new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(),
       )} ${formatMonthName(now)}.`,
     };
-  }, [activities]);
+  }, [activities, chartPeriod]);
 
   const primaryGoal = useMemo(() => selectPrimaryGoal(goals), [goals]);
   const goalProgress = useMemo(
@@ -1846,18 +1831,20 @@ export default function DashboardPage() {
                 <FadeIn delay={0.22}>
                 <div className={`${styles.surface} ${styles.activityPanel}`}>
                   <SurfaceHeader
-                    title="Activité sur les 30 derniers jours"
-                    description="Tes sorties réelles, jour par jour."
+                    title={dashboardData.activityChart.configuration.title}
+                    description={`Tes sorties réelles, ${dashboardData.activityChart.configuration.granularityLabel}.`}
                     action={
-                      <button type="button" className={styles.rangeButton}>
-                        30 derniers jours <ChevronDown aria-hidden="true" />
-                      </button>
+                      <ActivityPeriodSelect
+                        className={styles.rangeButton}
+                        value={chartPeriod}
+                        onChange={handleChartPeriodChange}
+                      />
                     }
                   />
                   <div className={styles.chartSummary}>
-                    <div><span>Total</span><strong>{formatDistance(dashboardData.rollingDistance, 1)}</strong></div>
-                    <div><span>Durée</span><strong>{formatDuration(dashboardData.rollingDuration)}</strong></div>
-                    <div><span>D+</span><strong>{formatNumber(dashboardData.rollingElevation)} m</strong></div>
+                    <div><span>Total</span><strong>{formatDistance(dashboardData.activityChart.totalDistance, 1)}</strong></div>
+                    <div><span>Durée</span><strong>{formatDuration(dashboardData.activityChart.totalDuration)}</strong></div>
+                    <div><span>D+</span><strong>{formatNumber(dashboardData.activityChart.totalElevation)} m</strong></div>
                   </div>
                   <div className={styles.chartToolbar}>
                     <div className={styles.chartTabs} role="tablist" aria-label="Métrique du graphique">
@@ -1886,13 +1873,13 @@ export default function DashboardPage() {
                           : "Heures d’activité"}
                     </span>
                   </div>
-                  <ActivityChart data={dashboardData.chartData} metric={chartMetric} />
+                  <ActivityChart data={dashboardData.activityChart.chartData} metric={chartMetric} />
                   <div className={styles.chartInsight}>
                     <Mountain aria-hidden="true" />
                     Ta meilleure trace sur la période atteint
                     <strong>
-                      {dashboardData.bestActivity
-                        ? formatDistance(dashboardData.bestActivity.distance || 0, 1)
+                      {dashboardData.activityChart.bestActivity
+                        ? formatDistance(dashboardData.activityChart.bestActivity.distance || 0, 1)
                         : "0 km"}
                     </strong>
                   </div>

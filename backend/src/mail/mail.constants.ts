@@ -4,7 +4,7 @@ export const MAIL_PROVIDER = Symbol('MAIL_PROVIDER');
 
 export const RESEND_CLIENT = Symbol('RESEND_CLIENT');
 
-export const MAIL_APP_NAME = 'Votre carnet outdoor';
+export const MAIL_APP_NAME = 'Hovren';
 
 export const MAIL_TEMPLATE_DEFAULTS = {
   authVerify: 'auth-verify-email',

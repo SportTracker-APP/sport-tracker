@@ -40,7 +40,7 @@ const mailEnvSchema = z
       .string()
       .trim()
       .min(1)
-      .default('Votre carnet outdoor <onboarding@resend.dev>'),
+      .default('Hovren <onboarding@resend.dev>'),
     MAIL_REPLY_TO: z.preprocess(
       emptyStringToUndefined,
       z.string().trim().optional(),

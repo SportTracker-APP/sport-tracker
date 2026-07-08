@@ -51,7 +51,7 @@ describe('Authentication API (e2e)', () => {
     const live = await request(app.getHttpServer()).get('/health/live').expect(200);
     expect(live.body).toMatchObject({
       status: 'ok',
-      service: 'montara-backend',
+      service: 'hovren-backend',
     });
 
     const ready = await request(app.getHttpServer()).get('/health/ready').expect(200);

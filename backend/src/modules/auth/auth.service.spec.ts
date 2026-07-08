@@ -1,4 +1,8 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -68,6 +72,7 @@ type MailMock = {
 
 type JwtMock = {
   signAsync: jest.Mock;
+  verifyAsync: jest.Mock;
 };
 
 const genericForgotPasswordMessage =
@@ -143,6 +148,7 @@ function makeJwtMock(): JwtMock {
       .fn()
       .mockResolvedValueOnce('access-token')
       .mockResolvedValueOnce('refresh-token'),
+    verifyAsync: jest.fn().mockResolvedValue({ sub: user.id }),
   };
 }
 
@@ -158,7 +164,9 @@ function makeService(
         EMAIL_VERIFICATION_TOKEN_TTL_MINUTES: '1440',
         EMAIL_VERIFICATION_URL: 'http://localhost:3000/verify-email',
         JWT_ACCESS_SECRET: 'test-access-secret',
+        JWT_ACCESS_TOKEN_TTL_SECONDS: '900',
         JWT_REFRESH_SECRET: 'test-refresh-secret',
+        JWT_REFRESH_TOKEN_TTL_SECONDS: '86400',
         PASSWORD_RESET_TOKEN_TTL_MINUTES: '30',
       };
 
@@ -385,6 +393,62 @@ describe('AuthService password reset', () => {
 
     await expect(service.login(user.email, 'Password1')).rejects.toThrow(
       'Veuillez vérifier votre adresse email',
+    );
+  });
+
+  it('rotates a valid refresh token and returns a fresh session', async () => {
+    const { service, prisma, jwt } = makeService();
+    const rawRefreshToken = 'valid-session-token';
+    const hashedRefreshToken = await bcrypt.hash(rawRefreshToken, 4);
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      refreshToken: hashedRefreshToken,
+    });
+
+    await expect(service.refreshSession(rawRefreshToken)).resolves.toEqual({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
+    expect(jwt.verifyAsync).toHaveBeenCalledWith(rawRefreshToken, {
+      secret: 'test-refresh-secret',
+      algorithms: ['HS256'],
+    });
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refreshToken: expect.stringMatching(/^\$2[ab]\$/),
+      },
+    });
+  });
+
+  it('rejects an expired or invalid refresh token', async () => {
+    const jwt = makeJwtMock();
+    jwt.verifyAsync.mockRejectedValue(new Error('expired'));
+    const { service } = makeService(makePrismaMock(), makeMailMock(), jwt);
+
+    await expect(
+      service.refreshSession('expired-token'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('rejects a refresh token that no longer matches the stored session', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      refreshToken: await bcrypt.hash('another-session-token', 4),
+    });
+
+    await expect(service.refreshSession('stale-token')).rejects.toBeInstanceOf(
+      UnauthorizedException,
     );
   });
 

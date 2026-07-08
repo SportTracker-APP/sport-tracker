@@ -1,4 +1,4 @@
-# Sport Tracker
+# Hovren
 
 ## Tester en local avant de pousser
 

@@ -17,7 +17,7 @@ import {
 
 const baseConfig: ObservabilityConfig = {
   environment: 'test',
-  serviceName: 'montara-test',
+  serviceName: 'hovren-test',
   metricsEnabled: true,
   metricsToken: 'test-metrics-token-123',
   alertsEnabled: false,
@@ -74,9 +74,9 @@ describe('MetricsService', () => {
 
     const output = await metrics.getMetrics();
 
-    expect(output).toContain('montara_http_requests_total');
+    expect(output).toContain('hovren_http_requests_total');
     expect(output).toContain('route="/activities/:id"');
-    expect(output).toContain('montara_application_errors_total');
+    expect(output).toContain('hovren_application_errors_total');
     metrics.onModuleDestroy();
   });
 });
@@ -147,7 +147,7 @@ describe('AlertService', () => {
     const service = new AlertService({
       ...baseConfig,
       alertsEnabled: true,
-      alertWebhookUrl: 'https://alerts.example.test/hooks/montara',
+      alertWebhookUrl: 'https://alerts.example.test/hooks/hovren',
     });
     const alert = {
       method: 'POST',
@@ -181,7 +181,7 @@ describe('AlertService', () => {
     const service = new AlertService({
       ...baseConfig,
       alertsEnabled: true,
-      alertWebhookUrl: 'https://alerts.example.test/hooks/montara',
+      alertWebhookUrl: 'https://alerts.example.test/hooks/hovren',
     });
 
     service.notifyHttpError({

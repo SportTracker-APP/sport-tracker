@@ -1473,7 +1473,7 @@
 
 /* --------------------------------------------------------------------------
    Theme alignment pass
-   - violet mode now follows the same dark card language as the rest of Montaro
+   - violet mode now follows the same dark card language as the rest of Hovren
    - nature mode remains untouched
    - hero typography is lighter and closer to the approved mockup
    - everything remains scoped to this CSS Module
@@ -1515,7 +1515,7 @@
   font-weight: 600;
 }
 
-/* Violet mode: reuse the established Montaro dark surfaces. */
+/* Violet mode: reuse the established Hovren dark surfaces. */
 :global(html:not(.sport-theme-nature)) :global(.app-shell) main .page {
   --activity-ink: #f4f4f5;
   --activity-muted: #a1a1aa;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 import {
@@ -10,7 +10,6 @@ import {
   Bike,
   CalendarDays,
   Clock3,
-  ChevronDown,
   Dumbbell,
   Flame,
   Footprints,
@@ -34,7 +33,15 @@ import {
 } from "recharts";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { ActivityPeriodSelect } from "@/components/dashboard/activity-period-select";
 import { useActivities } from "@/hooks/use-activities";
+import {
+  ACTIVITY_CHART_PERIOD_STORAGE_KEY,
+  getActivityChartSummary,
+  isActivityChartPeriod,
+  type ActivityChartDatum as ChartDatum,
+  type ActivityChartPeriod,
+} from "@/lib/activity-chart-period";
 import type { Activity as SportActivity } from "@/lib/activities";
 import styles from "@/features/dashboard/dashboard.module.css";
 import statStyles from "./statistiques.module.css";
@@ -48,13 +55,6 @@ type Totals = {
 };
 
 type ChartMetric = "distance" | "elevation" | "duration";
-
-type ChartDatum = {
-  day: string;
-  distance: number;
-  elevation: number;
-  duration: number;
-};
 
 function startOfDay(date: Date) {
   const nextDate = new Date(date);
@@ -370,6 +370,7 @@ function ActivityChart({
     },
   } as const;
   const selected = configuration[metric];
+  const tickInterval = data.length <= 8 ? 0 : data.length <= 16 ? 1 : 4;
 
   return (
     <div className={styles.chartArea}>
@@ -426,7 +427,7 @@ function ActivityChart({
             axisLine={false}
             tickLine={false}
             tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
-            interval={4}
+            interval={tickInterval}
           />
           <YAxis
             axisLine={false}
@@ -659,6 +660,10 @@ function DashboardActivityPanel({
   bestActivity,
   chartData,
   onMetricChange,
+  onPeriodChange,
+  period,
+  periodDescription,
+  periodTitle,
   totalDistance,
   totalDuration,
   totalElevation,
@@ -667,6 +672,10 @@ function DashboardActivityPanel({
   bestActivity: SportActivity | null;
   chartData: ChartDatum[];
   onMetricChange: (metric: ChartMetric) => void;
+  onPeriodChange: (period: ActivityChartPeriod) => void;
+  period: ActivityChartPeriod;
+  periodDescription: string;
+  periodTitle: string;
   totalDistance: number;
   totalDuration: number;
   totalElevation: number;
@@ -674,12 +683,14 @@ function DashboardActivityPanel({
   return (
     <div className={`${styles.surface} ${styles.activityPanel}`}>
       <SurfaceHeader
-        title="Activité sur les 30 derniers jours"
-        description="Vos sorties réelles, jour par jour."
+        title={periodTitle}
+        description={periodDescription}
         action={
-          <button type="button" className={styles.rangeButton}>
-            30 derniers jours <ChevronDown aria-hidden="true" />
-          </button>
+          <ActivityPeriodSelect
+            className={styles.rangeButton}
+            value={period}
+            onChange={onPeriodChange}
+          />
         }
       />
       <div className={styles.chartSummary}>
@@ -763,6 +774,23 @@ function DashboardHeatmapPanel({
 export default function StatisticsPage() {
   const { data: activities = [], error, isLoading } = useActivities();
   const [chartMetric, setChartMetric] = useState<ChartMetric>("distance");
+  const [chartPeriod, setChartPeriod] = useState<ActivityChartPeriod>("30d");
+
+  useEffect(() => {
+    const storedPeriod = window.localStorage.getItem(
+      ACTIVITY_CHART_PERIOD_STORAGE_KEY,
+    );
+
+    if (isActivityChartPeriod(storedPeriod)) {
+      setChartPeriod(storedPeriod);
+    }
+  }, []);
+
+  const handleChartPeriodChange = (period: ActivityChartPeriod) => {
+    setChartPeriod(period);
+    window.localStorage.setItem(ACTIVITY_CHART_PERIOD_STORAGE_KEY, period);
+  };
+
   const completedActivities = getCompletedActivities(activities);
   const sortedActivities = [...completedActivities].sort(
     (first, second) =>
@@ -808,20 +836,17 @@ export default function StatisticsPage() {
   const previousTotals = sumActivities(previous30Activities);
   const yearTotals = sumActivities(yearActivities);
   const chartData = getLastDaysChart(last30Activities, chartStart, 31);
+  const activityChart = getActivityChartSummary(
+    completedActivities,
+    chartPeriod,
+    today,
+  );
   const activeDays = new Set(
     last30Activities.map((activity) =>
       getDateKey(new Date(activity.startedAt)),
     ),
   ).size;
   const bestDay = getBestDay(chartData);
-  const bestActivity =
-    last30Activities.reduce<SportActivity | null>(
-      (currentBest, activity) =>
-        !currentBest || (activity.distance ?? 0) > (currentBest.distance ?? 0)
-          ? activity
-          : currentBest,
-      null,
-    );
   const sportDistribution = getSportDistribution(last30Activities);
   const topSport = sportDistribution[0] ?? null;
   const historicalBestElevationActivity =
@@ -1208,12 +1233,16 @@ export default function StatisticsPage() {
             >
               <DashboardActivityPanel
                 activeMetric={chartMetric}
-                bestActivity={bestActivity}
-                chartData={chartData}
+                bestActivity={activityChart.bestActivity}
+                chartData={activityChart.chartData}
                 onMetricChange={setChartMetric}
-                totalDistance={totals30.distance}
-                totalDuration={totals30.duration}
-                totalElevation={totals30.elevation}
+                onPeriodChange={handleChartPeriodChange}
+                period={chartPeriod}
+                periodDescription={`Vos sorties réelles, ${activityChart.configuration.granularityLabel}.`}
+                periodTitle={activityChart.configuration.title}
+                totalDistance={activityChart.totalDistance}
+                totalDuration={activityChart.totalDuration}
+                totalElevation={activityChart.totalElevation}
               />
               <DashboardHeatmapPanel
                 activities={completedActivities}

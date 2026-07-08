@@ -175,12 +175,12 @@ export function MobileSidebar() {
               </div>
 
               <div>
-                <SheetTitle className="text-xl font-bold text-white">
-                  Montaro
+                <SheetTitle className="text-xl font-extrabold tracking-normal text-white">
+                  HOVREN
                 </SheetTitle>
 
-                <p className="mt-1 text-sm text-zinc-500">
-                  Outdoor performance
+                <p className="mt-1 text-xs text-zinc-500">
+                  Sommets, traces, souvenirs.
                 </p>
               </div>
             </div>

@@ -25,6 +25,10 @@ import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS,
 } from './auth-security.constants';
+import {
+  DEFAULT_ACCESS_TOKEN_TTL_SECONDS,
+  DEFAULT_REFRESH_TOKEN_TTL_SECONDS,
+} from './auth-session.constants';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
@@ -43,6 +47,10 @@ type ForgotPasswordRequestMeta = {
 type RateLimitEntry = {
   count: number;
   resetAt: number;
+};
+
+type RefreshTokenPayload = {
+  sub: string;
 };
 
 @Injectable()
@@ -71,7 +79,7 @@ export class AuthService {
       },
       {
         secret: this.getRequiredConfig('JWT_ACCESS_SECRET'),
-        expiresIn: '15m',
+        expiresIn: this.getAccessTokenTtlSeconds(),
         algorithm: 'HS256',
       },
     );
@@ -90,7 +98,7 @@ export class AuthService {
       },
       {
         secret: this.getRequiredConfig('JWT_REFRESH_SECRET'),
-        expiresIn: '7d',
+        expiresIn: this.getRefreshTokenTtlSeconds(),
         algorithm: 'HS256',
       },
     );
@@ -108,6 +116,114 @@ export class AuthService {
         refreshToken: hashedRefreshToken,
       },
     });
+  }
+
+  async refreshSession(refreshToken?: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Session expirée');
+    }
+
+    let payload: RefreshTokenPayload;
+
+    try {
+      payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(
+        refreshToken,
+        {
+          secret: this.getRequiredConfig('JWT_REFRESH_SECRET'),
+          algorithms: ['HS256'],
+        },
+      );
+    } catch {
+      throw new UnauthorizedException('Session expirée');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: payload.sub,
+      },
+    });
+
+    if (
+      !user ||
+      user.isBlocked ||
+      !user.emailVerifiedAt ||
+      !user.refreshToken
+    ) {
+      throw new UnauthorizedException('Session expirée');
+    }
+
+    const refreshTokenMatches = await bcrypt.compare(
+      refreshToken,
+      user.refreshToken,
+    );
+
+    if (!refreshTokenMatches) {
+      throw new UnauthorizedException('Session expirée');
+    }
+
+    const accessToken = await this.generateAccessToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+    const nextRefreshToken = await this.generateRefreshToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+
+    await this.updateRefreshToken(user.id, nextRefreshToken);
+
+    return {
+      accessToken,
+      refreshToken: nextRefreshToken,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  }
+
+  async logout(refreshToken?: string): Promise<void> {
+    if (!refreshToken) {
+      return;
+    }
+
+    try {
+      const payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(
+        refreshToken,
+        {
+          secret: this.getRequiredConfig('JWT_REFRESH_SECRET'),
+          algorithms: ['HS256'],
+        },
+      );
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: payload.sub,
+        },
+        select: {
+          refreshToken: true,
+        },
+      });
+
+      if (
+        user?.refreshToken &&
+        (await bcrypt.compare(refreshToken, user.refreshToken))
+      ) {
+        await this.prisma.user.update({
+          where: {
+            id: payload.sub,
+          },
+          data: {
+            refreshToken: null,
+          },
+        });
+      }
+    } catch {
+      return;
+    }
   }
 
   async register(dto: RegisterDto) {
@@ -572,6 +688,28 @@ export class AuthService {
     }
 
     return parsedValue;
+  }
+
+  getRefreshTokenTtlSeconds(): number {
+    return this.getPositiveIntegerConfig(
+      'JWT_REFRESH_TOKEN_TTL_SECONDS',
+      DEFAULT_REFRESH_TOKEN_TTL_SECONDS,
+    );
+  }
+
+  private getAccessTokenTtlSeconds(): number {
+    return this.getPositiveIntegerConfig(
+      'JWT_ACCESS_TOKEN_TTL_SECONDS',
+      DEFAULT_ACCESS_TOKEN_TTL_SECONDS,
+    );
+  }
+
+  private getPositiveIntegerConfig(key: string, fallback: number): number {
+    const parsedValue = Number(this.configService.get<string>(key) ?? fallback);
+
+    return Number.isInteger(parsedValue) && parsedValue > 0
+      ? parsedValue
+      : fallback;
   }
 
   private buildResetPasswordUrl(token: string): string {

@@ -34,7 +34,7 @@ const observabilityEnvSchema = z
       .min(30)
       .max(86_400)
       .default(300),
-    SERVICE_NAME: optionalString.default('montara-backend'),
+    SERVICE_NAME: optionalString.default('hovren-backend'),
   })
   .superRefine((value, context) => {
     if (value.ALERTS_ENABLED && !value.ALERT_WEBHOOK_URL) {

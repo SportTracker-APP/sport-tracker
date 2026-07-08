@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Montara",
-  description: "Modern sport tracking platform",
+  title: "Hovren",
+  description: "Ton carnet de sommets, de sorties et d’exploration outdoor.",
   manifest: "/site.webmanifest",
   icons: {
     icon: [

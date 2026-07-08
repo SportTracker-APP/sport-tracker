@@ -24,7 +24,7 @@ type ResendEmailClientMock = {
 const enabledConfig: MailConfig = {
   enabled: true,
   apiKey: 'resend-api-key',
-  from: 'Votre carnet outdoor <sender@example.test>',
+  from: 'Hovren <sender@example.test>',
   replyTo: 'support@example.test',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
@@ -92,7 +92,7 @@ describe('ResendMailProvider', () => {
     expect(result).toEqual({ skipped: false, resendId: 'resend-email-1' });
     expect(resend.emails.send).toHaveBeenCalledWith(
       {
-        from: 'Votre carnet outdoor <sender@example.test>',
+        from: 'Hovren <sender@example.test>',
         to: 'camille@example.test',
         replyTo: 'support@example.test',
         template: {

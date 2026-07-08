@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import {
-  Bell,
   Check,
   ChevronDown,
   Leaf,
@@ -15,11 +14,13 @@ import {
 } from "lucide-react";
 
 import { MobileSidebar } from "./mobile-sidebar";
+import { NotificationCenter } from "./notification-center";
 
 import {
   type AppTheme,
   useAppTheme,
 } from "@/components/theme/theme-switcher";
+import { logoutSession } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
 
 export function Topbar() {
@@ -72,10 +73,15 @@ export function Topbar() {
     });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsAccountMenuOpen(false);
-    logout();
-    window.location.href = "/login";
+
+    try {
+      await logoutSession();
+    } finally {
+      logout();
+      window.location.href = "/login";
+    }
   };
 
   return (
@@ -97,14 +103,7 @@ export function Topbar() {
           </span>
         </div>
 
-        <Link
-          href="/calendrier"
-          aria-label="Voir le calendrier"
-          className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.03] text-zinc-400 backdrop-blur-xl transition-all duration-300 hover:border-white/[0.10] hover:bg-white/[0.05] hover:text-white"
-        >
-          <Bell size={18} />
-          <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(168,85,247,0.9)]" />
-        </Link>
+        <NotificationCenter />
 
         <div ref={accountMenuRef} className="relative">
           <button
@@ -156,7 +155,7 @@ export function Topbar() {
             >
               <div className="app-account-identity rounded-[18px] border border-white/[0.06] bg-white/[0.035] px-4 py-3">
                 <p className="truncate text-sm font-semibold text-white">
-                  {user?.firstName || "Utilisateur Montaro"}
+                  {user?.firstName || "Utilisateur Hovren"}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-zinc-500">
                   {user?.email || "Compte connecté"}

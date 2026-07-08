@@ -180,12 +180,12 @@ export function Sidebar() {
 
           {/* BRAND */}
           <div>
-            <h1 className="text-lg font-semibold tracking-tight text-white">
-              Montara
+            <h1 className="text-xl font-extrabold tracking-normal text-white">
+              HOVREN
             </h1>
 
-            <p className="mt-0.5 text-sm text-zinc-500">
-              Outdoor performance
+            <p className="mt-0.5 whitespace-nowrap text-[0.7rem] leading-5 text-zinc-500">
+              Sommets, traces, souvenirs.
             </p>
           </div>
         </div>

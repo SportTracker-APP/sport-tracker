@@ -4,22 +4,22 @@ import Link from "next/link";
 import { Mountain } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Conditions | Montara",
-  description: "Conditions d'utilisation de Montara.",
+  title: "Conditions | Hovren",
+  description: "Conditions d'utilisation de Hovren.",
 };
 
 const termsSections = [
   {
     title: "1. Acceptation des conditions",
     paragraphs: [
-      "Les presentes conditions encadrent l'acces et l'utilisation de Montara. En creant un compte ou en utilisant l'application, l'utilisateur accepte ces conditions.",
+      "Les presentes conditions encadrent l'acces et l'utilisation de Hovren. En creant un compte ou en utilisant l'application, l'utilisateur accepte ces conditions.",
       "Si l'utilisateur n'accepte pas ces conditions, il ne doit pas utiliser le service.",
     ],
   },
   {
     title: "2. Description du service",
     paragraphs: [
-      "Montara est une application de carnet outdoor permettant d'enregistrer, organiser et consulter des activites sportives, des sommets, des objectifs, des statistiques et des souvenirs d'exploration.",
+      "Hovren est une application de carnet outdoor permettant d'enregistrer, organiser et consulter des activites sportives, des sommets, des objectifs, des statistiques et des souvenirs d'exploration.",
       "Certaines fonctionnalites peuvent dependre d'integrations tierces, d'une connexion internet, de donnees fournies par l'utilisateur ou de services externes.",
     ],
   },
@@ -28,13 +28,13 @@ const termsSections = [
     paragraphs: [
       "L'utilisateur doit fournir des informations exactes lors de la creation du compte et maintenir ces informations a jour lorsque cela est necessaire.",
       "L'utilisateur est responsable de la confidentialite de ses identifiants et de toutes les actions realisees depuis son compte, sauf preuve d'un usage frauduleux non imputable a l'utilisateur.",
-      "Montara peut demander une verification d'email, bloquer temporairement une action ou suspendre un compte en cas de suspicion d'abus, de compromission ou d'utilisation non conforme.",
+      "Hovren peut demander une verification d'email, bloquer temporairement une action ou suspendre un compte en cas de suspicion d'abus, de compromission ou d'utilisation non conforme.",
     ],
   },
   {
     title: "4. Utilisation autorisee",
     paragraphs: [
-      "L'utilisateur s'engage a utiliser Montara de maniere loyale, personnelle et conforme aux lois applicables.",
+      "L'utilisateur s'engage a utiliser Hovren de maniere loyale, personnelle et conforme aux lois applicables.",
       "Il est interdit de tenter d'acceder a des comptes tiers, de contourner les mecanismes de securite, de perturber le service, d'automatiser des requetes abusives ou de publier du contenu illicite.",
       "L'utilisateur reste responsable des donnees, textes, notes, traces ou informations qu'il ajoute dans l'application.",
     ],
@@ -42,23 +42,23 @@ const termsSections = [
   {
     title: "5. Donnees sportives et limites d'usage",
     paragraphs: [
-      "Les donnees affichees par Montara, notamment distances, deniveles, durees, cartes, statistiques, badges et objectifs, sont fournies a titre de suivi personnel.",
+      "Les donnees affichees par Hovren, notamment distances, deniveles, durees, cartes, statistiques, badges et objectifs, sont fournies a titre de suivi personnel.",
       "Ces informations peuvent contenir des approximations, erreurs de mesure, differences d'arrondi ou incoherences issues de services tiers ou de donnees importees.",
-      "Montara ne remplace pas un avis medical, sportif, meteorologique, cartographique, de securite ou de secours. L'utilisateur reste seul responsable de ses decisions sur le terrain.",
+      "Hovren ne remplace pas un avis medical, sportif, meteorologique, cartographique, de securite ou de secours. L'utilisateur reste seul responsable de ses decisions sur le terrain.",
     ],
   },
   {
     title: "6. Integrations et services tiers",
     paragraphs: [
-      "L'utilisateur peut choisir de connecter Montara a des services tiers, comme une plateforme sportive ou un prestataire d'email transactionnel utilise par le service.",
-      "Les services tiers disposent de leurs propres conditions et politiques de confidentialite. Montara n'est pas responsable de leurs decisions, interruptions, changements d'API ou erreurs de traitement.",
-      "L'utilisateur peut retirer l'acces a une integration lorsque les parametres de Montara ou du service tiers le permettent.",
+      "L'utilisateur peut choisir de connecter Hovren a des services tiers, comme une plateforme sportive ou un prestataire d'email transactionnel utilise par le service.",
+      "Les services tiers disposent de leurs propres conditions et politiques de confidentialite. Hovren n'est pas responsable de leurs decisions, interruptions, changements d'API ou erreurs de traitement.",
+      "L'utilisateur peut retirer l'acces a une integration lorsque les parametres de Hovren ou du service tiers le permettent.",
     ],
   },
   {
     title: "7. Disponibilite et evolution",
     paragraphs: [
-      "Montara s'efforce de fournir un service fiable, mais ne garantit pas une disponibilite permanente, continue ou sans erreur.",
+      "Hovren s'efforce de fournir un service fiable, mais ne garantit pas une disponibilite permanente, continue ou sans erreur.",
       "Le service peut etre modifie, suspendu ou interrompu temporairement pour maintenance, correction, evolution produit, securite ou contrainte technique.",
       "Certaines fonctionnalites peuvent etre ajoutees, modifiees ou retirees afin d'ameliorer l'application ou de respecter des contraintes legales, techniques ou de securite.",
     ],
@@ -67,7 +67,7 @@ const termsSections = [
     title: "8. Propriete intellectuelle",
     paragraphs: [
       "L'application, son interface, son code, ses elements visuels, sa marque, sa structure et ses contenus propres sont proteges par les droits de propriete intellectuelle applicables.",
-      "L'utilisateur conserve les droits sur les donnees et contenus qu'il ajoute dans son compte, sous reserve des droits necessaires accordes a Montara pour fournir le service.",
+      "L'utilisateur conserve les droits sur les donnees et contenus qu'il ajoute dans son compte, sous reserve des droits necessaires accordes a Hovren pour fournir le service.",
       "Toute reproduction, extraction, copie ou exploitation non autorisee de l'application ou de ses elements est interdite.",
     ],
   },
@@ -75,15 +75,15 @@ const termsSections = [
     title: "9. Suppression et suspension",
     paragraphs: [
       "L'utilisateur peut demander la suppression de son compte selon les modalites disponibles dans l'application ou via le support.",
-      "Montara peut suspendre ou supprimer l'acces a un compte en cas de violation grave ou repetee des conditions, d'utilisation frauduleuse, de risque de securite ou d'obligation legale.",
+      "Hovren peut suspendre ou supprimer l'acces a un compte en cas de violation grave ou repetee des conditions, d'utilisation frauduleuse, de risque de securite ou d'obligation legale.",
       "La suppression du compte peut entrainer la perte definitive des activites, objectifs, sommets, statistiques et preferences associes.",
     ],
   },
   {
     title: "10. Responsabilite",
     paragraphs: [
-      "Montara est fourni comme un outil de suivi personnel. L'utilisateur reconnait que l'activite outdoor comporte des risques et qu'il doit prendre toutes les precautions necessaires avant, pendant et apres une sortie.",
-      "Montara ne peut etre tenu responsable des dommages lies a une mauvaise interpretation des donnees, a une decision prise sur le terrain, a une indisponibilite temporaire ou a une erreur provenant d'un service tiers.",
+      "Hovren est fourni comme un outil de suivi personnel. L'utilisateur reconnait que l'activite outdoor comporte des risques et qu'il doit prendre toutes les precautions necessaires avant, pendant et apres une sortie.",
+      "Hovren ne peut etre tenu responsable des dommages lies a une mauvaise interpretation des donnees, a une decision prise sur le terrain, a une indisponibilite temporaire ou a une erreur provenant d'un service tiers.",
       "Rien dans ces conditions n'exclut les garanties ou responsabilites qui ne peuvent pas etre exclues par la loi applicable.",
     ],
   },
@@ -97,15 +97,15 @@ const termsSections = [
   {
     title: "12. Modification des conditions",
     paragraphs: [
-      "Montara peut mettre a jour ces conditions pour tenir compte de l'evolution du service, des contraintes techniques ou des obligations legales.",
-      "La version publiee sur cette page est la version applicable. En cas de modification importante, Montara pourra informer les utilisateurs par un moyen approprie.",
+      "Hovren peut mettre a jour ces conditions pour tenir compte de l'evolution du service, des contraintes techniques ou des obligations legales.",
+      "La version publiee sur cette page est la version applicable. En cas de modification importante, Hovren pourra informer les utilisateurs par un moyen approprie.",
     ],
   },
   {
     title: "13. Droit applicable",
     paragraphs: [
       "Ces conditions sont redigees pour un service exploite depuis la France et ont vocation a etre interpretees selon le droit applicable au lieu d'etablissement de l'editeur, sauf regle imperative contraire.",
-      "En cas de difficulte, l'utilisateur est invite a contacter Montara afin de rechercher une solution amiable avant toute autre demarche.",
+      "En cas de difficulte, l'utilisateur est invite a contacter Hovren afin de rechercher une solution amiable avant toute autre demarche.",
     ],
   },
 ];
@@ -122,7 +122,7 @@ export default function TermsPage() {
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
               <Mountain className="h-5 w-5 text-violet-300" />
             </span>
-            <span className="text-xl font-semibold">Montara</span>
+            <span className="text-xl font-semibold">Hovren</span>
           </Link>
           <Link
             href="/login"
@@ -137,11 +137,11 @@ export default function TermsPage() {
             Conditions d'utilisation
           </p>
           <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-            Cadre d'utilisation de Montara
+            Cadre d'utilisation de Hovren
           </h1>
           <p className="max-w-3xl text-base leading-8 text-zinc-400">
             Derniere mise a jour : 26 juin 2026. Ces conditions definissent les
-            regles d'acces et d'utilisation de Montara, ainsi que les droits et
+            regles d'acces et d'utilisation de Hovren, ainsi que les droits et
             responsabilites de chacun.
           </p>
         </section>

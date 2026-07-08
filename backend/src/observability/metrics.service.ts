@@ -30,30 +30,30 @@ export class MetricsService implements OnModuleDestroy {
       environment: config.environment,
     });
     collectDefaultMetrics({
-      prefix: 'montara_',
+      prefix: 'hovren_',
       register: this.registry,
     });
     this.requestsTotal = new Counter({
-      name: 'montara_http_requests_total',
+      name: 'hovren_http_requests_total',
       help: 'Total number of HTTP requests handled by the API',
       labelNames: HTTP_LABELS,
       registers: [this.registry],
     });
     this.requestDuration = new Histogram({
-      name: 'montara_http_request_duration_seconds',
+      name: 'hovren_http_request_duration_seconds',
       help: 'HTTP request duration in seconds',
       labelNames: HTTP_LABELS,
       buckets: [0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
       registers: [this.registry],
     });
     this.requestsInFlight = new Gauge({
-      name: 'montara_http_requests_in_flight',
+      name: 'hovren_http_requests_in_flight',
       help: 'Current number of HTTP requests being processed',
       labelNames: ['method'] as const,
       registers: [this.registry],
     });
     this.errorsTotal = new Counter({
-      name: 'montara_application_errors_total',
+      name: 'hovren_application_errors_total',
       help: 'Total number of HTTP errors grouped by route and error type',
       labelNames: ERROR_LABELS,
       registers: [this.registry],

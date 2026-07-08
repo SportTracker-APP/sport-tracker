@@ -31,23 +31,23 @@ export default function LoginPage() {
           <AuthThemeToggle />
         </div>
 
-        <div className="app-auth-left relative hidden flex-col justify-center overflow-hidden border-r border-white/5 px-16 py-12 lg:flex">
-          <div className="app-auth-brand-row absolute top-12 left-16 flex items-center gap-4">
+        <div className="app-auth-left relative hidden flex-col justify-start overflow-y-auto border-r border-white/5 px-12 py-10 lg:flex xl:px-16 xl:py-12">
+          <div className="app-auth-brand-row absolute top-10 left-12 z-20 flex items-center gap-4 xl:top-12 xl:left-16">
             <div className="app-auth-logo app-brand-logo flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10 backdrop-blur-xl">
               <Mountain className="h-6 w-6 text-violet-400" />
             </div>
-            <span className="text-3xl font-semibold tracking-tight">
-              Montara
+            <span className="text-3xl font-bold tracking-normal">
+              HOVREN
             </span>
             <div className="app-auth-brand-kicker ml-2 inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
               Outdoor • Exploration • Aventure
             </div>
           </div>
 
-          <div className="relative z-10 mx-auto max-w-xl">
-            <div className="space-y-10">
-              <div className="space-y-7">
-                <h1 className="max-w-[700px] text-7xl leading-[0.95] font-bold tracking-[-0.05em]">
+          <div className="relative z-10 mx-auto w-full max-w-xl pt-24 pb-20">
+            <div className="space-y-8">
+              <div className="space-y-5">
+                <h1 className="max-w-[700px] text-6xl leading-[0.95] font-bold tracking-normal 2xl:text-7xl">
                   Continue ton{" "}
                   <span className="bg-gradient-to-r from-pink-300 via-fuchsia-400 to-violet-500 bg-clip-text text-transparent">
                     aventure.
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 </p>
               </div>
 
-              <div className="space-y-6 pt-4">
+              <div className="space-y-4 pt-2">
                 <FeatureItem
                   icon={<BookOpen className="h-5 w-5" />}
                   title="Carnet d'aventure"
@@ -89,7 +89,7 @@ export default function LoginPage() {
           </div>
 
           <div className="absolute right-16 bottom-10 left-16 flex items-center justify-between text-sm text-zinc-600">
-            <span>© 2026 Montara</span>
+            <span>© 2026 Hovren</span>
             <div className="flex items-center gap-8">
               <Link
                 href="/confidentialite"
@@ -116,7 +116,7 @@ export default function LoginPage() {
               <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
                 <Mountain className="h-5 w-5 text-violet-400" />
               </div>
-              <span className="text-2xl font-semibold">Montara</span>
+              <span className="text-2xl font-bold tracking-normal">HOVREN</span>
             </div>
 
             <LoginForm />

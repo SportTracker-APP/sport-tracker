@@ -107,7 +107,7 @@ const workflowSteps = [
 
 const callbackFailureMessages: Record<string, string> = {
   state_invalid:
-    "Le retour Strava n'est plus valide. Relancez la connexion depuis Sport Tracker.",
+    "Le retour Strava n'est plus valide. Relancez la connexion depuis Hovren.",
   token_exchange_failed:
     "Strava a refusé l'échange OAuth. Vérifiez surtout le Client Secret et le domaine de rappel.",
   token_payload_invalid:
@@ -462,7 +462,7 @@ export default function StravaIntegrationPage() {
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
                 Importez automatiquement tes activités, tes performances et ton
-                historique sportif dans Sport Tracker.
+                historique sportif dans Hovren.
               </p>
             </div>
 

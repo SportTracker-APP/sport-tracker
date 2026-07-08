@@ -906,6 +906,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  position: relative;
   flex: 0 0 auto;
   min-height: 34px;
   padding: 0 0.75rem;
@@ -915,11 +916,39 @@
   color: #526274;
   font-size: 0.66rem;
   font-weight: 650;
+  cursor: pointer;
 }
 
 .rangeButton svg {
   width: 13px;
   height: 13px;
+  flex: 0 0 auto;
+  pointer-events: none;
+}
+
+.rangeButton select {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  appearance: none;
+  background: transparent;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rangeButton select option {
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.rangeButton:focus-within {
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.14);
 }
 
 .textLink,
@@ -3826,6 +3855,11 @@
   border-color: rgba(196, 181, 253, 0.28);
   background: rgba(139, 92, 246, 0.12);
   color: #ede9fe;
+}
+
+:global(html:not(.sport-theme-nature)) .dashboardPage .rangeButton:focus-within {
+  border-color: rgba(196, 181, 253, 0.52);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
 }
 
 :global(html:not(.sport-theme-nature)) .dashboardPage .textLink,

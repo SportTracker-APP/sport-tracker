@@ -5,7 +5,7 @@ import { MailConfig, MailSendRequest, MailSendResult } from '../mail.types';
 const mailConfig: MailConfig = {
   enabled: true,
   apiKey: 'resend-api-key',
-  from: 'Votre carnet outdoor <sender@example.test>',
+  from: 'Hovren <sender@example.test>',
   replyTo: 'support@example.test',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
@@ -50,7 +50,7 @@ describe('MailService', () => {
       templateId: 'auth-verify-email',
       businessId: 'verification-1',
       variables: expect.objectContaining({
-        APP_NAME: 'Votre carnet outdoor',
+        APP_NAME: 'Hovren',
         SUPPORT_EMAIL: 'support@example.test',
         USER_NAME: 'Camille',
         VERIFY_URL: 'https://app.example.test/verify?token=secret-token',

@@ -4,7 +4,7 @@ import type { MailConfig } from '../mail.types';
 const config: MailConfig = {
   enabled: true,
   apiKey: 'resend-api-key',
-  from: 'Votre carnet outdoor <sender@example.test>',
+  from: 'Hovren <sender@example.test>',
   replyTo: 'support@example.test',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',

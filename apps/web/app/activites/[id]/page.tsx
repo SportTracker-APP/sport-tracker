@@ -415,7 +415,7 @@ function getSurfaceLabel(activity: ActivityModel) {
 }
 
 function getSourceLabel(activity: ActivityModel) {
-  return activity.stravaActivityId ? "Strava" : "Montaro";
+  return activity.stravaActivityId ? "Strava" : "Hovren";
 }
 
 function getLoopTag(activity: ActivityModel) {
@@ -1031,7 +1031,7 @@ export default function ActivityDetailsPage() {
     }
 
     const shareData = {
-      title: activity.title || "Sortie Montaro",
+      title: activity.title || "Sortie Hovren",
       text: getHeroText(activity),
       url: window.location.href,
     };

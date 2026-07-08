@@ -27,8 +27,8 @@ export default function VerifyEmailPage() {
             <div className="app-auth-logo app-brand-logo flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10 backdrop-blur-xl">
               <Mountain className="h-6 w-6 text-violet-400" />
             </div>
-            <span className="text-3xl font-semibold tracking-tight">
-              Montara
+            <span className="text-3xl font-bold tracking-normal">
+              HOVREN
             </span>
             <div className="app-auth-brand-kicker ml-2 inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
               Outdoor • Exploration • Aventure
@@ -85,7 +85,7 @@ export default function VerifyEmailPage() {
               <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
                 <Mountain className="h-5 w-5 text-violet-400" />
               </div>
-              <span className="text-2xl font-semibold">Montara</span>
+              <span className="text-2xl font-bold tracking-normal">HOVREN</span>
             </div>
 
             <Suspense fallback={null}>
