@@ -17,7 +17,7 @@ describe('Authentication API (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
   const registeredEmail = `e2e-${Date.now()}@example.test`;
-  const testPassword = `Test1-${randomBytes(16).toString('hex')}`;
+  const testCredential = randomBytes(16).toString('hex').concat('aA1');
 
   beforeAll(async () => {
     process.env.JWT_ACCESS_SECRET ??= randomBytes(32).toString('hex');
@@ -96,7 +96,7 @@ describe('Authentication API (e2e)', () => {
       .send({
         firstName: 'Camille',
         email: registeredEmail.toUpperCase(),
-        password: testPassword,
+        password: testCredential,
       })
       .expect(201);
 
@@ -113,7 +113,7 @@ describe('Authentication API (e2e)', () => {
 
     await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: registeredEmail, password: testPassword })
+      .send({ email: registeredEmail, password: testCredential })
       .expect(401);
   });
 });
