@@ -36,7 +36,6 @@ export function AuthThemeToggle() {
   const label = isNatureTheme
     ? "Activer le thème violet"
     : "Activer le thème vert";
-
   return (
     <button
       type="button"
@@ -46,16 +45,16 @@ export function AuthThemeToggle() {
         setTheme(nextTheme);
         applyTheme(nextTheme);
       }}
-      className="app-auth-theme-toggle inline-flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 text-sm font-medium text-zinc-300 backdrop-blur-xl transition hover:border-white/15 hover:bg-white/[0.09] hover:text-white"
+      className="app-auth-theme-toggle inline-flex h-7 items-center justify-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-2 text-[10px] font-medium whitespace-nowrap text-zinc-300 backdrop-blur-xl transition hover:border-white/15 hover:bg-white/[0.09] hover:text-white sm:h-10 sm:gap-2 sm:px-3 sm:text-sm"
       aria-pressed={isNatureTheme}
       aria-label={label}
     >
       {isNatureTheme ? (
-        <Leaf className="h-4 w-4" />
+        <Leaf className="h-3 w-3 sm:h-4 sm:w-4" />
       ) : (
-        <Sparkles className="h-4 w-4" />
+        <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
       )}
-      {label}
+      <span>{label}</span>
     </button>
   );
 }
