@@ -1940,6 +1940,21 @@ html.sport-theme-nature .app-auth-theme-toggle {
   font-weight: 600;
 }
 
+@media (max-width: 639px) {
+  .app-auth-theme-toggle {
+    min-height: 2.25rem !important;
+    gap: 0.375rem !important;
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.625rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .app-auth-theme-toggle svg {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+  }
+}
+
 .app-auth-alert-success {
   border: 1px solid rgba(52, 211, 153, 0.34);
   background: rgba(6, 78, 59, 0.28);

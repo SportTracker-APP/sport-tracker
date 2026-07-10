@@ -36,6 +36,8 @@ export function AuthThemeToggle() {
   const label = isNatureTheme
     ? "Activer le thème violet"
     : "Activer le thème vert";
+  const nextThemeName = isNatureTheme ? "violet" : "vert";
+
   return (
     <button
       type="button"
@@ -45,16 +47,20 @@ export function AuthThemeToggle() {
         setTheme(nextTheme);
         applyTheme(nextTheme);
       }}
-      className="app-auth-theme-toggle inline-flex h-7 items-center justify-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-2 text-[10px] font-medium whitespace-nowrap text-zinc-300 backdrop-blur-xl transition hover:border-white/15 hover:bg-white/[0.09] hover:text-white sm:h-10 sm:gap-2 sm:px-3 sm:text-sm"
+      className="app-auth-theme-toggle inline-flex min-h-9 items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-2 text-[10px] leading-none font-medium whitespace-nowrap text-zinc-300 backdrop-blur-xl transition hover:border-white/15 hover:bg-white/[0.09] hover:text-white sm:h-10 sm:gap-2 sm:px-3 sm:text-sm"
       aria-pressed={isNatureTheme}
       aria-label={label}
     >
       {isNatureTheme ? (
-        <Leaf className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Leaf className="h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
       ) : (
-        <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
+        <Sparkles className="h-3 w-3 shrink-0 sm:h-4 sm:w-4" />
       )}
-      <span>{label}</span>
+      <span className="flex flex-col items-start gap-0.5 sm:hidden">
+        <span>Activer le thème</span>
+        <span>{nextThemeName}</span>
+      </span>
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }

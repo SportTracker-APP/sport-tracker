@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
       </div>
 
       <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
-        <div className="absolute top-6 right-6 z-20 lg:top-10 lg:right-10">
+        <div className="absolute top-6 right-6 z-20 hidden lg:block lg:top-10 lg:right-10">
           <AuthThemeToggle />
         </div>
 
@@ -96,11 +96,16 @@ export default function ResetPasswordPage() {
           <div className="absolute top-0 right-0 h-[300px] w-[300px] bg-fuchsia-500/10 blur-3xl" />
 
           <div className="relative z-10 w-full max-w-md">
-            <div className="mb-12 flex items-center justify-center gap-4 lg:hidden">
-              <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
-                <Mountain className="h-5 w-5 text-violet-400" />
+            <div className="mb-10 flex items-center justify-between gap-4 lg:hidden">
+              <div className="flex items-center gap-3">
+                <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
+                  <Mountain className="h-5 w-5 text-violet-400" />
+                </div>
+                <span className="text-2xl font-bold tracking-normal">
+                  HOVREN
+                </span>
               </div>
-              <span className="text-2xl font-bold tracking-normal">HOVREN</span>
+              <AuthThemeToggle />
             </div>
 
             <Suspense fallback={null}>
