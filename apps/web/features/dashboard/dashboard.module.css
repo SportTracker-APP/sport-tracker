@@ -4582,6 +4582,70 @@
   }
 }
 
+@media (max-width: 639px) {
+  .dashboardPage {
+    gap: 0.9rem;
+  }
+
+  .hero {
+    min-height: 0;
+  }
+
+  .heroContent {
+    min-height: 0;
+    gap: 0.9rem;
+  }
+
+  .heroKicker {
+    min-height: 2rem;
+    margin-bottom: 0.72rem;
+    padding-inline: 0.72rem;
+    font-size: 0.66rem;
+  }
+
+  .heroCopy h1 {
+    max-width: 100% !important;
+    font-size: clamp(1.7rem, 9vw, 2.15rem);
+    line-height: 1.08;
+  }
+
+  .heroCopy > p {
+    margin-top: 0.62rem;
+    font-size: 0.84rem;
+    line-height: 1.48;
+  }
+
+  .heroCopy > p + p {
+    display: none;
+  }
+
+  .heroActions {
+    gap: 0.55rem;
+    margin-top: 1rem;
+  }
+
+  .heroActions a {
+    min-height: 2.75rem;
+    border-radius: 15px;
+    font-size: 0.82rem;
+  }
+
+  .heroMiniStats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 0.85rem;
+  }
+
+  .heroMiniStats > div {
+    min-width: 0;
+    padding: 0.7rem;
+  }
+
+  .heroMiniStats strong {
+    font-size: 1.18rem;
+  }
+}
+
 @media (max-width: 360px) {
   .heroContent {
     padding: 0.9rem;

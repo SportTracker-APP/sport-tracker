@@ -7706,3 +7706,106 @@ html:not(.sport-theme-nature) .app-settings-page .app-settings-actions {
   margin: 0 !important;
   padding-top: 0.25rem !important;
 }
+/* Final phone override: must remain at the physical end of globals.css. */
+@media (max-width: 639px) {
+  html .app-content-container {
+    gap: 0.9rem !important;
+    padding: 0.75rem 0.75rem calc(9rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  html .app-topbar {
+    height: 4rem !important;
+    padding-inline: 0.75rem !important;
+  }
+
+  html .app-topbar button,
+  html .app-topbar a {
+    min-height: 2.75rem !important;
+  }
+
+  html .app-mobile-bottom-nav {
+    padding-inline: 0.7rem !important;
+    padding-bottom: calc(0.45rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  html .app-mobile-bottom-nav-shell {
+    max-width: calc(100vw - 1.4rem) !important;
+    gap: 0.18rem !important;
+    border-radius: 23px !important;
+    padding: 0.34rem !important;
+  }
+
+  html .app-mobile-bottom-nav-item {
+    min-height: 2.9rem !important;
+    border-radius: 17px !important;
+    gap: 0.16rem !important;
+    font-size: 0.6rem !important;
+    line-height: 1.05 !important;
+  }
+
+  html .app-mobile-bottom-nav-item svg {
+    width: 1.08rem !important;
+    height: 1.08rem !important;
+  }
+
+  html .app-activities-hero,
+  html .app-map-hero,
+  html .app-calendar-hero-v2,
+  html .app-strava-hero,
+  html .app-settings-hero,
+  html .app-statistics-forest-panel,
+  html .app-premium-surface {
+    border-radius: 20px !important;
+    padding: 0.9rem !important;
+  }
+
+  html .app-activities-hero h1,
+  html .app-map-hero h1,
+  html .app-calendar-hero-v2 h1,
+  html .app-strava-hero h1,
+  html .app-settings-hero h1,
+  html .app-premium-surface h1 {
+    font-size: clamp(1.55rem, 7.4vw, 1.9rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  html .app-activities-hero p,
+  html .app-map-hero p,
+  html .app-calendar-hero-v2 p,
+  html .app-strava-hero p,
+  html .app-settings-hero p,
+  html .app-premium-surface p {
+    font-size: 0.82rem !important;
+    line-height: 1.48 !important;
+  }
+
+  html .app-filter-shell,
+  html .app-map-control-panel,
+  html .app-calendar-toolbar-v2 {
+    border-radius: 18px !important;
+    padding: 0.7rem !important;
+  }
+
+  html .app-activity-filters,
+  html .app-calendar-toolbar-v2 > div:first-child,
+  html .app-map-control-panel .flex.flex-wrap {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.48rem !important;
+    margin-inline: 0 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  html .app-activity-filters button,
+  html .app-calendar-toolbar-v2 button,
+  html .app-map-control-panel button {
+    width: 100% !important;
+    min-height: 2.42rem !important;
+    justify-content: center !important;
+    padding: 0.44rem 0.55rem !important;
+    border-radius: 14px !important;
+    font-size: 0.76rem !important;
+    white-space: normal !important;
+  }
+}
