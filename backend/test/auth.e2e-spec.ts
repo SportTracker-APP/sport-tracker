@@ -43,8 +43,13 @@ describe('Authentication API (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.user.deleteMany({ where: { email: registeredEmail } });
-    await app.close();
+    if (prisma) {
+      await prisma.user.deleteMany({ where: { email: registeredEmail } });
+    }
+
+    if (app) {
+      await app.close();
+    }
   });
 
   it('expose les sondes de vie et de disponibilité', async () => {
