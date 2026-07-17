@@ -112,7 +112,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             <div className="absolute inset-2 animate-pulse rounded-2xl border border-current opacity-30" />
             <Mountain className="relative h-8 w-8" strokeWidth={2.35} />
           </div>
-          <p className="mt-4 text-sm font-semibold">Hovren</p>
+          <p className="mt-4 text-sm font-semibold">HOVREN</p>
           <p className="mt-1 text-xs">Préparation de ton refuge...</p>
         </div>
       </div>

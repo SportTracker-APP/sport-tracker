@@ -181,7 +181,7 @@ export function Sidebar() {
           {/* BRAND */}
           <div>
             <h1 className="text-xl font-extrabold tracking-normal text-white">
-              Hovren
+              HOVREN
             </h1>
 
             <p className="mt-0.5 whitespace-nowrap text-[0.7rem] leading-5 text-zinc-500">

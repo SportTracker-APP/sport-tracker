@@ -32,6 +32,28 @@ export function LandingHero() {
         <div className="absolute top-32 right-[-10rem] h-[30rem] w-[30rem] rounded-full bg-emerald-400/12 blur-3xl" />
         <div className="absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(167,139,250,0.12),transparent)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:92px_92px] opacity-20" />
+        <svg
+          className="absolute top-24 right-0 h-[28rem] w-[48rem] text-emerald-200/[0.06]"
+          viewBox="0 0 760 420"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M46 92c118-34 225-28 328 18 106 48 211 45 340-16"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+          <path
+            d="M28 142c130-39 254-32 370 20 118 53 222 49 335-8"
+            stroke="currentColor"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M18 194c145-42 282-36 406 22 126 58 230 52 320-2"
+            stroke="currentColor"
+            strokeWidth="1"
+          />
+        </svg>
         <MountainSilhouette />
       </div>
 
@@ -69,20 +91,22 @@ export function LandingHero() {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-400">
-            {["Sans bruit inutile", "Pensé pour tes traces", "Données lisibles"].map(
-              (item) => (
-                <span
-                  key={item}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.035] px-3 py-1.5"
-                >
-                  <ShieldCheck
-                    className="h-3.5 w-3.5 text-emerald-200"
-                    aria-hidden="true"
-                  />
-                  {item}
-                </span>
-              ),
-            )}
+            {[
+              "Sans bruit. Juste tes traces.",
+              "Pensé pour tes sorties",
+              "Repères clairs",
+            ].map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.035] px-3 py-1.5"
+              >
+                <ShieldCheck
+                  className="h-3.5 w-3.5 text-emerald-200"
+                  aria-hidden="true"
+                />
+                {item}
+              </span>
+            ))}
           </div>
         </div>
 

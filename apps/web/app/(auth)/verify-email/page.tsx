@@ -28,7 +28,7 @@ export default function VerifyEmailPage() {
               <Mountain className="h-6 w-6 text-violet-400" />
             </div>
             <span className="text-3xl font-bold tracking-normal">
-              Hovren
+              HOVREN
             </span>
             <div className="app-auth-brand-kicker ml-2 inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
               Carnet • Sommets • Souvenirs
@@ -87,7 +87,7 @@ export default function VerifyEmailPage() {
                   <Mountain className="h-5 w-5 text-violet-400" />
                 </div>
                 <span className="text-2xl font-bold tracking-normal">
-                  Hovren
+                  HOVREN
                 </span>
               </div>
               <AuthThemeToggle />

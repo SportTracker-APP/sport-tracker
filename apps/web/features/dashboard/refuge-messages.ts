@@ -78,7 +78,7 @@ export const REFUGE_MESSAGES: readonly RefugeMessage[] = [
   },
   {
     title: "Le terrain de jeu est déjà ouvert.",
-    body: "Course, trail, vélo ou marche : choisis ta porte d’entrée, Hovren gardera la trace.",
+    body: "Course, trail, vélo ou marche : choisis ta porte d’entrée, HOVREN gardera la trace.",
   },
   {
     title: "Le paysage donne rarement de mauvais conseils.",

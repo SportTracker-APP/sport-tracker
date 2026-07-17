@@ -155,7 +155,7 @@ export function Topbar() {
             >
               <div className="app-account-identity rounded-[18px] border border-white/[0.06] bg-white/[0.035] px-4 py-3">
                 <p className="truncate text-sm font-semibold text-white">
-                  {user?.firstName || "Utilisateur Hovren"}
+                  {user?.firstName || "Utilisateur HOVREN"}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-zinc-500">
                   {user?.email || "Compte connecté"}

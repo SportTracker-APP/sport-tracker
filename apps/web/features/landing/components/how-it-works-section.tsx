@@ -8,7 +8,7 @@ const steps = [
   },
   {
     title: "Découvre un sommet",
-    description: "Hovren rapproche tes traces du catalogue de sommets.",
+    description: "HOVREN rapproche tes traces du catalogue de sommets.",
     icon: Mountain,
   },
   {

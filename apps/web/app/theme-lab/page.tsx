@@ -96,7 +96,7 @@ function MiniSidebar({ variant }: { variant: "fresh" | "forest" | "meadow" }) {
           </div>
 
           <div>
-            <p className="text-base font-bold">Hovren</p>
+            <p className="text-base font-bold">HOVREN</p>
             <p
               className={`text-xs ${
                 isForest ? "text-emerald-100/70" : "text-slate-400"

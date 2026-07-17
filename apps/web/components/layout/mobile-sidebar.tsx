@@ -176,7 +176,7 @@ export function MobileSidebar() {
 
               <div>
                 <SheetTitle className="text-xl font-extrabold tracking-normal text-white">
-                  Hovren
+                  HOVREN
                 </SheetTitle>
 
                 <p className="mt-1 text-xs text-zinc-500">

@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Hovren",
+  title: "HOVREN",
   description: "Ton carnet de sommets, de sorties et d’exploration outdoor.",
   metadataBase: new URL("https://hovren.fr"),
   manifest: "/site.webmanifest",

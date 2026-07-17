@@ -28,7 +28,7 @@ export default function ResetPasswordPage() {
               <Mountain className="h-6 w-6 text-violet-400" />
             </div>
             <span className="text-3xl font-bold tracking-normal">
-              Hovren
+              HOVREN
             </span>
             <div className="app-auth-brand-kicker ml-2 inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300 backdrop-blur-xl">
               Carnet • Sommets • Souvenirs
@@ -79,7 +79,7 @@ export default function ResetPasswordPage() {
           </div>
 
           <div className="absolute right-16 bottom-10 left-16 flex items-center justify-between text-sm text-zinc-600">
-            <span>© 2026 Hovren</span>
+            <span>© 2026 HOVREN</span>
             <div className="flex items-center gap-8">
               <button className="transition hover:text-zinc-400">
                 Confidentialité
@@ -102,7 +102,7 @@ export default function ResetPasswordPage() {
                   <Mountain className="h-5 w-5 text-violet-400" />
                 </div>
                 <span className="text-2xl font-bold tracking-normal">
-                  Hovren
+                  HOVREN
                 </span>
               </div>
               <AuthThemeToggle />

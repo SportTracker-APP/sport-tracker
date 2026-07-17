@@ -107,7 +107,7 @@ const workflowSteps = [
 
 const callbackFailureMessages: Record<string, string> = {
   state_invalid:
-    "Le retour Strava n'est plus valide. Relancez la connexion depuis Hovren.",
+    "Le retour Strava n'est plus valide. Relancez la connexion depuis HOVREN.",
   token_exchange_failed:
     "Strava a refusé l'échange OAuth. Vérifie surtout le Client Secret et le domaine de rappel.",
   token_payload_invalid:
@@ -462,7 +462,7 @@ export default function StravaIntegrationPage() {
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
                 Importe automatiquement tes traces Strava pour révéler tes
-                sommets, tes souvenirs et ton historique outdoor dans Hovren.
+                sommets, tes souvenirs et ton historique outdoor dans HOVREN.
               </p>
             </div>
 

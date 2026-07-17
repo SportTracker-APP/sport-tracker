@@ -11,7 +11,7 @@ export function LandingFooter() {
             <Mountain className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-lg font-semibold text-white">Hovren</p>
+            <p className="text-lg font-semibold text-white">HOVREN</p>
             <p className="text-sm text-slate-400">
               Carnet outdoor intelligent pour sorties, sommets et progression.
             </p>

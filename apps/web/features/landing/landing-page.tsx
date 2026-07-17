@@ -11,6 +11,7 @@ import {
   Footprints,
   Map,
   Mountain,
+  Route,
 } from "lucide-react";
 
 const features = [
@@ -72,14 +73,67 @@ export function LandingPage() {
         ))}
       </section>
 
-      <HowItWorksSection />
       <section className="relative mx-auto w-full max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.07] bg-[linear-gradient(135deg,rgba(139,92,246,0.12),rgba(47,122,99,0.07))] px-6 py-8 shadow-[0_26px_90px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:px-10">
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_70%_50%,rgba(125,211,168,0.14),transparent_42%)]" />
-          <p className="relative max-w-4xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.075] bg-[linear-gradient(135deg,rgba(13,13,31,0.92),rgba(24,18,55,0.72)_52%,rgba(14,45,42,0.54))] p-6 shadow-[0_30px_110px_rgba(0,0,0,0.3)] backdrop-blur-2xl sm:p-9 lg:p-10">
+          <div className="pointer-events-none absolute -top-24 right-16 h-72 w-72 rounded-full bg-violet-400/14 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-28 left-10 h-72 w-72 rounded-full bg-emerald-300/10 blur-3xl" />
+          <svg
+            className="pointer-events-none absolute inset-y-0 right-0 h-full w-1/2 text-white/[0.045]"
+            viewBox="0 0 620 360"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M58 86c90-22 169-18 244 12 78 31 154 33 255-8"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M36 132c108-30 204-25 286 12 88 40 168 40 258-2"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+            <path
+              d="M24 184c126-34 238-29 334 14 96 43 174 38 238-5"
+              stroke="currentColor"
+              strokeWidth="0.9"
+            />
+            <path
+              d="M0 280 98 230l72 25 110-82 92 78 74-46 88 70 86-36v121H0z"
+              fill="currentColor"
+              opacity="0.55"
+            />
+          </svg>
+
+          <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-violet-200/14 bg-violet-300/9 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-violet-100 uppercase">
+              <Route className="h-3.5 w-3.5" aria-hidden="true" />
+              Positionnement
+            </p>
+            <div>
+              <h2 className="max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                Pas une app de performance de plus.
+              </h2>
+              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">
+                HOVREN ne cherche pas seulement à compter tes kilomètres.
+                L’app transforme tes sorties en repères : lieux explorés,
+                sommets validés, souvenirs structurés et progression visible.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <HowItWorksSection />
+      <section className="relative mx-auto w-full max-w-7xl px-5 py-9 sm:px-6 lg:px-8 lg:py-12">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.075] bg-[linear-gradient(135deg,rgba(139,92,246,0.16),rgba(47,122,99,0.08),rgba(255,255,255,0.035))] px-6 py-10 shadow-[0_30px_110px_rgba(0,0,0,0.28)] backdrop-blur-2xl sm:px-10 lg:px-12">
+          <div className="pointer-events-none absolute -top-24 left-1/3 h-72 w-72 rounded-full bg-violet-400/12 blur-3xl" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_70%_50%,rgba(125,211,168,0.18),transparent_42%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.026)_1px,transparent_1px)] bg-[size:72px_72px] opacity-25" />
+          <p className="relative max-w-5xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
             Chaque sortie laisse une trace. HOVREN t’aide à la garder vivante.
           </p>
-          <p className="relative mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+          <p className="relative mt-5 max-w-2xl text-base leading-8 text-slate-300">
             Pas seulement des chiffres : des lieux, des crêtes, des repères et
             des souvenirs qui prennent forme au fil du carnet.
           </p>

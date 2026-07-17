@@ -25,7 +25,7 @@ export function LandingHeader() {
         <Link
           href="/"
           className="group flex items-center gap-3 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
-          aria-label="Accueil Hovren"
+          aria-label="Accueil HOVREN"
         >
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition group-hover:border-violet-300/28">
             <Mountain className="h-5 w-5 text-violet-200" aria-hidden="true" />
