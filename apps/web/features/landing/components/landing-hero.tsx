@@ -93,7 +93,7 @@ export function LandingHero() {
           <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-400">
             {[
               "Sans bruit. Juste tes traces.",
-              "Pensé pour tes sorties",
+              "Sommets à collectionner",
               "Repères clairs",
             ].map((item) => (
               <span

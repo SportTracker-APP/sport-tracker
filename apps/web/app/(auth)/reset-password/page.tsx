@@ -4,6 +4,7 @@ import { BookOpen, Map, Mountain, TrendingUp, Trophy } from "lucide-react";
 
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { AuthThemeToggle } from "@/components/theme/auth-theme-toggle";
+import { XSocialLink } from "@/features/landing/components/x-social-link";
 
 export default function ResetPasswordPage() {
   return (
@@ -87,6 +88,7 @@ export default function ResetPasswordPage() {
               <button className="transition hover:text-zinc-400">
                 Conditions
               </button>
+              <XSocialLink className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.045] text-zinc-600 transition hover:border-white/18 hover:bg-white/[0.075] hover:text-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300" />
             </div>
           </div>
         </div>

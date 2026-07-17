@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { Mountain } from "lucide-react";
 
+import { XSocialLink } from "./x-social-link";
+
 export function LandingFooter() {
   return (
     <footer className="border-t border-white/[0.07] px-5 py-10 sm:px-6 lg:px-8">
@@ -43,6 +45,7 @@ export function LandingFooter() {
           >
             Connexion
           </Link>
+          <XSocialLink className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.045] text-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:-translate-y-0.5 hover:border-white/18 hover:bg-white/[0.075] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200" />
         </div>
       </div>
     </footer>

@@ -7,6 +7,7 @@ import { ProgressionSection } from "./components/progression-section";
 import { SummitJournalSection } from "./components/summit-journal-section";
 import {
   BarChart3,
+  CheckCircle2,
   Compass,
   Footprints,
   Map,
@@ -38,6 +39,24 @@ const features = [
     description:
       "Objectifs, badges et statistiques t’aident à visualiser ce que tu accomplis vraiment.",
     icon: BarChart3,
+  },
+] as const;
+
+const summitCollectionSteps = [
+  {
+    title: "À découvrir",
+    description: "Les sommets du catalogue attendent ta prochaine trace.",
+    icon: Map,
+  },
+  {
+    title: "Révélé",
+    description: "Une sortie passe près d’un sommet : HOVREN le repère.",
+    icon: Route,
+  },
+  {
+    title: "Validé",
+    description: "Le sommet rejoint ta liste et reste dans ton carnet.",
+    icon: CheckCircle2,
   },
 ] as const;
 
@@ -126,6 +145,57 @@ export function LandingPage() {
 
       <HowItWorksSection />
       <SummitJournalSection />
+      <section className="relative mx-auto w-full max-w-7xl px-5 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.07] bg-[linear-gradient(135deg,rgba(255,255,255,0.045),rgba(139,92,246,0.055)_48%,rgba(125,211,168,0.05))] px-6 py-8 shadow-[0_24px_90px_rgba(0,0,0,0.24)] backdrop-blur-2xl sm:px-8 lg:px-10">
+          <div className="pointer-events-none absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-emerald-300/10 blur-3xl" />
+          <div className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-violet-400/10 blur-3xl" />
+
+          <div className="relative grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/8 px-3 py-1.5 text-xs font-semibold tracking-[0.2em] text-emerald-100 uppercase">
+                <Mountain className="h-3.5 w-3.5" aria-hidden="true" />
+                Collection
+              </p>
+              <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                Ta liste de sommets se remplit sortie après sortie.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
+                Comme un carnet de collection outdoor : chaque sommet parcouru
+                devient un repère clair, retrouvé plus tard avec son massif, sa
+                trace et ton souvenir.
+              </p>
+            </div>
+
+            <ol className="grid gap-4 sm:grid-cols-3">
+              {summitCollectionSteps.map((step, index) => {
+                const Icon = step.icon;
+
+                return (
+                  <li
+                    key={step.title}
+                    className="relative border-t border-white/[0.09] pt-4 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5 sm:first:border-l-0"
+                  >
+                    <span className="text-xs font-semibold tracking-[0.18em] text-emerald-100/80 uppercase">
+                      0{index + 1}
+                    </span>
+                    <div className="mt-3 flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.055] text-emerald-100">
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                      <strong className="text-base font-semibold text-white">
+                        {step.title}
+                      </strong>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-slate-400">
+                      {step.description}
+                    </p>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </div>
+      </section>
       <ProgressionSection />
 
       <section className="relative mx-auto w-full max-w-7xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20">
