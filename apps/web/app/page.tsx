@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://hovren.fr"),
   title: "HOVREN — Ton carnet outdoor",
   description:
-    "Suis tes sorties, découvre tes sommets et construis ton carnet d’exploration outdoor avec HOVREN.",
+    "Suis tes sorties, synchronise tes activités, découvre tes sommets et construis ton carnet d’exploration outdoor avec HOVREN.",
   alternates: {
     canonical: "https://hovren.fr",
   },

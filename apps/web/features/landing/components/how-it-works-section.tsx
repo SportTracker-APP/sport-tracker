@@ -1,24 +1,28 @@
-import { BookOpen, Flag, Mountain, Route } from "lucide-react";
+import { BookOpen, Flag, Mountain, RefreshCw } from "lucide-react";
 
 const steps = [
   {
-    title: "Trace une sortie",
-    description: "Ajoute une sortie ou synchronise Strava pour garder la trace.",
-    icon: Route,
+    title: "Connecte Strava",
+    description:
+      "Importe tes sorties automatiquement et retrouve tes traces dans HOVREN.",
+    icon: RefreshCw,
   },
   {
-    title: "Découvre un sommet",
-    description: "HOVREN rapproche tes traces du catalogue de sommets.",
+    title: "HOVREN révèle tes sommets",
+    description:
+      "Tes activités deviennent des repères : sommets validés, massifs explorés, lieux atteints.",
     icon: Mountain,
   },
   {
-    title: "Enrichis ton carnet",
-    description: "Chaque découverte devient un souvenir lisible et durable.",
+    title: "Construis ton carnet",
+    description:
+      "Chaque sortie enrichit ton historique outdoor avec badges, progression et souvenirs.",
     icon: BookOpen,
   },
   {
     title: "Suis ta progression",
-    description: "Objectifs, badges et statistiques montrent le chemin parcouru.",
+    description:
+      "Visualise ce que tu explores vraiment, sortie après sortie.",
     icon: Flag,
   },
 ] as const;

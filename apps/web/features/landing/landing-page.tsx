@@ -12,10 +12,17 @@ import {
   Footprints,
   Map,
   Mountain,
+  RefreshCw,
   Route,
 } from "lucide-react";
 
 const features = [
+  {
+    title: "Synchronisation Strava",
+    description:
+      "Retrouve tes activités sans tout ressaisir. HOVREN transforme tes sorties importées en carnet d’exploration.",
+    icon: RefreshCw,
+  },
   {
     title: "Suis tes sorties",
     description:
@@ -69,12 +76,12 @@ export function LandingPage() {
 
       <section
         id="fonctionnalites"
-        className="relative mx-auto grid w-full max-w-7xl gap-4 px-5 py-14 sm:px-6 lg:grid-cols-4 lg:px-8 lg:py-20"
+        className="relative mx-auto grid w-full max-w-7xl gap-4 px-5 py-14 sm:px-6 lg:grid-cols-3 lg:px-8 lg:py-20 xl:grid-cols-5"
         aria-labelledby="landing-features-title"
       >
         <div className="pointer-events-none absolute -top-24 right-8 h-72 w-72 rounded-full bg-violet-500/10 blur-3xl" />
         <div className="pointer-events-none absolute bottom-8 left-0 h-64 w-64 rounded-full bg-emerald-300/8 blur-3xl" />
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-3 xl:col-span-5">
           <p className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/8 px-3 py-1.5 text-xs font-semibold tracking-[0.22em] text-emerald-100 uppercase">
             <Compass className="h-3.5 w-3.5" aria-hidden="true" />
             Exploration guidée
@@ -225,8 +232,8 @@ export function LandingPage() {
               Prêt à ouvrir ton carnet outdoor ?
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300">
-              Commence à suivre tes sorties, valide tes sommets et construis ton
-              histoire avec HOVREN.
+              Connecte tes sorties existantes, valide tes sommets et commence à
+              construire ton carnet outdoor avec HOVREN.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
