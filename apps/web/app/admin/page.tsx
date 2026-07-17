@@ -165,7 +165,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (user && user.role !== "ADMIN") {
-      router.replace("/");
+      router.replace("/refuge");
     }
   }, [router, user]);
 

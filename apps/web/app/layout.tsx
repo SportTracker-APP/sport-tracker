@@ -14,6 +14,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Hovren",
   description: "Ton carnet de sommets, de sorties et d’exploration outdoor.",
+  metadataBase: new URL("https://hovren.fr"),
   manifest: "/site.webmanifest",
   icons: {
     icon: [
@@ -43,7 +44,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className={inter.className}>
         <script
           dangerouslySetInnerHTML={{

@@ -107,7 +107,7 @@ export function LoginForm() {
 
       setAuth(response.accessToken, response.user);
 
-      window.location.href = "/";
+      window.location.href = "/refuge";
     } catch (error: unknown) {
       setServerError("Email ou mot de passe invalide");
     }

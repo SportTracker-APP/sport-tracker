@@ -12,8 +12,11 @@ import { getMe } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
 
 const publicRoutes = [
+  "/",
   "/login",
   "/register",
+  "/forgot-password",
+  "/reset-password",
   "/verify-email",
   "/theme-lab",
   "/confidentialite",
@@ -26,6 +29,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const router = useRouter();
 
   const pathname = usePathname();
+  const isPublicRoute = publicRoutes.includes(pathname);
+  const shouldBypassAuthGate = isPublicRoute && !authEntryRoutes.includes(pathname);
 
   const hydrateAuth = useAuthStore((state) => state.hydrateAuth);
 
@@ -52,7 +57,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const isPublicRoute = publicRoutes.includes(pathname);
+        if (shouldBypassAuthGate) {
+          setIsLoading(false);
+
+          return;
+        }
 
         const accessToken = localStorage.getItem("accessToken");
 
@@ -77,23 +86,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
         // SI connecté et page de connexion/inscription
         if (authEntryRoutes.includes(pathname)) {
-          router.replace("/");
+          router.replace("/refuge");
         }
       } catch (error) {
         console.error("Auth hydration failed:", error);
 
         logout();
 
-        router.replace("/login");
+        if (!publicRoutes.includes(pathname)) {
+          router.replace("/login");
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
-    initializeAuth();
-  }, [pathname]);
+    void initializeAuth();
+  }, [pathname, shouldBypassAuthGate, hydrateAuth, logout, router]);
 
-  if (isLoading) {
+  if (isLoading && !shouldBypassAuthGate) {
     return (
       <div className="app-auth-loading flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -102,7 +113,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
             <Mountain className="relative h-8 w-8" strokeWidth={2.35} />
           </div>
           <p className="mt-4 text-sm font-semibold">Hovren</p>
-          <p className="mt-1 text-xs">Préparation de votre espace...</p>
+          <p className="mt-1 text-xs">Préparation de ton refuge...</p>
         </div>
       </div>
     );

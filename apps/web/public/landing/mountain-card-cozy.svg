@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" role="img" aria-label="Montagne douce au bord d'un lac">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2c1c62"/>
+      <stop offset="0.48" stop-color="#17223e"/>
+      <stop offset="1" stop-color="#0d3a31"/>
+    </linearGradient>
+    <linearGradient id="ridgeA" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#121426"/>
+      <stop offset="0.52" stop-color="#283052"/>
+      <stop offset="1" stop-color="#143d36"/>
+    </linearGradient>
+    <linearGradient id="ridgeB" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#0c1824"/>
+      <stop offset="1" stop-color="#18473a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="72%" cy="28%" r="52%">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.28"/>
+      <stop offset="0.5" stop-color="#7dd3a8" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#070713" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="summitGlow" cx="43%" cy="46%" r="34%">
+      <stop offset="0" stop-color="#f5f3ff" stop-opacity="0.13"/>
+      <stop offset="0.42" stop-color="#a78bfa" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#070713" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grain" width="140" height="140" patternUnits="userSpaceOnUse">
+      <circle cx="18" cy="24" r="1" fill="#ffffff" opacity="0.05"/>
+      <circle cx="86" cy="44" r="1" fill="#ffffff" opacity="0.035"/>
+      <circle cx="116" cy="98" r="1" fill="#7dd3a8" opacity="0.045"/>
+      <circle cx="42" cy="118" r="1" fill="#c4b5fd" opacity="0.04"/>
+    </pattern>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16"/>
+    </filter>
+  </defs>
+  <rect width="760" height="420" fill="url(#sky)"/>
+  <rect width="760" height="420" fill="url(#glow)"/>
+  <rect width="760" height="420" fill="url(#summitGlow)"/>
+  <path d="M92 114c86-22 168-20 246 6 84 28 160 30 254-2" fill="none" stroke="#d9d6ff" stroke-width="1.2" stroke-opacity="0.10"/>
+  <path d="M70 150c98-28 190-27 278 2 92 30 176 34 296-8" fill="none" stroke="#d9d6ff" stroke-width="1.1" stroke-opacity="0.085"/>
+  <path d="M52 188c112-30 214-29 306 4 96 34 196 32 332-12" fill="none" stroke="#7dd3a8" stroke-width="1" stroke-opacity="0.075"/>
+  <path d="M396 80c34 26 70 42 108 48 42 7 78 24 110 52" fill="none" stroke="#f8fafc" stroke-width="1" stroke-opacity="0.08"/>
+  <path d="M428 108c28 20 59 33 92 39 35 6 66 19 93 42" fill="none" stroke="#f8fafc" stroke-width="0.9" stroke-opacity="0.07"/>
+  <circle cx="610" cy="96" r="116" fill="#8b5cf6" opacity="0.12" filter="url(#blur)"/>
+  <circle cx="154" cy="132" r="92" fill="#7dd3a8" opacity="0.08" filter="url(#blur)"/>
+  <path d="M0 260 84 220l72 25 118-122 88 98 80-58 102 94 85-68 131 100v131H0z" fill="url(#ridgeA)"/>
+  <path d="M274 123 362 221l-48-31-28 40-12-107zM544 257l85-68-36 70-34-16-15 14z" fill="#d9d6ff" opacity="0.34"/>
+  <path d="M0 306c108-22 208-16 304 4 116 24 230 28 356-4 42-11 76-14 100-12v126H0z" fill="url(#ridgeB)" opacity="0.82"/>
+  <path d="M0 338c98-18 210-14 330 5 150 24 292 18 430-18v95H0z" fill="#0b2028" opacity="0.72"/>
+  <path d="M0 366c130-8 238-6 352 5 154 15 270 11 408-12v61H0z" fill="#123431" opacity="0.58"/>
+  <rect width="760" height="420" fill="url(#grain)"/>
+</svg>

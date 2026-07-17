@@ -41,7 +41,7 @@ const integrationItems = [
 const navigationItems = [
   {
     title: "Refuge",
-    href: "/",
+    href: "/refuge",
     icon: LayoutDashboard,
   },
   {

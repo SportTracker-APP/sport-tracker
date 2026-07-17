@@ -116,7 +116,7 @@ export default function TermsPage() {
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
         <header className="flex items-center justify-between gap-4">
           <Link
-            href="/login"
+            href="/"
             className="inline-flex items-center gap-3 text-zinc-300 transition hover:text-white"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
@@ -125,7 +125,7 @@ export default function TermsPage() {
             <span className="text-xl font-semibold">Hovren</span>
           </Link>
           <Link
-            href="/login"
+            href="/"
             className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-violet-300/30 hover:text-white"
           >
             Retour

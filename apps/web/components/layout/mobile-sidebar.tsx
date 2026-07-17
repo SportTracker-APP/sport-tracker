@@ -31,7 +31,7 @@ import { useAuthStore } from "@/store/auth-store";
 const navigationLinks = [
   {
     label: "Refuge",
-    href: "/",
+    href: "/refuge",
     icon: LayoutDashboard,
   },
   {

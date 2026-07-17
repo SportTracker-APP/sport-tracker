@@ -21,7 +21,7 @@ type MobileNavItem = {
 const navigationItems: MobileNavItem[] = [
   {
     label: "Refuge",
-    href: "/",
+    href: "/refuge",
     icon: Home,
   },
   {

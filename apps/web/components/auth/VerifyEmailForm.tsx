@@ -41,7 +41,7 @@ export function VerifyEmailForm() {
 
         setAuth(response.accessToken, response.user);
         setStatus("success");
-        window.setTimeout(() => router.replace("/"), 900);
+        window.setTimeout(() => router.replace("/refuge"), 900);
       } catch (error: unknown) {
         if (isMounted) {
           setStatus("error");
