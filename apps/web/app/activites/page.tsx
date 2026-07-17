@@ -170,7 +170,7 @@ export default function ActivitiesPage() {
             >
               <Link href="/activites/nouvelle">
                 <Plus className="mr-2 h-4 w-4" />
-                Nouvelle activité
+                Nouvelle sortie
               </Link>
             </Button>
           </div>
@@ -179,14 +179,14 @@ export default function ActivitiesPage() {
         {/* LOADING */}
         {isLoading && (
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center text-zinc-400">
-            Chargement des activités...
+            Chargement de tes traces...
           </div>
         )}
 
         {/* ERROR */}
         {error && (
           <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-8 text-center text-red-300">
-            Impossible de charger les activités.
+            Impossible de charger tes traces.
           </div>
         )}
 
@@ -205,11 +205,11 @@ export default function ActivitiesPage() {
                 {filteredActivities.length === 0 ? (
                   <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center">
                     <h3 className="text-lg font-semibold text-white">
-                      Aucune activité
+                      Aucune trace pour le moment
                     </h3>
 
                     <p className="mt-2 text-zinc-400">
-                      Commencez par créer ta première activité.
+                      Ajoute une sortie ou synchronise Strava pour commencer ton carnet.
                     </p>
                   </div>
                 ) : (

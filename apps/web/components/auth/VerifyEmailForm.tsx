@@ -83,8 +83,8 @@ export function VerifyEmailForm() {
           {status === "error"
             ? "Ce lien est expiré ou a déjà été utilisé."
             : status === "success"
-              ? "Votre compte est activé. Redirection en cours."
-              : "Nous activons votre compte."}
+              ? "Ton compte est activé. Redirection en cours."
+              : "Nous activons ton compte."}
         </p>
       </div>
 

@@ -122,7 +122,7 @@ button {
       rgba(236, 253, 245, 0.38),
       transparent 38%
     ),
-    linear-gradient(135deg, #10b981 0%, #16a34a 54%, #a3e635 100%);
+    linear-gradient(135deg, #0f9f78 0%, #138c6d 56%, #79b889 100%);
   box-shadow:
     0 16px 34px rgba(16, 185, 129, 0.36),
     0 0 0 6px rgba(16, 185, 129, 0.08),
@@ -170,7 +170,7 @@ html.sport-theme-nature .app-mobile-bottom-primary {
       rgba(236, 253, 245, 0.48),
       transparent 38%
     ),
-    linear-gradient(135deg, #047857 0%, #10b981 58%, #84cc16 100%) !important;
+    linear-gradient(135deg, #075f52 0%, #0f9f78 58%, #79b889 100%) !important;
   box-shadow:
     0 16px 34px rgba(6, 78, 59, 0.28),
     0 0 0 6px rgba(16, 185, 129, 0.12),
@@ -797,9 +797,9 @@ html.sport-theme-nature {
   --nature-surface: rgba(255, 255, 255, 0.86);
   --nature-surface-strong: rgba(255, 255, 255, 0.96);
   --nature-border: rgba(20, 83, 45, 0.12);
-  --nature-green: #10b981;
-  --nature-green-dark: #047857;
-  --nature-lime: #a3e635;
+  --nature-green: #0f9f78;
+  --nature-green-dark: #075f52;
+  --nature-lime: #8fcf9f;
   --nature-shadow: 0 22px 70px rgba(21, 128, 61, 0.1);
 }
 
@@ -7706,6 +7706,115 @@ html:not(.sport-theme-nature) .app-settings-page .app-settings-actions {
   margin: 0 !important;
   padding-top: 0.25rem !important;
 }
+
+/* Admin page: keep the nature theme premium, not neon lime. */
+html.sport-theme-nature .app-admin-page {
+  --admin-forest: #064e3b;
+  --admin-forest-soft: rgba(6, 78, 59, 0.1);
+  --admin-mint: rgba(20, 184, 166, 0.14);
+  --admin-surface: rgba(248, 252, 249, 0.88);
+  --admin-surface-strong: rgba(239, 248, 242, 0.94);
+  --admin-line: rgba(6, 78, 59, 0.13);
+  --admin-muted: #65776f;
+}
+
+html.sport-theme-nature .app-admin-page .app-premium-surface {
+  border-color: var(--admin-line) !important;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(20, 184, 166, 0.1), transparent 34%),
+    radial-gradient(circle at 92% 12%, rgba(124, 58, 237, 0.055), transparent 36%),
+    linear-gradient(145deg, var(--admin-surface), rgba(231, 243, 236, 0.82)) !important;
+  box-shadow:
+    0 22px 70px rgba(6, 78, 59, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76) !important;
+}
+
+html.sport-theme-nature
+  .app-admin-page
+  .app-premium-surface[class*="bg-gradient-to-br"] {
+  background:
+    linear-gradient(90deg, rgba(6, 78, 59, 0.72), rgba(6, 78, 59, 0)) left /
+      4px 100% no-repeat,
+    radial-gradient(circle at 94% 8%, rgba(20, 184, 166, 0.18), transparent 34%),
+    radial-gradient(circle at 0% 100%, rgba(167, 139, 250, 0.08), transparent 42%),
+    linear-gradient(145deg, rgba(250, 253, 251, 0.96), rgba(231, 243, 236, 0.88)) !important;
+}
+
+html.sport-theme-nature
+  .app-admin-page
+  .app-premium-surface[class*="bg-gradient-to-br"]:hover {
+  border-color: rgba(6, 78, 59, 0.2) !important;
+  box-shadow:
+    0 24px 72px rgba(6, 78, 59, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+html.sport-theme-nature .app-admin-page h1,
+html.sport-theme-nature .app-admin-page h2,
+html.sport-theme-nature .app-admin-page h3,
+html.sport-theme-nature .app-admin-page .text-white {
+  color: #0f241f !important;
+}
+
+html.sport-theme-nature .app-admin-page p,
+html.sport-theme-nature .app-admin-page .text-zinc-400,
+html.sport-theme-nature .app-admin-page .text-zinc-500 {
+  color: var(--admin-muted) !important;
+}
+
+html.sport-theme-nature .app-admin-page [class*="bg-black/20"],
+html.sport-theme-nature .app-admin-page [class*="bg-white/["] {
+  border-color: var(--admin-line) !important;
+  background: rgba(255, 255, 255, 0.54) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+html.sport-theme-nature .app-admin-page button[class*="from-violet"],
+html.sport-theme-nature .app-admin-page button[class*="to-fuchsia"] {
+  border: 1px solid rgba(6, 78, 59, 0.18) !important;
+  background-image:
+    radial-gradient(circle at 28% 12%, rgba(187, 247, 208, 0.16), transparent 34%),
+    linear-gradient(135deg, #052e2b 0%, #065f46 58%, #0f766e 100%) !important;
+  color: #f8fffb !important;
+  box-shadow:
+    0 16px 38px rgba(6, 78, 59, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+html.sport-theme-nature
+  .app-admin-page
+  [class*="h-full"][class*="rounded-full"][class*="bg-gradient-to-r"][class*="from-violet"] {
+  background-image: linear-gradient(90deg, #0f766e, #14b8a6, #6ee7b7) !important;
+}
+
+html.sport-theme-nature .app-admin-page .text-violet-200,
+html.sport-theme-nature .app-admin-page .text-violet-300,
+html.sport-theme-nature .app-admin-page .text-fuchsia-300,
+html.sport-theme-nature .app-admin-page .text-sky-300 {
+  color: var(--admin-forest) !important;
+}
+
+html.sport-theme-nature .app-admin-page .text-emerald-300,
+html.sport-theme-nature .app-admin-page .text-emerald-200\/70 {
+  color: #047857 !important;
+}
+
+html.sport-theme-nature .app-admin-page .text-orange-300 {
+  color: #c2410c !important;
+}
+
+html.sport-theme-nature .app-admin-page [class*="bg-emerald-500/10"],
+html.sport-theme-nature .app-admin-page [class*="bg-violet-500/10"],
+html.sport-theme-nature .app-admin-page [class*="bg-sky-500/10"] {
+  border-color: rgba(6, 78, 59, 0.14) !important;
+  background: rgba(6, 78, 59, 0.065) !important;
+}
+
+html.sport-theme-nature .app-admin-page [class*="bg-orange-500/10"] {
+  border-color: rgba(194, 65, 12, 0.18) !important;
+  background: rgba(251, 146, 60, 0.1) !important;
+}
+
 /* Final phone override: must remain at the physical end of globals.css. */
 @media (max-width: 639px) {
   html .app-content-container {

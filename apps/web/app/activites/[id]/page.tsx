@@ -1070,7 +1070,7 @@ export default function ActivityDetailsPage() {
                   <div>
                     <p>Correspondance possible</p>
                     <h2>
-                      Cette activité semble correspondre à votre séance
+                      Cette sortie semble correspondre à ta séance
                       planifiée “{plannedWorkoutSuggestion.title ??
                         "Séance planifiée"}”.
                     </h2>

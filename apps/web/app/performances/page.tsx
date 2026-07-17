@@ -124,7 +124,7 @@ export default function PerformancesPage() {
     {
       label: "Meilleure distance",
       value: longestActivity ? formatDistance(longestActivity.distance) : "—",
-      detail: longestActivity?.title ?? "Aucune activité importée",
+      detail: longestActivity?.title ?? "Aucune trace importée",
       icon: Trophy,
     },
     {
@@ -142,7 +142,7 @@ export default function PerformancesPage() {
       detail:
         totalElevation > 0
           ? "Ascension cumulée importée"
-          : "Ajoutez des sorties avec dénivelé",
+          : "Ajoute des sorties avec dénivelé",
       icon: Mountain,
     },
   ];
@@ -173,12 +173,11 @@ export default function PerformancesPage() {
             </div>
 
             <h1 className="mt-5 text-3xl font-bold tracking-tight text-white">
-              Vos meilleurs repères sportifs.
+              Tes meilleurs repères outdoor.
             </h1>
 
             <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
-              Records, tendances et indicateurs calculés avec vos vraies
-              activités importées.
+              Records, tendances et repères calculés avec tes vraies traces.
             </p>
           </div>
         </section>
@@ -191,7 +190,7 @@ export default function PerformancesPage() {
 
         {error && (
           <div className="rounded-[24px] border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-300">
-            Impossible de charger vos performances.
+            Impossible de charger tes performances.
           </div>
         )}
 
@@ -234,7 +233,7 @@ export default function PerformancesPage() {
             <div className="mt-6 flex h-48 items-end gap-3">
               {monthlyDistances.length === 0 ? (
                 <div className="flex h-full w-full items-center justify-center rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.03] text-sm text-zinc-500">
-                  Synchronisez Strava pour afficher vos tendances.
+                  Synchronise Strava pour révéler tes premières tendances.
                 </div>
               ) : (
                 monthlyDistances.map((month) => {

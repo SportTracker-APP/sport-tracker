@@ -1,9 +1,9 @@
 import { Activity, SportType, WeatherType } from '@prisma/client';
 import SunCalc from 'suncalc';
 
-import { BadgeCatalogItem } from './badge-catalog';
+import { BadgeCatalogItem, BadgeRule } from './badge-catalog';
 
-type BadgeActivity = Pick<
+export type BadgeActivity = Pick<
   Activity,
   | 'distance'
   | 'elevationGain'
@@ -15,9 +15,15 @@ type BadgeActivity = Pick<
   | 'weather'
 >;
 
-type BadgeSummitDiscovery = {
+export type BadgeSummitDiscovery = {
   summitId: string;
   activity: { startedAt: Date };
+};
+
+export type BadgeProgress = {
+  current: number;
+  target: number;
+  unit: string;
 };
 
 type CalendarDate = {
@@ -90,6 +96,27 @@ function hasMatchingMonth<T extends { startedAt: Date }>(
   }
 
   return Array.from(byYear.values()).some(predicate);
+}
+
+function getMonthGroups<T extends { startedAt: Date }>(
+  values: T[],
+  month: number,
+): T[][] {
+  const byYear = new Map<number, T[]>();
+
+  for (const value of values) {
+    const calendarDate = getCalendarDate(value.startedAt);
+
+    if (calendarDate.month !== month) {
+      continue;
+    }
+
+    const yearValues = byYear.get(calendarDate.year) ?? [];
+    yearValues.push(value);
+    byYear.set(calendarDate.year, yearValues);
+  }
+
+  return Array.from(byYear.values());
 }
 
 function startedBeforeSunrise(activity: BadgeActivity): boolean {
@@ -260,4 +287,194 @@ export function evaluateBadgeCatalog(
   }
 
   return qualified;
+}
+
+export function getBadgeProgress(
+  rule: BadgeRule,
+  activities: BadgeActivity[],
+  summitDiscoveries: BadgeSummitDiscovery[],
+): BadgeProgress | null {
+  const totalDistance = activities.reduce(
+    (total, activity) => total + (activity.distance ?? 0),
+    0,
+  );
+  const totalElevation = activities.reduce(
+    (total, activity) => total + (activity.elevationGain ?? 0),
+    0,
+  );
+  const distinctSummits = new Set(
+    summitDiscoveries.map((discovery) => discovery.summitId),
+  ).size;
+  const datedSummitDiscoveries = summitDiscoveries.map((discovery) => ({
+    summitId: discovery.summitId,
+    startedAt: discovery.activity.startedAt,
+  }));
+
+  switch (rule.kind) {
+    case 'TOTAL_DISTANCE':
+      return {
+        current: totalDistance,
+        target: rule.thresholdKm,
+        unit: 'km',
+      };
+    case 'DISTINCT_SUMMITS':
+      return {
+        current: distinctSummits,
+        target: rule.threshold,
+        unit: 'sommets',
+      };
+    case 'BEFORE_SUNRISE':
+      return {
+        current: activities.some(startedBeforeSunrise) ? 1 : 0,
+        target: 1,
+        unit: 'sortie',
+      };
+    case 'TEMPERATURE_BELOW':
+      return {
+        current: activities.some(
+          (activity) =>
+            activity.temperature !== null &&
+            activity.temperature < rule.thresholdCelsius,
+        )
+          ? 1
+          : 0,
+        target: 1,
+        unit: 'sortie',
+      };
+    case 'RAINY_ACTIVITY':
+      return {
+        current: activities.some(isRainy) ? 1 : 0,
+        target: 1,
+        unit: 'sortie',
+      };
+    case 'SINGLE_ACTIVITY_ELEVATION':
+      return {
+        current: Math.max(
+          0,
+          ...activities.map((activity) => activity.elevationGain ?? 0),
+        ),
+        target: rule.thresholdMeters,
+        unit: 'm D+',
+      };
+    case 'TOTAL_ELEVATION':
+      return {
+        current: totalElevation,
+        target: rule.thresholdMeters,
+        unit: 'm D+',
+      };
+    case 'MONTHLY_ELEVATION':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map((values) =>
+            values.reduce(
+              (total, activity) => total + (activity.elevationGain ?? 0),
+              0,
+            ),
+          ),
+        ),
+        target: rule.thresholdMeters,
+        unit: 'm D+',
+      };
+    case 'MONTHLY_ACTIVITY_COUNT':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map((values) => values.length),
+        ),
+        target: rule.threshold,
+        unit: 'sorties',
+      };
+    case 'MONTHLY_OUTDOOR_DISTANCE':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map((values) =>
+            values
+              .filter(isOutdoor)
+              .reduce(
+                (total, activity) => total + (activity.distance ?? 0),
+                0,
+              ),
+          ),
+        ),
+        target: rule.thresholdKm,
+        unit: 'km',
+      };
+    case 'MONTHLY_SUMMITS':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(datedSummitDiscoveries, rule.month).map(
+            (values) =>
+              new Set(values.map((discovery) => discovery.summitId)).size,
+          ),
+        ),
+        target: rule.threshold,
+        unit: 'sommets',
+      };
+    case 'MONTHLY_DISTANCE':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map((values) =>
+            values.reduce(
+              (total, activity) => total + (activity.distance ?? 0),
+              0,
+            ),
+          ),
+        ),
+        target: rule.thresholdKm,
+        unit: 'km',
+      };
+    case 'MONTHLY_LONG_RUNS':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map(
+            (values) =>
+              values.filter(
+                (activity) =>
+                  (activity.sport === SportType.RUNNING ||
+                    activity.sport === SportType.TRAIL) &&
+                  (activity.distance ?? 0) > rule.minimumDistanceKm,
+              ).length,
+          ),
+        ),
+        target: rule.threshold,
+        unit: 'sorties',
+      };
+    case 'MONTHLY_RAIN_AND_DISTANCE':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map((values) =>
+            values.some(isRainy)
+              ? values.reduce(
+                  (total, activity) => total + (activity.distance ?? 0),
+                  0,
+                )
+              : 0,
+          ),
+        ),
+        target: rule.thresholdKm,
+        unit: 'km',
+      };
+    case 'MONTHLY_ACTIVE_WEEKS':
+      return {
+        current: Math.max(
+          0,
+          ...getMonthGroups(activities, rule.month).map(
+            (values) =>
+              new Set(
+                values
+                  .filter(isOutdoor)
+                  .map((activity) => getIsoWeekKey(activity.startedAt)),
+              ).size,
+          ),
+        ),
+        target: rule.threshold,
+        unit: 'semaines',
+      };
+  }
 }

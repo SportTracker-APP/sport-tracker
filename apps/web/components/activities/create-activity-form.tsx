@@ -62,14 +62,14 @@ const modeOptions = [
     value: "COMPLETED" as const,
     label: "Activité réalisée",
     description:
-      "Ajoutez une sortie déjà terminée avec ses résultats.",
+      "Ajoute une sortie déjà terminée avec ses traces.",
     icon: CheckCircle2,
   },
   {
     value: "PLANNED" as const,
     label: "Sortie à planifier",
     description:
-      "Préparez une séance qui apparaîtra dans le calendrier.",
+      "Prépare une séance qui apparaîtra dans ton planning.",
     icon: CalendarPlus,
   },
 ] as const;
@@ -379,17 +379,17 @@ export function CreateActivityForm() {
           ? "Sortie planifiée terminée"
           : isPlannedMode
             ? "Sortie planifiée"
-            : "Activité enregistrée",
+            : "Trace enregistrée",
         description: submittedPlannedWorkoutId
-          ? `Votre séance “${title || "planifiée"}” est maintenant reliée à l’activité réalisée.`
+          ? `Ta séance “${title || "planifiée"}” est maintenant reliée à la sortie réalisée.`
           : isPlannedMode
-            ? `Votre sortie “${title || "sans titre"}” est bien ajoutée au planning.`
-            : `Votre activité “${title || "sans titre"}” est bien enregistrée.`,
+            ? `Ta sortie “${title || "sans titre"}” est bien ajoutée au planning.`
+            : `Ta trace “${title || "sans titre"}” est bien enregistrée.`,
       });
     } catch (error) {
       console.error(error);
       setSubmitError(
-        "Impossible d’enregistrer cette activité pour le moment. Vérifiez les informations puis réessayez.",
+        "Impossible d’enregistrer cette sortie pour le moment. Vérifie les informations puis réessaie.",
       );
     }
   }
@@ -422,7 +422,7 @@ export function CreateActivityForm() {
         <div className={styles.formCard}>
           <FormSection
             eyebrow="Étape 1"
-            title="Quel type d’activité ajoutez-vous ?"
+            title="Quel type de sortie ajoutes-tu ?"
             description="Distinguez une sortie terminée d’une séance à venir."
             icon={<Route aria-hidden="true" />}
           >
@@ -465,8 +465,8 @@ export function CreateActivityForm() {
 
           <FormSection
             eyebrow="Étape 2"
-            title="Choisissez votre discipline"
-            description="Le sport sélectionné adapte la lecture de vos futures statistiques."
+            title="Choisis ta discipline"
+            description="Le sport sélectionné adapte la lecture de tes futures traces."
             icon={<Mountain aria-hidden="true" />}
           >
             <SportSelector
@@ -485,8 +485,8 @@ export function CreateActivityForm() {
             title="Informations essentielles"
             description={
               isPlannedMode
-                ? "Donnez un nom et un créneau à votre prochaine sortie."
-                : "Identifiez clairement la séance déjà réalisée."
+                ? "Donne un nom et un créneau à ta prochaine sortie."
+                : "Identifie clairement la sortie déjà réalisée."
             }
             icon={<CalendarDays aria-hidden="true" />}
           >
@@ -516,7 +516,7 @@ export function CreateActivityForm() {
             <FormSection
               eyebrow="Étape 4"
               title="Résultats de la sortie"
-              description="Renseignez les métriques utiles à votre progression."
+              description="Renseigne les repères utiles à ton carnet."
               icon={<Gauge aria-hidden="true" />}
             >
               <div className={styles.performanceGrid}>
@@ -653,7 +653,7 @@ export function CreateActivityForm() {
                 <p>
                   La séance sera ajoutée au calendrier sans distance,
                   durée, dénivelé ni calories. Vous pourrez compléter
-                  ces données une fois l’activité réalisée.
+                  ces données une fois la sortie réalisée.
                 </p>
               </div>
             </div>
@@ -665,7 +665,7 @@ export function CreateActivityForm() {
             description={
               isStrengthSport
                 ? "Notez les exercices, séries, charges ou sensations de la séance."
-                : "Ajoutez le contexte qui donnera du sens aux chiffres."
+                : "Ajoute le contexte qui donnera du sens à tes souvenirs."
             }
             icon={<NotebookPen aria-hidden="true" />}
           >
@@ -693,7 +693,7 @@ export function CreateActivityForm() {
                   )}
                   {isStrengthSport
                     ? "Détaillez les exercices et les charges utiles."
-                    : "Décrivez le terrain ou le lieu dans vos notes."}
+                    : "Décris le terrain ou le lieu dans tes notes."}
                 </span>
                 <span>
                   {notes?.length ?? 0} caractère
@@ -744,7 +744,7 @@ export function CreateActivityForm() {
               ) : (
                 <>
                   <CheckCircle2 aria-hidden="true" />
-                  Enregistrer l’activité
+                  Enregistrer la sortie
                 </>
               )}
             </Button>
@@ -763,8 +763,8 @@ export function CreateActivityForm() {
                 <h2>
                   {title?.trim() ||
                     (isPlannedMode
-                      ? "Votre prochaine aventure"
-                      : "Nouvelle activité")}
+                      ? "Ta prochaine aventure"
+                      : "Nouvelle trace")}
                 </h2>
               </div>
             </div>
@@ -832,7 +832,7 @@ export function CreateActivityForm() {
                 <Clock3 aria-hidden="true" />
                 <span>
                   <strong>Durée précise</strong>
-                  Permet de suivre votre volume d’entraînement réel.
+                  Permet de suivre ton volume outdoor réel.
                 </span>
               </li>
               <li>
@@ -852,7 +852,7 @@ export function CreateActivityForm() {
         title={saveConfirmation?.title ?? "Enregistrement confirmé"}
         description={
           saveConfirmation?.description ??
-          "Votre sortie a bien été enregistrée."
+          "Ta sortie a bien été enregistrée."
         }
         confirmLabel="Voir le planning"
         cancelLabel="Rester ici"

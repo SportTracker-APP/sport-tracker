@@ -207,7 +207,7 @@ export function SummitCelebrationMonitor() {
         const event = buildDiscoveryEvent(summit);
 
         if (event) {
-          toast.success(`Nouveau sommet découvert — ${summit.name} rejoint votre carnet.`);
+          toast.success(`Nouveau sommet découvert — ${summit.name} rejoint ton carnet.`);
           persistDashboardEvent(event);
           seenEventKeys.add(discoveryKey);
           continue;

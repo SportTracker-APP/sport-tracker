@@ -10,7 +10,7 @@ import { ActivityStatus, Prisma, SummitDiscoveryStatus } from '@prisma/client';
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BADGE_CATALOG } from './badge-catalog';
-import { evaluateBadgeCatalog } from './badge-engine';
+import { evaluateBadgeCatalog, getBadgeProgress } from './badge-engine';
 import { UpdateSummitDiscoveryDto } from './dto/update-summit-discovery.dto';
 import { SUMMIT_CATALOG } from './summit-catalog';
 import { detectSummits } from './summit-detection';
@@ -198,6 +198,35 @@ export class SummitsService implements OnModuleInit {
   async findBadges(userId: string) {
     await this.reconcileBadges(userId, false);
 
+    const [discoveries, activities] = await Promise.all([
+      this.prisma.summitDiscovery.findMany({
+        where: { userId, status: SummitDiscoveryStatus.CONFIRMED },
+        include: { activity: true },
+        orderBy: { activity: { startedAt: 'asc' } },
+      }),
+      this.prisma.activity.findMany({
+        where: { userId, status: ActivityStatus.COMPLETED },
+        select: {
+          distance: true,
+          elevationGain: true,
+          sport: true,
+          startLatitude: true,
+          startLongitude: true,
+          startedAt: true,
+          temperature: true,
+          weather: true,
+        },
+      }),
+    ]);
+    const firstBySummit = new Map<string, (typeof discoveries)[number]>();
+
+    for (const discovery of discoveries) {
+      if (!firstBySummit.has(discovery.summitId)) {
+        firstBySummit.set(discovery.summitId, discovery);
+      }
+    }
+
+    const uniqueDiscoveries = Array.from(firstBySummit.values());
     const badges = await this.prisma.badge.findMany({
       where: { isActive: true },
       include: {
@@ -226,6 +255,9 @@ export class SummitsService implements OnModuleInit {
         tone: badge.tone,
         category: catalogBadge?.category ?? 'Progression D+',
         criterion: catalogBadge?.criterion ?? badge.hint,
+        progress: catalogBadge
+          ? getBadgeProgress(catalogBadge.rule, activities, uniqueDiscoveries)
+          : null,
         unlocked: badge.users.length > 0,
         unlockedAt: badge.users[0]?.unlockedAt ?? null,
       };

@@ -732,8 +732,8 @@ function MapboxOutdoorMap({
             Aucune trace disponible
           </p>
           <p className="mt-2 max-w-sm text-sm text-zinc-400">
-            Synchronisez Strava ou ajoutez des activités avec un tracé pour
-            alimenter cette carte.
+            Synchronise Strava ou ajoute une sortie avec trace pour révéler ta
+            carte d’exploration.
           </p>
         </div>
       </div>
@@ -768,7 +768,7 @@ function MapboxOutdoorMap({
                 ? "Vérifiez la clé publique Mapbox ou la connexion réseau, puis rechargez la page."
                 : MAPBOX_TOKEN
                   ? "Mapbox Outdoor prépare le relief et tes traces."
-                  : "Ajoutez NEXT_PUBLIC_MAPBOX_TOKEN dans l'environnement web pour afficher Mapbox Outdoor 3D."}
+                  : "Ajoute NEXT_PUBLIC_MAPBOX_TOKEN dans l'environnement web pour afficher Mapbox Outdoor 3D."}
             </p>
           </div>
         </div>

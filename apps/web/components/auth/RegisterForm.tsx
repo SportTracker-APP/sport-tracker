@@ -88,7 +88,7 @@ export function RegisterForm() {
           </div>
 
           <h2 className="text-4xl font-bold tracking-tight text-white">
-            Vérifiez votre boîte mail
+            Vérifie ta boîte mail
           </h2>
 
           <p className="text-zinc-400">

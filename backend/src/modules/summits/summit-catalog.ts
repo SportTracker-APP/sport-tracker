@@ -156,7 +156,7 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     type: 'Arête',
     coordinates: [6.259, 45.842],
     imageUrl:
-      'https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=1400',
+      'https://images.pexels.com/photos/1365425/pexels-photo-1365425.jpeg?auto=compress&cs=tinysrgb&w=1400',
     imageCredit: 'Image montagne',
   },
   {

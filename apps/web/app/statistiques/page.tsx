@@ -958,14 +958,14 @@ export default function StatisticsPage() {
 
         {error && (
           <div className="rounded-[24px] border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-300">
-            Impossible de charger vos statistiques.
+            Impossible de charger tes statistiques.
           </div>
         )}
 
         {!isLoading && !error && completedActivities.length === 0 && (
           <div className="app-premium-surface rounded-[28px] border border-white/[0.08] bg-[#181922]/90 p-7 text-sm text-zinc-400">
-            Aucune sortie terminée pour le moment. Synchronisez Strava ou
-            ajoutez une activité passée pour lancer vos statistiques.
+            Aucune trace terminée pour le moment. Synchronise Strava ou ajoute
+            une sortie passée pour lancer ton carnet de statistiques.
           </div>
         )}
 
@@ -995,7 +995,7 @@ export default function StatisticsPage() {
                   </h2>
                   <p className="mt-5 max-w-2xl text-sm leading-7 text-emerald-50/68">
                     Distance, D+, régularité et terrain préféré sont calculés
-                    depuis tes vraies activités. Le but : savoir où tu
+                    depuis tes vraies traces. Le but : savoir où tu
                     progresses, et où le prochain sentier t'attend.
                   </p>
                 </div>
@@ -1273,7 +1273,7 @@ export default function StatisticsPage() {
                         Message du refuge
                       </h2>
                       <p className="mt-1 text-sm text-emerald-50/70">
-                        Lecture rapide de vos 30 derniers jours.
+                        Lecture rapide de tes 30 derniers jours.
                       </p>
                     </div>
                   </div>
@@ -1316,7 +1316,7 @@ export default function StatisticsPage() {
                       Dernière trace
                     </h2>
                     <p className="mt-1 text-sm text-zinc-500">
-                      Dernière activité importée.
+                      Dernière trace importée.
                     </p>
                   </div>
                 </div>
@@ -1334,7 +1334,7 @@ export default function StatisticsPage() {
                   </div>
                 ) : (
                   <p className="mt-6 text-sm text-zinc-500">
-                    Aucune activité importée pour le moment.
+                    Aucune trace importée pour le moment.
                   </p>
                 )}
               </aside>

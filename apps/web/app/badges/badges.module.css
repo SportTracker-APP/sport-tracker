@@ -127,14 +127,23 @@
 
 .grid {
   display: grid;
+  align-items: stretch;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.8rem;
+}
+
+.grid > * {
+  display: flex;
+  min-width: 0;
+  height: 100%;
 }
 
 .badge {
   position: relative;
   display: grid;
-  min-height: 245px;
+  width: 100%;
+  min-height: 300px;
+  height: 100%;
   overflow: hidden;
   border: 1px solid var(--badge-border);
   border-radius: 8px;
@@ -229,6 +238,51 @@
   line-height: 1.45;
 }
 
+.badgeProgress {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  border: 1px solid rgba(196, 181, 253, 0.1);
+  border-radius: 8px;
+  padding: 0.65rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.badgeProgress > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.badgeProgress span {
+  color: var(--badge-muted);
+  font-size: 0.62rem;
+  font-weight: 760;
+}
+
+.badgeProgress strong {
+  color: var(--badge-text);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.badgeProgressTrack {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.badgeProgressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+}
+
 .badge footer {
   align-self: end;
   margin-top: 1rem;
@@ -288,6 +342,9 @@
   .grid {
     grid-template-columns: 1fr;
   }
+  .badge {
+    min-height: 285px;
+  }
   .filters {
     gap: 0.65rem;
     padding: 0.75rem 0;
@@ -331,4 +388,17 @@
 
 :global(html.sport-theme-nature) .progressTrack span {
   background: #059669;
+}
+
+:global(html.sport-theme-nature) .badgeProgress {
+  border-color: rgba(5, 150, 105, 0.1);
+  background: rgba(5, 150, 105, 0.045);
+}
+
+:global(html.sport-theme-nature) .badgeProgressTrack {
+  background: rgba(15, 78, 58, 0.08);
+}
+
+:global(html.sport-theme-nature) .badgeProgressTrack span {
+  background: linear-gradient(90deg, #059669, #34d399);
 }

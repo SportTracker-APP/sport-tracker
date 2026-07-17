@@ -383,7 +383,7 @@ export default function AdminPage() {
 
   async function deleteUser(adminUser: AdminUser) {
     if (adminUser.id === user?.id) {
-      setError("Vous ne pouvez pas supprimer votre propre compte.");
+      setError("Tu ne peux pas supprimer ton propre compte.");
       return;
     }
 
@@ -569,7 +569,7 @@ export default function AdminPage() {
                         Signaux produit
                       </h2>
                       <p className="mt-1 text-sm text-zinc-500">
-                        Les indicateurs qui méritent votre attention.
+                        Les indicateurs qui méritent ton attention.
                       </p>
                     </div>
                   </div>

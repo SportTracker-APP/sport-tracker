@@ -654,7 +654,7 @@ export function ActivityMapboxRoute({
 
       {(mapStatus === "loading" || mapStatus === "idle") && (
         <div className={styles.loading}>
-          Mapbox Outdoor prépare le relief et votre trace.
+          Mapbox Outdoor prépare le relief et ta trace.
         </div>
       )}
 

@@ -27,7 +27,7 @@ export default function SettingsPage() {
                 <div>
                   <h1>Paramètres</h1>
                   <p>
-                    Gére ton profil, ton identité Hovren et la sécurité de
+                    Gère ton profil, ton identité Hovren et la sécurité de
                     ton compte.
                   </p>
                 </div>

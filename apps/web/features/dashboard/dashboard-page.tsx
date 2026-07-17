@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
@@ -55,7 +55,7 @@ import {
   useMarkPlannedWorkoutCelebrationSeen,
 } from "@/hooks/use-activities";
 import { useGoals } from "@/hooks/use-goals";
-import { useSummitBadges } from "@/hooks/use-summits";
+import { useSummitBadges, useSummits } from "@/hooks/use-summits";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
 import {
@@ -66,6 +66,8 @@ import {
   type ActivityChartPeriod,
 } from "@/lib/activity-chart-period";
 import { getBadgeIcon } from "@/lib/badge-icons";
+import type { SummitBadge } from "@/lib/summit-api";
+import { getMassifProgress, type SummitView } from "@/lib/summit-discovery";
 import {
   calculateGoalProgress,
   formatGoalValue,
@@ -119,6 +121,10 @@ type ActivityWithMedia = SportActivity & {
   coverImageUrl?: string | null;
   photoUrls?: readonly string[] | null;
   photos?: unknown;
+};
+
+type SummitStoryStyle = CSSProperties & {
+  "--summit-discovery-image"?: string;
 };
 
 const CHART_METRIC_STORAGE_KEY = "hovren.dashboard2.chartMetric";
@@ -255,6 +261,10 @@ function formatNumber(value: number, maximumFractionDigits = 0) {
   }).format(value);
 }
 
+function toCssImageUrl(url: string) {
+  return `url("${url.replaceAll('"', "%22")}")`;
+}
+
 function formatDistance(distance: number, maximumFractionDigits = 1) {
   return `${formatNumber(distance, maximumFractionDigits)} km`;
 }
@@ -305,6 +315,17 @@ function formatShortDate(date: string) {
   return new Intl.DateTimeFormat("fr-FR", {
     day: "numeric",
     month: "short",
+  }).format(new Date(date));
+}
+
+function formatSummitDate(date: string | null) {
+  if (!date) {
+    return "Découverte à venir";
+  }
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "long",
   }).format(new Date(date));
 }
 
@@ -840,7 +861,7 @@ function RecentTraceList({
   totalCount: number;
 }) {
   if (activities.length === 0) {
-    return <div className={styles.emptyState}>Aucune activité récente à afficher.</div>;
+    return <div className={styles.emptyState}>Aucune trace récente à afficher.</div>;
   }
 
   return (
@@ -1055,10 +1076,11 @@ function StravaConnectionCard({ compact }: { compact: boolean }) {
     >
       <div className={styles.emptyDashboardIcon}><Link2 aria-hidden="true" /></div>
       <div className={styles.stravaConnectionContent}>
-        <p className={styles.emptyDashboardKicker}>Strava non synchronisé</p>
-        <h2>Synchronisez automatiquement tes sorties avec Strava</h2>
+        <p className={styles.emptyDashboardKicker}>Premières traces à révéler</p>
+        <h2>Synchronise Strava pour révéler tes premiers sommets</h2>
         <p>
-          Hovren fonctionne aussi avec tes activités ajoutées manuellement.
+          Tes sorties manuelles restent dans le carnet, mais Strava peut ramener
+          tes traces, tes sommets et tes souvenirs en quelques secondes.
         </p>
       </div>
       <div className={styles.emptyDashboardActions}>
@@ -1066,7 +1088,7 @@ function StravaConnectionCard({ compact }: { compact: boolean }) {
           <Link2 aria-hidden="true" /> Connecter Strava
         </Link>
         <Link href="/activites/nouvelle" className={styles.secondaryButton}>
-          <Plus aria-hidden="true" /> Ajouter une activité
+          <Plus aria-hidden="true" /> Tracer une sortie
         </Link>
       </div>
     </div>
@@ -1251,10 +1273,169 @@ function SummitDiscoveryCelebrationCard({
   );
 }
 
+function SummitCollectionPanel({
+  summits,
+  badges,
+  hasStravaIntegration,
+}: {
+  summits: SummitView[];
+  badges: SummitBadge[];
+  hasStravaIntegration: boolean;
+}) {
+  const discoveredSummits = summits.filter((summit) => summit.discovered);
+  const missingSummits = summits.filter((summit) => !summit.discovered);
+  const summitProgress =
+    summits.length > 0
+      ? Math.round((discoveredSummits.length / summits.length) * 100)
+      : 0;
+  const massifProgress = getMassifProgress(summits);
+  const exploredMassifs = massifProgress.filter(
+    (massif) => massif.discovered > 0,
+  ).length;
+  const latestSummit = discoveredSummits
+    .slice()
+    .sort(
+      (firstSummit, secondSummit) =>
+        new Date(secondSummit.latestDiscoveredAt ?? 0).getTime() -
+        new Date(firstSummit.latestDiscoveredAt ?? 0).getTime(),
+    )[0];
+  const nextMassif =
+    massifProgress.find((massif) => massif.progress > 0 && massif.progress < 100) ??
+    massifProgress.find((massif) => massif.progress < 100);
+  const nextSummit =
+    (nextMassif
+      ? missingSummits.find((summit) => summit.massif === nextMassif.massif)
+      : null) ?? missingSummits[0];
+  const unlockedBadges = badges.filter((badge) => badge.unlocked);
+  const nextBadge = badges.find((badge) => !badge.unlocked) ?? unlockedBadges[0];
+  const BadgeIcon = nextBadge ? getBadgeIcon(nextBadge.icon) : ShieldCheck;
+  const latestSummitImageStyle: SummitStoryStyle | undefined =
+    latestSummit?.imageUrl
+      ? { "--summit-discovery-image": toCssImageUrl(latestSummit.imageUrl) }
+      : undefined;
+
+  return (
+    <FadeIn delay={0.18}>
+      <section className={`${styles.surface} ${styles.summitCollectionPanel}`}>
+        <div className={styles.summitCollectionHeader}>
+          <div>
+            <p className={styles.summitCollectionEyebrow}>
+              <Mountain aria-hidden="true" /> Carnet des sommets
+            </p>
+            <h2>
+              {latestSummit
+                ? `${latestSummit.name} rejoint ton carnet.`
+                : "Tes traces peuvent révéler tes premiers sommets."}
+            </h2>
+            <p>
+              Chaque trace ajoute une page au carnet : un sommet, un massif,
+              parfois un badge.
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.summitCollectionGrid}>
+          <Link
+            href="/sommets"
+            className={`${styles.summitStoryCard} ${
+              latestSummitImageStyle ? styles.summitStoryCardWithImage : ""
+            }`}
+            style={latestSummitImageStyle}
+          >
+            <span className={styles.summitStoryIcon}>
+              <Mountain aria-hidden="true" />
+            </span>
+            <div className={styles.summitStoryContent}>
+              <p>Dernière découverte</p>
+              <strong>{latestSummit?.name ?? "Aucun sommet découvert"}</strong>
+              <span className={styles.summitStoryMeta}>
+                {latestSummit
+                  ? `${formatNumber(latestSummit.altitude)} m · ${
+                      latestSummit.massif
+                    } · ${formatSummitDate(latestSummit.latestDiscoveredAt)}`
+                  : hasStravaIntegration
+                    ? "Synchronise une sortie de montagne pour commencer."
+                    : "Connecte Strava ou ajoute une sortie avec trace."}
+              </span>
+              <span className={styles.summitStoryAction}>
+                Voir le sommet <ArrowUpRight aria-hidden="true" />
+              </span>
+            </div>
+          </Link>
+
+          <aside className={styles.summitCollectionSidebar}>
+            <div className={styles.summitCollectionProgress}>
+              <span>{summitProgress}%</span>
+              <small>du carnet</small>
+              <div
+                className={styles.summitCollectionProgressTrack}
+                aria-label={`${summitProgress}% du carnet des sommets complété`}
+              >
+                <i style={{ width: `${summitProgress}%` }} />
+              </div>
+            </div>
+
+            <div className={styles.summitCollectionStats}>
+              <div>
+                <span>Sommets</span>
+                <strong>{discoveredSummits.length}</strong>
+                <small>{summits.length} au catalogue</small>
+              </div>
+              <div>
+                <span>Massifs</span>
+                <strong>{exploredMassifs}</strong>
+                <small>{massifProgress.length} zones</small>
+              </div>
+              <div>
+                <span>Badges</span>
+                <strong>{unlockedBadges.length}</strong>
+                <small>{badges.length} à collectionner</small>
+              </div>
+            </div>
+
+            <Link href="/sommets?statut=a-decouvrir" className={styles.nextSummitCard}>
+              <div>
+                <p>Prochaine idée</p>
+                <strong>{nextSummit?.name ?? "Choisir une trace"}</strong>
+                <span>
+                  {nextSummit
+                    ? `${formatNumber(nextSummit.altitude)} m · ${
+                        nextSummit.massif
+                      }`
+                    : "Le prochain sommet apparaîtra avec le catalogue."}
+                </span>
+              </div>
+              <ChevronRight aria-hidden="true" />
+            </Link>
+
+            <Link href="/badges" className={styles.nextBadgeCard}>
+              <span className={styles.nextBadgeIcon}>
+                <BadgeIcon aria-hidden="true" />
+              </span>
+              <div>
+                <p>{nextBadge?.unlocked ? "Badge récent" : "Badge à viser"}</p>
+                <strong>{nextBadge?.name ?? "Premier badge"}</strong>
+                <span>
+                  {nextBadge
+                    ? nextBadge.unlocked
+                      ? nextBadge.description
+                      : nextBadge.hint
+                    : "Tes découvertes feront grandir cette collection."}
+                </span>
+              </div>
+            </Link>
+          </aside>
+        </div>
+      </section>
+    </FadeIn>
+  );
+}
+
 export default function DashboardPage() {
   const { data: activities = [], isLoading, error } = useActivities();
   const { data: goals = [] } = useGoals();
   const { data: summitBadges = [] } = useSummitBadges();
+  const { data: summits = [] } = useSummits();
   const markCelebrationSeen = useMarkPlannedWorkoutCelebrationSeen();
   const [stravaStatus, setStravaStatus] = useState<StravaStatus | null>(null);
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
@@ -1626,7 +1807,7 @@ export default function DashboardPage() {
       title: hasStravaIntegration ? "Strava synchronisé" : "Strava à connecter",
       description: hasStravaIntegration
         ? "Les données du dashboard sont alimentées automatiquement."
-        : "Le dashboard utilise encore tes activités manuelles.",
+        : "Le refuge utilise encore tes sorties ajoutées à la main.",
       icon: hasStravaIntegration ? CheckCircle2 : AlertTriangle,
       href: "/integrations/strava",
       label: hasStravaIntegration ? "OK" : "Connecter",
@@ -1683,7 +1864,7 @@ export default function DashboardPage() {
 
         {error ? (
           <div className={styles.errorState}>
-            Impossible de charger les activités pour le moment.
+            Impossible de charger tes traces pour le moment.
           </div>
         ) : null}
 
@@ -1722,20 +1903,17 @@ export default function DashboardPage() {
                       Carnet d’exploration
                     </div>
                     <h1>
-                      Bienvenue dans ton refuge <span>outdoor.</span>
+                      Tes traces deviennent ton <span>carnet de sommets.</span>
                     </h1>
                     <p>
-                      {formatNumber(dashboardData.exploredSectors)} secteurs run,
-                      trail ou montagne découverts. {formatDistance(
-                        dashboardData.rollingDistance,
-                        1,
-                      )} parcourus et {formatNumber(
-                        dashboardData.rollingElevation,
-                      )} m D+ gravis sur tes 30 derniers jours.
+                      Chaque sortie peut révéler un sommet, compléter un massif
+                      ou débloquer un badge. Tes stats racontent l’effort ; ton
+                      carnet garde l’histoire.
                     </p>
                     <p>
-                      Prochaine aventure : {nextAdventure}. Un terrain de jeu pour
-                      courir, grimper, rouler, marcher, et garder le fil.
+                      {formatNumber(dashboardData.exploredSectors)} traces
+                      outdoor analysées récemment. Prochaine aventure :{" "}
+                      {nextAdventure}.
                     </p>
 
                     <div className={styles.heroActions}>
@@ -1745,8 +1923,8 @@ export default function DashboardPage() {
                       <Link href="/integrations/strava" className={styles.heroStravaButton}>
                         <Link2 aria-hidden="true" /> Synchroniser Strava
                       </Link>
-                      <Link href="/calendrier" className={styles.heroGhostButton}>
-                        <CalendarDays aria-hidden="true" /> Planifier
+                      <Link href="/sommets" className={styles.heroGhostButton}>
+                        <Mountain aria-hidden="true" /> Ouvrir le carnet
                       </Link>
                     </div>
 
@@ -1817,6 +1995,12 @@ export default function DashboardPage() {
                 </div>
               </div>
             </FadeIn>
+
+            <SummitCollectionPanel
+              summits={summits}
+              badges={summitBadges}
+              hasStravaIntegration={hasStravaIntegration}
+            />
 
             <div className={styles.metricsGrid}>
               {metrics.map((metric, index) => (

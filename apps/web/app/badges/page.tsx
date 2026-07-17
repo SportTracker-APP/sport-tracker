@@ -34,6 +34,14 @@ function formatUnlockDate(value: string | null): string {
   }).format(new Date(value));
 }
 
+function formatProgressValue(value: number, unit: string): string {
+  const maximumFractionDigits = unit === "km" ? 1 : 0;
+
+  return new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits,
+  }).format(value);
+}
+
 export default function BadgesPage() {
   const { data: badges = [], isLoading, error } = useSummitBadges();
   const [category, setCategory] = useState<SummitBadge["category"] | "ALL">(
@@ -152,6 +160,15 @@ export default function BadgesPage() {
           <section className={styles.grid} aria-live="polite">
             {visibleBadges.map((badge, index) => {
               const Icon = getBadgeIcon(badge.icon);
+              const badgeProgress = badge.progress;
+              const badgeProgressPercent = badgeProgress
+                ? Math.min(
+                    100,
+                    Math.round(
+                      (badgeProgress.current / badgeProgress.target) * 100,
+                    ),
+                  )
+                : 0;
 
               return (
                 <FadeIn key={badge.id} delay={Math.min(index * 0.025, 0.3)}>
@@ -178,6 +195,38 @@ export default function BadgesPage() {
                     <p>
                       {badge.unlocked ? badge.description : badge.criterion}
                     </p>
+
+                    {!badge.unlocked && badgeProgress ? (
+                      <div
+                        className={styles.badgeProgress}
+                        aria-label={`Progression ${formatProgressValue(
+                          badgeProgress.current,
+                          badgeProgress.unit,
+                        )} sur ${formatProgressValue(
+                          badgeProgress.target,
+                          badgeProgress.unit,
+                        )} ${badgeProgress.unit}`}
+                      >
+                        <div>
+                          <span>Progression</span>
+                          <strong>
+                            {formatProgressValue(
+                              badgeProgress.current,
+                              badgeProgress.unit,
+                            )}{" "}
+                            /{" "}
+                            {formatProgressValue(
+                              badgeProgress.target,
+                              badgeProgress.unit,
+                            )}{" "}
+                            {badgeProgress.unit}
+                          </strong>
+                        </div>
+                        <div className={styles.badgeProgressTrack}>
+                          <span style={{ width: `${badgeProgressPercent}%` }} />
+                        </div>
+                      </div>
+                    ) : null}
 
                     <footer>
                       {badge.unlocked ? (

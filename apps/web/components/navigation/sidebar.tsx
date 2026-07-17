@@ -170,7 +170,7 @@ export function Sidebar() {
       <div className="relative px-7 py-8">
         <div className="flex items-center gap-4">
           {/* LOGO */}
-          <div className="app-brand-logo relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-emerald-500 via-green-400 to-lime-400 shadow-[0_16px_42px_rgba(16,185,129,0.30)]">
+          <div className="app-brand-logo relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-400 shadow-[0_16px_42px_rgba(6,95,70,0.24)]">
             <Mountain
               size={22}
               className="relative text-white"
@@ -181,7 +181,7 @@ export function Sidebar() {
           {/* BRAND */}
           <div>
             <h1 className="text-xl font-extrabold tracking-normal text-white">
-              HOVREN
+              Hovren
             </h1>
 
             <p className="mt-0.5 whitespace-nowrap text-[0.7rem] leading-5 text-zinc-500">

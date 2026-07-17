@@ -692,7 +692,7 @@ export default function GoalsPage() {
     const parsedTarget = Number(target.replace(",", "."));
 
     if (!Number.isFinite(parsedTarget) || parsedTarget <= 0) {
-      window.alert("Ajoutez une cible supérieure à 0.");
+      window.alert("Ajoute une cible supérieure à 0.");
       return;
     }
 

@@ -68,7 +68,7 @@ interface FeedbackMessage {
 const importedData = [
   {
     icon: Activity,
-    title: "Activités",
+    title: "Traces",
     description: "Courses, vélo, randonnée et plus",
   },
   {
@@ -102,14 +102,14 @@ const workflowSteps = [
   "Connexion Strava",
   "Autorisation OAuth",
   "Synchronisation",
-  "Import des activités",
+  "Révélation des traces",
 ];
 
 const callbackFailureMessages: Record<string, string> = {
   state_invalid:
     "Le retour Strava n'est plus valide. Relancez la connexion depuis Hovren.",
   token_exchange_failed:
-    "Strava a refusé l'échange OAuth. Vérifiez surtout le Client Secret et le domaine de rappel.",
+    "Strava a refusé l'échange OAuth. Vérifie surtout le Client Secret et le domaine de rappel.",
   token_payload_invalid:
     "Strava n'a pas renvoyé toutes les informations attendues.",
   database_error:
@@ -163,7 +163,7 @@ function isCompletedActivity(activity: LastSyncedActivity) {
 }
 
 function getActivityTitle(activity: LastSyncedActivity) {
-  return activity.title || activity.name || "Activité Strava";
+  return activity.title || activity.name || "Trace Strava";
 }
 
 function formatActivityDate(value?: string) {
@@ -461,8 +461,8 @@ export default function StravaIntegrationPage() {
               </h1>
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
-                Importez automatiquement tes activités, tes performances et ton
-                historique sportif dans Hovren.
+                Importe automatiquement tes traces Strava pour révéler tes
+                sommets, tes souvenirs et ton historique outdoor dans Hovren.
               </p>
             </div>
 
@@ -569,7 +569,7 @@ export default function StravaIntegrationPage() {
               {lastSyncedActivity ? (
                 <div className="mt-3 space-y-1">
                   <p className="text-sm font-semibold text-zinc-300">
-                    Dernière activité synchronisée :
+                    Dernière trace synchronisée :
                   </p>
 
                   <p className="text-base font-semibold text-white">
@@ -590,12 +590,11 @@ export default function StravaIntegrationPage() {
                 </div>
               ) : syncResult ? (
                 <p className="mt-2 text-sm text-zinc-400">
-                  Synchronisation terminée. Aucune nouvelle activité à afficher.
+                  Synchronisation terminée. Aucune nouvelle trace à afficher.
                 </p>
               ) : (
                 <p className="mt-2 text-sm text-zinc-400">
-                  Synchronisez Strava pour afficher ta dernière activité
-                  importée.
+                  Synchronise Strava pour faire apparaître ta dernière trace.
                 </p>
               )}
             </div>
@@ -630,7 +629,7 @@ export default function StravaIntegrationPage() {
               <p className="mt-1 text-sm text-zinc-400">
                 {status.connected
                   ? `Athlète Strava ${status.athleteId}`
-                  : "Connectez Strava pour importer vos activités."}
+                  : "Connecte Strava pour importer tes traces."}
               </p>
             </div>
 

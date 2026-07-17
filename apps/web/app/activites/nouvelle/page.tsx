@@ -139,12 +139,12 @@ export default function NewActivityPage() {
               <h1>
                 {isPlanning ? (
                   <>
-                    Planifiez votre prochaine{" "}
+                    Planifie ta prochaine{" "}
                     <span>sortie.</span>
                   </>
                 ) : (
                   <>
-                    Ajoutez une sortie déjà{" "}
+                    Ajoute une sortie déjà{" "}
                     <span>réalisée.</span>
                   </>
                 )}
@@ -152,8 +152,8 @@ export default function NewActivityPage() {
 
               <p>
                 {isPlanning
-                  ? "Préparez votre séance, choisissez son créneau et retrouvez-la dans votre calendrier. Vous pourrez compléter ses résultats après la sortie."
-                  : "Renseignez les données d’une sortie terminée pour enrichir vos statistiques, votre progression et votre carnet outdoor."}
+                  ? "Prépare ta séance, choisis son créneau et retrouve-la dans ton planning. Tu pourras compléter ses résultats après la sortie."
+                  : "Renseigne les données d’une sortie terminée pour enrichir tes traces, tes sommets et tes souvenirs."}
               </p>
 
               <div className={styles.sportPills}>
@@ -200,8 +200,8 @@ export default function NewActivityPage() {
             <p>Nouvelle entrée</p>
             <h2>
               {isPlanning
-                ? "Construisez votre séance"
-                : "Consignez votre sortie"}
+                ? "Construis ta séance"
+                : "Consigne ta sortie"}
             </h2>
             <span>
               Le formulaire s’adapte automatiquement au

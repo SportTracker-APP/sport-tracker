@@ -16,6 +16,11 @@ export type SummitBadge = {
     | "Progression D+"
     | "Défis mensuels";
   criterion: string;
+  progress: {
+    current: number;
+    target: number;
+    unit: string;
+  } | null;
   unlocked: boolean;
   unlockedAt: string | null;
 };
