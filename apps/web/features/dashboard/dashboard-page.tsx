@@ -329,6 +329,21 @@ function formatSummitDate(date: string | null) {
   }).format(new Date(date));
 }
 
+function selectDailySuggestedSummit(summits: SummitView[]) {
+  if (summits.length === 0) {
+    return undefined;
+  }
+
+  const today = new Date();
+  const seed = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  const seedValue = [...seed].reduce(
+    (total, character) => total + character.charCodeAt(0),
+    0,
+  );
+
+  return summits[seedValue % summits.length];
+}
+
 function getSportLabel(activity: SportActivity | null) {
   if (!activity) {
     return "Aucune sortie";
@@ -1299,20 +1314,23 @@ function SummitCollectionPanel({
         new Date(secondSummit.latestDiscoveredAt ?? 0).getTime() -
         new Date(firstSummit.latestDiscoveredAt ?? 0).getTime(),
     )[0];
-  const nextMassif =
-    massifProgress.find((massif) => massif.progress > 0 && massif.progress < 100) ??
-    massifProgress.find((massif) => massif.progress < 100);
+  const nextMassif = massifProgress.find(
+    (massif) => massif.progress > 0 && massif.progress < 100,
+  );
+  const dailySuggestedSummit = selectDailySuggestedSummit(missingSummits);
   const nextSummit =
     (nextMassif
       ? missingSummits.find((summit) => summit.massif === nextMassif.massif)
-      : null) ?? missingSummits[0];
+      : null) ?? dailySuggestedSummit ?? missingSummits[0];
+  const featuredSummit = latestSummit ?? dailySuggestedSummit ?? nextSummit;
   const unlockedBadges = badges.filter((badge) => badge.unlocked);
   const nextBadge = badges.find((badge) => !badge.unlocked) ?? unlockedBadges[0];
   const BadgeIcon = nextBadge ? getBadgeIcon(nextBadge.icon) : ShieldCheck;
-  const latestSummitImageStyle: SummitStoryStyle | undefined =
-    latestSummit?.imageUrl
-      ? { "--summit-discovery-image": toCssImageUrl(latestSummit.imageUrl) }
+  const featuredSummitImageStyle: SummitStoryStyle | undefined =
+    featuredSummit?.imageUrl
+      ? { "--summit-discovery-image": toCssImageUrl(featuredSummit.imageUrl) }
       : undefined;
+  const isShowingLatestSummit = Boolean(latestSummit);
 
   return (
     <FadeIn delay={0.18}>
@@ -1323,13 +1341,16 @@ function SummitCollectionPanel({
               <Mountain aria-hidden="true" /> Carnet des sommets
             </p>
             <h2>
-              {latestSummit
+              {isShowingLatestSummit && latestSummit
                 ? `${latestSummit.name} rejoint ton carnet.`
+                : featuredSummit
+                  ? `${featuredSummit.name}, prochaine découverte possible.`
                 : "Tes traces peuvent révéler tes premiers sommets."}
             </h2>
             <p>
-              Chaque trace ajoute une page au carnet : un sommet, un massif,
-              parfois un badge.
+              {isShowingLatestSummit
+                ? "Chaque trace ajoute une page au carnet : un sommet, un massif, parfois un badge."
+                : "Une première sortie peut déjà révéler un sommet et lancer ton carnet."}
             </p>
           </div>
         </div>
@@ -1338,27 +1359,36 @@ function SummitCollectionPanel({
           <Link
             href="/sommets"
             className={`${styles.summitStoryCard} ${
-              latestSummitImageStyle ? styles.summitStoryCardWithImage : ""
+              featuredSummitImageStyle ? styles.summitStoryCardWithImage : ""
             }`}
-            style={latestSummitImageStyle}
+            style={featuredSummitImageStyle}
           >
             <span className={styles.summitStoryIcon}>
               <Mountain aria-hidden="true" />
             </span>
             <div className={styles.summitStoryContent}>
-              <p>Dernière découverte</p>
-              <strong>{latestSummit?.name ?? "Aucun sommet découvert"}</strong>
+              <p>
+                {isShowingLatestSummit
+                  ? "Dernière découverte"
+                  : "Prochaine découverte possible"}
+              </p>
+              <strong>{featuredSummit?.name ?? "Un sommet t’attend"}</strong>
               <span className={styles.summitStoryMeta}>
-                {latestSummit
+                {isShowingLatestSummit && latestSummit
                   ? `${formatNumber(latestSummit.altitude)} m · ${
                       latestSummit.massif
                     } · ${formatSummitDate(latestSummit.latestDiscoveredAt)}`
-                  : hasStravaIntegration
-                    ? "Synchronise une sortie de montagne pour commencer."
-                    : "Connecte Strava ou ajoute une sortie avec trace."}
+                  : featuredSummit
+                    ? `${formatNumber(featuredSummit.altitude)} m · ${
+                        featuredSummit.massif
+                      } · à aller chercher`
+                    : hasStravaIntegration
+                      ? "Synchronise une sortie de montagne pour commencer."
+                      : "Connecte Strava ou ajoute une sortie avec trace."}
               </span>
               <span className={styles.summitStoryAction}>
-                Voir le sommet <ArrowUpRight aria-hidden="true" />
+                {isShowingLatestSummit ? "Voir le sommet" : "Explorer l’idée"}{" "}
+                <ArrowUpRight aria-hidden="true" />
               </span>
             </div>
           </Link>

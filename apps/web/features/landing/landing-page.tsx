@@ -125,20 +125,6 @@ export function LandingPage() {
       </section>
 
       <HowItWorksSection />
-      <section className="relative mx-auto w-full max-w-7xl px-5 py-9 sm:px-6 lg:px-8 lg:py-12">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.075] bg-[linear-gradient(135deg,rgba(139,92,246,0.16),rgba(47,122,99,0.08),rgba(255,255,255,0.035))] px-6 py-10 shadow-[0_30px_110px_rgba(0,0,0,0.28)] backdrop-blur-2xl sm:px-10 lg:px-12">
-          <div className="pointer-events-none absolute -top-24 left-1/3 h-72 w-72 rounded-full bg-violet-400/12 blur-3xl" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_70%_50%,rgba(125,211,168,0.18),transparent_42%)]" />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.026)_1px,transparent_1px)] bg-[size:72px_72px] opacity-25" />
-          <p className="relative max-w-5xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            Chaque sortie laisse une trace. HOVREN t’aide à la garder vivante.
-          </p>
-          <p className="relative mt-5 max-w-2xl text-base leading-8 text-slate-300">
-            Pas seulement des chiffres : des lieux, des crêtes, des repères et
-            des souvenirs qui prennent forme au fil du carnet.
-          </p>
-        </div>
-      </section>
       <SummitJournalSection />
       <ProgressionSection />
 
