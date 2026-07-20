@@ -6,10 +6,10 @@ import { XSocialLink } from "./x-social-link";
 
 export function LandingFooter() {
   return (
-    <footer className="border-t border-white/[0.07] px-5 py-10 sm:px-6 lg:px-8">
+    <footer className="border-t border-emerald-100/[0.08] px-5 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.045] text-violet-100">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-100/12 bg-emerald-300/[0.08] text-emerald-100">
             <Mountain className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>
@@ -23,29 +23,29 @@ export function LandingFooter() {
         <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-400">
           <a
             href="mailto:contact@hovren.fr"
-            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
           >
             contact@hovren.fr
           </a>
           <Link
             href="/conditions"
-            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
           >
             Conditions
           </Link>
           <Link
             href="/confidentialite"
-            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
           >
             Confidentialité
           </Link>
           <Link
             href="/login"
-            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+            className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
           >
             Connexion
           </Link>
-          <XSocialLink className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.045] text-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:-translate-y-0.5 hover:border-white/18 hover:bg-white/[0.075] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200" />
+          <XSocialLink className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-100/12 bg-white/[0.045] text-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:-translate-y-0.5 hover:border-emerald-100/22 hover:bg-white/[0.075] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100" />
         </div>
       </div>
     </footer>

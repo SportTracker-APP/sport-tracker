@@ -8,7 +8,13 @@ export const registerSchema = z.object({
 
   email: z.string().email("Email invalide"),
 
-  password: z.string().min(6, "Minimum 6 caractères"),
+  password: z
+    .string()
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .regex(
+      /^(?=.*[A-Za-z])(?=.*\d).+$/,
+      "Le mot de passe doit contenir au moins une lettre et un chiffre",
+    ),
 });
 
 export type RegisterSchema = z.infer<typeof registerSchema>;

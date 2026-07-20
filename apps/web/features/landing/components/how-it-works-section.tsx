@@ -34,10 +34,10 @@ export function HowItWorksSection() {
       className="relative mx-auto w-full max-w-7xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20"
       aria-labelledby="how-title"
     >
-      <div className="pointer-events-none absolute right-6 top-10 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute right-6 top-10 h-64 w-64 rounded-full bg-emerald-300/12 blur-3xl" />
       <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
-          <p className="text-sm font-semibold tracking-[0.22em] text-violet-200 uppercase">
+          <p className="text-sm font-semibold tracking-[0.22em] text-emerald-100 uppercase">
             Comment ça marche
           </p>
           <h2
@@ -59,7 +59,7 @@ export function HowItWorksSection() {
             return (
               <article
                 key={step.title}
-                className="relative overflow-hidden rounded-[1.65rem] border border-white/[0.065] bg-white/[0.04] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-white/[0.055]"
+                className="relative overflow-hidden rounded-[1.65rem] border border-emerald-100/[0.10] bg-[#0b1f19]/52 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-[#102a22]/62"
               >
                 <div className="absolute top-5 right-5 text-5xl font-semibold text-white/[0.035]">
                   {String(index + 1).padStart(2, "0")}

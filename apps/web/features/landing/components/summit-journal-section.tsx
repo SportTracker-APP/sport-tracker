@@ -13,12 +13,12 @@ export function SummitJournalSection() {
       className="relative mx-auto w-full max-w-7xl scroll-mt-28 px-5 py-14 sm:px-6 lg:px-8 lg:py-20"
       aria-labelledby="summit-title"
     >
-      <div className="pointer-events-none absolute -top-16 left-8 h-72 w-72 rounded-full bg-emerald-300/10 blur-3xl" />
-      <div className="pointer-events-none absolute top-36 right-0 h-80 w-80 rounded-full bg-violet-400/14 blur-3xl" />
+      <div className="pointer-events-none absolute -top-16 left-8 h-72 w-72 rounded-full bg-emerald-300/12 blur-3xl" />
+      <div className="pointer-events-none absolute top-36 right-0 h-80 w-80 rounded-full bg-[#2f7a63]/18 blur-3xl" />
       <div className="pointer-events-none absolute bottom-10 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-300/7 blur-3xl" />
 
-      <div className="relative overflow-hidden rounded-[2.25rem] border border-white/[0.08] bg-[linear-gradient(145deg,rgba(15,15,37,0.96),rgba(7,7,20,0.92)_46%,rgba(8,24,34,0.8))] px-5 py-9 shadow-[0_42px_140px_rgba(0,0,0,0.38)] backdrop-blur-2xl sm:px-8 sm:py-11 lg:px-11 lg:py-14">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_13%_18%,rgba(139,92,246,0.2),transparent_34%),radial-gradient(circle_at_86%_30%,rgba(125,211,168,0.15),transparent_31%),radial-gradient(circle_at_54%_100%,rgba(20,184,166,0.09),transparent_44%)]" />
+      <div className="relative overflow-hidden rounded-[2.25rem] border border-emerald-100/[0.12] bg-[linear-gradient(145deg,rgba(3,17,13,0.98),rgba(7,23,19,0.94)_46%,rgba(11,31,25,0.84))] px-5 py-9 shadow-[0_42px_140px_rgba(0,0,0,0.38)] backdrop-blur-2xl sm:px-8 sm:py-11 lg:px-11 lg:py-14">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_13%_18%,rgba(185,246,208,0.13),transparent_34%),radial-gradient(circle_at_86%_30%,rgba(125,211,168,0.16),transparent_31%),radial-gradient(circle_at_54%_100%,rgba(47,122,99,0.14),transparent_44%)]" />
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.026)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:92px_92px] opacity-20" />
         <svg
           className="pointer-events-none absolute top-4 right-0 h-96 w-[46rem] text-white/[0.035]"
@@ -61,18 +61,18 @@ export function SummitJournalSection() {
             </p>
           </header>
 
-          <article className="relative mt-12 overflow-hidden rounded-[2.1rem] border border-white/[0.09] bg-[#070713] shadow-[0_38px_140px_rgba(0,0,0,0.42)]">
+          <article className="relative mt-12 overflow-hidden rounded-[2.1rem] border border-emerald-100/[0.13] bg-[#03110d] shadow-[0_38px_140px_rgba(0,0,0,0.42)]">
             <div
-              className="absolute inset-0 bg-cover bg-center opacity-[0.44]"
+              className="absolute inset-0 bg-cover bg-center opacity-[0.74]"
               style={{
-                backgroundImage: "url('/landing/mountain-journal-green.svg')",
+                backgroundImage: "url('/landing/alpine-forest-card.png')",
               }}
               aria-hidden="true"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(7,7,19,0.98)_0%,rgba(16,14,38,0.9)_42%,rgba(9,31,41,0.42)_72%,rgba(7,7,19,0.68)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-[#070713]/98 via-[#070713]/42 to-transparent" />
+            <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(3,17,13,0.97)_0%,rgba(7,23,19,0.82)_42%,rgba(9,31,41,0.28)_72%,rgba(3,17,13,0.48)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-[#03110d]/98 via-[#03110d]/38 to-transparent" />
             <div className="absolute -right-24 top-4 h-80 w-80 rounded-full bg-emerald-300/16 blur-3xl" />
-            <div className="absolute -left-16 bottom-8 h-80 w-80 rounded-full bg-violet-400/17 blur-3xl" />
+            <div className="absolute -left-16 bottom-8 h-80 w-80 rounded-full bg-[#2f7a63]/20 blur-3xl" />
             <div className="absolute right-1/3 top-1/4 h-44 w-44 rounded-full bg-cyan-200/8 blur-3xl" />
 
             <svg
@@ -121,16 +121,16 @@ export function SummitJournalSection() {
                     Annecy
                   </span>
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.055] px-3 py-2 uppercase tracking-[0.12em] text-slate-300">
-                    <Route className="h-4 w-4 text-violet-200" aria-hidden="true" />
+                    <Route className="h-4 w-4 text-emerald-100" aria-hidden="true" />
                     Trace récente
                   </span>
                 </div>
 
                 <a
                   href="/register"
-                  className="group relative mt-8 inline-flex w-fit overflow-hidden rounded-2xl bg-gradient-to-r from-violet-300/70 via-emerald-200/70 to-violet-300/70 p-px text-sm font-bold text-white shadow-[0_18px_54px_rgba(125,211,168,0.12)] transition duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+                  className="group relative mt-8 inline-flex w-fit overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-200/80 via-emerald-400/70 to-emerald-100/70 p-px text-sm font-bold text-white shadow-[0_18px_54px_rgba(125,211,168,0.16)] transition duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
                 >
-                  <span className="inline-flex items-center gap-2 rounded-[calc(1rem-1px)] bg-[#111126]/92 px-4 py-3 transition duration-200 group-hover:bg-[#17162f]/94">
+                  <span className="inline-flex items-center gap-2 rounded-[calc(1rem-1px)] bg-[#0b1f19]/94 px-4 py-3 transition duration-200 group-hover:bg-[#102a22]/96">
                     Voir le carnet
                     <ArrowUpRight
                       className="h-4 w-4 transition duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -141,7 +141,7 @@ export function SummitJournalSection() {
               </div>
 
               <div className="relative min-h-[20rem] overflow-hidden rounded-[1.8rem] border border-white/[0.055] bg-[linear-gradient(145deg,rgba(255,255,255,0.045),rgba(255,255,255,0.012))] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] lg:min-h-[25rem] lg:border-transparent lg:bg-transparent lg:shadow-none">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_26%,rgba(110,231,183,0.24),transparent_28%),radial-gradient(circle_at_36%_74%,rgba(139,92,246,0.24),transparent_34%),radial-gradient(circle_at_56%_55%,rgba(56,189,248,0.08),transparent_36%),linear-gradient(145deg,rgba(8,8,24,0.04),rgba(2,6,23,0.36))]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_26%,rgba(110,231,183,0.24),transparent_28%),radial-gradient(circle_at_36%_74%,rgba(47,122,99,0.28),transparent_34%),radial-gradient(circle_at_56%_55%,rgba(56,189,248,0.08),transparent_36%),linear-gradient(145deg,rgba(8,24,18,0.04),rgba(2,6,23,0.36))]" />
                 <div className="absolute inset-y-8 left-6 right-0 rounded-[2rem] border border-white/[0.045] bg-white/[0.018] blur-[0.2px] lg:left-0" />
                 <svg
                   className="absolute inset-0 h-full w-full text-white/[0.08]"
@@ -180,7 +180,7 @@ export function SummitJournalSection() {
                 trace
               </span>{" "}
               qui rejoint{" "}
-              <span className="bg-gradient-to-r from-violet-100 via-white to-emerald-100 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-emerald-100 via-white to-emerald-200 bg-clip-text text-transparent">
                 ton histoire
               </span>
               .

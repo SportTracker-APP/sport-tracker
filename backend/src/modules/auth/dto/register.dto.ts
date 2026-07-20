@@ -1,5 +1,11 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  Matches,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 
 import {
   EMAIL_MAX_LENGTH,
@@ -21,7 +27,12 @@ export class RegisterDto {
   email: string;
 
   @IsString()
-  @MinLength(PASSWORD_MIN_LENGTH)
+  @MinLength(PASSWORD_MIN_LENGTH, {
+    message: 'Le mot de passe doit contenir au moins 8 caractères',
+  })
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d).+$/, {
+    message: 'Le mot de passe doit contenir au moins une lettre et un chiffre',
+  })
   @MaxLength(PASSWORD_MAX_LENGTH)
   password: string;
 }

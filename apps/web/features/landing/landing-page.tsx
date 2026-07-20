@@ -69,8 +69,8 @@ const summitCollectionSteps = [
 
 export function LandingPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#070713] text-slate-50 selection:bg-violet-400/30 selection:text-white">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_18%_8%,rgba(139,92,246,0.28),transparent_32%),radial-gradient(circle_at_80%_12%,rgba(47,122,99,0.22),transparent_30%),linear-gradient(180deg,#070713_0%,#0b0a1a_44%,#070713_100%)]" />
+    <main className="min-h-screen overflow-hidden bg-[#03110d] text-slate-50 selection:bg-emerald-300/30 selection:text-white">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_18%_8%,rgba(47,122,99,0.36),transparent_34%),radial-gradient(circle_at_82%_10%,rgba(185,246,208,0.14),transparent_28%),radial-gradient(circle_at_52%_40%,rgba(70,42,132,0.18),transparent_38%),linear-gradient(180deg,#03110d_0%,#071713_46%,#03110d_100%)]" />
       <LandingHeader />
       <LandingHero />
 
@@ -79,8 +79,8 @@ export function LandingPage() {
         className="relative mx-auto grid w-full max-w-7xl gap-4 px-5 py-14 sm:px-6 lg:grid-cols-3 lg:px-8 lg:py-20 xl:grid-cols-5"
         aria-labelledby="landing-features-title"
       >
-        <div className="pointer-events-none absolute -top-24 right-8 h-72 w-72 rounded-full bg-violet-500/10 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-8 left-0 h-64 w-64 rounded-full bg-emerald-300/8 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 right-8 h-72 w-72 rounded-full bg-emerald-300/12 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-8 left-0 h-64 w-64 rounded-full bg-[#2f7a63]/16 blur-3xl" />
         <div className="lg:col-span-3 xl:col-span-5">
           <p className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/8 px-3 py-1.5 text-xs font-semibold tracking-[0.22em] text-emerald-100 uppercase">
             <Compass className="h-3.5 w-3.5" aria-hidden="true" />
@@ -100,9 +100,9 @@ export function LandingPage() {
       </section>
 
       <section className="relative mx-auto w-full max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.075] bg-[linear-gradient(135deg,rgba(13,13,31,0.92),rgba(24,18,55,0.72)_52%,rgba(14,45,42,0.54))] p-6 shadow-[0_30px_110px_rgba(0,0,0,0.3)] backdrop-blur-2xl sm:p-9 lg:p-10">
-          <div className="pointer-events-none absolute -top-24 right-16 h-72 w-72 rounded-full bg-violet-400/14 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-28 left-10 h-72 w-72 rounded-full bg-emerald-300/10 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/[0.12] bg-[linear-gradient(135deg,rgba(7,23,19,0.96),rgba(16,42,34,0.82)_52%,rgba(8,18,27,0.66))] p-6 shadow-[0_30px_110px_rgba(0,0,0,0.3)] backdrop-blur-2xl sm:p-9 lg:p-10">
+          <div className="pointer-events-none absolute -top-24 right-16 h-72 w-72 rounded-full bg-emerald-200/13 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-28 left-10 h-72 w-72 rounded-full bg-[#2f7a63]/18 blur-3xl" />
           <svg
             className="pointer-events-none absolute inset-y-0 right-0 h-full w-1/2 text-white/[0.045]"
             viewBox="0 0 620 360"
@@ -132,7 +132,7 @@ export function LandingPage() {
           </svg>
 
           <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
-            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-violet-200/14 bg-violet-300/9 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-violet-100 uppercase">
+            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-100/15 bg-emerald-300/9 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-emerald-100 uppercase">
               <Route className="h-3.5 w-3.5" aria-hidden="true" />
               Positionnement
             </p>
@@ -153,9 +153,9 @@ export function LandingPage() {
       <HowItWorksSection />
       <SummitJournalSection />
       <section className="relative mx-auto w-full max-w-7xl px-5 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.07] bg-[linear-gradient(135deg,rgba(255,255,255,0.045),rgba(139,92,246,0.055)_48%,rgba(125,211,168,0.05))] px-6 py-8 shadow-[0_24px_90px_rgba(0,0,0,0.24)] backdrop-blur-2xl sm:px-8 lg:px-10">
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/[0.12] bg-[linear-gradient(135deg,rgba(11,31,25,0.9),rgba(16,42,34,0.62)_48%,rgba(3,17,13,0.86))] px-6 py-8 shadow-[0_24px_90px_rgba(0,0,0,0.24)] backdrop-blur-2xl sm:px-8 lg:px-10">
           <div className="pointer-events-none absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-emerald-300/10 blur-3xl" />
-          <div className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-violet-400/10 blur-3xl" />
+          <div className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-[#2f7a63]/18 blur-3xl" />
 
           <div className="relative grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
@@ -206,8 +206,8 @@ export function LandingPage() {
       <ProgressionSection />
 
       <section className="relative mx-auto w-full max-w-7xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045] px-6 py-12 shadow-[0_34px_120px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:px-10 lg:px-14 lg:py-16">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(125,211,168,0.16),transparent_28%),radial-gradient(circle_at_12%_82%,rgba(139,92,246,0.24),transparent_34%)]" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/[0.13] bg-[linear-gradient(135deg,rgba(11,31,25,0.86),rgba(7,23,19,0.66),rgba(8,18,27,0.8))] px-6 py-12 shadow-[0_34px_120px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:px-10 lg:px-14 lg:py-16">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(125,211,168,0.18),transparent_28%),radial-gradient(circle_at_12%_82%,rgba(47,122,99,0.28),transparent_34%)]" />
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-28 opacity-50"
             aria-hidden="true"
@@ -238,13 +238,13 @@ export function LandingPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
                 href="/register"
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-violet-500 px-6 text-sm font-bold text-white shadow-[0_18px_48px_rgba(139,92,246,0.28)] transition hover:-translate-y-0.5 hover:bg-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+                className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#2f7a63] px-6 text-sm font-bold text-white shadow-[0_18px_48px_rgba(47,122,99,0.28)] transition hover:-translate-y-0.5 hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
               >
                 Créer mon carnet
               </a>
               <a
                 href="/login"
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.045] px-6 text-sm font-bold text-slate-100 transition hover:-translate-y-0.5 hover:border-white/22 hover:bg-white/[0.075] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-emerald-100/14 bg-white/[0.045] px-6 text-sm font-bold text-slate-100 transition hover:-translate-y-0.5 hover:border-emerald-100/24 hover:bg-white/[0.075] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
               >
                 Se connecter
               </a>

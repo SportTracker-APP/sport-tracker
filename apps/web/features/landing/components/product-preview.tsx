@@ -5,7 +5,7 @@ function MiniRoute() {
     <svg viewBox="0 0 220 120" className="h-full w-full" aria-hidden="true">
       <defs>
         <linearGradient id="landing-route" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#a78bfa" />
+          <stop offset="0%" stopColor="#b9f6d0" />
           <stop offset="100%" stopColor="#7dd3a8" />
         </linearGradient>
       </defs>
@@ -16,7 +16,7 @@ function MiniRoute() {
         strokeLinecap="round"
         strokeWidth="8"
       />
-      <circle cx="18" cy="84" r="7" fill="#a78bfa" />
+      <circle cx="18" cy="84" r="7" fill="#b9f6d0" />
       <circle cx="202" cy="28" r="7" fill="#7dd3a8" />
     </svg>
   );
@@ -31,12 +31,12 @@ const stats = [
 export function ProductPreview() {
   return (
     <div className="relative mx-auto w-full max-w-[44rem] lg:mx-0 xl:max-w-[50rem] min-[1800px]:max-w-[58rem]">
-      <div className="absolute -inset-6 rounded-[2.5rem] bg-violet-500/16 blur-3xl" />
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-[#111127]/78 p-3 shadow-[0_40px_140px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-        <div className="rounded-[1.5rem] border border-white/[0.08] bg-[#070713]/82 p-4 min-[1536px]:p-5">
+      <div className="absolute -inset-6 rounded-[2.5rem] bg-emerald-300/14 blur-3xl" />
+      <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/14 bg-[#0b1f19]/78 p-3 shadow-[0_40px_140px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+        <div className="rounded-[1.5rem] border border-emerald-100/[0.09] bg-[#03110d]/84 p-4 min-[1536px]:p-5">
           <div className="flex items-center justify-between gap-4 border-b border-white/[0.07] pb-4">
             <div>
-              <p className="text-xs font-semibold tracking-[0.22em] text-violet-200 uppercase">
+              <p className="text-xs font-semibold tracking-[0.22em] text-emerald-100 uppercase">
                 Refuge
               </p>
               <p className="mt-1 text-lg font-semibold text-white">
@@ -53,12 +53,12 @@ export function ProductPreview() {
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-[0.72]"
                 style={{
-                  backgroundImage: "url('/landing/mountain-card-cozy.svg')",
+                  backgroundImage: "url('/landing/alpine-forest-card.png')",
                 }}
                 aria-hidden="true"
               />
-              <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(7,7,19,0.88)_0%,rgba(9,9,24,0.68)_48%,rgba(20,61,54,0.34)_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#070713]/88 via-[#070713]/45 to-transparent" />
+              <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(3,17,13,0.86)_0%,rgba(7,23,19,0.62)_48%,rgba(20,61,54,0.22)_100%)]" />
+              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#03110d]/90 via-[#03110d]/44 to-transparent" />
               <div className="absolute inset-y-0 left-0 w-[82%] bg-[radial-gradient(circle_at_18%_38%,rgba(125,211,168,0.16),transparent_34%)]" />
               <div className="relative">
                 <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export function ProductPreview() {
                   <p className="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase">
                     Trace récente
                   </p>
-                  <Route className="h-4 w-4 text-violet-200" aria-hidden="true" />
+                  <Route className="h-4 w-4 text-emerald-100" aria-hidden="true" />
                 </div>
                 <div className="mt-4 h-28">
                   <MiniRoute />
@@ -117,7 +117,7 @@ export function ProductPreview() {
 
               <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/14 text-violet-100">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-300/12 text-emerald-100">
                     <Award className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div>
@@ -140,7 +140,7 @@ export function ProductPreview() {
                 <span className="text-sm font-bold text-white">33%</span>
               </div>
               <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-violet-400 to-emerald-300" />
+                <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-emerald-200 to-emerald-400" />
               </div>
             </div>
             <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.035] p-4">
@@ -152,7 +152,7 @@ export function ProductPreview() {
                   </p>
                   <p className="text-xs text-slate-400">Pointe de Talamarche</p>
                 </div>
-                <Sparkles className="ml-auto h-4 w-4 text-violet-200" aria-hidden="true" />
+                <Sparkles className="ml-auto h-4 w-4 text-emerald-100" aria-hidden="true" />
               </div>
             </div>
           </div>

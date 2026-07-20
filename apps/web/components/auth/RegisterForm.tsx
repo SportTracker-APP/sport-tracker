@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import axios from "axios";
 import Link from "next/link";
 
 import { useForm } from "react-hook-form";
@@ -27,6 +28,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { getPasswordStrength } from "./password-strength";
+
+function getRegisterErrorMessage(error: unknown): string {
+  if (!axios.isAxiosError(error)) {
+    return "Une erreur est survenue";
+  }
+
+  const message = (error.response?.data as { message?: unknown } | undefined)
+    ?.message;
+
+  if (Array.isArray(message)) {
+    return message.filter((item) => typeof item === "string").join(" ");
+  }
+
+  if (typeof message === "string") {
+    return message;
+  }
+
+  return "Une erreur est survenue";
+}
 
 export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +79,23 @@ export function RegisterForm() {
     () => getPasswordStrength(password),
     [password],
   );
+  const passwordRequirements = useMemo(
+    () => [
+      {
+        label: "8 caractères minimum",
+        isValid: password.length >= 8,
+      },
+      {
+        label: "Au moins une lettre",
+        isValid: /[A-Za-z]/.test(password),
+      },
+      {
+        label: "Au moins un chiffre",
+        isValid: /\d/.test(password),
+      },
+    ],
+    [password],
+  );
 
   async function onSubmit(data: RegisterSchema) {
     try {
@@ -73,7 +110,7 @@ export function RegisterForm() {
       setConfirmationEmail(data.email);
       setConfirmationMessage(response.message);
     } catch (error: unknown) {
-      setServerError("Une erreur est survenue");
+      setServerError(getRegisterErrorMessage(error));
     }
   }
 
@@ -187,7 +224,7 @@ export function RegisterForm() {
 
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder="Minimum 6 caractères"
+                placeholder="Minimum 8 caractères"
                 autoComplete="new-password"
                 className="h-12 border-white/10 bg-black/30 pr-12 pl-12 text-white placeholder:text-zinc-500"
                 {...formRegister("password")}
@@ -226,6 +263,25 @@ export function RegisterForm() {
                 Sécurité :{" "}
                 <span className="text-white">{passwordStrength.label}</span>
               </p>
+
+              <ul className="grid gap-1.5 pt-1 text-xs text-zinc-400 sm:grid-cols-3">
+                {passwordRequirements.map((requirement) => (
+                  <li
+                    key={requirement.label}
+                    className={
+                      requirement.isValid
+                        ? "flex items-center gap-1.5 text-emerald-300"
+                        : "flex items-center gap-1.5 text-zinc-500"
+                    }
+                  >
+                    <CheckCircle2
+                      className="h-3.5 w-3.5 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span>{requirement.label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>
