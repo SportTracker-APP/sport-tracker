@@ -13,15 +13,15 @@ export function SummitJournalSection() {
       className="relative mx-auto w-full max-w-7xl scroll-mt-28 px-5 py-14 sm:px-6 lg:px-8 lg:py-20"
       aria-labelledby="summit-title"
     >
-      <div className="pointer-events-none absolute -top-16 left-8 h-72 w-72 rounded-full bg-emerald-300/12 blur-3xl" />
+      <div className="pointer-events-none absolute -top-16 left-8 h-72 w-72 rounded-full bg-emerald-300/28 blur-3xl" />
       <div className="pointer-events-none absolute top-36 right-0 h-80 w-80 rounded-full bg-[#2f7a63]/18 blur-3xl" />
       <div className="pointer-events-none absolute bottom-10 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-300/7 blur-3xl" />
 
-      <div className="relative overflow-hidden rounded-[2.25rem] border border-emerald-100/[0.12] bg-[linear-gradient(145deg,rgba(3,17,13,0.98),rgba(7,23,19,0.94)_46%,rgba(11,31,25,0.84))] px-5 py-9 shadow-[0_42px_140px_rgba(0,0,0,0.38)] backdrop-blur-2xl sm:px-8 sm:py-11 lg:px-11 lg:py-14">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_13%_18%,rgba(185,246,208,0.13),transparent_34%),radial-gradient(circle_at_86%_30%,rgba(125,211,168,0.16),transparent_31%),radial-gradient(circle_at_54%_100%,rgba(47,122,99,0.14),transparent_44%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.026)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:92px_92px] opacity-20" />
+      <div className="relative overflow-hidden rounded-[2.25rem] border border-emerald-900/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.92),rgba(237,248,241,0.84)_46%,rgba(220,241,228,0.78))] px-5 py-9 shadow-[0_30px_90px_rgba(15,64,49,0.15)] backdrop-blur-2xl sm:px-8 sm:py-11 lg:px-11 lg:py-14">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_13%_18%,rgba(185,246,208,0.34),transparent_34%),radial-gradient(circle_at_86%_30%,rgba(125,211,168,0.22),transparent_31%),radial-gradient(circle_at_54%_100%,rgba(47,122,99,0.08),transparent_44%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(47,122,99,0.042)_1px,transparent_1px),linear-gradient(90deg,rgba(47,122,99,0.028)_1px,transparent_1px)] bg-[size:92px_92px] opacity-40" />
         <svg
-          className="pointer-events-none absolute top-4 right-0 h-96 w-[46rem] text-white/[0.035]"
+          className="pointer-events-none absolute top-4 right-0 h-96 w-[46rem] text-emerald-950/[0.06]"
           viewBox="0 0 760 420"
           fill="none"
           aria-hidden="true"
@@ -44,17 +44,17 @@ export function SummitJournalSection() {
 
         <div className="relative">
           <header className="max-w-4xl">
-            <p className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/8 px-3 py-1.5 text-xs font-semibold tracking-[0.22em] text-emerald-100 uppercase">
+            <p className="inline-flex items-center gap-2 rounded-full border border-emerald-700/15 bg-emerald-100/80 px-3 py-1.5 text-xs font-semibold tracking-[0.22em] text-emerald-800 uppercase">
               <Mountain className="h-3.5 w-3.5" aria-hidden="true" />
               Sommets
             </p>
             <h2
               id="summit-title"
-              className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl"
+              className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl"
             >
               Chaque sommet devient un repère.
             </h2>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300/95 sm:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
               HOVREN transforme tes sorties en souvenirs structurés : les lieux
               que tu atteins, les massifs que tu explores et les traces qui
               construisent ton histoire.
@@ -63,14 +63,14 @@ export function SummitJournalSection() {
 
           <article className="relative mt-12 overflow-hidden rounded-[2.1rem] border border-emerald-100/[0.13] bg-[#03110d] shadow-[0_38px_140px_rgba(0,0,0,0.42)]">
             <div
-              className="absolute inset-0 bg-cover bg-center opacity-[0.74]"
+              className="absolute inset-0 bg-cover bg-center opacity-[0.88]"
               style={{
                 backgroundImage: "url('/landing/alpine-forest-card.png')",
               }}
               aria-hidden="true"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(3,17,13,0.97)_0%,rgba(7,23,19,0.82)_42%,rgba(9,31,41,0.28)_72%,rgba(3,17,13,0.48)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-[#03110d]/98 via-[#03110d]/38 to-transparent" />
+            <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(3,17,13,0.94)_0%,rgba(7,23,19,0.70)_42%,rgba(9,31,41,0.16)_72%,rgba(3,17,13,0.32)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-[#03110d]/96 via-[#03110d]/30 to-transparent" />
             <div className="absolute -right-24 top-4 h-80 w-80 rounded-full bg-emerald-300/16 blur-3xl" />
             <div className="absolute -left-16 bottom-8 h-80 w-80 rounded-full bg-[#2f7a63]/20 blur-3xl" />
             <div className="absolute right-1/3 top-1/4 h-44 w-44 rounded-full bg-cyan-200/8 blur-3xl" />
@@ -174,29 +174,29 @@ export function SummitJournalSection() {
           </article>
 
           <div className="mt-12 text-center">
-            <p className="mx-auto max-w-4xl text-2xl font-medium leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
+            <p className="mx-auto max-w-4xl text-2xl font-medium leading-tight tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">
               Ce n’est pas seulement un sommet validé. C’est une{" "}
-              <span className="bg-gradient-to-r from-emerald-200 to-cyan-100 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-700 to-emerald-500 bg-clip-text text-transparent">
                 trace
               </span>{" "}
               qui rejoint{" "}
-                  <span className="bg-gradient-to-r from-emerald-100 via-white to-emerald-200 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-900 via-emerald-700 to-emerald-500 bg-clip-text text-transparent">
                 ton histoire
               </span>
               .
             </p>
 
-            <dl className="mx-auto mt-10 grid max-w-4xl gap-7 border-t border-white/[0.085] pt-8 sm:grid-cols-3 sm:gap-0">
+            <dl className="mx-auto mt-10 grid max-w-4xl gap-7 border-t border-emerald-900/10 pt-8 sm:grid-cols-3 sm:gap-0">
               {summitMarkers.map((marker) => (
                 <div
                   key={marker.label}
-                  className="min-w-0 sm:border-l sm:border-white/[0.09] sm:first:border-l-0"
+                  className="min-w-0 sm:border-l sm:border-emerald-900/10 sm:first:border-l-0"
                 >
                   <dt
                     className={
                       marker.accent
-                        ? "bg-gradient-to-r from-emerald-200 via-cyan-100 to-violet-200 bg-clip-text text-5xl font-semibold tracking-tight text-transparent sm:text-6xl"
-                        : "text-5xl font-semibold tracking-tight text-white sm:text-6xl"
+                        ? "bg-gradient-to-r from-emerald-700 via-emerald-500 to-cyan-500 bg-clip-text text-5xl font-semibold tracking-tight text-transparent sm:text-6xl"
+                        : "text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl"
                     }
                   >
                     {marker.value}

@@ -51,14 +51,14 @@ export function ProductPreview() {
           <div className="mt-4 grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
             <div className="relative overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
               <div
-                className="absolute inset-0 bg-cover bg-center opacity-[0.72]"
+                className="absolute inset-0 bg-cover bg-center opacity-[0.86]"
                 style={{
                   backgroundImage: "url('/landing/alpine-forest-card.png')",
                 }}
                 aria-hidden="true"
               />
-              <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(3,17,13,0.86)_0%,rgba(7,23,19,0.62)_48%,rgba(20,61,54,0.22)_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#03110d]/90 via-[#03110d]/44 to-transparent" />
+              <div className="absolute inset-0 bg-[linear-gradient(112deg,rgba(3,17,13,0.80)_0%,rgba(7,23,19,0.52)_48%,rgba(20,61,54,0.16)_100%)]" />
+              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#03110d]/86 via-[#03110d]/34 to-transparent" />
               <div className="absolute inset-y-0 left-0 w-[82%] bg-[radial-gradient(circle_at_18%_38%,rgba(125,211,168,0.16),transparent_34%)]" />
               <div className="relative">
                 <div className="flex items-center gap-3">

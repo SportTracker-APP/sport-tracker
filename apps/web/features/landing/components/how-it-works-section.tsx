@@ -34,19 +34,19 @@ export function HowItWorksSection() {
       className="relative mx-auto w-full max-w-7xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20"
       aria-labelledby="how-title"
     >
-      <div className="pointer-events-none absolute right-6 top-10 h-64 w-64 rounded-full bg-emerald-300/12 blur-3xl" />
+      <div className="pointer-events-none absolute right-6 top-10 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
       <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
-          <p className="text-sm font-semibold tracking-[0.22em] text-emerald-100 uppercase">
+          <p className="text-sm font-semibold tracking-[0.22em] text-emerald-700 uppercase">
             Comment ça marche
           </p>
           <h2
             id="how-title"
-            className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-5xl"
+            className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl"
           >
             Une sortie devient une page de ton histoire.
           </h2>
-          <p className="mt-5 max-w-xl text-base leading-8 text-slate-400">
+          <p className="mt-5 max-w-xl text-base leading-8 text-slate-600">
             HOVREN garde le produit simple : tu bouges, l’app structure ce que
             tes traces racontent déjà.
           </p>
@@ -59,18 +59,18 @@ export function HowItWorksSection() {
             return (
               <article
                 key={step.title}
-                className="relative overflow-hidden rounded-[1.65rem] border border-emerald-100/[0.10] bg-[#0b1f19]/52 p-5 shadow-[0_18px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-[#102a22]/62"
+                className="relative overflow-hidden rounded-[1.65rem] border border-emerald-900/10 bg-white/82 p-5 shadow-[0_18px_52px_rgba(15,64,49,0.12)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-white"
               >
-                <div className="absolute top-5 right-5 text-5xl font-semibold text-white/[0.035]">
+                <div className="absolute top-5 right-5 text-5xl font-semibold text-emerald-950/[0.05]">
                   {String(index + 1).padStart(2, "0")}
                 </div>
-                <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-200/14 bg-emerald-300/9 text-emerald-100">
+                <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-900/10 bg-emerald-50 text-emerald-700">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <h3 className="relative mt-6 text-xl font-semibold text-white">
+                <h3 className="relative mt-6 text-xl font-semibold text-slate-950">
                   {step.title}
                 </h3>
-                <p className="relative mt-3 text-sm leading-7 text-slate-400">
+                <p className="relative mt-3 text-sm leading-7 text-slate-600">
                   {step.description}
                 </p>
               </article>

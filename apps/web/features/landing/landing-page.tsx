@@ -74,21 +74,23 @@ export function LandingPage() {
       <LandingHeader />
       <LandingHero />
 
+      <div className="relative bg-[linear-gradient(180deg,#edf8f1_0%,#f8faf7_34%,#eef8f1_100%)] text-slate-950">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(47,122,99,0.12),transparent_28%),radial-gradient(circle_at_88%_22%,rgba(185,246,208,0.32),transparent_30%),linear-gradient(rgba(47,122,99,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(47,122,99,0.035)_1px,transparent_1px)] bg-[size:auto,auto,92px_92px,92px_92px]" />
       <section
         id="fonctionnalites"
         className="relative mx-auto grid w-full max-w-7xl gap-4 px-5 py-14 sm:px-6 lg:grid-cols-3 lg:px-8 lg:py-20 xl:grid-cols-5"
         aria-labelledby="landing-features-title"
       >
-        <div className="pointer-events-none absolute -top-24 right-8 h-72 w-72 rounded-full bg-emerald-300/12 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-8 left-0 h-64 w-64 rounded-full bg-[#2f7a63]/16 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 right-8 h-72 w-72 rounded-full bg-emerald-300/28 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-8 left-0 h-64 w-64 rounded-full bg-[#2f7a63]/14 blur-3xl" />
         <div className="lg:col-span-3 xl:col-span-5">
-          <p className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/8 px-3 py-1.5 text-xs font-semibold tracking-[0.22em] text-emerald-100 uppercase">
+          <p className="inline-flex items-center gap-2 rounded-full border border-emerald-700/15 bg-emerald-100/80 px-3 py-1.5 text-xs font-semibold tracking-[0.22em] text-emerald-800 uppercase">
             <Compass className="h-3.5 w-3.5" aria-hidden="true" />
             Exploration guidée
           </p>
           <h2
             id="landing-features-title"
-            className="mt-5 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl"
+            className="mt-5 max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl"
           >
             Tout ce qui donne une forme à tes aventures.
           </h2>
@@ -100,11 +102,11 @@ export function LandingPage() {
       </section>
 
       <section className="relative mx-auto w-full max-w-7xl px-5 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/[0.12] bg-[linear-gradient(135deg,rgba(7,23,19,0.96),rgba(16,42,34,0.82)_52%,rgba(8,18,27,0.66))] p-6 shadow-[0_30px_110px_rgba(0,0,0,0.3)] backdrop-blur-2xl sm:p-9 lg:p-10">
-          <div className="pointer-events-none absolute -top-24 right-16 h-72 w-72 rounded-full bg-emerald-200/13 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-28 left-10 h-72 w-72 rounded-full bg-[#2f7a63]/18 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.9),rgba(237,248,241,0.86)_52%,rgba(220,241,228,0.74))] p-6 shadow-[0_24px_80px_rgba(15,64,49,0.14)] backdrop-blur-2xl sm:p-9 lg:p-10">
+          <div className="pointer-events-none absolute -top-24 right-16 h-72 w-72 rounded-full bg-emerald-200/38 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-28 left-10 h-72 w-72 rounded-full bg-[#2f7a63]/12 blur-3xl" />
           <svg
-            className="pointer-events-none absolute inset-y-0 right-0 h-full w-1/2 text-white/[0.045]"
+            className="pointer-events-none absolute inset-y-0 right-0 h-full w-1/2 text-emerald-950/[0.08]"
             viewBox="0 0 620 360"
             fill="none"
             aria-hidden="true"
@@ -132,15 +134,15 @@ export function LandingPage() {
           </svg>
 
           <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
-            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-100/15 bg-emerald-300/9 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-emerald-100 uppercase">
+            <p className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-700/15 bg-emerald-100/80 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-emerald-800 uppercase">
               <Route className="h-3.5 w-3.5" aria-hidden="true" />
               Positionnement
             </p>
             <div>
-              <h2 className="max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
+              <h2 className="max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
                 Pas une app de performance de plus.
               </h2>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">
+              <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600">
                 HOVREN ne cherche pas seulement à compter tes kilomètres.
                 L’app transforme tes sorties en repères : lieux explorés,
                 sommets validés, souvenirs structurés et progression visible.
@@ -153,20 +155,20 @@ export function LandingPage() {
       <HowItWorksSection />
       <SummitJournalSection />
       <section className="relative mx-auto w-full max-w-7xl px-5 py-6 sm:px-6 lg:px-8 lg:py-8">
-        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/[0.12] bg-[linear-gradient(135deg,rgba(11,31,25,0.9),rgba(16,42,34,0.62)_48%,rgba(3,17,13,0.86))] px-6 py-8 shadow-[0_24px_90px_rgba(0,0,0,0.24)] backdrop-blur-2xl sm:px-8 lg:px-10">
-          <div className="pointer-events-none absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-emerald-300/10 blur-3xl" />
-          <div className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-[#2f7a63]/18 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-white/82 px-6 py-8 shadow-[0_24px_80px_rgba(15,64,49,0.13)] backdrop-blur-2xl sm:px-8 lg:px-10">
+          <div className="pointer-events-none absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-emerald-200/42 blur-3xl" />
+          <div className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-[#2f7a63]/10 blur-3xl" />
 
           <div className="relative grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-300/8 px-3 py-1.5 text-xs font-semibold tracking-[0.2em] text-emerald-100 uppercase">
+              <p className="inline-flex items-center gap-2 rounded-full border border-emerald-700/15 bg-emerald-100/80 px-3 py-1.5 text-xs font-semibold tracking-[0.2em] text-emerald-800 uppercase">
                 <Mountain className="h-3.5 w-3.5" aria-hidden="true" />
                 Collection
               </p>
-              <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
                 Ta liste de sommets se remplit sortie après sortie.
               </h2>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
+              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-600">
                 Comme un carnet de collection outdoor : chaque sommet parcouru
                 devient un repère clair, retrouvé plus tard avec son massif, sa
                 trace et ton souvenir.
@@ -180,20 +182,20 @@ export function LandingPage() {
                 return (
                   <li
                     key={step.title}
-                    className="relative border-t border-white/[0.09] pt-4 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5 sm:first:border-l-0"
+                    className="relative border-t border-emerald-900/10 pt-4 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5 sm:first:border-l-0"
                   >
-                    <span className="text-xs font-semibold tracking-[0.18em] text-emerald-100/80 uppercase">
+                    <span className="text-xs font-semibold tracking-[0.18em] text-emerald-700 uppercase">
                       0{index + 1}
                     </span>
                     <div className="mt-3 flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.055] text-emerald-100">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-emerald-900/10 bg-emerald-50 text-emerald-700">
                         <Icon className="h-4 w-4" aria-hidden="true" />
                       </span>
-                      <strong className="text-base font-semibold text-white">
+                      <strong className="text-base font-semibold text-slate-950">
                         {step.title}
                       </strong>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-slate-400">
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
                       {step.description}
                     </p>
                   </li>
@@ -206,8 +208,8 @@ export function LandingPage() {
       <ProgressionSection />
 
       <section className="relative mx-auto w-full max-w-7xl px-5 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-100/[0.13] bg-[linear-gradient(135deg,rgba(11,31,25,0.86),rgba(7,23,19,0.66),rgba(8,18,27,0.8))] px-6 py-12 shadow-[0_34px_120px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:px-10 lg:px-14 lg:py-16">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(125,211,168,0.18),transparent_28%),radial-gradient(circle_at_12%_82%,rgba(47,122,99,0.28),transparent_34%)]" />
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-[linear-gradient(135deg,#ffffff,#edf8f1_52%,#dff2e7)] px-6 py-12 shadow-[0_34px_90px_rgba(15,64,49,0.16)] backdrop-blur-2xl sm:px-10 lg:px-14 lg:py-16">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(125,211,168,0.26),transparent_28%),radial-gradient(circle_at_12%_82%,rgba(47,122,99,0.12),transparent_34%)]" />
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-28 opacity-50"
             aria-hidden="true"
@@ -225,13 +227,13 @@ export function LandingPage() {
           </div>
 
           <div className="relative max-w-3xl">
-            <p className="text-sm font-semibold tracking-[0.22em] text-emerald-100 uppercase">
+            <p className="text-sm font-semibold tracking-[0.22em] text-emerald-700 uppercase">
               Ouvre ton refuge
             </p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
               Prêt à ouvrir ton carnet outdoor ?
             </h2>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300">
+            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
               Connecte tes sorties existantes, valide tes sommets et commence à
               construire ton carnet outdoor avec HOVREN.
             </p>
@@ -244,7 +246,7 @@ export function LandingPage() {
               </a>
               <a
                 href="/login"
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-emerald-100/14 bg-white/[0.045] px-6 text-sm font-bold text-slate-100 transition hover:-translate-y-0.5 hover:border-emerald-100/24 hover:bg-white/[0.075] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-emerald-900/10 bg-white/70 px-6 text-sm font-bold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-700/20 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
               >
                 Se connecter
               </a>
@@ -254,6 +256,7 @@ export function LandingPage() {
       </section>
 
       <LandingFooter />
+      </div>
     </main>
   );
 }
