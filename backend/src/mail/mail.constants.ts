@@ -13,6 +13,6 @@ export const MAIL_TEMPLATE_DEFAULTS = {
   authPasswordChanged: 'auth-password-changed',
   activityFirstCreated: 'activity-first-created',
   activityUpcomingReminder: 'activity-upcoming-reminder',
-  activityCompletedCongratulations: 'activity-completed-congratulations',
+  activityCompletedCongratulations: 'activity-completed',
   summitFirstValidated: 'summit-first-validated',
 } as const;

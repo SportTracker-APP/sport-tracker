@@ -35,7 +35,7 @@ const config: MailConfig = {
   enabled: true,
   apiKey: 'resend-api-key',
   from: 'Hovren <sender@example.test>',
-  replyTo: 'support@example.test',
+  replyTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
   templates: {
@@ -45,7 +45,7 @@ const config: MailConfig = {
     authPasswordChanged: 'auth-password-changed',
     activityFirstCreated: 'activity-first-created',
     activityUpcomingReminder: 'activity-upcoming-reminder',
-    activityCompletedCongratulations: 'activity-completed-congratulations',
+    activityCompletedCongratulations: 'activity-completed',
     summitFirstValidated: 'summit-first-validated',
   },
 };

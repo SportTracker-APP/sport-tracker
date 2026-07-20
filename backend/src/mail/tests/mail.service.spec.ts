@@ -6,7 +6,7 @@ const mailConfig: MailConfig = {
   enabled: true,
   apiKey: 'resend-api-key',
   from: 'Hovren <sender@example.test>',
-  replyTo: 'support@example.test',
+  replyTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
   templates: {
@@ -16,7 +16,7 @@ const mailConfig: MailConfig = {
     authPasswordChanged: 'auth-password-changed',
     activityFirstCreated: 'activity-first-created',
     activityUpcomingReminder: 'activity-upcoming-reminder',
-    activityCompletedCongratulations: 'activity-completed-congratulations',
+    activityCompletedCongratulations: 'activity-completed',
     summitFirstValidated: 'summit-first-validated',
   },
 };
@@ -51,7 +51,7 @@ describe('MailService', () => {
       businessId: 'verification-1',
       variables: expect.objectContaining({
         APP_NAME: 'Hovren',
-        SUPPORT_EMAIL: 'support@example.test',
+        SUPPORT_EMAIL: 'contact@hovren.fr',
         USER_NAME: 'Camille',
         VERIFY_URL: 'https://app.example.test/verify?token=secret-token',
         EXPIRATION_MINUTES: 30,
@@ -257,7 +257,7 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'activity.completed_congratulations',
       to: 'user@example.test',
-      templateId: 'activity-completed-congratulations',
+      templateId: 'activity-completed',
       businessId: 'scheduled-email-2',
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
