@@ -12,9 +12,28 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "HOVREN",
-  description: "Ton carnet de sommets, de sorties et d’exploration outdoor.",
+  title: {
+    default: "HOVREN — Ton carnet outdoor",
+    template: "%s | HOVREN",
+  },
+  description:
+    "Suis tes sorties, découvre tes sommets et construis ton carnet d’exploration outdoor avec HOVREN.",
   metadataBase: new URL("https://hovren.fr"),
+  applicationName: "HOVREN",
+  authors: [{ name: "HOVREN", url: "https://hovren.fr" }],
+  creator: "HOVREN",
+  publisher: "HOVREN",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   manifest: "/site.webmanifest",
   icons: {
     icon: [

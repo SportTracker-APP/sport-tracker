@@ -37,6 +37,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   openGraph: {
     title: siteTitle,
@@ -50,12 +57,15 @@ export const metadata: Metadata = {
         url: `${siteUrl}/opengraph-image.png`,
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: siteTitle,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
+    site: "@hovrenapp",
+    creator: "@hovrenapp",
     title: siteTitle,
     description: socialDescription,
     images: [`${siteUrl}/twitter-image.png`],
