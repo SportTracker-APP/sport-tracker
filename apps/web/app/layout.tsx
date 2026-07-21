@@ -51,8 +51,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
             __html: `
               try {
                 localStorage.removeItem("sport-tracker-theme");
+                localStorage.removeItem("sport-tracker-theme-v2");
 
-                if (localStorage.getItem("sport-tracker-theme-v2") === "violet") {
+                if (localStorage.getItem("sport-tracker-theme-v3") === "violet") {
                   document.documentElement.classList.remove("sport-theme-nature");
                 } else {
                   document.documentElement.classList.add("sport-theme-nature");

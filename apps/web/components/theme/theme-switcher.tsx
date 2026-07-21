@@ -5,7 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Leaf, Sparkles } from "lucide-react";
 
 const LEGACY_THEME_STORAGE_KEY = "sport-tracker-theme";
-const THEME_STORAGE_KEY = "sport-tracker-theme-v2";
+const PREVIOUS_THEME_STORAGE_KEY = "sport-tracker-theme-v2";
+const THEME_STORAGE_KEY = "sport-tracker-theme-v3";
 const NATURE_THEME_CLASS = "sport-theme-nature";
 const THEME_CHANGE_EVENT = "hovren-theme-change";
 
@@ -40,6 +41,7 @@ export function useAppTheme() {
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);
+    localStorage.removeItem(PREVIOUS_THEME_STORAGE_KEY);
 
     const initialTheme = getStoredTheme();
 
