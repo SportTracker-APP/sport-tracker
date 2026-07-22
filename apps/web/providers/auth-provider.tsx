@@ -2,10 +2,9 @@
 
 import { PropsWithChildren, useEffect, useState } from "react";
 
-import { Mountain } from "lucide-react";
-
 import { usePathname, useRouter } from "next/navigation";
 
+import { BrandMark } from "@/features/auth/login/components/login-hero";
 import { AUTH_SESSION_EXPIRED_EVENT } from "@/lib/api";
 import { getMe } from "@/lib/auth";
 
@@ -110,10 +109,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
         <div className="text-center">
           <div className="app-auth-loading-logo relative mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl">
             <div className="absolute inset-2 animate-pulse rounded-2xl border border-current opacity-30" />
-            <Mountain className="relative h-8 w-8" strokeWidth={2.35} />
+            <BrandMark />
           </div>
-          <p className="mt-4 text-sm font-semibold">HOVREN</p>
-          <p className="mt-1 text-xs">Préparation de ton refuge...</p>
+          <p className="mt-4 text-sm font-semibold">
+            HOVREN<span>.fr</span>
+          </p>
+          <p className="mt-1 text-xs">Ouverture de ton carnet...</p>
         </div>
       </div>
     );

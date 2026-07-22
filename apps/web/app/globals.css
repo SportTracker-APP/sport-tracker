@@ -2168,23 +2168,55 @@ html.sport-theme-nature .app-heatmap-momentum-card p:first-of-type {
 html .app-auth-loading {
   background:
     radial-gradient(
-      circle at center,
-      rgba(139, 92, 246, 0.16),
+      circle at 50% 44%,
+      rgba(196, 81, 42, 0.1),
       transparent 32%
     ),
-    linear-gradient(135deg, #050509, #0b0b12 46%, #09070f);
-  color: #ffffff;
+    radial-gradient(
+      circle at 42% 58%,
+      rgba(41, 77, 56, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(135deg, #f6f2e5, #f0ead8 48%, #e7e0cb);
+  color: #18231b;
+  font-family: var(--font-auth-body), Inter, system-ui, sans-serif;
 }
 
 html .app-auth-loading-logo {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(139, 92, 246, 0.16);
-  color: #a78bfa;
-  box-shadow: 0 18px 50px rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(41, 77, 56, 0.18);
+  background:
+    radial-gradient(
+      circle at 28% 18%,
+      rgba(196, 81, 42, 0.12),
+      transparent 38%
+    ),
+    linear-gradient(145deg, rgba(249, 246, 235, 0.9), rgba(235, 231, 212, 0.78));
+  color: #294d38;
+  box-shadow:
+    0 18px 42px rgba(24, 35, 27, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52);
+}
+
+html .app-auth-loading-logo svg {
+  width: 34px;
+  height: 28px;
+}
+
+html .app-auth-loading p:first-of-type {
+  color: #18231b;
+  font-family: var(--font-auth-display), Inter, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+html .app-auth-loading p:first-of-type span {
+  color: #c4512a;
+  letter-spacing: 0.02em;
 }
 
 html .app-auth-loading p:last-child {
-  color: rgba(212, 212, 216, 0.62);
+  color: rgba(83, 96, 79, 0.72);
+  font-weight: 600;
 }
 
 html.sport-theme-nature .app-auth-loading {
@@ -2194,27 +2226,27 @@ html.sport-theme-nature .app-auth-loading {
       rgba(16, 185, 129, 0.16),
       transparent 30%
     ),
-    linear-gradient(135deg, #f8fffb, #eefbf2 48%, #e5f8db);
-  color: #0f172a;
+    linear-gradient(135deg, #f6f2e5, #f0ead8 48%, #e7e0cb);
+  color: #18231b;
 }
 
 html.sport-theme-nature .app-auth-loading-logo {
-  border-color: rgba(187, 247, 208, 0.28);
+  border-color: rgba(41, 77, 56, 0.18);
   background:
     radial-gradient(
       circle at 30% 20%,
-      rgba(187, 247, 208, 0.18),
+      rgba(196, 81, 42, 0.12),
       transparent 38%
     ),
-    linear-gradient(135deg, #052e2b, #065f46 58%, #064e3b);
-  color: #ecfdf5;
+    linear-gradient(145deg, rgba(249, 246, 235, 0.9), rgba(235, 231, 212, 0.78));
+  color: #294d38;
   box-shadow:
-    0 18px 46px rgba(6, 78, 59, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 18px 42px rgba(24, 35, 27, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52);
 }
 
 html.sport-theme-nature .app-auth-loading p:last-child {
-  color: #64748b;
+  color: rgba(83, 96, 79, 0.72);
 }
 
 html.sport-theme-nature .app-admin-page .app-premium-surface,
