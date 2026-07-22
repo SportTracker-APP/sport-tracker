@@ -23,6 +23,7 @@ import {
 
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
+import refugeShell from "@/components/layout/refuge-shell.module.css";
 
 interface StravaStatus {
   connected: boolean;
@@ -100,7 +101,28 @@ const administrationItems = [
 
 const normalizePath = (path: string) => path.replace(/\/$/, "");
 
-export function Sidebar() {
+type SidebarProps = {
+  variant?: "default" | "refuge";
+};
+
+function RefugeBrandMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 48 34"
+      className={className}
+      aria-hidden="true"
+      fill="none"
+    >
+      <path
+        d="M3 30 17 5l8 14 6-10 14 21"
+        stroke="currentColor"
+        strokeWidth="3"
+      />
+    </svg>
+  );
+}
+
+export function Sidebar({ variant = "default" }: SidebarProps) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
 
@@ -143,6 +165,78 @@ export function Sidebar() {
     return current === target || current.startsWith(`${target}/`);
   };
 
+  if (variant === "refuge") {
+    const renderPaperItems = (
+      items: Array<{
+        title: string;
+        href: string;
+        icon: typeof Mountain;
+        adminOnly?: boolean;
+      }>,
+    ) =>
+      items
+        .filter((item) => !item.adminOnly || user?.role === "ADMIN")
+        .map((item) => {
+          const Icon = item.icon;
+          const isActive = isActiveRoute(item.href);
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              className={`${refugeShell.navItem} ${
+                isActive ? refugeShell.navItemActive : ""
+              }`}
+            >
+              <Icon aria-hidden="true" />
+              <span>{item.title}</span>
+            </Link>
+          );
+        });
+
+    return (
+      <aside className={refugeShell.sidebar}>
+        <div className={refugeShell.sidebarScroll}>
+          <section className={refugeShell.navSection}>
+            <p className={refugeShell.navLabel}>Principal</p>
+            <nav
+              className={refugeShell.navList}
+              aria-label="Navigation principale"
+            >
+              {renderPaperItems(navigationItems)}
+            </nav>
+          </section>
+
+          <section className={refugeShell.navSection}>
+            <p className={refugeShell.navLabel}>Secondaire</p>
+            <nav
+              className={refugeShell.navList}
+              aria-label="Navigation secondaire"
+            >
+              {renderPaperItems(secondaryItems)}
+            </nav>
+          </section>
+
+          {user?.role === "ADMIN" ? (
+            <section className={refugeShell.navSection}>
+              <p className={refugeShell.navLabel}>Administration</p>
+              <nav className={refugeShell.navList} aria-label="Administration">
+                {renderPaperItems(administrationItems)}
+              </nav>
+            </section>
+          ) : null}
+
+          <div className={refugeShell.sidebarFooter}>
+            <div className={refugeShell.sidebarLandscape} aria-hidden="true" />
+            <RefugeBrandMark className={refugeShell.sidebarFooterMark} />
+            <p>Pensé dans les Alpes françaises.</p>
+          </div>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="app-sidebar relative hidden w-[270px] shrink-0 overflow-hidden border-r border-white/[0.06] bg-[#0D0E14]/95 backdrop-blur-2xl lg:flex lg:flex-col">
       {/* GLOBAL BACKGROUND */}
@@ -184,7 +278,7 @@ export function Sidebar() {
               HOVREN
             </h1>
 
-            <p className="mt-0.5 whitespace-nowrap text-[0.7rem] leading-5 text-zinc-500">
+            <p className="mt-0.5 text-[0.7rem] leading-5 whitespace-nowrap text-zinc-500">
               Sommets, traces, souvenirs.
             </p>
           </div>
@@ -254,50 +348,50 @@ export function Sidebar() {
 
           <nav className="space-y-1">
             {secondaryItems.map((item) => {
-                const Icon = item.icon;
+              const Icon = item.icon;
 
-                const isActive = isActiveRoute(item.href);
+              const isActive = isActiveRoute(item.href);
 
-                return (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
-                      isActive
-                        ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
-                        : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+              return (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group relative flex items-center gap-3 overflow-hidden rounded-[20px] px-4 py-3 transition-all duration-300 ${
+                    isActive
+                      ? "border border-white/[0.06] bg-white/[0.05] text-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
+                      : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+                  }`}
+                >
+                  {/* ACTIVE BG */}
+                  {isActive && (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
+                  )}
+
+                  {/* ACTIVE BAR */}
+                  <div
+                    className={`relative h-5 w-1 rounded-full transition-all ${
+                      isActive ? "bg-violet-400 opacity-100" : "opacity-0"
                     }`}
-                  >
-                    {/* ACTIVE BG */}
-                    {isActive && (
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.14),transparent_45%)]" />
-                    )}
+                  />
 
-                    {/* ACTIVE BAR */}
-                    <div
-                      className={`relative h-5 w-1 rounded-full transition-all ${
-                        isActive ? "bg-violet-400 opacity-100" : "opacity-0"
-                      }`}
-                    />
+                  {/* ICON */}
+                  <Icon
+                    size={18}
+                    className={`relative transition-all duration-200 ${
+                      isActive
+                        ? "text-violet-300"
+                        : "text-zinc-500 group-hover:text-zinc-300"
+                    }`}
+                  />
 
-                    {/* ICON */}
-                    <Icon
-                      size={18}
-                      className={`relative transition-all duration-200 ${
-                        isActive
-                          ? "text-violet-300"
-                          : "text-zinc-500 group-hover:text-zinc-300"
-                      }`}
-                    />
-
-                    {/* LABEL */}
-                    <span className="relative text-sm font-medium">
-                      {item.title}
-                    </span>
-                  </Link>
-                );
-              })}
+                  {/* LABEL */}
+                  <span className="relative text-sm font-medium">
+                    {item.title}
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
 
@@ -416,7 +510,6 @@ export function Sidebar() {
               );
             })}
           </nav>
-
         </div>
 
         {/* SPACER */}

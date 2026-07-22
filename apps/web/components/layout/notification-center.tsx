@@ -48,6 +48,7 @@ function getSportLabel(sport: string) {
 
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
+  const [referenceTime] = useState(() => Date.now());
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const { data: activities = [], isLoading: activitiesLoading } =
@@ -61,7 +62,7 @@ export function NotificationCenter() {
         .filter(
           (activity) =>
             activity.status === "PLANNED" &&
-            new Date(activity.startedAt).getTime() >= Date.now(),
+            new Date(activity.startedAt).getTime() >= referenceTime,
         )
         .sort(
           (first, second) =>
@@ -69,7 +70,7 @@ export function NotificationCenter() {
             new Date(second.startedAt).getTime(),
         )
         .slice(0, MAX_UPCOMING_ACTIVITIES),
-    [activities],
+    [activities, referenceTime],
   );
   const recentBadges = useMemo(
     () =>
@@ -159,7 +160,9 @@ export function NotificationCenter() {
         >
           <div className="app-notification-header flex items-start justify-between border-b border-white/[0.07] px-4 py-3.5">
             <div>
-              <h2 className="text-sm font-semibold text-white">Notifications</h2>
+              <h2 className="text-sm font-semibold text-white">
+                Notifications
+              </h2>
               <p className="mt-0.5 text-[0.7rem] text-zinc-500">
                 Ton fil d’exploration
               </p>
@@ -171,7 +174,10 @@ export function NotificationCenter() {
 
           <div className="app-notification-scroll min-h-0 flex-1 overflow-y-auto px-2 py-2">
             {isLoading ? (
-              <div className="space-y-2 p-2" aria-label="Chargement des notifications">
+              <div
+                className="space-y-2 p-2"
+                aria-label="Chargement des notifications"
+              >
                 {[0, 1, 2].map((item) => (
                   <div
                     key={item}
@@ -187,7 +193,10 @@ export function NotificationCenter() {
                       id="notification-upcoming-title"
                       className="flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] text-zinc-500 uppercase"
                     >
-                      <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
+                      <CalendarClock
+                        className="h-3.5 w-3.5"
+                        aria-hidden="true"
+                      />
                       Prochaines sorties
                     </h3>
                     <Link
@@ -208,17 +217,24 @@ export function NotificationCenter() {
                           className="app-notification-item group flex items-center gap-3 rounded-[14px] px-2.5 py-2.5 transition hover:bg-white/[0.045]"
                         >
                           <span className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-sky-400/15 bg-sky-400/10 text-sky-300">
-                            <CalendarClock className="h-4 w-4" aria-hidden="true" />
+                            <CalendarClock
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            />
                           </span>
                           <span className="min-w-0 flex-1">
                             <strong className="block truncate text-xs font-semibold text-zinc-100">
                               {activity.title || "Séance prévue"}
                             </strong>
                             <span className="mt-0.5 block truncate text-[0.68rem] text-zinc-500">
-                              {getSportLabel(activity.sport)} · {formatNotificationDateTime(activity.startedAt)}
+                              {getSportLabel(activity.sport)} ·{" "}
+                              {formatNotificationDateTime(activity.startedAt)}
                             </span>
                           </span>
-                          <ChevronRight className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300" aria-hidden="true" />
+                          <ChevronRight
+                            className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300"
+                            aria-hidden="true"
+                          />
                         </Link>
                       ))}
                     </div>
@@ -261,17 +277,24 @@ export function NotificationCenter() {
                             className="app-notification-item group flex items-center gap-3 rounded-[14px] px-2.5 py-2.5 transition hover:bg-white/[0.045]"
                           >
                             <span className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-violet-400/15 bg-violet-500/10 text-violet-300">
-                              <BadgeIcon className="h-4 w-4" aria-hidden="true" />
+                              <BadgeIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
                             </span>
                             <span className="min-w-0 flex-1">
                               <strong className="block truncate text-xs font-semibold text-zinc-100">
                                 {badge.name}
                               </strong>
                               <span className="mt-0.5 block truncate text-[0.68rem] text-zinc-500">
-                                {badge.category} · {formatNotificationDateTime(badge.unlockedAt)}
+                                {badge.category} ·{" "}
+                                {formatNotificationDateTime(badge.unlockedAt)}
                               </span>
                             </span>
-                            <ChevronRight className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300" aria-hidden="true" />
+                            <ChevronRight
+                              className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300"
+                              aria-hidden="true"
+                            />
                           </Link>
                         );
                       })}
@@ -292,7 +315,10 @@ export function NotificationCenter() {
                           id="notification-summits-title"
                           className="flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] text-zinc-500 uppercase"
                         >
-                          <Mountain className="h-3.5 w-3.5" aria-hidden="true" />
+                          <Mountain
+                            className="h-3.5 w-3.5"
+                            aria-hidden="true"
+                          />
                           Sommets découverts
                         </h3>
                         <Link
@@ -312,17 +338,26 @@ export function NotificationCenter() {
                             className="app-notification-item group flex items-center gap-3 rounded-[14px] px-2.5 py-2.5 transition hover:bg-white/[0.045]"
                           >
                             <span className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-emerald-400/15 bg-emerald-400/10 text-emerald-300">
-                              <Mountain className="h-4 w-4" aria-hidden="true" />
+                              <Mountain
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
                             </span>
                             <span className="min-w-0 flex-1">
                               <strong className="block truncate text-xs font-semibold text-zinc-100">
                                 {summit.name}
                               </strong>
                               <span className="mt-0.5 block truncate text-[0.68rem] text-zinc-500">
-                                {summit.altitude.toLocaleString("fr-FR")} m · {formatNotificationDateTime(summit.latestDiscoveredAt)}
+                                {summit.altitude.toLocaleString("fr-FR")} m ·{" "}
+                                {formatNotificationDateTime(
+                                  summit.latestDiscoveredAt,
+                                )}
                               </span>
                             </span>
-                            <ChevronRight className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300" aria-hidden="true" />
+                            <ChevronRight
+                              className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300"
+                              aria-hidden="true"
+                            />
                           </Link>
                         ))}
                       </div>

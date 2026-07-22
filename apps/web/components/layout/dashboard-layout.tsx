@@ -3,12 +3,53 @@ import { SummitCelebrationMonitor } from "@/components/summits/summit-celebratio
 import { MobileBottomNavigation } from "@/components/layout/mobile-bottom-navigation";
 import { Topbar } from "@/components/layout/topbar";
 import { PageTransition } from "@/components/ui/page-transition";
+import { Oswald, Work_Sans } from "next/font/google";
+
+import refugeShell from "./refuge-shell.module.css";
+
+const refugeDisplay = Oswald({
+  subsets: ["latin"],
+  variable: "--font-refuge-display",
+});
+
+const refugeBody = Work_Sans({
+  subsets: ["latin"],
+  variable: "--font-refuge-body",
+});
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
+  variant?: "default" | "refuge";
 };
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({
+  children,
+  variant = "default",
+}: DashboardLayoutProps) {
+  if (variant === "refuge") {
+    return (
+      <div
+        className={`${refugeShell.shell} ${refugeDisplay.variable} ${refugeBody.variable}`}
+      >
+        <SummitCelebrationMonitor />
+        <Topbar variant="refuge" />
+        <div className={refugeShell.body}>
+          <Sidebar variant="refuge" />
+          <div className={refugeShell.contentArea}>
+            <main className={refugeShell.main}>
+              <div className={refugeShell.scroll}>
+                <div className={refugeShell.content}>
+                  <PageTransition>{children}</PageTransition>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+        <MobileBottomNavigation variant="refuge" />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell relative flex h-[100dvh] min-w-0 overflow-hidden bg-[#09090C] text-white">
       <SummitCelebrationMonitor />

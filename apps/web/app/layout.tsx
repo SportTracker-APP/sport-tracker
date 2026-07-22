@@ -6,6 +6,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
+import { TawkToWidget } from "@/components/integrations/tawk-to-widget";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <AuthProvider>{children}</AuthProvider>
           </QueryProvider>
         </ThemeProvider>
+        <TawkToWidget />
         <Toaster richColors position="top-right" />
         <Analytics />
       </body>

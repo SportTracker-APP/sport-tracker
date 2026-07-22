@@ -1,5 +1,5 @@
-import DashboardPage from "@/features/dashboard/dashboard-page";
+import RefugeView from "@/features/refuge/refuge-view";
 
 export default function RefugePage() {
-  return <DashboardPage />;
+  return <RefugeView />;
 }

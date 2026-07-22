@@ -3,13 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import {
-  Activity,
-  Home,
-  Map,
-  Mountain,
-  type LucideIcon,
-} from "lucide-react";
+import { Activity, Home, Map, Mountain, type LucideIcon } from "lucide-react";
+import refugeShell from "./refuge-shell.module.css";
 
 type MobileNavItem = {
   label: string;
@@ -60,12 +55,20 @@ function isActiveRoute(pathname: string, href: string) {
   return current === target || current.startsWith(`${target}/`);
 }
 
-export function MobileBottomNavigation() {
+type MobileBottomNavigationProps = {
+  variant?: "default" | "refuge";
+};
+
+export function MobileBottomNavigation({
+  variant = "default",
+}: MobileBottomNavigationProps) {
   const pathname = usePathname();
 
   return (
     <nav
-      className="app-mobile-bottom-nav fixed inset-x-0 bottom-0 z-[120] px-3 pb-[calc(0.7rem+env(safe-area-inset-bottom))] lg:hidden"
+      className={`app-mobile-bottom-nav fixed inset-x-0 bottom-0 z-[120] px-3 pb-[calc(0.7rem+env(safe-area-inset-bottom))] lg:hidden ${
+        variant === "refuge" ? refugeShell.bottomNav : ""
+      }`}
       aria-label="Navigation mobile principale"
     >
       <div className="app-mobile-bottom-nav-shell mx-auto grid max-w-[28rem] grid-cols-4 items-end gap-1.5 rounded-[30px] border p-2">
@@ -79,13 +82,13 @@ export function MobileBottomNavigation() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               aria-label={item.isPrimary ? "Ajouter une sortie" : item.label}
-              className={`app-mobile-bottom-nav-item group relative flex min-h-[3.55rem] min-w-0 flex-col items-center justify-center gap-1 rounded-[22px] text-[0.68rem] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 ${
+              className={`app-mobile-bottom-nav-item group relative flex min-h-[3.55rem] min-w-0 flex-col items-center justify-center gap-1 rounded-[22px] text-[0.68rem] font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:outline-none ${
                 item.isPrimary
                   ? "text-white"
                   : isActive
                     ? "text-emerald-100"
                     : "text-zinc-500 hover:text-zinc-200"
-                }`}
+              }`}
             >
               {isActive && !item.isPrimary ? (
                 <span className="app-mobile-bottom-active-pill absolute inset-x-1.5 top-1.5 bottom-1.5 rounded-[18px] transition-all duration-200" />
@@ -100,7 +103,9 @@ export function MobileBottomNavigation() {
                 aria-hidden="true"
               >
                 <Icon
-                  className={item.isPrimary ? "h-[1.35rem] w-[1.35rem]" : "h-5 w-5"}
+                  className={
+                    item.isPrimary ? "h-[1.35rem] w-[1.35rem]" : "h-5 w-5"
+                  }
                   strokeWidth={item.isPrimary ? 2.7 : isActive ? 2.6 : 2.25}
                 />
               </span>
