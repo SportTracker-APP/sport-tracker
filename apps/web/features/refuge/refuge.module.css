@@ -177,8 +177,7 @@
 }
 
 .statsStrip,
-.discoveryCard,
-.carnetCard,
+.masterpieceCard,
 .outingsCard,
 .challengeCard {
   border: 1px solid var(--border);
@@ -261,20 +260,48 @@
 .dashboardGrid {
   display: grid;
   grid-template-areas:
-    "discovery carnet"
+    "masterpiece masterpiece"
     "outings challenge";
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
   gap: 20px;
   margin-top: 20px;
 }
 
-.discoveryCard {
-  grid-area: discovery;
+.masterpieceCard {
+  grid-area: masterpiece;
   display: grid;
-  min-height: 330px;
-  grid-template-columns: minmax(250px, 0.92fr) minmax(0, 1.38fr);
+  min-height: 370px;
+  grid-template-columns: minmax(0, 1.72fr) minmax(310px, 0.88fr);
   overflow: hidden;
   border-radius: var(--radius-card);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .masterpieceCard:hover {
+    border-color: rgba(47, 93, 70, 0.28);
+    box-shadow: 0 22px 44px -32px rgba(48, 68, 49, 0.46);
+  }
+
+  .masterpieceCard:hover .discoveryImage img {
+    transform: scale(1.015);
+  }
+
+  .masterpieceCard:hover .discoveryStamp {
+    transform: rotate(-2deg) translateY(-1px);
+  }
+}
+
+.masterpieceStory {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(245px, 0.88fr) minmax(0, 1.32fr);
+}
+
+.masterpieceStory > .discoveryEmpty {
+  grid-column: 1 / -1;
 }
 
 .discoveryCopy {
@@ -322,7 +349,6 @@
 
 .discoveryCopy p,
 .discoveryEmpty p,
-.carnetCard > p,
 .challengeCard > p {
   color: var(--moss);
   font-size: 0.82rem;
@@ -369,8 +395,12 @@
 
 .discoveryImage {
   position: relative;
-  min-height: 330px;
+  min-height: 370px;
   overflow: hidden;
+}
+
+.discoveryImage img {
+  transition: transform 420ms ease;
 }
 
 .discoveryImageShade {
@@ -381,32 +411,29 @@
     linear-gradient(0deg, rgba(23, 53, 40, 0.18), transparent 45%);
 }
 
-.imageDots {
+.discoveryStamp {
   position: absolute;
-  right: 23px;
-  bottom: 20px;
-  display: flex;
-  gap: 9px;
-}
-
-.imageDots span {
-  width: 8px;
-  height: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.64);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.imageDots .activeDot {
-  border-color: var(--terracotta);
-  background: var(--terracotta);
+  top: 24px;
+  right: 24px;
+  padding: 8px 10px;
+  border: 2px dashed rgba(200, 91, 47, 0.78);
+  border-radius: 7px;
+  background: rgba(248, 244, 234, 0.78);
+  color: var(--terracotta);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  letter-spacing: 0.09em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  backdrop-filter: blur(5px);
+  transition: transform 220ms ease;
 }
 
 .discoveryEmpty {
-  grid-column: 1 / -1;
   display: flex;
-  min-height: 330px;
+  min-height: 370px;
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
@@ -428,13 +455,24 @@
   stroke-width: 1.5;
 }
 
-.carnetCard {
-  grid-area: carnet;
+.masterpieceProgress {
   display: flex;
-  min-height: 330px;
+  min-width: 0;
+  min-height: 370px;
   flex-direction: column;
-  padding: 30px;
-  border-radius: var(--radius-card);
+  padding: 32px 30px 26px;
+  border-left: 1px solid var(--border);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(223, 153, 80, 0.1),
+      transparent 36%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(248, 244, 234, 0.98),
+      rgba(238, 231, 218, 0.88)
+    );
 }
 
 .sectionKicker {
@@ -451,9 +489,12 @@
   height: 21px;
 }
 
-.carnetCard > p {
+.masterpieceProgress > p {
   max-width: 320px;
   margin-top: 17px;
+  color: var(--moss);
+  font-size: 0.78rem;
+  line-height: 1.55;
 }
 
 .globalProgress {
@@ -532,6 +573,18 @@
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.masterpieceLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 18px;
+  margin-top: auto;
+}
+
+.masterpieceLinks .textLink {
+  margin-top: 0;
 }
 
 .textLink svg {
@@ -868,14 +921,9 @@
   min-height: 92px;
 }
 
-.discoverySkeleton {
-  grid-area: discovery;
-  min-height: 330px;
-}
-
-.carnetSkeleton {
-  grid-area: carnet;
-  min-height: 330px;
+.masterpieceSkeleton {
+  grid-area: masterpiece;
+  min-height: 370px;
 }
 
 .outingsSkeleton {
@@ -938,8 +986,17 @@
   .dashboardGrid {
     grid-template-columns: minmax(0, 1.35fr) minmax(290px, 0.9fr);
   }
-  .discoveryCard {
-    grid-template-columns: minmax(230px, 0.95fr) minmax(0, 1.05fr);
+  .masterpieceCard {
+    grid-template-columns: minmax(0, 1.55fr) minmax(290px, 0.9fr);
+  }
+  .masterpieceStory {
+    grid-template-columns: minmax(220px, 0.92fr) minmax(0, 1.08fr);
+  }
+  .discoveryCopy {
+    padding-left: 24px;
+  }
+  .masterpieceProgress {
+    padding-inline: 24px;
   }
   .outingRow {
     grid-template-columns:
@@ -970,10 +1027,20 @@
     border-top: 1px solid var(--border);
   }
   .dashboardGrid {
-    grid-template-areas: "discovery" "carnet" "challenge" "outings";
+    grid-template-areas: "masterpiece" "challenge" "outings";
     grid-template-columns: minmax(0, 1fr);
   }
-  .carnetCard,
+  .masterpieceCard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .masterpieceProgress {
+    min-height: 0;
+    border-top: 1px solid var(--border);
+    border-left: 0;
+  }
+  .masterpieceLinks {
+    margin-top: 24px;
+  }
   .challengeCard {
     min-height: 300px;
   }
@@ -1036,9 +1103,13 @@
     gap: 14px;
     margin-top: 14px;
   }
-  .discoveryCard {
+  .masterpieceCard {
     display: flex;
-    min-height: 430px;
+    min-height: 0;
+    flex-direction: column;
+  }
+  .masterpieceStory {
+    display: flex;
     flex-direction: column-reverse;
   }
   .discoveryImage {
@@ -1059,12 +1130,28 @@
     margin-top: 18px;
   }
   .discoveryEmpty {
-    min-height: 390px;
+    min-height: 360px;
     padding: 24px;
   }
-  .carnetCard,
+  .masterpieceProgress,
   .challengeCard {
     padding: 24px;
+  }
+  .masterpieceProgress {
+    min-height: 330px;
+  }
+  .globalProgress {
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .globalProgress > span {
+    max-width: 125px;
+    text-align: right;
+  }
+  .masterpieceLinks {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 22px;
   }
   .outingsCard {
     padding: 20px 16px 10px;
@@ -1109,10 +1196,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .masterpieceCard,
+  .discoveryImage img,
+  .discoveryStamp,
   .quickActions a,
   .outlineButton,
   .outingRow {
     transition: none;
+  }
+
+  .masterpieceCard:hover .discoveryImage img,
+  .masterpieceCard:hover .discoveryStamp {
+    transform: none;
   }
   .panelSkeleton > span {
     animation: none;

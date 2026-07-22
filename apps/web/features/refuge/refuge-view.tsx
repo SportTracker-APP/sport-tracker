@@ -261,71 +261,12 @@ export default function RefugeView() {
         )}
 
         <div className={styles.dashboardGrid}>
-          {summitsQuery.isLoading ? (
-            <PanelSkeleton className={styles.discoverySkeleton} />
-          ) : summitsQuery.isError ? (
-            <section className={styles.discoveryCard}>
-              <InlineError
-                message="Tes sommets ne peuvent pas être affichés pour le moment."
-                onRetry={() => void summitsQuery.refetch()}
-              />
-            </section>
-          ) : (
-            <section className={styles.discoveryCard}>
-              {viewModel.latestSummit ? (
-                <>
-                  <div className={styles.discoveryCopy}>
-                    <span className={styles.pill}>Dernière découverte</span>
-                    <h2>{viewModel.latestSummit.name}</h2>
-                    <p className={styles.discoveryMeta}>
-                      {viewModel.latestSummit.altitude} ·{" "}
-                      {viewModel.latestSummit.massif}
-                    </p>
-                    <p>{viewModel.latestSummit.description}</p>
-                    <Link href="/sommets" className={styles.outlineButton}>
-                      Voir la fiche sommet <ArrowRight aria-hidden="true" />
-                    </Link>
-                  </div>
-                  <div className={styles.discoveryImage}>
-                    <Image
-                      src={viewModel.latestSummit.imageUrl}
-                      alt={`Paysage autour de ${viewModel.latestSummit.name}`}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 55vw"
-                      className="object-cover"
-                    />
-                    <div className={styles.discoveryImageShade} />
-                    <div className={styles.imageDots} aria-hidden="true">
-                      <span className={styles.activeDot} />
-                      <span />
-                      <span />
-                      <span />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className={styles.discoveryEmpty}>
-                  <span className={styles.pill}>Prochaine découverte</span>
-                  <Mountain aria-hidden="true" />
-                  <h2>Ton premier sommet t’attend.</h2>
-                  <p>
-                    Synchronise une sortie ou explore le catalogue pour faire
-                    entrer une première crête dans ton carnet.
-                  </p>
-                  <Link href="/sommets" className={styles.outlineButton}>
-                    Explorer les sommets <ArrowRight aria-hidden="true" />
-                  </Link>
-                </div>
-              )}
-            </section>
-          )}
-
           {summitsQuery.isLoading || badgesQuery.isLoading ? (
-            <PanelSkeleton className={styles.carnetSkeleton} />
+            <PanelSkeleton className={styles.masterpieceSkeleton} />
           ) : summitsQuery.isError || badgesQuery.isError ? (
-            <section className={styles.carnetCard}>
+            <section className={styles.masterpieceCard}>
               <InlineError
-                message="La progression de ton carnet n’est pas disponible."
+                message="Ta dernière découverte et la progression de ton carnet ne sont pas disponibles."
                 onRetry={() => {
                   void Promise.all([
                     summitsQuery.refetch(),
@@ -335,41 +276,109 @@ export default function RefugeView() {
               />
             </section>
           ) : (
-            <section className={styles.carnetCard}>
-              <div className={styles.sectionKicker}>
-                <TrendingUp aria-hidden="true" /> Ton carnet progresse
+            <section
+              className={styles.masterpieceCard}
+              aria-labelledby="refuge-masterpiece-title"
+            >
+              <div className={styles.masterpieceStory}>
+                {viewModel.latestSummit ? (
+                  <>
+                    <div className={styles.discoveryCopy}>
+                      <span className={styles.pill}>Dernière découverte</span>
+                      <h2 id="refuge-masterpiece-title">
+                        {viewModel.latestSummit.name}
+                      </h2>
+                      <p className={styles.discoveryMeta}>
+                        {viewModel.latestSummit.altitude} ·{" "}
+                        {viewModel.latestSummit.massif}
+                      </p>
+                      <p>{viewModel.latestSummit.description}</p>
+                      <Link href="/sommets" className={styles.outlineButton}>
+                        Voir la fiche sommet <ArrowRight aria-hidden="true" />
+                      </Link>
+                    </div>
+                    <div className={styles.discoveryImage}>
+                      <Image
+                        src={viewModel.latestSummit.imageUrl}
+                        alt={`Paysage autour de ${viewModel.latestSummit.name}`}
+                        fill
+                        sizes="(max-width: 900px) 100vw, 48vw"
+                        className="object-cover"
+                      />
+                      <div className={styles.discoveryImageShade} />
+                      <span className={styles.discoveryStamp}>
+                        Sommet
+                        <br />
+                        validé
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.discoveryEmpty}>
+                    <span className={styles.pill}>Prochaine découverte</span>
+                    <Mountain aria-hidden="true" />
+                    <h2 id="refuge-masterpiece-title">
+                      Ton premier sommet t’attend.
+                    </h2>
+                    <p>
+                      Synchronise une sortie ou explore le catalogue pour faire
+                      entrer une première crête dans ton carnet.
+                    </p>
+                    <Link href="/sommets" className={styles.outlineButton}>
+                      Explorer les sommets <ArrowRight aria-hidden="true" />
+                    </Link>
+                  </div>
+                )}
               </div>
-              <p>
-                Continue comme ça, chaque trace te rapproche de ton prochain
-                objectif.
-              </p>
-              <div className={styles.globalProgress}>
-                <div>
-                  <span>Progression globale</span>
-                  <strong>{viewModel.carnetProgress} %</strong>
+
+              <aside
+                className={styles.masterpieceProgress}
+                aria-label="Progression du carnet"
+              >
+                <div className={styles.sectionKicker}>
+                  <TrendingUp aria-hidden="true" /> Ton carnet progresse
                 </div>
-                <span>Objectif : 50 %</span>
-              </div>
-              <ProgressBar
-                value={viewModel.carnetProgress}
-                label="Progression globale du carnet"
-              />
-              <div className={styles.nextStep}>
-                <div>
-                  <span>Prochain palier</span>
-                  <strong>
-                    {viewModel.nextBadge?.name ?? "10 sommets validés"}
-                  </strong>
-                  <p>
-                    {viewModel.nextBadge?.remainingLabel ??
-                      "Ton prochain badge se dessinera au fil de tes traces."}
-                  </p>
+                <p>
+                  {viewModel.latestSummit
+                    ? "Cette découverte enrichit ton histoire et te rapproche du prochain palier."
+                    : "Chaque future trace fera grandir ici ta collection de sommets."}
+                </p>
+
+                <div className={styles.globalProgress}>
+                  <div>
+                    <span>Progression globale</span>
+                    <strong>{viewModel.carnetProgress} %</strong>
+                  </div>
+                  <span>{viewModel.summitCount} sommets dans ton carnet</span>
                 </div>
-                <Award aria-hidden="true" />
-              </div>
-              <Link href="/badges" className={styles.textLink}>
-                Voir ma collection <ArrowRight aria-hidden="true" />
-              </Link>
+                <ProgressBar
+                  value={viewModel.carnetProgress}
+                  label="Progression globale du carnet"
+                />
+
+                <div className={styles.nextStep}>
+                  <div>
+                    <span>Prochain palier</span>
+                    <strong>
+                      {viewModel.nextBadge?.name ?? "10 sommets validés"}
+                    </strong>
+                    <p>
+                      {viewModel.nextBadge?.remainingLabel ??
+                        "Ton prochain badge se dessinera au fil de tes traces."}
+                    </p>
+                  </div>
+                  <Award aria-hidden="true" />
+                </div>
+
+                <div className={styles.masterpieceLinks}>
+                  <Link href="/sommets" className={styles.textLink}>
+                    Ouvrir mon carnet <ArrowRight aria-hidden="true" />
+                  </Link>
+                  <Link href="/badges" className={styles.textLink}>
+                    Voir mes badges <ArrowRight aria-hidden="true" />
+                  </Link>
+                </div>
+              </aside>
             </section>
           )}
 
