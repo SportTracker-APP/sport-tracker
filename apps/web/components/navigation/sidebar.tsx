@@ -286,7 +286,7 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
       </div>
 
       {/* CONTENT */}
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6">
+      <div className="app-sidebar-scroll relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6">
         {/* MAIN NAV */}
         <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
           Principal
