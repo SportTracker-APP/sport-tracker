@@ -43,16 +43,31 @@ export class StravaTokenMigrationService implements OnApplicationBootstrap {
       },
     });
     let migratedConnections = 0;
+    let skippedConnections = 0;
 
     for (const connection of connections) {
-      const accessToken = this.tokenEncryption.reencryptIfNeeded(
-        connection.accessToken,
-        { userId: connection.userId, tokenType: 'access' },
-      );
-      const refreshToken = this.tokenEncryption.reencryptIfNeeded(
-        connection.refreshToken,
-        { userId: connection.userId, tokenType: 'refresh' },
-      );
+      let accessToken: string;
+      let refreshToken: string;
+
+      try {
+        accessToken = this.tokenEncryption.reencryptIfNeeded(
+          connection.accessToken,
+          { userId: connection.userId, tokenType: 'access' },
+        );
+        refreshToken = this.tokenEncryption.reencryptIfNeeded(
+          connection.refreshToken,
+          { userId: connection.userId, tokenType: 'refresh' },
+        );
+      } catch {
+        skippedConnections += 1;
+        this.logger.warn({
+          connectionId: connection.id,
+          userId: connection.userId,
+          message:
+            'Strava token migration skipped because credentials could not be decrypted',
+        });
+        continue;
+      }
 
       if (
         accessToken === connection.accessToken &&
@@ -80,6 +95,14 @@ export class StravaTokenMigrationService implements OnApplicationBootstrap {
       this.logger.log({
         migratedConnections,
         message: 'Strava tokens encrypted or rotated successfully',
+      });
+    }
+
+    if (skippedConnections > 0) {
+      this.logger.warn({
+        skippedConnections,
+        message:
+          'Some Strava credentials could not be migrated; affected users must reconnect Strava',
       });
     }
   }
