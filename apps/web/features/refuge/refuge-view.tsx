@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import {
   ArrowRight,
   Award,
+  BookOpen,
   CalendarDays,
   Clock3,
   Flag,
@@ -23,7 +24,10 @@ import { useActivities } from "@/hooks/use-activities";
 import { useGoals } from "@/hooks/use-goals";
 import { useSummitBadges, useSummits } from "@/hooks/use-summits";
 
-import { createRefugeViewModel } from "./refuge-mappers";
+import {
+  createRefugeViewModel,
+  type RefugePrimaryAction,
+} from "./refuge-mappers";
 import styles from "./refuge.module.css";
 
 function HeaderMountain() {
@@ -133,6 +137,42 @@ function ProgressBar({ value, label }: { value: number; label: string }) {
   );
 }
 
+function StoryEventIcon({
+  kind,
+}: {
+  kind: "activity" | "summit" | "badge" | "progress";
+}) {
+  if (kind === "activity") {
+    return <Route aria-hidden="true" />;
+  }
+
+  if (kind === "summit") {
+    return <Mountain aria-hidden="true" />;
+  }
+
+  if (kind === "badge") {
+    return <Award aria-hidden="true" />;
+  }
+
+  return <TrendingUp aria-hidden="true" />;
+}
+
+function PrimaryActionIcon({ kind }: { kind: RefugePrimaryAction["kind"] }) {
+  if (kind === "discovery") {
+    return <Mountain aria-hidden="true" />;
+  }
+
+  if (kind === "plan") {
+    return <CalendarDays aria-hidden="true" />;
+  }
+
+  if (kind === "explore") {
+    return <MapPin aria-hidden="true" />;
+  }
+
+  return <Link2 aria-hidden="true" />;
+}
+
 export default function RefugeView() {
   const activitiesQuery = useActivities();
   const goalsQuery = useGoals();
@@ -160,6 +200,8 @@ export default function RefugeView() {
     goalsQuery.isError ||
     summitsQuery.isError ||
     badgesQuery.isError;
+  const isPrimaryActionLoading =
+    activitiesQuery.isLoading || summitsQuery.isLoading;
 
   return (
     <DashboardLayout variant="refuge">
@@ -170,18 +212,43 @@ export default function RefugeView() {
               <span aria-hidden="true" /> Refuge
             </p>
             <h1>Refuge</h1>
-            <p>
-              Ton point de départ pour explorer, te dépasser et garder une trace
-              de tes aventures.
-            </p>
-            <div className={styles.quickActions} aria-label="Actions rapides">
-              <Link href="/activites/nouvelle">
-                <Plus aria-hidden="true" /> Tracer une sortie
-              </Link>
-              <Link href="/integrations/strava">
-                <Link2 aria-hidden="true" /> Synchroniser Strava
-              </Link>
-            </div>
+            <p>{viewModel.welcomeMessage}</p>
+            {isPrimaryActionLoading ? (
+              <div
+                className={styles.primaryActionSkeleton}
+                aria-label="Recherche de la prochaine étape"
+                aria-busy="true"
+              >
+                <span />
+                <span />
+              </div>
+            ) : (
+              <div className={styles.actionContext} aria-live="polite">
+                <p>
+                  <span>{viewModel.primaryAction.contextLabel}</span>
+                  {viewModel.primaryAction.description}
+                </p>
+                <div
+                  className={styles.quickActions}
+                  aria-label="Action recommandée"
+                >
+                  <Link
+                    href={viewModel.primaryAction.href}
+                    className={styles.primaryAction}
+                  >
+                    <PrimaryActionIcon kind={viewModel.primaryAction.kind} />
+                    <span>{viewModel.primaryAction.label}</span>
+                    <ArrowRight aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/activites/nouvelle"
+                    className={styles.secondaryAction}
+                  >
+                    <Plus aria-hidden="true" /> Tracer une sortie
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
           <HeaderMountain />
         </header>
@@ -344,31 +411,70 @@ export default function RefugeView() {
                     : "Chaque future trace fera grandir ici ta collection de sommets."}
                 </p>
 
-                <div className={styles.globalProgress}>
-                  <div>
-                    <span>Progression globale</span>
-                    <strong>{viewModel.carnetProgress} %</strong>
+                <div className={styles.collectionBadge}>
+                  <div className={styles.collectionBadgeHeading}>
+                    <div>
+                      <span>Prochain badge</span>
+                      <strong>
+                        {viewModel.nextBadge?.name ?? "Premier palier"}
+                      </strong>
+                    </div>
+                    <Award aria-hidden="true" />
                   </div>
-                  <span>{viewModel.summitCount} sommets dans ton carnet</span>
-                </div>
-                <ProgressBar
-                  value={viewModel.carnetProgress}
-                  label="Progression globale du carnet"
-                />
-
-                <div className={styles.nextStep}>
-                  <div>
-                    <span>Prochain palier</span>
+                  <div className={styles.collectionProgressHeading}>
                     <strong>
-                      {viewModel.nextBadge?.name ?? "10 sommets validés"}
+                      {viewModel.nextBadge?.progressLabel ??
+                        `${viewModel.summitCount} sommets`}
                     </strong>
-                    <p>
+                    <span>
                       {viewModel.nextBadge?.remainingLabel ??
-                        "Ton prochain badge se dessinera au fil de tes traces."}
-                    </p>
+                        "Ta collection commence avec ta prochaine trace."}
+                    </span>
                   </div>
-                  <Award aria-hidden="true" />
+                  <ProgressBar
+                    value={viewModel.nextBadge?.progress ?? 0}
+                    label="Progression vers le prochain badge"
+                  />
                 </div>
+
+                {viewModel.latestMilestone ? (
+                  <p className={styles.milestoneNote}>
+                    <Award aria-hidden="true" />
+                    <span>
+                      Palier franchi
+                      <strong>{viewModel.latestMilestone.name}</strong>
+                    </span>
+                    <time>{viewModel.latestMilestone.date}</time>
+                  </p>
+                ) : null}
+
+                {viewModel.strongestMassif || viewModel.nextZone ? (
+                  <div
+                    className={styles.collectionTerritories}
+                    aria-label="Repères de ta collection"
+                  >
+                    {viewModel.strongestMassif ? (
+                      <Link href="/sommets" className={styles.territoryItem}>
+                        <MapPin aria-hidden="true" />
+                        <span>
+                          <small>Massif le plus exploré</small>
+                          <strong>{viewModel.strongestMassif.name}</strong>
+                          <span>{viewModel.strongestMassif.countLabel}</span>
+                        </span>
+                      </Link>
+                    ) : null}
+                    {viewModel.nextZone ? (
+                      <Link href="/sommets" className={styles.territoryItem}>
+                        <Flag aria-hidden="true" />
+                        <span>
+                          <small>Prochaine zone à compléter</small>
+                          <strong>{viewModel.nextZone.name}</strong>
+                          <span>{viewModel.nextZone.countLabel}</span>
+                        </span>
+                      </Link>
+                    ) : null}
+                  </div>
+                ) : null}
 
                 <div className={styles.masterpieceLinks}>
                   <Link href="/sommets" className={styles.textLink}>
@@ -379,6 +485,89 @@ export default function RefugeView() {
                   </Link>
                 </div>
               </aside>
+            </section>
+          )}
+
+          {activitiesQuery.isLoading ||
+          summitsQuery.isLoading ||
+          badgesQuery.isLoading ? (
+            <PanelSkeleton className={styles.storylineSkeleton} />
+          ) : activitiesQuery.isError ||
+            summitsQuery.isError ||
+            badgesQuery.isError ? (
+            <section className={styles.storylineCard}>
+              <InlineError
+                message="Le fil de ton carnet ne peut pas être reconstitué pour le moment."
+                onRetry={() => {
+                  void Promise.all([
+                    activitiesQuery.refetch(),
+                    summitsQuery.refetch(),
+                    badgesQuery.refetch(),
+                  ]);
+                }}
+              />
+            </section>
+          ) : viewModel.storyEvents.length > 0 ? (
+            <section
+              className={styles.storylineCard}
+              aria-labelledby="refuge-storyline-title"
+            >
+              <header className={styles.storylineHeading}>
+                <div>
+                  <p className={styles.storylineKicker}>
+                    <BookOpen aria-hidden="true" /> Le fil du carnet
+                  </p>
+                  <h2 id="refuge-storyline-title">
+                    Ce que tes dernières traces ont révélé.
+                  </h2>
+                </div>
+                <Link href="/sommets">
+                  Ouvrir mon carnet <ArrowRight aria-hidden="true" />
+                </Link>
+              </header>
+
+              <div className={styles.storylineTrack}>
+                {viewModel.storyEvents.map((event) => (
+                  <Link
+                    href={event.href}
+                    key={event.id}
+                    className={styles.storyEvent}
+                  >
+                    <time>{event.date}</time>
+                    <span
+                      className={`${styles.storyMarker} ${styles[`storyMarker${event.kind}`]}`}
+                    >
+                      <StoryEventIcon kind={event.kind} />
+                    </span>
+                    <span className={styles.storyCopy}>
+                      <small>{event.label}</small>
+                      <strong>{event.title}</strong>
+                      <span>{event.description}</span>
+                    </span>
+                    <ArrowRight
+                      className={styles.storyArrow}
+                      aria-hidden="true"
+                    />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className={styles.storylineEmpty}>
+              <span className={styles.storyMarker}>
+                <Route aria-hidden="true" />
+              </span>
+              <div>
+                <p className={styles.storylineKicker}>Le fil du carnet</p>
+                <h2>Ta première trace écrira le début de l’histoire.</h2>
+                <p>
+                  Connecte Strava ou ajoute une sortie pour faire apparaître ici
+                  tes découvertes, tes badges et ta progression.
+                </p>
+              </div>
+              <Link href="/integrations/strava">
+                Connecter Strava <ArrowRight aria-hidden="true" />
+              </Link>
             </section>
           )}
 

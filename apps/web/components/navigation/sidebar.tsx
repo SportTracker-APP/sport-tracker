@@ -105,23 +105,6 @@ type SidebarProps = {
   variant?: "default" | "refuge";
 };
 
-function RefugeBrandMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 48 34"
-      className={className}
-      aria-hidden="true"
-      fill="none"
-    >
-      <path
-        d="M3 30 17 5l8 14 6-10 14 21"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-    </svg>
-  );
-}
-
 export function Sidebar({ variant = "default" }: SidebarProps) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
@@ -229,7 +212,6 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
 
           <div className={refugeShell.sidebarFooter}>
             <div className={refugeShell.sidebarLandscape} aria-hidden="true" />
-            <RefugeBrandMark className={refugeShell.sidebarFooterMark} />
             <p>Pensé dans les Alpes françaises.</p>
           </div>
         </div>

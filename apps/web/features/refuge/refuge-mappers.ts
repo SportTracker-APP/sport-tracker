@@ -7,7 +7,11 @@ import {
 } from "@/lib/goal-progress";
 import type { Goal } from "@/lib/goals";
 import type { SummitBadge } from "@/lib/summit-api";
-import type { SummitView } from "@/lib/summit-discovery";
+import {
+  getMassifProgress,
+  type MassifProgress,
+  type SummitView,
+} from "@/lib/summit-discovery";
 
 export type RefugeActivity = {
   id: string;
@@ -19,7 +23,32 @@ export type RefugeActivity = {
   imageUrl: string;
 };
 
+export type RefugeStoryEvent = {
+  id: string;
+  kind: "activity" | "summit" | "badge" | "progress";
+  label: string;
+  title: string;
+  description: string;
+  date: string;
+  href: string;
+};
+
+export type RefugeCollectionTerritory = {
+  name: string;
+  countLabel: string;
+  progress: number;
+};
+
+export type RefugePrimaryAction = {
+  kind: "sync" | "discovery" | "plan" | "explore";
+  contextLabel: string;
+  href: string;
+  label: string;
+  description: string;
+};
+
 export type RefugeViewModel = {
+  welcomeMessage: string;
   activityCount: number;
   summitCount: number;
   badgeCount: number;
@@ -35,7 +64,17 @@ export type RefugeViewModel = {
   nextBadge: {
     name: string;
     remainingLabel: string;
+    progressLabel: string;
+    progress: number;
   } | null;
+  strongestMassif: RefugeCollectionTerritory | null;
+  nextZone: RefugeCollectionTerritory | null;
+  latestMilestone: {
+    name: string;
+    date: string;
+  } | null;
+  primaryAction: RefugePrimaryAction;
+  storyEvents: RefugeStoryEvent[];
   recentActivities: RefugeActivity[];
   challenge: {
     title: string;
@@ -116,6 +155,43 @@ function getBadgeRemainingLabel(badge: SummitBadge) {
   return `Plus que ${integerFormatter.format(remaining)} ${badge.progress.unit} avant de le débloquer.`;
 }
 
+function getBadgeProgressLabel(badge: SummitBadge) {
+  if (!badge.progress) {
+    return "À découvrir";
+  }
+
+  return `${integerFormatter.format(badge.progress.current)} / ${integerFormatter.format(badge.progress.target)} ${badge.progress.unit}`;
+}
+
+function getBadgeProgress(badge: SummitBadge) {
+  if (!badge.progress) {
+    return 0;
+  }
+
+  return Math.min(
+    100,
+    Math.round(
+      (badge.progress.current / Math.max(1, badge.progress.target)) * 100,
+    ),
+  );
+}
+
+function mapCollectionTerritory(
+  massif: MassifProgress | undefined,
+): RefugeCollectionTerritory | null {
+  if (!massif) {
+    return null;
+  }
+
+  const summitLabel = massif.total > 1 ? "sommets" : "sommet";
+
+  return {
+    name: massif.massif,
+    countLabel: `${integerFormatter.format(massif.discovered)} / ${integerFormatter.format(massif.total)} ${summitLabel}`,
+    progress: massif.progress,
+  };
+}
+
 function getDeadlineLabel(date: Date) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -127,6 +203,94 @@ function getDeadlineLabel(date: Date) {
   );
 
   return days === 0 ? "Aujourd’hui" : `${days} j`;
+}
+
+function isRecentDate(value: string | null, maximumAgeInDays: number) {
+  if (!value) {
+    return false;
+  }
+
+  const elapsed = Date.now() - new Date(value).getTime();
+
+  return elapsed >= 0 && elapsed <= maximumAgeInDays * 86_400_000;
+}
+
+function getPrimaryAction(input: {
+  completedActivities: Activity[];
+  latestSummit: SummitView | null;
+  nextZone: MassifProgress | undefined;
+  plannedActivity: Activity | null;
+}): RefugePrimaryAction {
+  if (
+    input.latestSummit?.latestDiscoveredAt &&
+    isRecentDate(input.latestSummit.latestDiscoveredAt, 7)
+  ) {
+    return {
+      kind: "discovery",
+      contextLabel: "Nouvelle découverte",
+      href: "/sommets",
+      label: "Voir ma nouvelle découverte",
+      description: `${input.latestSummit.name} vient de rejoindre ton carnet.`,
+    };
+  }
+
+  if (input.plannedActivity) {
+    return {
+      kind: "plan",
+      contextLabel: "Prochaine sortie",
+      href: "/calendrier",
+      label: "Préparer ma prochaine sortie",
+      description: `${getActivityTitle(input.plannedActivity)} est la prochaine étape de ton carnet.`,
+    };
+  }
+
+  if (input.completedActivities.length === 0) {
+    return {
+      kind: "sync",
+      contextLabel: "Carnet à compléter",
+      href: "/integrations/strava",
+      label: "Synchroniser mes dernières sorties",
+      description: "Importe tes traces pour révéler tes premiers sommets.",
+    };
+  }
+
+  if (input.nextZone && input.nextZone.discovered > 0) {
+    return {
+      kind: "explore",
+      contextLabel: "Massif à poursuivre",
+      href: "/sommets",
+      label: `Continuer le massif ${input.nextZone.massif}`,
+      description: `${input.nextZone.discovered} sommet${input.nextZone.discovered > 1 ? "s" : ""} sur ${input.nextZone.total} déjà révélé${input.nextZone.discovered > 1 ? "s" : ""}.`,
+    };
+  }
+
+  return {
+    kind: "sync",
+    contextLabel: "Carnet à actualiser",
+    href: "/integrations/strava",
+    label: "Synchroniser mes dernières sorties",
+    description: "Récupère tes nouvelles traces et mets ton carnet à jour.",
+  };
+}
+
+function getWelcomeMessage(action: RefugePrimaryAction) {
+  if (action.kind === "discovery") {
+    return "Une nouvelle découverte vient d’enrichir ton histoire.";
+  }
+
+  if (action.kind === "plan") {
+    return "Ta prochaine aventure est déjà au programme.";
+  }
+
+  if (action.kind === "explore") {
+    return "Ton carnet prend forme, massif après massif.";
+  }
+
+  if (action.contextLabel === "Carnet à compléter") {
+    return "Ton carnet est prêt à accueillir ses premières traces.";
+  }
+
+  return "Tes dernières traces continuent de construire ton histoire.";
 }
 
 export function createRefugeViewModel(input: {
@@ -150,7 +314,13 @@ export function createRefugeViewModel(input: {
         new Date(first.latestDiscoveredAt || 0).getTime(),
     );
   const latestSummit = discoveredSummits[0] ?? null;
-  const unlockedBadges = input.badges.filter((badge) => badge.unlocked);
+  const unlockedBadges = input.badges
+    .filter((badge) => badge.unlocked)
+    .sort(
+      (first, second) =>
+        new Date(second.unlockedAt || 0).getTime() -
+        new Date(first.unlockedAt || 0).getTime(),
+    );
   const nextBadge = input.badges
     .filter((badge) => !badge.unlocked)
     .sort((first, second) => {
@@ -165,15 +335,128 @@ export function createRefugeViewModel(input: {
     })[0];
   const primaryGoal = selectPrimaryGoal(input.goals);
   const goalProgress = calculateGoalProgress(primaryGoal, completedActivities);
+  const latestActivity = completedActivities[0] ?? null;
+  const plannedActivity =
+    input.activities
+      .filter(
+        (activity) =>
+          activity.status === "PLANNED" &&
+          new Date(activity.startedAt).getTime() >= Date.now(),
+      )
+      .sort(
+        (first, second) =>
+          new Date(first.startedAt).getTime() -
+          new Date(second.startedAt).getTime(),
+      )[0] ?? null;
+  const latestBadge = unlockedBadges[0] ?? null;
+  const massifProgress = getMassifProgress(input.summits);
+  const strongestMassif = [...massifProgress]
+    .filter((massif) => massif.discovered > 0)
+    .sort((first, second) => {
+      if (second.discovered !== first.discovered) {
+        return second.discovered - first.discovered;
+      }
+
+      if (second.progress !== first.progress) {
+        return second.progress - first.progress;
+      }
+
+      return second.total - first.total;
+    })[0];
+  const nextZone = [...massifProgress]
+    .filter((massif) => massif.progress < 100)
+    .sort((first, second) => {
+      const firstStarted = first.discovered > 0 ? 1 : 0;
+      const secondStarted = second.discovered > 0 ? 1 : 0;
+
+      if (secondStarted !== firstStarted) {
+        return secondStarted - firstStarted;
+      }
+
+      if (second.progress !== first.progress) {
+        return second.progress - first.progress;
+      }
+
+      const firstRemaining = first.total - first.discovered;
+      const secondRemaining = second.total - second.discovered;
+
+      if (firstRemaining !== secondRemaining) {
+        return firstRemaining - secondRemaining;
+      }
+
+      return second.total - first.total;
+    })[0];
+  const carnetProgress =
+    input.summits.length > 0
+      ? Math.round((discoveredSummits.length / input.summits.length) * 100)
+      : 0;
+  const storyEvents: RefugeStoryEvent[] = [];
+
+  if (latestActivity) {
+    const activity = mapActivity(latestActivity);
+
+    storyEvents.push({
+      id: `activity-${activity.id}`,
+      kind: "activity",
+      label: latestActivity.stravaActivityId
+        ? "Sortie synchronisée"
+        : "Sortie enregistrée",
+      title: activity.title,
+      description: `${activity.distance} · ${activity.elevation} · ${activity.place}`,
+      date: activity.date,
+      href: `/activites/${activity.id}`,
+    });
+  }
+
+  if (latestSummit?.latestDiscoveredAt) {
+    storyEvents.push({
+      id: `summit-${latestSummit.id}`,
+      kind: "summit",
+      label: "Sommet validé",
+      title: latestSummit.name,
+      description: `${integerFormatter.format(latestSummit.altitude)} m · ${latestSummit.massif}`,
+      date: formatDate(latestSummit.latestDiscoveredAt),
+      href: "/sommets",
+    });
+  }
+
+  if (latestBadge?.unlockedAt) {
+    storyEvents.push({
+      id: `badge-${latestBadge.id}`,
+      kind: "badge",
+      label: "Badge débloqué",
+      title: latestBadge.name,
+      description: latestBadge.description,
+      date: formatDate(latestBadge.unlockedAt),
+      href: "/badges",
+    });
+  }
+
+  if (storyEvents.length > 0 && input.summits.length > 0) {
+    storyEvents.push({
+      id: "carnet-progress",
+      kind: "progress",
+      label: "Carnet révélé",
+      title: `${carnetProgress} % du carnet`,
+      description: `${discoveredSummits.length} sommets validés sur ${input.summits.length} répertoriés.`,
+      date: "État actuel",
+      href: "/sommets",
+    });
+  }
+
+  const primaryAction = getPrimaryAction({
+    completedActivities,
+    latestSummit,
+    nextZone,
+    plannedActivity,
+  });
 
   return {
+    welcomeMessage: getWelcomeMessage(primaryAction),
     activityCount: completedActivities.length,
     summitCount: discoveredSummits.length,
     badgeCount: unlockedBadges.length,
-    carnetProgress:
-      input.summits.length > 0
-        ? Math.round((discoveredSummits.length / input.summits.length) * 100)
-        : 0,
+    carnetProgress,
     latestSummit: latestSummit
       ? {
           id: latestSummit.id,
@@ -190,8 +473,20 @@ export function createRefugeViewModel(input: {
       ? {
           name: nextBadge.name,
           remainingLabel: getBadgeRemainingLabel(nextBadge),
+          progressLabel: getBadgeProgressLabel(nextBadge),
+          progress: getBadgeProgress(nextBadge),
         }
       : null,
+    strongestMassif: mapCollectionTerritory(strongestMassif),
+    nextZone: mapCollectionTerritory(nextZone),
+    latestMilestone: latestBadge?.unlockedAt
+      ? {
+          name: latestBadge.name,
+          date: formatDate(latestBadge.unlockedAt),
+        }
+      : null,
+    primaryAction,
+    storyEvents,
     recentActivities: completedActivities.slice(0, 4).map(mapActivity),
     challenge: {
       title: primaryGoal.title,

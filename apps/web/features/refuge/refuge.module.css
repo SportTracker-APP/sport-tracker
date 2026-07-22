@@ -18,7 +18,7 @@
 .intro {
   position: relative;
   display: flex;
-  min-height: 194px;
+  min-height: 214px;
   align-items: center;
   overflow: hidden;
   padding: 20px 14px 30px;
@@ -28,6 +28,7 @@
   position: relative;
   z-index: 2;
   max-width: 520px;
+  animation: refuge-enter 480ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .eyebrow,
@@ -75,16 +76,40 @@
   line-height: 1.55;
 }
 
+.actionContext {
+  margin-top: 15px;
+}
+
+.actionContext > p {
+  display: flex;
+  max-width: 500px;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--moss);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.actionContext > p > span {
+  flex: none;
+  color: var(--terracotta);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
 .quickActions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 19px;
+  margin-top: 8px;
 }
 
 .quickActions a {
   display: inline-flex;
-  min-height: 36px;
+  min-height: 38px;
   align-items: center;
   gap: 7px;
   padding: 8px 13px;
@@ -92,7 +117,7 @@
   border-radius: 8px;
   background: rgba(248, 244, 234, 0.82);
   color: var(--forest);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   transition:
     transform 180ms ease,
@@ -100,19 +125,88 @@
     background 180ms ease;
 }
 
-.quickActions a:first-child {
+.quickActions .primaryAction {
+  min-height: 42px;
+  gap: 9px;
+  padding-inline: 15px;
   border-color: var(--terracotta);
   background: var(--terracotta);
   color: #fffaf2;
+  box-shadow: 0 11px 22px -18px rgba(118, 50, 27, 0.9);
+}
+
+.primaryAction > span {
+  white-space: nowrap;
+}
+
+.primaryAction svg:last-child {
+  margin-left: 2px;
+}
+
+.quickActions .secondaryAction {
+  border-color: transparent;
+  background: transparent;
+  color: var(--forest);
 }
 
 .quickActions a:hover {
   transform: translateY(-1px);
 }
 
+.quickActions .primaryAction:hover {
+  background: #b94e27;
+}
+
+.quickActions .secondaryAction:hover {
+  border-color: rgba(47, 93, 70, 0.14);
+  background: rgba(47, 93, 70, 0.045);
+}
+
+.quickActions a:focus-visible {
+  outline: 2px solid rgba(200, 91, 47, 0.45);
+  outline-offset: 3px;
+}
+
 .quickActions svg {
   width: 14px;
   height: 14px;
+}
+
+.primaryActionSkeleton {
+  display: grid;
+  width: min(100%, 430px);
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.primaryActionSkeleton span {
+  display: block;
+  border-radius: 7px;
+  background: linear-gradient(
+    90deg,
+    rgba(102, 116, 104, 0.08),
+    rgba(102, 116, 104, 0.16),
+    rgba(102, 116, 104, 0.08)
+  );
+  background-size: 220% 100%;
+  animation: refuge-action-loading 1.35s ease-in-out infinite;
+}
+
+.primaryActionSkeleton span:first-child {
+  width: 76%;
+  height: 11px;
+}
+
+.primaryActionSkeleton span:last-child {
+  width: 285px;
+  max-width: 100%;
+  height: 42px;
+}
+
+@keyframes refuge-action-loading {
+  to {
+    background-position: -220% 0;
+  }
 }
 
 .headerMountain {
@@ -122,6 +216,7 @@
   width: min(55%, 680px);
   height: auto;
   opacity: 0.9;
+  animation: refuge-enter 620ms 80ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   mask-image: linear-gradient(
     90deg,
     transparent 0%,
@@ -178,6 +273,8 @@
 
 .statsStrip,
 .masterpieceCard,
+.storylineCard,
+.storylineEmpty,
 .outingsCard,
 .challengeCard {
   border: 1px solid var(--border);
@@ -191,6 +288,7 @@
   grid-template-columns: 0.9fr 1fr 0.9fr 1.8fr;
   align-items: stretch;
   border-radius: var(--radius-card);
+  animation: refuge-enter 480ms 90ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .statItem {
@@ -199,6 +297,7 @@
   align-items: center;
   gap: 17px;
   padding: 19px 26px;
+  transition: background-color 180ms ease;
 }
 
 .statItem + .statItem {
@@ -211,6 +310,9 @@
   flex: none;
   color: var(--moss);
   stroke-width: 1.6;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
 }
 
 .statItem strong {
@@ -255,16 +357,291 @@
   margin: 0;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--terracotta), #df9950);
+  transition: width 620ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dashboardGrid {
   display: grid;
   grid-template-areas:
     "masterpiece masterpiece"
+    "storyline storyline"
     "outings challenge";
   grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
   gap: 20px;
   margin-top: 20px;
+}
+
+.storylineCard,
+.storylineEmpty {
+  position: relative;
+  grid-area: storyline;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(
+      circle at 82% 0%,
+      rgba(200, 91, 47, 0.075),
+      transparent 28%
+    ),
+    linear-gradient(135deg, var(--paper), rgba(238, 231, 218, 0.86));
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.storylineCard::after,
+.storylineEmpty::after {
+  position: absolute;
+  right: -42px;
+  bottom: -82px;
+  width: 270px;
+  height: 170px;
+  border: 1px solid rgba(47, 93, 70, 0.07);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 22px rgba(47, 93, 70, 0.025),
+    0 0 0 46px rgba(47, 93, 70, 0.018);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-18deg);
+}
+
+.storylineHeading {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 23px 28px 19px;
+  border-bottom: 1px solid rgba(217, 209, 194, 0.72);
+}
+
+.storylineKicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--terracotta);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.storylineKicker svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7;
+}
+
+.storylineHeading h2,
+.storylineEmpty h2 {
+  margin-top: 7px;
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 1.45rem;
+  font-weight: 540;
+  letter-spacing: 0;
+}
+
+.storylineHeading > a,
+.storylineEmpty > a {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  color: var(--terracotta);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.storylineHeading > a svg,
+.storylineEmpty > a svg {
+  width: 14px;
+  height: 14px;
+}
+
+.storylineHeading > a:focus-visible,
+.storylineEmpty > a:focus-visible,
+.storyEvent:focus-visible {
+  border-radius: 6px;
+  outline: 2px solid rgba(200, 91, 47, 0.48);
+  outline-offset: 4px;
+}
+
+.storylineTrack {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  padding: 22px 28px 27px;
+}
+
+.storylineTrack::before {
+  position: absolute;
+  top: 52px;
+  right: 48px;
+  left: 48px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(47, 93, 70, 0.1),
+    rgba(200, 91, 47, 0.28),
+    rgba(47, 93, 70, 0.1)
+  );
+  content: "";
+}
+
+.storyEvent {
+  position: relative;
+  display: block;
+  min-width: 0;
+  padding-right: 22px;
+  transition: transform 180ms ease;
+}
+
+.storyEvent time {
+  display: block;
+  min-height: 20px;
+  color: var(--moss);
+  font-size: 0.59rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.storyMarker {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(47, 93, 70, 0.2);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--forest);
+  box-shadow: 0 7px 18px -14px rgba(32, 55, 43, 0.72);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.storyMarker svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.7;
+}
+
+.storyMarkerbadge {
+  color: var(--terracotta);
+}
+
+.storyMarkerprogress {
+  border-color: rgba(200, 91, 47, 0.3);
+  background: var(--terracotta);
+  color: #fffaf2;
+}
+
+.storyCopy {
+  display: block;
+  min-width: 0;
+  margin-top: 12px;
+}
+
+.storyCopy small,
+.storyCopy strong,
+.storyCopy > span {
+  display: block;
+}
+
+.storyCopy small {
+  color: var(--forest);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 0.61rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.storyCopy strong {
+  overflow: hidden;
+  margin-top: 5px;
+  color: var(--forest-deep);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.storyCopy > span {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 5px;
+  color: var(--moss);
+  font-size: 0.65rem;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.storyArrow {
+  position: absolute;
+  right: 19px;
+  bottom: 1px;
+  width: 13px;
+  height: 13px;
+  color: var(--moss);
+  opacity: 0;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .storyEvent:hover {
+    transform: translateY(-2px);
+  }
+
+  .storyEvent:hover .storyMarker {
+    border-color: rgba(200, 91, 47, 0.4);
+    background: #fffaf2;
+  }
+
+  .storyEvent:hover .storyMarkerprogress {
+    background: #b94d27;
+    color: #fffaf2;
+  }
+
+  .storyEvent:hover .storyArrow {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+}
+
+.storylineEmpty {
+  display: grid;
+  min-height: 150px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 19px;
+  padding: 25px 28px;
+}
+
+.storylineEmpty > .storyMarker {
+  width: 46px;
+  height: 46px;
+}
+
+.storylineEmpty h2 {
+  margin-top: 5px;
+}
+
+.storylineEmpty div > p:last-child {
+  max-width: 660px;
+  margin-top: 6px;
+  color: var(--moss);
+  font-size: 0.72rem;
+  line-height: 1.5;
 }
 
 .masterpieceCard {
@@ -276,13 +653,32 @@
   border-radius: var(--radius-card);
   transition:
     border-color 200ms ease,
-    box-shadow 200ms ease;
+    box-shadow 200ms ease,
+    transform 200ms ease;
+  animation: refuge-enter 520ms 150ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .masterpieceCard:hover {
     border-color: rgba(47, 93, 70, 0.28);
     box-shadow: 0 22px 44px -32px rgba(48, 68, 49, 0.46);
+    transform: translateY(-2px);
+  }
+
+  .statItem:hover {
+    background: rgba(47, 93, 70, 0.035);
+  }
+
+  .statItem:hover > svg {
+    color: var(--terracotta);
+    transform: translateY(-2px);
+  }
+
+  .storylineCard:hover,
+  .storylineEmpty:hover {
+    border-color: rgba(47, 93, 70, 0.25);
+    box-shadow: 0 20px 40px -34px rgba(48, 68, 49, 0.42);
+    transform: translateY(-1px);
   }
 
   .masterpieceCard:hover .discoveryImage img {
@@ -491,22 +887,28 @@
 
 .masterpieceProgress > p {
   max-width: 320px;
-  margin-top: 17px;
+  margin-top: 13px;
   color: var(--moss);
   font-size: 0.78rem;
   line-height: 1.55;
 }
 
-.globalProgress {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  margin-top: 23px;
-  color: var(--moss);
+.collectionBadge {
+  margin-top: 19px;
+  padding: 15px 0 14px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
-.globalProgress > div > span,
-.nextStep span {
+.collectionBadgeHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.collectionBadgeHeading span,
+.territoryItem small {
   display: block;
   font-size: 0.62rem;
   font-weight: 650;
@@ -514,53 +916,152 @@
   text-transform: uppercase;
 }
 
-.globalProgress strong {
+.collectionBadgeHeading strong {
   display: block;
-  margin-top: 4px;
+  margin-top: 5px;
   color: var(--forest-deep);
   font-family: var(--font-refuge-display), "Oswald", sans-serif;
-  font-size: 2rem;
+  font-size: 1.28rem;
   font-weight: 550;
 }
 
-.globalProgress > span {
-  font-size: 0.65rem;
-  font-weight: 600;
-}
-
-.nextStep {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-top: 23px;
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-inner);
-  background: var(--paper-muted);
-}
-
-.nextStep strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 0.82rem;
-}
-
-.nextStep p {
-  margin-top: 7px;
-  color: var(--moss);
-  font-size: 0.69rem;
-  line-height: 1.45;
-}
-
-.nextStep > svg {
-  width: 47px;
-  height: 47px;
+.collectionBadgeHeading > svg {
+  width: 42px;
+  height: 42px;
   flex: none;
-  padding: 10px;
-  border: 5px double rgba(35, 76, 57, 0.25);
+  padding: 9px;
+  border: 1px solid rgba(35, 76, 57, 0.22);
   border-radius: 50%;
   color: var(--forest);
+  opacity: 0.78;
+}
+
+.collectionProgressHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 14px 0 9px;
+}
+
+.collectionProgressHeading strong {
+  flex: none;
+  color: var(--terracotta);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 1rem;
+  font-weight: 560;
+}
+
+.collectionProgressHeading span {
+  max-width: 190px;
+  color: var(--moss);
+  font-size: 0.61rem;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.milestoneNote {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 11px;
+  color: var(--moss);
+  font-size: 0.59rem;
+}
+
+.milestoneNote > svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--terracotta);
+}
+
+.milestoneNote > span {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  text-transform: uppercase;
+}
+
+.milestoneNote strong {
+  overflow: hidden;
+  color: var(--forest-deep);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.milestoneNote time {
+  flex: none;
+  color: var(--moss);
+}
+
+.collectionTerritories {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.territoryItem {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px 10px 12px 0;
+  color: var(--moss);
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.territoryItem + .territoryItem {
+  padding-right: 0;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+
+.territoryItem > svg {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--forest);
+}
+
+.territoryItem small {
+  overflow: hidden;
+  color: var(--moss);
+  font-size: 0.49rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.territoryItem strong,
+.territoryItem span span {
+  display: block;
+}
+
+.territoryItem strong {
+  overflow: hidden;
+  margin-top: 4px;
+  color: var(--forest-deep);
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.territoryItem span span {
+  margin-top: 3px;
+  font-size: 0.58rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .territoryItem:hover {
+    color: var(--terracotta);
+    transform: translateY(-1px);
+  }
 }
 
 .textLink {
@@ -590,6 +1091,16 @@
 .textLink svg {
   width: 13px;
   height: 13px;
+  transition: transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .textLink:hover svg,
+  .cardHeading a:hover svg,
+  .storylineHeading > a:hover svg,
+  .storylineEmpty > a:hover svg {
+    transform: translateX(3px);
+  }
 }
 
 .outingsCard {
@@ -597,6 +1108,7 @@
   min-height: 310px;
   padding: 24px 26px 14px;
   border-radius: var(--radius-card);
+  animation: refuge-enter 520ms 260ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .cardHeading {
@@ -742,6 +1254,19 @@
     rgba(238, 231, 218, 0.96),
     rgba(229, 229, 211, 0.88)
   );
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+  animation: refuge-enter 520ms 310ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .challengeCard:hover {
+    border-color: rgba(47, 93, 70, 0.26);
+    box-shadow: 0 22px 42px -34px rgba(48, 68, 49, 0.44);
+    transform: translateY(-2px);
+  }
 }
 
 .challengeCard .sectionKicker {
@@ -926,6 +1451,11 @@
   min-height: 370px;
 }
 
+.storylineSkeleton {
+  grid-area: storyline;
+  min-height: 190px;
+}
+
 .outingsSkeleton {
   grid-area: outings;
   min-height: 270px;
@@ -971,6 +1501,23 @@
   }
 }
 
+@keyframes refuge-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.storylineCard,
+.storylineEmpty {
+  animation: refuge-enter 520ms 210ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
 @media (max-width: 1180px) {
   .statsStrip {
     grid-template-columns: repeat(4, 1fr);
@@ -1010,7 +1557,7 @@
 
 @media (max-width: 900px) {
   .intro {
-    min-height: 156px;
+    min-height: 206px;
   }
   .headerMountain {
     width: 60%;
@@ -1027,7 +1574,7 @@
     border-top: 1px solid var(--border);
   }
   .dashboardGrid {
-    grid-template-areas: "masterpiece" "challenge" "outings";
+    grid-template-areas: "masterpiece" "storyline" "challenge" "outings";
     grid-template-columns: minmax(0, 1fr);
   }
   .masterpieceCard {
@@ -1041,6 +1588,13 @@
   .masterpieceLinks {
     margin-top: 24px;
   }
+  .storylineTrack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 0;
+  }
+  .storylineTrack::before {
+    display: none;
+  }
   .challengeCard {
     min-height: 300px;
   }
@@ -1048,7 +1602,7 @@
 
 @media (max-width: 640px) {
   .intro {
-    min-height: 178px;
+    min-height: 214px;
     align-items: flex-start;
     padding: 10px 2px 20px;
   }
@@ -1068,10 +1622,33 @@
   .quickActions {
     gap: 6px;
   }
+  .actionContext {
+    margin-top: 13px;
+  }
+  .actionContext > p {
+    max-width: 320px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.62rem;
+  }
   .quickActions a {
     min-height: 34px;
     padding: 7px 10px;
     font-size: 0.65rem;
+  }
+  .quickActions .primaryAction {
+    width: 100%;
+    max-width: 310px;
+    justify-content: center;
+  }
+  .primaryAction > span {
+    min-width: 0;
+    white-space: normal;
+  }
+  .quickActions .secondaryAction {
+    min-height: 30px;
+    padding-inline: 4px;
   }
   .statsStrip {
     grid-template-columns: 1fr 1fr;
@@ -1102,6 +1679,66 @@
   .dashboardGrid {
     gap: 14px;
     margin-top: 14px;
+  }
+  .storylineHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+    padding: 20px;
+  }
+  .storylineTrack {
+    display: block;
+    padding: 20px;
+  }
+  .storylineTrack::before {
+    display: block;
+    top: 28px;
+    right: auto;
+    bottom: 29px;
+    left: 39px;
+    width: 1px;
+    height: auto;
+  }
+  .storyEvent {
+    display: grid;
+    min-height: 86px;
+    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 14px;
+    padding: 0 0 18px;
+  }
+  .storyEvent:last-child {
+    min-height: 66px;
+    padding-bottom: 0;
+  }
+  .storyEvent time {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 18px;
+  }
+  .storyEvent .storyMarker {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+  .storyCopy {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 1px;
+  }
+  .storyArrow {
+    display: none;
+  }
+  .storyCopy strong {
+    white-space: normal;
+  }
+  .storylineEmpty {
+    min-height: 230px;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 22px;
+  }
+  .storylineEmpty > a {
+    grid-column: 2;
+    justify-self: start;
   }
   .masterpieceCard {
     display: flex;
@@ -1138,15 +1775,27 @@
     padding: 24px;
   }
   .masterpieceProgress {
-    min-height: 330px;
+    min-height: 0;
   }
-  .globalProgress {
+  .collectionProgressHeading {
     align-items: flex-start;
+    flex-direction: column;
     gap: 16px;
   }
-  .globalProgress > span {
-    max-width: 125px;
-    text-align: right;
+  .collectionProgressHeading span {
+    max-width: none;
+    text-align: left;
+  }
+  .collectionTerritories {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .territoryItem,
+  .territoryItem + .territoryItem {
+    padding: 12px 0;
+    border-left: 0;
+  }
+  .territoryItem + .territoryItem {
+    border-top: 1px solid var(--border);
   }
   .masterpieceLinks {
     align-items: flex-start;
@@ -1196,20 +1845,66 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .introCopy,
+  .headerMountain,
+  .statsStrip,
+  .masterpieceCard,
+  .storylineCard,
+  .storylineEmpty,
+  .outingsCard,
+  .challengeCard {
+    animation: none;
+  }
+
   .masterpieceCard,
   .discoveryImage img,
   .discoveryStamp,
   .quickActions a,
   .outlineButton,
-  .outingRow {
+  .outingRow,
+  .statItem,
+  .statItem > svg,
+  .progressTrack span,
+  .storylineCard,
+  .storylineEmpty,
+  .challengeCard,
+  .textLink svg,
+  .cardHeading a svg,
+  .storylineHeading > a svg,
+  .storylineEmpty > a svg {
     transition: none;
+  }
+
+  .storyEvent,
+  .storyMarker,
+  .storyArrow {
+    transition: none;
+  }
+
+  .storyEvent:hover {
+    transform: none;
   }
 
   .masterpieceCard:hover .discoveryImage img,
   .masterpieceCard:hover .discoveryStamp {
     transform: none;
   }
+
+  .masterpieceCard:hover,
+  .storylineCard:hover,
+  .storylineEmpty:hover,
+  .challengeCard:hover,
+  .statItem:hover > svg,
+  .textLink:hover svg,
+  .cardHeading a:hover svg,
+  .storylineHeading > a:hover svg,
+  .storylineEmpty > a:hover svg {
+    transform: none;
+  }
   .panelSkeleton > span {
+    animation: none;
+  }
+  .primaryActionSkeleton span {
     animation: none;
   }
 }

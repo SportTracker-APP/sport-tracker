@@ -106,8 +106,18 @@ describe("createRefugeViewModel", () => {
     });
 
     expect(result.activityCount).toBe(0);
+    expect(result.welcomeMessage).toBe(
+      "Ton carnet est prêt à accueillir ses premières traces.",
+    );
     expect(result.summitCount).toBe(0);
     expect(result.latestSummit).toBeNull();
+    expect(result.primaryAction).toMatchObject({
+      kind: "sync",
+      contextLabel: "Carnet à compléter",
+      href: "/integrations/strava",
+      label: "Synchroniser mes dernières sorties",
+    });
+    expect(result.storyEvents).toEqual([]);
     expect(result.recentActivities).toEqual([]);
   });
 
@@ -125,12 +135,113 @@ describe("createRefugeViewModel", () => {
     expect(result.latestSummit?.name).toBe("Mont Veyrier");
     expect(result.recentActivities[0]?.distance).toBe("12,4 km");
     expect(result.nextBadge?.remainingLabel).toContain("9 sommets");
+    expect(result.nextBadge?.progressLabel).toBe("1 / 10 sommets");
+    expect(result.nextBadge?.progress).toBe(10);
+    expect(result.strongestMassif).toEqual({
+      name: "Annecy",
+      countLabel: "1 / 1 sommet",
+      progress: 100,
+    });
+    expect(result.nextZone).toBeNull();
+    expect(result.storyEvents.map((event) => event.kind)).toEqual([
+      "activity",
+      "summit",
+      "progress",
+    ]);
+    expect(result.storyEvents[0]).toMatchObject({
+      title: "Trail du Veyrier",
+      href: "/activites/activity-1",
+    });
+    expect(result.storyEvents.at(-1)?.title).toBe("100 % du carnet");
     expect(result.challenge.currentLabel).toBe("12,4 km");
   });
 
-  it("ignore les séances planifiées dans les statistiques", () => {
+  it("ajoute le dernier badge débloqué au fil du carnet", () => {
     const result = createRefugeViewModel({
-      activities: [createActivity({ status: "PLANNED" })],
+      activities: [createActivity()],
+      summits: [summit],
+      badges: [
+        {
+          ...badge,
+          id: "badge-unlocked",
+          name: "Premier Sommet",
+          unlocked: true,
+          unlockedAt: "2026-07-04T09:00:00.000Z",
+        },
+      ],
+      goals: [goal],
+    });
+
+    expect(result.storyEvents.map((event) => event.kind)).toEqual([
+      "activity",
+      "summit",
+      "badge",
+      "progress",
+    ]);
+    expect(result.storyEvents[2]).toMatchObject({
+      title: "Premier Sommet",
+      date: "4 juil 2026",
+      href: "/badges",
+    });
+    expect(result.latestMilestone).toEqual({
+      name: "Premier Sommet",
+      date: "4 juil 2026",
+    });
+  });
+
+  it("identifie le massif de tête et la prochaine zone à compléter", () => {
+    const result = createRefugeViewModel({
+      activities: [createActivity()],
+      summits: [
+        { ...summit, id: "bornes-1", massif: "Bornes" },
+        { ...summit, id: "bornes-2", massif: "Bornes" },
+        {
+          ...summit,
+          id: "bornes-3",
+          massif: "Bornes",
+          discovered: false,
+          latestDiscoveredAt: null,
+        },
+        { ...summit, id: "annecy-1", massif: "Annecy" },
+        {
+          ...summit,
+          id: "annecy-2",
+          massif: "Annecy",
+          discovered: false,
+          latestDiscoveredAt: null,
+        },
+      ],
+      badges: [
+        {
+          ...badge,
+          progress: { current: 8, target: 10, unit: "sommets" },
+        },
+      ],
+      goals: [goal],
+    });
+
+    expect(result.nextBadge).toMatchObject({
+      progressLabel: "8 / 10 sommets",
+      progress: 80,
+    });
+    expect(result.strongestMassif).toEqual({
+      name: "Bornes",
+      countLabel: "2 / 3 sommets",
+      progress: 67,
+    });
+    expect(result.nextZone).toEqual({
+      name: "Bornes",
+      countLabel: "2 / 3 sommets",
+      progress: 67,
+    });
+  });
+
+  it("ignore les séances planifiées dans les statistiques", () => {
+    const futureDate = new Date(Date.now() + 86_400_000).toISOString();
+    const result = createRefugeViewModel({
+      activities: [
+        createActivity({ status: "PLANNED", startedAt: futureDate }),
+      ],
       summits: [],
       badges: [],
       goals: [goal],
@@ -139,5 +250,74 @@ describe("createRefugeViewModel", () => {
     expect(result.activityCount).toBe(0);
     expect(result.recentActivities).toHaveLength(0);
     expect(result.challenge.progress).toBe(0);
+    expect(result.primaryAction).toMatchObject({
+      kind: "plan",
+      contextLabel: "Prochaine sortie",
+      href: "/calendrier",
+      label: "Préparer ma prochaine sortie",
+    });
+    expect(result.welcomeMessage).toBe(
+      "Ta prochaine aventure est déjà au programme.",
+    );
+  });
+
+  it("met une découverte récente au premier plan", () => {
+    const recentDiscovery = new Date(Date.now() - 86_400_000).toISOString();
+    const result = createRefugeViewModel({
+      activities: [createActivity()],
+      summits: [
+        {
+          ...summit,
+          latestDiscoveredAt: recentDiscovery,
+        },
+      ],
+      badges: [badge],
+      goals: [goal],
+    });
+
+    expect(result.primaryAction).toEqual({
+      kind: "discovery",
+      contextLabel: "Nouvelle découverte",
+      href: "/sommets",
+      label: "Voir ma nouvelle découverte",
+      description: "Mont Veyrier vient de rejoindre ton carnet.",
+    });
+    expect(result.welcomeMessage).toBe(
+      "Une nouvelle découverte vient d’enrichir ton histoire.",
+    );
+  });
+
+  it("propose de poursuivre une zone déjà commencée", () => {
+    const result = createRefugeViewModel({
+      activities: [createActivity()],
+      summits: [
+        {
+          ...summit,
+          id: "bornes-1",
+          massif: "Bornes",
+          latestDiscoveredAt: "2025-01-01T08:00:00.000Z",
+        },
+        {
+          ...summit,
+          id: "bornes-2",
+          massif: "Bornes",
+          discovered: false,
+          latestDiscoveredAt: null,
+        },
+      ],
+      badges: [badge],
+      goals: [goal],
+    });
+
+    expect(result.primaryAction).toEqual({
+      kind: "explore",
+      contextLabel: "Massif à poursuivre",
+      href: "/sommets",
+      label: "Continuer le massif Bornes",
+      description: "1 sommet sur 2 déjà révélé.",
+    });
+    expect(result.welcomeMessage).toBe(
+      "Ton carnet prend forme, massif après massif.",
+    );
   });
 });
