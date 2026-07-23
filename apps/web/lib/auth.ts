@@ -1,5 +1,13 @@
 import { api } from "./api";
 
+export interface AdminImpersonationContext {
+  sessionId: string;
+  adminId: string;
+  adminEmail: string;
+  adminFirstName: string;
+  expiresAt: string;
+}
+
 export interface AuthUser {
   id: string;
 
@@ -10,6 +18,8 @@ export interface AuthUser {
   role?: "USER" | "ADMIN";
 
   avatarUrl?: string | null;
+
+  impersonation?: AdminImpersonationContext | null;
 }
 
 export interface AuthResponse {
@@ -58,6 +68,17 @@ export async function login(
 }
 
 export async function logoutSession(): Promise<void> {
+  if (
+    typeof window !== "undefined" &&
+    window.sessionStorage.getItem("hovren:admin-impersonation-token")
+  ) {
+    try {
+      await api.post("/admin/impersonation/stop");
+    } catch {
+      // An expired delegated session must never prevent a regular logout.
+    }
+  }
+
   await api.post("/auth/logout");
 }
 
@@ -97,6 +118,22 @@ export async function resetPassword(
 
 export async function getMe(): Promise<AuthUser> {
   const { data } = await api.get<AuthUser>("/users/me");
+
+  return data;
+}
+
+export async function startAdminImpersonation(
+  userId: string,
+): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>(
+    `/admin/users/${userId}/impersonate`,
+  );
+
+  return data;
+}
+
+export async function stopAdminImpersonation(): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>("/admin/impersonation/stop");
 
   return data;
 }

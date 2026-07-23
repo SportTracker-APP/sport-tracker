@@ -156,6 +156,34 @@ describe("createRefugeViewModel", () => {
     expect(result.challenge.currentLabel).toBe("12,4 km");
   });
 
+  it("n'utilise jamais les médias Strava dans la mise en scène du Refuge", () => {
+    const stravaImage =
+      "https://example.supabase.co/storage/v1/object/public/strava/photo.jpg";
+    const result = createRefugeViewModel({
+      activities: [createActivity({ coverImageUrl: stravaImage })],
+      summits: [
+        {
+          ...summit,
+          imageUrl: stravaImage,
+          latestActivity: {
+            id: "activity-1",
+            title: "Trail du Veyrier",
+            sport: "TRAIL",
+            startedAt: "2026-07-03T08:00:00.000Z",
+            distance: 12.4,
+            elevationGain: 680,
+            coverImageUrl: stravaImage,
+          },
+        },
+      ],
+      badges: [badge],
+      goals: [goal],
+    });
+
+    expect(result.latestSummit?.imageUrl).not.toBe(stravaImage);
+    expect(result.recentActivities[0]?.imageUrl).not.toBe(stravaImage);
+  });
+
   it("ajoute le dernier badge débloqué au fil du carnet", () => {
     const result = createRefugeViewModel({
       activities: [createActivity()],

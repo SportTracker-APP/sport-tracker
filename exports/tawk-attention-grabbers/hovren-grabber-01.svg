@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
+  <g fill="#244B3A" font-family="Arial Narrow, Arial, sans-serif" font-size="8" font-weight="700" text-anchor="middle">
+    <text x="20.4" y="43" transform="rotate(-60 20.4 43)">B</text>
+    <text x="23.9" y="37.9" transform="rotate(-51.1 23.9 37.9)">E</text>
+    <text x="28.2" y="33.3" transform="rotate(-42.1 28.2 33.3)">S</text>
+    <text x="33.1" y="29.5" transform="rotate(-33.2 33.1 29.5)">O</text>
+    <text x="38.5" y="26.5" transform="rotate(-24.3 38.5 26.5)">I</text>
+    <text x="44.4" y="24.4" transform="rotate(-15.4 44.4 24.4)">N</text>
+    <text x="56.7" y="23" transform="rotate(2.5 56.7 23)">D</text>
+    <text x="62.9" y="23.8" transform="rotate(11.4 62.9 23.8)">’</text>
+    <text x="68.9" y="25.5" transform="rotate(20.4 68.9 25.5)">A</text>
+    <text x="74.6" y="28.1" transform="rotate(29.3 74.6 28.1)">I</text>
+    <text x="79.7" y="31.6" transform="rotate(38.2 79.7 31.6)">D</text>
+    <text x="84.3" y="35.8" transform="rotate(47.1 84.3 35.8)">E</text>
+    <text x="91.3" y="46.1" transform="rotate(65 91.3 46.1)">?</text>
+  </g>
+  <path d="M12 72 20 63l6 7 10-14 11 16" fill="none" stroke="#244B3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M11 82c20 4 35 2 49-5" fill="none" stroke="#C85B2F" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1 4" />
+  <circle cx="63" cy="75" r="2.4" fill="#C85B2F" />
+</svg>

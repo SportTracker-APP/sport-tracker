@@ -13,6 +13,7 @@ import {
   Gauge,
   KeyRound,
   Link2,
+  LogIn,
   LockKeyhole,
   Trash2,
   Search,
@@ -25,6 +26,7 @@ import {
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { api } from "@/lib/api";
+import { startAdminImpersonation } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
 
 interface AdminMetrics {
@@ -122,6 +124,7 @@ function getSyncFreshness(lastSynchronizationAt: string | null) {
 export default function AdminPage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
+  const setAuth = useAuthStore((state) => state.setAuth);
   const usersSectionRef = useRef<HTMLElement | null>(null);
 
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
@@ -136,6 +139,9 @@ export default function AdminPage() {
     Record<string, string>
   >({});
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+  const [impersonatingUserId, setImpersonatingUserId] = useState<string | null>(
+    null,
+  );
   const [createForm, setCreateForm] = useState({
     firstName: "",
     lastName: "",
@@ -409,6 +415,37 @@ export default function AdminPage() {
       setError("Impossible de supprimer cet utilisateur.");
     } finally {
       setDeletingUserId(null);
+    }
+  }
+
+  async function accessUserAccount(adminUser: AdminUser) {
+    if (
+      adminUser.id === user?.id ||
+      adminUser.role === "ADMIN" ||
+      adminUser.isBlocked
+    ) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Accéder au compte de ${adminUser.firstName} ${adminUser.lastName ?? ""} en mode administrateur ?\n\nTes actions seront exécutées comme si tu étais cet utilisateur. Une trace de sécurité minimale sera conservée côté administration.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setNotice(null);
+    setError(null);
+    setImpersonatingUserId(adminUser.id);
+
+    try {
+      const session = await startAdminImpersonation(adminUser.id);
+      setAuth(session.accessToken, session.user);
+      window.location.assign("/refuge");
+    } catch {
+      setError("Impossible d’accéder à ce compte en mode administrateur.");
+      setImpersonatingUserId(null);
     }
   }
 
@@ -844,6 +881,38 @@ export default function AdminPage() {
                             </div>
 
                             <div className="grid gap-3 md:grid-cols-2 xl:w-[460px]">
+                              <button
+                                type="button"
+                                disabled={
+                                  impersonatingUserId === adminUser.id ||
+                                  adminUser.id === user?.id ||
+                                  adminUser.role === "ADMIN" ||
+                                  adminUser.isBlocked
+                                }
+                                onClick={() =>
+                                  void accessUserAccount(adminUser)
+                                }
+                                className={`${buttonClass} border border-violet-400/30 bg-violet-500/12 text-violet-100 hover:bg-violet-500/20 md:col-span-2`}
+                                title={
+                                  adminUser.role === "ADMIN"
+                                    ? "L’accès délégué à un autre administrateur est interdit"
+                                    : adminUser.isBlocked
+                                      ? "Débloquez le compte avant d’y accéder"
+                                      : "Accéder à l’application comme cet utilisateur"
+                                }
+                              >
+                                <LogIn className="h-4 w-4" />
+                                {impersonatingUserId === adminUser.id
+                                  ? "Ouverture du compte..."
+                                  : adminUser.id === user?.id
+                                    ? "Compte actuel"
+                                    : adminUser.role === "ADMIN"
+                                      ? "Compte administrateur protégé"
+                                      : adminUser.isBlocked
+                                        ? "Compte bloqué"
+                                        : "Accéder au compte"}
+                              </button>
+
                               <select
                                 className={fieldClass}
                                 value={adminUser.role}

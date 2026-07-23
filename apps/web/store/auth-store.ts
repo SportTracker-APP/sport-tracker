@@ -1,27 +1,33 @@
 import { create } from "zustand";
 
-interface User {
-  id: string;
+import type { AuthUser } from "@/lib/auth";
 
-  firstName: string;
+const IMPERSONATION_STORAGE_KEY = "hovren:admin-impersonation";
+const IMPERSONATION_TOKEN_KEY = "hovren:admin-impersonation-token";
 
-  email: string;
+function syncImpersonationMarker(user: AuthUser | null) {
+  if (typeof window === "undefined") {
+    return;
+  }
 
-  role?: "USER" | "ADMIN";
+  if (user?.impersonation) {
+    window.sessionStorage.setItem(IMPERSONATION_STORAGE_KEY, "true");
+    return;
+  }
 
-  avatarUrl?: string | null;
+  window.sessionStorage.removeItem(IMPERSONATION_STORAGE_KEY);
 }
 
 interface AuthState {
   accessToken: string | null;
 
-  user: User | null;
+  user: AuthUser | null;
 
-  setAuth: (accessToken: string, user: User) => void;
+  setAuth: (accessToken: string, user: AuthUser) => void;
 
-  hydrateAuth: (accessToken: string, user: User) => void;
+  hydrateAuth: (accessToken: string, user: AuthUser) => void;
 
-  setUser: (user: User | null) => void;
+  setUser: (user: AuthUser | null) => void;
 
   logout: () => void;
 }
@@ -32,7 +38,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
 
   setAuth: (accessToken, user) => {
-    localStorage.setItem("accessToken", accessToken);
+    if (user.impersonation) {
+      sessionStorage.setItem(IMPERSONATION_TOKEN_KEY, accessToken);
+    } else {
+      localStorage.setItem("accessToken", accessToken);
+      sessionStorage.removeItem(IMPERSONATION_TOKEN_KEY);
+    }
+    syncImpersonationMarker(user);
 
     set({
       accessToken,
@@ -41,6 +53,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   hydrateAuth: (accessToken, user) => {
+    syncImpersonationMarker(user);
+
     set({
       accessToken,
       user,
@@ -48,6 +62,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   setUser: (user) => {
+    syncImpersonationMarker(user);
+
     set({
       user,
     });
@@ -55,6 +71,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem("accessToken");
+    sessionStorage.removeItem(IMPERSONATION_STORAGE_KEY);
+    sessionStorage.removeItem(IMPERSONATION_TOKEN_KEY);
 
     set({
       accessToken: null,

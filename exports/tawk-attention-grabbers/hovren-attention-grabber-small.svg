@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="346" height="130" viewBox="0 0 346 130">
+  <g fill="none" stroke="#244B3A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 55 28 35l15 17 20-29 23 32" />
+  </g>
+  <text
+    x="99"
+    y="61"
+    fill="#244B3A"
+    font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif"
+    font-size="31"
+    font-weight="700"
+  >Besoin d’aide ?</text>
+  <path
+    d="M101 80c57 0 108 2 147 10 28 6 46 14 67 27"
+    fill="none"
+    stroke="#C85B2F"
+    stroke-width="3"
+    stroke-linecap="round"
+  />
+  <circle cx="326" cy="121" r="6" fill="#C85B2F" />
+</svg>

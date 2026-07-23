@@ -21,9 +21,9 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Crête',
     coordinates: [6.18, 45.903],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Lac%20veyrier2.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/mont-veyrier.webp',
+    imageCredit: 'Photo : Yann Forget',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Lac_veyrier2.jpg',
   },
   {
     id: 'mont-baron',
@@ -33,9 +33,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Crête',
     coordinates: [6.181, 45.914],
-    imageUrl:
-      'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    imageCredit: 'Image montagne',
+    imageUrl: '/summits/mont-baron.webp',
+    imageCredit: 'Photo : Myrabella',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Chemin_mont_Veyrier_mont_Baron.jpg',
   },
   {
     id: 'semnoz',
@@ -45,9 +46,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Modérée',
     type: 'Sommet',
     coordinates: [6.104, 45.797],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Semnoz%20vu%20de%20menthon.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/semnoz.webp',
+    imageCredit: 'Photo : Didier',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Semnoz_vu_de_menthon.jpg',
   },
   {
     id: 'cret-de-chatillon',
@@ -57,9 +59,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Modérée',
     type: 'Belvédère',
     coordinates: [6.103, 45.797],
-    imageUrl:
-      'https://images.pexels.com/photos/67517/pexels-photo-67517.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    imageCredit: 'Image montagne',
+    imageUrl: '/summits/cret-de-chatillon.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Cr%C3%AAt_de_Ch%C3%A2tillon_@_Semnoz_(50933120682).jpg',
   },
   {
     id: 'roc-de-chere',
@@ -69,9 +72,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Facile',
     type: 'Belvédère',
     coordinates: [6.212, 45.844],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Roc%20de%20Ch%C3%A8re%20-%20Lac%20d%27Annecy.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/roc-de-chere.webp',
+    imageCredit: 'Photo : Florian Pépellin',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Roc_de_Ch%C3%A8re_et_lac_d%27Annecy_(printemps_2023).JPG',
   },
   {
     id: 'parmelan',
@@ -81,9 +85,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.235, 45.963],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Le%20Parmelan%20depuis%20Villaz%20%C3%A0%20l%27ouest.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/parmelan.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:T%C3%AAte_du_Parmelan_@_Villaz_(51105086198).jpg',
   },
   {
     id: 'la-tournette',
@@ -93,9 +98,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.287, 45.827],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/La%20Tournette%20%40%20Lake%20Annecy%20%40%20Saint-Jorioz%20%2850488455392%29.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/la-tournette.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:La_Tournette_@_Lake_Annecy_@_Saint-Jorioz_(50488455392).jpg',
   },
   {
     id: 'pointe-de-talamarche',
@@ -106,9 +112,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.25734, 45.85981],
-    imageUrl:
-      'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    imageCredit: 'Image montagne',
+    imageUrl: '/summits/pointe-de-talamarche.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Pointe_de_Talamarche_@_Hike_to_Lanfonnet_%26_Pointe_de_Talamarche_(15353800805).jpg',
   },
   {
     id: 'mont-lachat-de-thones',
@@ -118,9 +125,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.446, 45.958],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Mont%20Lachat%20de%20Th%C3%B4nes.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/mont-lachat-de-thones.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Mont_Lachat_(51015342921).jpg',
   },
   {
     id: 'aiguille-verte-bargy',
@@ -131,9 +139,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.432661, 45.982277],
-    imageUrl:
-      'https://images.pexels.com/photos/355241/pexels-photo-355241.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    imageCredit: 'Image montagne',
+    imageUrl: '/summits/aiguille-verte-bargy.webp',
+    imageCredit: 'Photo : Rémih',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Aiguille_Verte_@_Col_Sous_le_Buclon.jpg',
   },
   {
     id: 'le-buclon',
@@ -143,9 +152,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.445161, 45.98641],
-    imageUrl:
-      'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    imageCredit: 'Image montagne',
+    imageUrl: '/summits/le-buclon.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Le_Buclon_@_Le_Grand-Bornand_(51045092073).jpg',
   },
   {
     id: 'lanfonnet',
@@ -155,9 +165,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Arête',
     coordinates: [6.259, 45.842],
-    imageUrl:
-      'https://images.pexels.com/photos/1365425/pexels-photo-1365425.jpeg?auto=compress&cs=tinysrgb&w=1400',
-    imageCredit: 'Image montagne',
+    imageUrl: '/summits/lanfonnet.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Dents_de_Lanfon_%26_Lanfonnet_@_Saint-Jorioz_(50470892721).jpg',
   },
   {
     id: 'dent-de-lanfon',
@@ -167,9 +178,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Arête',
     coordinates: [6.251, 45.849],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Dents%20de%20Lanfon%20falaise%20Nord.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/dent-de-lanfon.webp',
+    imageCredit: 'Photo : Thomas Basset',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Dents_de_Lanfon_falaise_Nord.jpg',
   },
   {
     id: 'sulens',
@@ -179,9 +191,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Modérée',
     type: 'Sommet',
     coordinates: [6.362, 45.85],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Mont%20Sulens.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/sulens.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Montagne_de_Sulens_(51377181065).jpg',
   },
   {
     id: 'mont-charvin',
@@ -191,9 +204,9 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.41, 45.809],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Le_Mont_Charvin.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/mont-charvin.webp',
+    imageCredit: 'Photo : Nicolas Vigier',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Le_Mont_Charvin.jpg',
   },
   {
     id: 'pointe-percee',
@@ -203,9 +216,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.555, 45.955],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/La%20Pointe%20Perc%C3%A9ee.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/pointe-percee.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Pointe_Perc%C3%A9e_@_Aravis_@_Belv%C3%A9d%C3%A8re_@_Semnoz_(50936218957).jpg',
   },
   {
     id: 'tete-pelouse',
@@ -215,9 +229,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.481, 45.978],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/T%C3%AAte%20Pelouse.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/tete-pelouse.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:T%C3%AAte_Pelouse_@_La_Clusaz_(51199115282).jpg',
   },
   {
     id: 'la-sambuy',
@@ -227,9 +242,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.284, 45.692],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Pointe%20de%20la%20Sambuy.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/la-sambuy.webp',
+    imageCredit: 'Photo : Rémih',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Pointe_de_la_Sambuy.jpg',
   },
   {
     id: 'montagne-de-sous-dine',
@@ -239,9 +255,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Sommet',
     coordinates: [6.319, 46.024],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Montagne%20de%20Sous-Dine.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/montagne-de-sous-dine.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Montagne_de_Sous-Dine_@_Filli%C3%A8re_(51019671756).jpg',
   },
   {
     id: 'le-mole',
@@ -251,9 +268,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Modérée',
     type: 'Sommet',
     coordinates: [6.457, 46.106],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Le%20M%C3%B4le%20depuis%20Bonneville.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/le-mole.webp',
+    imageCredit: 'Photo : Guilhem Vellut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Le_M%C3%B4le_@_Bonneville_(50995766398).jpg',
   },
   {
     id: 'aiguille-du-midi',
@@ -263,9 +281,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.887, 45.878],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Aiguille%20du%20Midi%20from%20Chamonix.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/aiguille-du-midi.webp',
+    imageCredit: 'Photo : Tangopaso',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Aiguille_du_Midi_from_Chamonix.jpg',
   },
   {
     id: 'mont-blanc',
@@ -275,9 +294,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.865, 45.833],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Mont%20Blanc%20Aiguille.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/mont-blanc.webp',
+    imageCredit: 'Photo : Hseugut',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Mont_Blanc_Aiguille.jpg',
   },
   {
     id: 'le-brevent',
@@ -287,9 +307,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Difficile',
     type: 'Belvédère',
     coordinates: [6.837, 45.934],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Br%C3%A9vent%20Depuis%20Chamonix%2019082008.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/le-brevent.webp',
+    imageCredit: 'Photo : Franck Langlois',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Br%C3%A9vent_Depuis_Chamonix_19082008.jpg',
   },
   {
     id: 'aiguille-verte',
@@ -300,8 +321,9 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Expert',
     type: 'Sommet',
     coordinates: [6.969, 45.934],
-    imageUrl:
-      'https://commons.wikimedia.org/wiki/Special:FilePath/Aiguille%20Verte%20from%20Aiguille%20du%20Midi.jpg',
-    imageCredit: 'Wikimedia Commons',
+    imageUrl: '/summits/aiguille-verte.webp',
+    imageCredit: 'Photo : Jacek Rużyczka',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Aiguille_Verte_depuis_l%27Aiguille_du_Midi.jpg',
   },
 ];

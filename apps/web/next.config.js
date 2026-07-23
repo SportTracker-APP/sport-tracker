@@ -9,7 +9,7 @@ const cspReportOnly = [
   "script-src 'self' 'unsafe-inline' https://api.mapbox.com",
   "style-src 'self' 'unsafe-inline' https://api.mapbox.com",
   `connect-src 'self' ${apiUrl} https://api.mapbox.com https://events.mapbox.com`,
-  "img-src 'self' data: blob: https://*.supabase.co https://api.mapbox.com https://*.tiles.mapbox.com",
+  "img-src 'self' data: blob: https://*.supabase.co https://images.pexels.com https://commons.wikimedia.org https://upload.wikimedia.org https://dgtzuqphqg23d.cloudfront.net https://api.mapbox.com https://*.tiles.mapbox.com",
   "worker-src 'self' blob:",
 ].join("; ");
 
@@ -20,6 +20,22 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "hkzkzprcofhanjendhct.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+      },
+      {
+        protocol: "https",
+        hostname: "commons.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "dgtzuqphqg23d.cloudfront.net",
       },
     ],
   },

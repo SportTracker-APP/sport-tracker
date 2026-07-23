@@ -59,12 +59,46 @@ model User {
 
   badges UserBadge[]
 
+  impersonationSessionsStarted AdminImpersonationSession[] @relation("AdminImpersonationAdmin")
+
+  impersonationSessionsReceived AdminImpersonationSession[] @relation("AdminImpersonationTarget")
+
   // DATES
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
 
   stravaConnection StravaConnection?
+}
+
+model AdminImpersonationSession {
+  id String @id @default(cuid())
+
+  adminUserId String?
+
+  targetUserId String?
+
+  adminEmail String
+
+  targetEmail String
+
+  startedAt DateTime @default(now())
+
+  expiresAt DateTime
+
+  endedAt DateTime?
+
+  ipAddress String?
+
+  userAgent String?
+
+  adminUser User? @relation("AdminImpersonationAdmin", fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  targetUser User? @relation("AdminImpersonationTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([adminUserId, startedAt])
+  @@index([targetUserId, startedAt])
+  @@index([expiresAt])
 }
 
 model PasswordResetToken {

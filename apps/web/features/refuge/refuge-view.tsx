@@ -367,7 +367,7 @@ export default function RefugeView() {
                     <div className={styles.discoveryImage}>
                       <Image
                         src={viewModel.latestSummit.imageUrl}
-                        alt={`Paysage autour de ${viewModel.latestSummit.name}`}
+                        alt={`Paysage de montagne sélectionné pour ${viewModel.latestSummit.name}`}
                         fill
                         sizes="(max-width: 900px) 100vw, 48vw"
                         className="object-cover"

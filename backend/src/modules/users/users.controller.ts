@@ -15,8 +15,13 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getProfile(@Req() req: AuthenticatedRequest) {
-    return this.usersService.getProfile(req.user.id);
+  async getProfile(@Req() req: AuthenticatedRequest) {
+    const profile = await this.usersService.getProfile(req.user.id);
+
+    return {
+      ...profile,
+      impersonation: req.user.impersonation ?? null,
+    };
   }
 
   @UseGuards(JwtAuthGuard)

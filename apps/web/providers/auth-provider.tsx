@@ -5,7 +5,11 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { BrandMark } from "@/features/auth/login/components/login-hero";
-import { AUTH_SESSION_EXPIRED_EVENT } from "@/lib/api";
+import { AdminImpersonationFrame } from "@/components/admin/admin-impersonation-banner";
+import {
+  AUTH_IDENTITY_CHANGED_EVENT,
+  AUTH_SESSION_EXPIRED_EVENT,
+} from "@/lib/api";
 import { getMe } from "@/lib/auth";
 
 import { useAuthStore } from "@/store/auth-store";
@@ -34,6 +38,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const hydrateAuth = useAuthStore((state) => state.hydrateAuth);
 
   const logout = useAuthStore((state) => state.logout);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -54,6 +59,36 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, [logout, router]);
 
   useEffect(() => {
+    const handleIdentityChanged = (event: Event) => {
+      const identityEvent = event as CustomEvent<{
+        accessToken: string;
+        user: {
+          id: string;
+          firstName: string;
+          email: string;
+          role?: "USER" | "ADMIN";
+          avatarUrl?: string | null;
+        };
+      }>;
+
+      setAuth(identityEvent.detail.accessToken, identityEvent.detail.user);
+      router.replace("/admin");
+    };
+
+    window.addEventListener(
+      AUTH_IDENTITY_CHANGED_EVENT,
+      handleIdentityChanged,
+    );
+
+    return () => {
+      window.removeEventListener(
+        AUTH_IDENTITY_CHANGED_EVENT,
+        handleIdentityChanged,
+      );
+    };
+  }, [router, setAuth]);
+
+  useEffect(() => {
     const initializeAuth = async () => {
       try {
         if (shouldBypassAuthGate) {
@@ -62,7 +97,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
           return;
         }
 
-        const accessToken = localStorage.getItem("accessToken");
+        const accessToken =
+          sessionStorage.getItem("hovren:admin-impersonation-token") ??
+          localStorage.getItem("accessToken");
 
         // PAS CONNECTÉ
         if (!accessToken) {
@@ -79,7 +116,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         const currentUser = await getMe();
 
         hydrateAuth(
-          localStorage.getItem("accessToken") ?? accessToken,
+          sessionStorage.getItem("hovren:admin-impersonation-token") ??
+            localStorage.getItem("accessToken") ??
+            accessToken,
           currentUser,
         );
 
@@ -120,5 +159,5 @@ export function AuthProvider({ children }: PropsWithChildren) {
     );
   }
 
-  return children;
+  return <AdminImpersonationFrame>{children}</AdminImpersonationFrame>;
 }

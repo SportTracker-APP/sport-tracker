@@ -1,0 +1,105 @@
+.shell {
+  --admin-mode-banner-height: 48px;
+}
+
+.shell :global(.app-shell) {
+  height: calc(100dvh - var(--admin-mode-banner-height));
+}
+
+.banner {
+  position: relative;
+  z-index: 1200;
+  display: flex;
+  min-height: var(--admin-mode-banner-height);
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  background: #c8512e;
+  padding: 7px 20px;
+  color: #fffaf0;
+  box-shadow: 0 8px 24px rgba(78, 31, 16, 0.2);
+}
+
+.message {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.label {
+  margin-right: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 32px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 6px;
+  background: rgba(91, 30, 13, 0.18);
+  padding: 5px 11px;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.button:hover {
+  background: rgba(91, 30, 13, 0.32);
+  transform: translateY(-1px);
+}
+
+.button:focus-visible {
+  outline: 2px solid #fffaf0;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .shell {
+    --admin-mode-banner-height: 64px;
+  }
+
+  .banner {
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 12px;
+  }
+
+  .message {
+    font-size: 11px;
+  }
+
+  .label {
+    display: block;
+    margin: 0 0 1px;
+    font-size: 9px;
+  }
+
+  .buttonText {
+    display: none;
+  }
+
+  .button {
+    width: 34px;
+    padding: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+
+  .button:hover {
+    transform: none;
+  }
+}

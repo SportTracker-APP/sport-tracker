@@ -6,6 +6,7 @@ import {
   selectPrimaryGoal,
 } from "@/lib/goal-progress";
 import type { Goal } from "@/lib/goals";
+import { getEditorialMountainImage } from "@/lib/mountain-visuals";
 import type { SummitBadge } from "@/lib/summit-api";
 import {
   getMassifProgress,
@@ -117,18 +118,6 @@ function getActivityPlace(activity: Activity) {
   return activity.city || activity.country || "Trace HOVREN";
 }
 
-function getSafeImageUrl(value: string | null | undefined) {
-  if (!value) {
-    return "/landing/alpine-forest-card.png";
-  }
-
-  if (value.startsWith("/") || value.includes(".supabase.co/")) {
-    return value;
-  }
-
-  return "/landing/alpine-forest-card.png";
-}
-
 function mapActivity(activity: Activity): RefugeActivity {
   return {
     id: activity.id,
@@ -137,7 +126,7 @@ function mapActivity(activity: Activity): RefugeActivity {
     date: formatDate(activity.startedAt),
     distance: `${numberFormatter.format(activity.distance || 0)} km`,
     elevation: `${integerFormatter.format(activity.elevationGain || 0)} m D+`,
-    imageUrl: getSafeImageUrl(activity.coverImageUrl),
+    imageUrl: getEditorialMountainImage(`refuge-activity:${activity.id}`),
   };
 }
 
@@ -464,8 +453,8 @@ export function createRefugeViewModel(input: {
           altitude: `${integerFormatter.format(latestSummit.altitude)} m`,
           massif: latestSummit.massif,
           description: `Une trace qui enrichit ton carnet dans le massif ${latestSummit.massif}.`,
-          imageUrl: getSafeImageUrl(
-            latestSummit.imageUrl || latestSummit.latestActivity?.coverImageUrl,
+          imageUrl: getEditorialMountainImage(
+            `refuge-summit:${latestSummit.id}:${latestSummit.massif}`,
           ),
         }
       : null,

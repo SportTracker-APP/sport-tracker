@@ -3,10 +3,16 @@ import { expect, test } from "@playwright/test";
 const genericConfirmation =
   "Si un compte correspond à cette adresse, un email de réinitialisation a été envoyé.";
 
+test.beforeEach(async ({ page }) => {
+  await page.route(/^https:\/\/(?:[^/]+\.)?tawk\.to\//, async (route) =>
+    route.abort(),
+  );
+});
+
 test("la connexion valide les champs obligatoires", async ({ page }) => {
   await page.goto("/login");
 
-  await page.getByRole("button", { name: "Se connecter" }).click();
+  await page.getByRole("button", { name: "Ouvrir mon carnet" }).click();
 
   await expect(page.getByText("Email invalide")).toBeVisible();
   await expect(page.getByText("Minimum 6 caractères")).toBeVisible();
@@ -27,7 +33,7 @@ test("un utilisateur peut demander un lien depuis la card de connexion", async (
   await page.getByRole("button", { name: "Mot de passe oublié ?" }).click();
 
   await expect(
-    page.getByRole("heading", { name: "Mot de passe oublié" }),
+    page.getByRole("heading", { name: "Retrouve ton accès" }),
   ).toBeVisible();
 
   await page.getByPlaceholder("ton@email.com").fill("randonneur@example.test");
@@ -80,6 +86,13 @@ test("un sommet découvert peut être retiré après confirmation sur mobile", a
   await page.addInitScript(() => {
     window.localStorage.setItem("accessToken", "e2e-access-token");
     window.localStorage.setItem(
+      "hovren.summitCelebrations.v1",
+      JSON.stringify({
+        initialized: true,
+        seenEventKeys: ["summit-discovery:lanfonnet:activity-1"],
+      }),
+    );
+    window.localStorage.setItem(
       "hovren.summitCelebrations.dashboardEvent.v1",
       JSON.stringify({
         key: "summit-discovery:lanfonnet:activity-1",
@@ -131,6 +144,11 @@ test("un sommet découvert peut être retiré après confirmation sur mobile", a
   });
 
   await page.goto("/sommets");
+  const summitActions = page.locator(
+    'summary[aria-label="Actions pour Lanfonnet"]',
+  );
+  await summitActions.click();
+  await expect(summitActions.locator("..")).toHaveAttribute("open", "");
   await page
     .getByRole("button", { name: "Retirer Lanfonnet de mes découvertes" })
     .click();

@@ -1,0 +1,66 @@
+.launcher {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  color: #fffaf0;
+  cursor: pointer;
+  background: var(--refuge-terracotta, #c85b2f);
+  border: 1px solid rgb(118 47 25 / 24%);
+  border-radius: 50%;
+  box-shadow: 0 12px 28px rgb(79 41 24 / 22%);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.launcher svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.9;
+}
+
+.launcher:hover {
+  background: var(--refuge-terracotta-hover, #aa4325);
+  box-shadow: 0 15px 32px rgb(79 41 24 / 27%);
+  transform: translateY(-2px);
+}
+
+.launcher:focus-visible {
+  outline: 3px solid rgb(47 93 70 / 32%);
+  outline-offset: 4px;
+}
+
+.launcher:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 767px) {
+  .launcher {
+    right: 14px;
+    bottom: 92px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .launcher svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher {
+    transition: none;
+  }
+
+  .launcher:hover,
+  .launcher:active {
+    transform: none;
+  }
+}
