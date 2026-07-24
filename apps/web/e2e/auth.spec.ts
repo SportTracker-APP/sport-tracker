@@ -45,6 +45,38 @@ test("un utilisateur peut demander un lien depuis la card de connexion", async (
   ).toBeVisible();
 });
 
+test("la validation email utilise le carnet HOVREN actuel", async ({
+  page,
+}) => {
+  await page.route("**/users/me", async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "Unauthorized" }),
+    });
+  });
+  await page.route("**/auth/verify-email**", async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "Invalid verification token" }),
+    });
+  });
+
+  await page.goto("/verify-email?token=expired-token");
+
+  await expect(
+    page.getByRole("heading", { name: "Lien invalide" }),
+  ).toBeVisible();
+  await expect(page.getByText("Validation interrompue")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Retour à la connexion" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Retrouve ton carnet outdoor" }),
+  ).toBeVisible();
+});
+
 test("un sommet découvert peut être retiré après confirmation sur mobile", async ({
   page,
 }) => {

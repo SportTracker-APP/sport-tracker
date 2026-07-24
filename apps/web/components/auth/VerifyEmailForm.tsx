@@ -7,18 +7,21 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { CheckCircle2, Loader2, ShieldAlert } from "lucide-react";
 
+import { BrandMark } from "@/features/auth/login/components/login-hero";
 import { verifyEmail } from "@/lib/auth";
 
 import { useAuthStore } from "@/store/auth-store";
+
+import styles from "@/features/auth/login/login.module.css";
+
+type VerificationStatus = "loading" | "success" | "error";
 
 export function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setAuth = useAuthStore((state) => state.setAuth);
 
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading",
-  );
+  const [status, setStatus] = useState<VerificationStatus>("loading");
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -56,54 +59,94 @@ export function VerifyEmailForm() {
     };
   }, [router, searchParams, setAuth]);
 
+  return <VerificationPanel status={status} />;
+}
+
+export function VerifyEmailPending() {
+  return <VerificationPanel status="loading" />;
+}
+
+function VerificationPanel({ status }: { status: VerificationStatus }) {
+  const isError = status === "error";
+  const isSuccess = status === "success";
+
   return (
-    <div className="app-auth-card rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
-      <div className="mb-8 space-y-3 text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-violet-500/20">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500">
-            {status === "error" ? (
-              <ShieldAlert className="h-6 w-6 text-white" />
-            ) : status === "success" ? (
-              <CheckCircle2 className="h-6 w-6 text-white" />
-            ) : (
-              <Loader2 className="h-6 w-6 animate-spin text-white" />
-            )}
-          </div>
-        </div>
+    <section
+      className={`${styles.loginCard} ${styles.verificationCard}`}
+      aria-live="polite"
+      aria-busy={status === "loading"}
+    >
+      <div className={styles.mobileBrand}>
+        <BrandMark />
+        <span>
+          HOVREN<span>.fr</span>
+        </span>
+      </div>
 
-        <h2 className="text-4xl font-bold tracking-tight text-white">
-          {status === "error"
+      <div
+        className={`${styles.verificationSeal} ${
+          isError
+            ? styles.verificationSealError
+            : isSuccess
+              ? styles.verificationSealSuccess
+              : styles.verificationSealLoading
+        }`}
+        aria-hidden="true"
+      >
+        {isError ? <ShieldAlert /> : isSuccess ? <CheckCircle2 /> : <Loader2 />}
+      </div>
+
+      <div className={`${styles.formHeader} ${styles.verificationHeader}`}>
+        <span className={styles.formEyebrow}>
+          {isError
+            ? "Validation interrompue"
+            : isSuccess
+              ? "Carnet activé"
+              : "Dernière étape"}
+        </span>
+        <h2>
+          {isError
             ? "Lien invalide"
-            : status === "success"
+            : isSuccess
               ? "Email vérifié"
-              : "Vérification..."}
+              : "Ouverture du carnet"}
         </h2>
-
-        <p className="text-zinc-400">
-          {status === "error"
+        <p>
+          {isError
             ? "Ce lien est expiré ou a déjà été utilisé."
-            : status === "success"
+            : isSuccess
               ? "Ton compte est activé. Redirection en cours."
-              : "Nous activons ton compte."}
+              : "Nous sécurisons ton accès et activons ton carnet."}
         </p>
       </div>
 
-      {status === "error" && (
-        <div className="space-y-5">
-          <div className="app-auth-alert app-auth-alert-error">
+      {status === "loading" && (
+        <div className={styles.verificationProgress} aria-hidden="true">
+          <span />
+        </div>
+      )}
+
+      {isSuccess && (
+        <div
+          className={`${styles.statusMessage} ${styles.statusSuccess} ${styles.verificationMessage}`}
+        >
+          Ton histoire outdoor peut commencer.
+        </div>
+      )}
+
+      {isError && (
+        <div className={styles.verificationActions}>
+          <div
+            className={`${styles.statusMessage} ${styles.statusError} ${styles.verificationMessage}`}
+          >
             Impossible de vérifier cette adresse email.
           </div>
 
-          <p className="text-center text-sm text-zinc-500">
-            <Link
-              href="/login"
-              className="text-violet-400 transition hover:text-violet-300"
-            >
-              Retour à la connexion
-            </Link>
-          </p>
+          <Link href="/login" className={styles.verificationLink}>
+            Retour à la connexion
+          </Link>
         </div>
       )}
-    </div>
+    </section>
   );
 }

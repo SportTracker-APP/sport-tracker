@@ -33,7 +33,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const pathname = usePathname();
   const isPublicRoute = publicRoutes.includes(pathname);
-  const shouldBypassAuthGate = isPublicRoute && !authEntryRoutes.includes(pathname);
+  const shouldBypassAuthGate =
+    isPublicRoute && !authEntryRoutes.includes(pathname);
 
   const hydrateAuth = useAuthStore((state) => state.hydrateAuth);
 
@@ -75,10 +76,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       router.replace("/admin");
     };
 
-    window.addEventListener(
-      AUTH_IDENTITY_CHANGED_EVENT,
-      handleIdentityChanged,
-    );
+    window.addEventListener(AUTH_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
 
     return () => {
       window.removeEventListener(
@@ -145,15 +143,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
   if (isLoading && !shouldBypassAuthGate) {
     return (
       <div className="app-auth-loading flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="app-auth-loading-logo relative mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl">
-            <div className="absolute inset-2 animate-pulse rounded-2xl border border-current opacity-30" />
+        <div
+          className="app-auth-loading-sheet"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="app-auth-loading-brand">
             <BrandMark />
+            <p>
+              HOVREN<span>.fr</span>
+            </p>
           </div>
-          <p className="mt-4 text-sm font-semibold">
-            HOVREN<span>.fr</span>
-          </p>
-          <p className="mt-1 text-xs">Ouverture de ton carnet...</p>
+          <div className="app-auth-loading-trail" aria-hidden="true">
+            <span />
+          </div>
+          <p className="app-auth-loading-copy">Ouverture de ton carnet...</p>
         </div>
       </div>
     );

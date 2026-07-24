@@ -495,11 +495,10 @@
   min-height: 42px !important;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--refuge-border) !important;
+  border: 1px solid var(--refuge-border);
   border-radius: 13px;
-  background: var(--refuge-paper-muted) !important;
-  color: var(--refuge-forest) !important;
-  box-shadow: none !important;
+  background: var(--refuge-paper-muted);
+  color: var(--refuge-forest);
   transition:
     border-color 180ms ease,
     background-color 180ms ease,
@@ -515,13 +514,6 @@
 .mobileTrigger:focus-visible {
   outline: 2px solid rgba(200, 91, 47, 0.58);
   outline-offset: 3px;
-}
-
-:global(html.sport-theme-nature) .mobileTrigger {
-  border-color: var(--refuge-border) !important;
-  background: var(--refuge-paper-muted) !important;
-  color: var(--refuge-forest) !important;
-  box-shadow: none !important;
 }
 
 .mobileSheet {
@@ -549,17 +541,6 @@
   font-family: var(--font-mobile-nav-body), "Work Sans", sans-serif;
 }
 
-.mobileSheet[data-variant="refuge"] {
-  top: 72px !important;
-  height: calc(100dvh - 72px) !important;
-}
-
-:global(html.sport-theme-nature)
-  .mobileSheet.mobileSheet[data-variant="refuge"] {
-  top: 72px !important;
-  height: calc(100dvh - 72px) !important;
-}
-
 .mobileSheet::before {
   position: absolute;
   inset: 0;
@@ -571,11 +552,6 @@
   background-size: 18px 18px;
   content: "";
   pointer-events: none;
-}
-
-.mobileSheet::after {
-  display: none !important;
-  content: none !important;
 }
 
 :global(html.sport-theme-nature) .mobileSheet {
@@ -763,7 +739,7 @@
   border-color: var(--mobile-border) !important;
   background: var(--mobile-paper-muted) !important;
   color: var(--mobile-forest-deep) !important;
-  box-shadow: inset 3px 0 0 var(--mobile-terracotta) !important;
+  box-shadow: inset 3px 0 0 var(--mobile-terracotta);
 }
 
 .mobileNavItemActive svg {
@@ -823,17 +799,6 @@
   .mobileSheet {
     top: 5rem !important;
     height: calc(100dvh - 5rem) !important;
-  }
-
-  .mobileSheet[data-variant="refuge"] {
-    top: 72px !important;
-    height: calc(100dvh - 72px) !important;
-  }
-
-  :global(html.sport-theme-nature)
-    .mobileSheet.mobileSheet[data-variant="refuge"] {
-    top: 72px !important;
-    height: calc(100dvh - 72px) !important;
   }
 }
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Oswald, Work_Sans } from "next/font/google";
 
 import {
   Activity,
@@ -16,6 +17,7 @@ import {
   Mountain,
   ShieldCheck,
   Settings,
+  X,
 } from "lucide-react";
 
 import {
@@ -28,6 +30,16 @@ import {
 } from "@/components/ui/sheet";
 import { useAuthStore } from "@/store/auth-store";
 import refugeShell from "./refuge-shell.module.css";
+
+const mobileDisplay = Oswald({
+  subsets: ["latin"],
+  variable: "--font-mobile-nav-display",
+});
+
+const mobileBody = Work_Sans({
+  subsets: ["latin"],
+  variable: "--font-mobile-nav-body",
+});
 
 const navigationLinks = [
   {
@@ -137,26 +149,11 @@ export function MobileSidebar({ variant = "default" }: MobileSidebarProps) {
             <Link
               href={link.href}
               aria-current={isActive ? "page" : undefined}
-              className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:outline-none ${
-                variant === "refuge" ? refugeShell.mobileNavItem : ""
-              } ${
-                isActive
-                  ? variant === "refuge"
-                    ? refugeShell.mobileNavItemActive
-                    : "border border-white/[0.08] bg-white/[0.07] text-white"
-                  : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+              className={`${refugeShell.mobileNavItem} ${
+                isActive ? refugeShell.mobileNavItemActive : ""
               }`}
             >
-              <span
-                className={`h-5 w-1 rounded-full ${
-                  isActive
-                    ? variant === "refuge"
-                      ? "bg-[#c8522f]"
-                      : "bg-violet-400"
-                    : "bg-transparent"
-                }`}
-              />
-              <Icon size={20} className="shrink-0" />
+              <Icon size={20} aria-hidden="true" />
               <span className="truncate">{link.label}</span>
             </Link>
           </SheetClose>
@@ -168,9 +165,7 @@ export function MobileSidebar({ variant = "default" }: MobileSidebarProps) {
       <SheetTrigger asChild>
         <button
           type="button"
-          className={`app-mobile-menu-trigger flex min-h-11 min-w-11 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900 p-3 text-zinc-300 transition-colors hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-emerald-400/70 focus-visible:outline-none lg:hidden ${
-            variant === "refuge" ? refugeShell.mobileTrigger : ""
-          }`}
+          className={`app-mobile-menu-trigger ${refugeShell.mobileTrigger}`}
         >
           <span className="sr-only">Ouvrir le menu</span>
           <Menu size={20} />
@@ -179,83 +174,92 @@ export function MobileSidebar({ variant = "default" }: MobileSidebarProps) {
 
       <SheetContent
         side="left"
-        className={`app-mobile-sidebar !fixed !top-16 !bottom-0 !left-0 w-[min(22rem,calc(100vw-1rem))] border-zinc-800 bg-black p-0 ${
-          variant === "refuge" ? refugeShell.mobileSheet : ""
-        }`}
+        showCloseButton={false}
+        data-variant={variant}
+        className={`app-mobile-sidebar ${refugeShell.mobileSheet} ${mobileDisplay.variable} ${mobileBody.variable}`}
       >
-        <div className="flex h-full flex-col">
-          {/* Logo */}
-          <SheetHeader
-            className={`border-b border-zinc-800 p-5 pb-4 ${
-              variant === "refuge" ? refugeShell.mobileSheetHeader : ""
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <div className="app-brand-logo flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
-                <Mountain
-                  className={`h-5 w-5 ${
-                    variant === "refuge" ? "text-[#234c39]" : "text-white"
-                  }`}
+        <div className={refugeShell.mobileSheetInner}>
+          <SheetHeader className={refugeShell.mobileSheetHeader}>
+            <Link
+              href="/refuge"
+              className={refugeShell.mobileBrand}
+              aria-label="HOVREN - Refuge"
+            >
+              <svg
+                className={refugeShell.mobileBrandMark}
+                viewBox="0 0 48 34"
+                aria-hidden="true"
+                fill="none"
+              >
+                <path
+                  d="M3 30 17 5l8 14 6-10 14 21"
+                  stroke="currentColor"
+                  strokeWidth="3"
                 />
-              </div>
-
-              <div>
-                <SheetTitle
-                  className={`text-xl font-extrabold tracking-normal text-white ${
-                    variant === "refuge" ? "!text-[#173528]" : ""
-                  }`}
-                >
-                  HOVREN{variant === "refuge" ? ".fr" : ""}
+              </svg>
+              <span>
+                <SheetTitle className={refugeShell.mobileBrandName}>
+                  HOVREN<em>.fr</em>
                 </SheetTitle>
+                <span className={refugeShell.mobileBrandTagline}>
+                  Carnet outdoor intelligent
+                </span>
+              </span>
+            </Link>
 
-                <p className="mt-1 text-xs text-zinc-500">
-                  Sommets, traces, souvenirs.
-                </p>
-              </div>
-            </div>
+            <SheetClose asChild>
+              <button
+                type="button"
+                className={refugeShell.mobileClose}
+                aria-label="Fermer le menu"
+              >
+                <X size={19} aria-hidden="true" />
+              </button>
+            </SheetClose>
           </SheetHeader>
 
-          {/* Navigation */}
-          <nav className="flex-1 space-y-5 overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-            <div>
+          <nav className={refugeShell.mobileNav} aria-label="Navigation mobile">
+            <section className={refugeShell.mobileNavSection}>
               <p
-                className={`mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase ${variant === "refuge" ? refugeShell.mobileNavLabel : ""}`}
+                className={`${refugeShell.mobileNavLabel} ${refugeShell.mobileNavLabelFirst}`}
               >
                 Principal
               </p>
-              <div className="space-y-1">{renderLinks(navigationLinks)}</div>
-            </div>
+              <div className={refugeShell.mobileNavList}>
+                {renderLinks(navigationLinks)}
+              </div>
+            </section>
 
-            <div>
-              <p
-                className={`mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase ${variant === "refuge" ? refugeShell.mobileNavLabel : ""}`}
-              >
-                Secondaire
-              </p>
-              <div className="space-y-1">{renderLinks(secondaryLinks)}</div>
-            </div>
+            <section className={refugeShell.mobileNavSection}>
+              <p className={refugeShell.mobileNavLabel}>Secondaire</p>
+              <div className={refugeShell.mobileNavList}>
+                {renderLinks(secondaryLinks)}
+              </div>
+            </section>
 
-            <div>
-              <p
-                className={`mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase ${variant === "refuge" ? refugeShell.mobileNavLabel : ""}`}
-              >
-                Connexions
-              </p>
-              <div className="space-y-1">{renderLinks(connectionLinks)}</div>
-            </div>
+            <section className={refugeShell.mobileNavSection}>
+              <p className={refugeShell.mobileNavLabel}>Connexions</p>
+              <div className={refugeShell.mobileNavList}>
+                {renderLinks(connectionLinks)}
+              </div>
+            </section>
 
             {user?.role === "ADMIN" ? (
-              <div>
-                <p
-                  className={`mb-2 px-4 text-[0.66rem] font-semibold tracking-[0.22em] text-zinc-600 uppercase ${variant === "refuge" ? refugeShell.mobileNavLabel : ""}`}
-                >
-                  Administration
-                </p>
-                <div className="space-y-1">
+              <section className={refugeShell.mobileNavSection}>
+                <p className={refugeShell.mobileNavLabel}>Administration</p>
+                <div className={refugeShell.mobileNavList}>
                   {renderLinks(administrationLinks)}
                 </div>
-              </div>
+              </section>
             ) : null}
+
+            <div className={refugeShell.mobileSidebarFooter}>
+              <div
+                className={refugeShell.mobileSidebarLandscape}
+                aria-hidden="true"
+              />
+              <p>Pensé dans les Alpes françaises.</p>
+            </div>
           </nav>
         </div>
       </SheetContent>
