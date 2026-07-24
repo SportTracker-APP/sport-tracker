@@ -17,7 +17,6 @@ import {
   LockKeyhole,
   Trash2,
   Search,
-  ShieldCheck,
   Sparkles,
   TrendingUp,
   UserPlus,
@@ -28,6 +27,8 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { api } from "@/lib/api";
 import { startAdminImpersonation } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
+
+import styles from "./admin.module.css";
 
 interface AdminMetrics {
   totalUsers: number;
@@ -61,12 +62,6 @@ type Signal = {
   caption: string;
   progress: number;
 };
-
-const fieldClass =
-  "h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm text-white outline-none transition focus:border-violet-400/50 focus:bg-white/[0.06]";
-
-const buttonClass =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60";
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -177,7 +172,11 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (user?.role === "ADMIN") {
-      void loadAdminData();
+      const timeoutId = window.setTimeout(() => {
+        void loadAdminData();
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
     }
   }, [user?.role]);
 
@@ -253,32 +252,24 @@ export default function AdminPage() {
       value: formatNumber(metrics?.totalUsers ?? 0),
       detail: `${activeUsers} actifs · ${blockedUsers} bloqués`,
       icon: Users,
-      tone: "from-violet-500/24 via-violet-500/8 to-sky-500/10",
-      accent: "text-violet-300",
     },
     {
       label: "Strava connectés",
       value: formatNumber(metrics?.stravaConnections ?? 0),
       detail: `${stravaConnectionRate}% des comptes`,
       icon: Link2,
-      tone: "from-orange-500/22 via-orange-500/8 to-amber-500/10",
-      accent: "text-orange-300",
     },
     {
       label: "Activités synchronisées",
       value: formatNumber(metrics?.syncedActivities ?? 0),
       detail: "Historique importé",
       icon: Activity,
-      tone: "from-sky-500/22 via-sky-500/8 to-cyan-500/10",
-      accent: "text-sky-300",
     },
     {
       label: "Inscriptions 7 jours",
       value: `+${formatNumber(metrics?.newUsersLast7Days ?? 0)}`,
       detail: "Nouveaux accès",
       icon: TrendingUp,
-      tone: "from-fuchsia-500/24 via-fuchsia-500/8 to-violet-500/10",
-      accent: "text-fuchsia-300",
     },
   ];
 
@@ -450,81 +441,102 @@ export default function AdminPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="app-admin-page space-y-6">
-        <section className="app-premium-surface relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[#151720]/92 p-6 backdrop-blur-xl md:p-8">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(139,92,246,0.24),transparent_34%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_16%,rgba(14,165,233,0.16),transparent_34%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_92%,rgba(16,185,129,0.18),transparent_34%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.06),transparent_34%)]" />
-
-          <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-violet-500/12 px-3 py-1.5 text-xs font-semibold text-violet-200">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Console administrateur privée
+    <DashboardLayout variant="refuge">
+      <div className={styles.page}>
+        <section className={styles.hero}>
+          <div className={styles.heroInner}>
+            <div className={styles.heroCopy}>
+              <div className={styles.eyebrow}>
+                <span className={styles.eyebrowMark} aria-hidden="true" />
+                Poste de commande
               </div>
-
-              <h1 className="mt-5 max-w-4xl text-4xl leading-tight font-bold tracking-tight text-white md:text-5xl">
-                Centre de pilotage premium.
-              </h1>
-
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">
-                Pilotez les accès, surveillez l’adoption Strava et gardez une
-                lecture nette de la santé produit.
+              <h1 className={styles.heroTitle}>Administration</h1>
+              <p className={styles.heroDescription}>
+                Pilote les accès, surveille l’adoption Strava et garde une
+                lecture nette de la santé du carnet.
               </p>
-
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className={styles.heroActions}>
                 <button
                   type="button"
                   onClick={handleUsersPanelToggle}
-                  className={`${buttonClass} bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_18px_45px_rgba(139,92,246,0.26)] hover:scale-[1.02]`}
+                  className={styles.primaryButton}
+                  aria-expanded={isUsersOpen}
                 >
-                  <Users className="h-4 w-4" />
+                  <Users size={17} aria-hidden="true" />
                   Gestion utilisateurs
                   <ChevronDown
-                    className={`h-4 w-4 transition ${
-                      isUsersOpen ? "rotate-180" : ""
+                    size={16}
+                    aria-hidden="true"
+                    className={`${styles.buttonChevron} ${
+                      isUsersOpen ? styles.buttonChevronOpen : ""
                     }`}
                   />
                 </button>
-
                 <button
                   type="button"
                   onClick={() => void loadAdminData()}
-                  className={`${buttonClass} border border-white/[0.08] bg-white/[0.04] text-zinc-200 hover:border-white/[0.14] hover:bg-white/[0.07]`}
+                  className={styles.secondaryButton}
                 >
-                  <Sparkles className="h-4 w-4" />
-                  Actualiser le cockpit
+                  <Sparkles size={17} aria-hidden="true" />
+                  Actualiser les données
                 </button>
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-black/20 p-5">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.22),transparent_56%)]" />
-              <div className="absolute inset-6 rounded-full border border-white/[0.08]" />
-              <div className="absolute inset-14 rounded-full border border-white/[0.06]" />
-
-              <div className="relative flex min-h-[230px] items-center justify-center">
-                <div className="relative flex h-36 w-36 items-center justify-center rounded-full border border-violet-400/25 bg-violet-500/10 shadow-[0_0_70px_rgba(139,92,246,0.26)]">
-                  <div className="absolute -top-3 left-1/2 h-6 w-6 -translate-x-1/2 rounded-full bg-emerald-400 shadow-[0_0_24px_rgba(52,211,153,0.65)]" />
-                  <div className="absolute right-2 bottom-8 h-4 w-4 rounded-full bg-sky-400 shadow-[0_0_20px_rgba(56,189,248,0.55)]" />
-
-                  <div className="text-center">
-                    <p className="text-xs font-medium tracking-[0.18em] text-zinc-500 uppercase">
-                      Score produit
-                    </p>
-                    <p className="mt-2 text-5xl font-bold text-white">
-                      {productScore}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-500">/ 100</p>
-                  </div>
+            <div className={styles.heroVisual} aria-hidden="true">
+              <svg
+                className={styles.commandMap}
+                viewBox="0 0 620 360"
+                preserveAspectRatio="xMidYMid slice"
+              >
+                <path
+                  d="M0 320 92 225l55 51 82-126 82 111 58-78 84 95 64-58 103 100Z"
+                  fill="rgba(170,183,165,.24)"
+                />
+                <path
+                  d="M0 338 106 280l61 30 91-93 74 76 80-55 64 56 72-34 72 78Z"
+                  fill="rgba(47,93,70,.12)"
+                />
+                <g fill="none" stroke="rgba(47,93,70,.22)" strokeWidth="1.2">
+                  <path d="M70 95c58-69 171-63 205 1 33 62-35 112-102 105-77-7-130-54-103-106Z" />
+                  <path d="M105 104c39-44 109-39 132 3 21 40-22 72-68 66-48-6-83-35-64-69Z" />
+                  <path d="M348 76c43-52 132-45 158 8 28 58-27 105-85 97-67-8-108-62-73-105Z" />
+                  <path d="M377 89c29-31 85-28 102 5 19 37-15 68-54 62-41-6-71-39-48-67Z" />
+                </g>
+                <path
+                  d="M78 278c58-9 76-67 132-67 54 0 69 58 120 48 52-11 55-89 113-87 45 1 65 43 97 63"
+                  fill="none"
+                  stroke="#c85b2f"
+                  strokeDasharray="8 9"
+                  strokeWidth="2.4"
+                />
+                <g fill="#2f5d46">
+                  <circle cx="78" cy="278" r="4" />
+                  <circle cx="210" cy="211" r="4" />
+                  <circle cx="330" cy="259" r="4" />
+                  <circle cx="443" cy="172" r="4" />
+                </g>
+                <circle cx="540" cy="235" r="6" fill="#c85b2f" />
+                <circle
+                  cx="540"
+                  cy="235"
+                  r="14"
+                  fill="none"
+                  stroke="#c85b2f"
+                  strokeDasharray="4 4"
+                />
+              </svg>
+              <div className={styles.scoreStamp}>
+                <span className={styles.stampLabel}>Indice produit</span>
+                <div className={styles.scoreLine}>
+                  <strong className={styles.scoreValue}>{productScore}</strong>
+                  <span className={styles.scoreUnit}>/ 100</span>
                 </div>
-              </div>
-
-              <div className="relative rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4 text-center">
-                <p className="text-xs text-zinc-500">Dernière synchro</p>
-                <p className="mt-1 text-sm font-semibold text-white">
+                <div className={styles.scoreBar}>
+                  <span style={{ width: `${productScore}%` }} />
+                </div>
+                <p className={styles.syncNote}>
+                  Dernière synchro :{" "}
                   {formatDate(metrics?.lastSynchronizationAt ?? null)}
                 </p>
               </div>
@@ -533,388 +545,363 @@ export default function AdminPage() {
         </section>
 
         {isLoading && (
-          <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-8 text-center text-zinc-400">
-            Chargement du cockpit admin...
+          <div className={`${styles.stateMessage} ${styles.loading}`}>
+            Chargement du poste de commande...
           </div>
         )}
-
         {notice && (
-          <div className="flex items-center gap-3 rounded-[24px] border border-emerald-500/20 bg-emerald-500/10 px-5 py-4 text-sm font-semibold text-emerald-300">
-            <CheckCircle2 className="h-5 w-5" />
+          <div className={`${styles.stateMessage} ${styles.success}`}>
+            <CheckCircle2 size={19} aria-hidden="true" />
             {notice}
           </div>
         )}
-
         {error && (
-          <div className="rounded-[24px] border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm font-semibold text-red-300">
+          <div className={`${styles.stateMessage} ${styles.error}`}>
             {error}
           </div>
         )}
 
         {!isLoading && metrics && (
           <>
-            <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <section className={styles.ledger} aria-label="Indicateurs clés">
               {cards.map((card) => {
                 const Icon = card.icon;
-
                 return (
-                  <div
-                    key={card.label}
-                    className={`app-premium-surface group relative min-h-[164px] overflow-hidden rounded-[28px] border border-white/[0.08] bg-gradient-to-br ${card.tone} p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14]`}
-                  >
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_42%)]" />
-
-                    <div className="relative flex h-full flex-col justify-between gap-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <p className="text-sm font-medium text-zinc-400">
-                          {card.label}
-                        </p>
-
-                        <div
-                          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/20 ${card.accent}`}
-                        >
-                          <Icon className="h-5 w-5" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <p className="text-4xl font-bold tracking-tight text-white">
-                          {card.value}
-                        </p>
-                        <p className="mt-2 text-sm text-zinc-500">
-                          {card.detail}
-                        </p>
-                      </div>
+                  <article className={styles.metric} key={card.label}>
+                    <div className={styles.metricIcon}>
+                      <Icon aria-hidden="true" />
                     </div>
-                  </div>
+                    <div>
+                      <span className={styles.metricLabel}>{card.label}</span>
+                      <div className={styles.metricValue}>{card.value}</div>
+                      <p className={styles.metricDetail}>{card.detail}</p>
+                    </div>
+                  </article>
                 );
               })}
             </section>
 
-            <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,0.92fr)_380px]">
-              <div className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.14),transparent_34%)]" />
-
-                <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 text-violet-300">
-                      <Gauge className="h-5 w-5" />
+            <section className={styles.overviewGrid}>
+              <article className={styles.signalSection}>
+                <header className={styles.sectionHeader}>
+                  <div className={styles.sectionIdentity}>
+                    <div className={styles.sectionIcon}>
+                      <Gauge aria-hidden="true" />
                     </div>
-
                     <div>
-                      <h2 className="text-xl font-semibold text-white">
-                        Signaux produit
-                      </h2>
-                      <p className="mt-1 text-sm text-zinc-500">
+                      <span className={styles.sectionKicker}>
+                        Lecture du terrain
+                      </span>
+                      <h2 className={styles.sectionTitle}>Signaux produit</h2>
+                      <p className={styles.sectionDescription}>
                         Les indicateurs qui méritent ton attention.
                       </p>
                     </div>
                   </div>
-
-                  <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
-                    <p className="text-xs text-emerald-200/70">Statut</p>
-                    <p className="mt-1 text-sm font-semibold text-emerald-300">
-                      Produit en ligne
-                    </p>
-                  </div>
-                </div>
-
-                <div className="relative mt-6 grid gap-4 lg:grid-cols-3">
+                  <span className={styles.onlineStatus}>
+                    <span className={styles.onlineDot} aria-hidden="true" />
+                    Produit en ligne
+                  </span>
+                </header>
+                <div className={styles.signals}>
                   {signals.map((signal) => (
-                    <div
-                      key={signal.label}
-                      className="rounded-[24px] border border-white/[0.08] bg-white/[0.035] p-4"
-                    >
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-white">
+                    <div className={styles.signal} key={signal.label}>
+                      <div className={styles.signalHeading}>
+                        <span className={styles.signalLabel}>
                           {signal.label}
-                        </p>
-                        <p className="text-sm font-semibold text-violet-300">
+                        </span>
+                        <strong className={styles.signalValue}>
                           {signal.value}
-                        </p>
+                        </strong>
                       </div>
-
-                      <p className="mt-1 text-xs text-zinc-500">
+                      <span className={styles.signalCaption}>
                         {signal.caption}
-                      </p>
-
-                      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/[0.06]">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-sky-400"
-                          style={{
-                            width: `${signal.progress}%`,
-                          }}
-                        />
+                      </span>
+                      <div className={styles.signalBar}>
+                        <span style={{ width: `${signal.progress}%` }} />
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              </article>
 
-              <aside className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.16),transparent_38%)]" />
-
-                <div className="relative">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <h2 className="text-xl font-semibold text-white">
-                        Dernier import
-                      </h2>
-                      <p className="mt-1 text-sm text-zinc-500">
-                        Dernière activité Strava entrée en base.
-                      </p>
-                    </div>
-
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-orange-500/20 bg-orange-500/10 text-orange-300">
-                      <CalendarClock className="h-5 w-5" />
-                    </div>
+              <aside className={styles.importPanel}>
+                <header className={styles.sectionHeader}>
+                  <div>
+                    <span className={styles.sectionKicker}>
+                      Journal de bord
+                    </span>
+                    <h2 className={styles.sectionTitle}>Dernier import</h2>
+                    <p className={styles.sectionDescription}>
+                      Dernière activité Strava entrée en base.
+                    </p>
                   </div>
-
-                  <div className="mt-6 space-y-3">
-                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
-                      <p className="text-xs text-zinc-500">Date</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {formatDate(metrics.lastSynchronizationAt)}
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
-                      <p className="text-xs text-zinc-500">Utilisateur</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {metrics.lastSynchronizationUser
-                          ? `${metrics.lastSynchronizationUser.firstName} · ${metrics.lastSynchronizationUser.email}`
-                          : "Aucun utilisateur"}
-                      </p>
-                    </div>
+                  <div className={styles.sectionIcon}>
+                    <CalendarClock aria-hidden="true" />
+                  </div>
+                </header>
+                <div className={styles.importDetails}>
+                  <div>
+                    <span className={styles.metaLabel}>Date</span>
+                    <p className={styles.importValue}>
+                      {formatDate(metrics.lastSynchronizationAt)}
+                    </p>
+                  </div>
+                  <div>
+                    <span className={styles.metaLabel}>Utilisateur</span>
+                    <p className={styles.importValue}>
+                      {metrics.lastSynchronizationUser
+                        ? `${metrics.lastSynchronizationUser.firstName} · ${metrics.lastSynchronizationUser.email}`
+                        : "Aucun utilisateur"}
+                    </p>
                   </div>
                 </div>
               </aside>
             </section>
 
             {isUsersOpen && (
-              <section
-                ref={usersSectionRef}
-                className="grid scroll-mt-28 items-start gap-5 xl:grid-cols-[420px_minmax(0,1fr)]"
-              >
-                <form
-                  onSubmit={handleCreateUser}
-                  className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl"
-                >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_38%)]" />
+              <section ref={usersSectionRef} className={styles.usersSection}>
+                <header className={styles.usersIntro}>
+                  <div>
+                    <span className={styles.sectionKicker}>Registre privé</span>
+                    <h2 className={styles.usersTitle}>Utilisateurs</h2>
+                  </div>
+                  <span className={styles.usersCount}>
+                    {filteredUsers.length} compte
+                    {filteredUsers.length > 1 ? "s" : ""} affiché
+                    {filteredUsers.length > 1 ? "s" : ""}
+                  </span>
+                </header>
 
-                  <div className="relative">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300">
-                        <UserPlus className="h-5 w-5" />
+                <div className={styles.usersGrid}>
+                  <form
+                    onSubmit={handleCreateUser}
+                    className={styles.createPanel}
+                  >
+                    <div className={styles.sectionIdentity}>
+                      <div className={styles.sectionIcon}>
+                        <UserPlus aria-hidden="true" />
                       </div>
-
                       <div>
-                        <h2 className="text-xl font-semibold text-white">
+                        <span className={styles.sectionKicker}>
+                          Nouvel accès
+                        </span>
+                        <h3 className={styles.sectionTitle}>
                           Créer un utilisateur
-                        </h2>
-                        <p className="mt-1 text-sm text-zinc-500">
+                        </h3>
+                        <p className={styles.sectionDescription}>
                           Création directe depuis l’espace admin.
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-6 grid gap-3">
-                      <input
-                        className={fieldClass}
-                        placeholder="Prénom"
-                        value={createForm.firstName}
-                        onChange={(event) =>
-                          setCreateForm((currentForm) => ({
-                            ...currentForm,
-                            firstName: event.target.value,
-                          }))
-                        }
-                        required
-                        minLength={2}
-                      />
-                      <input
-                        className={fieldClass}
-                        placeholder="Nom"
-                        value={createForm.lastName}
-                        onChange={(event) =>
-                          setCreateForm((currentForm) => ({
-                            ...currentForm,
-                            lastName: event.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className={fieldClass}
-                        placeholder="Email"
-                        type="email"
-                        value={createForm.email}
-                        onChange={(event) =>
-                          setCreateForm((currentForm) => ({
-                            ...currentForm,
-                            email: event.target.value,
-                          }))
-                        }
-                        required
-                      />
-                      <input
-                        className={fieldClass}
-                        placeholder="Mot de passe temporaire"
-                        type="password"
-                        value={createForm.password}
-                        onChange={(event) =>
-                          setCreateForm((currentForm) => ({
-                            ...currentForm,
-                            password: event.target.value,
-                          }))
-                        }
-                        required
-                        minLength={6}
-                      />
-                      <select
-                        className={fieldClass}
-                        value={createForm.role}
-                        onChange={(event) =>
-                          setCreateForm((currentForm) => ({
-                            ...currentForm,
-                            role: event.target.value as "USER" | "ADMIN",
-                          }))
-                        }
+                    <div className={styles.createForm}>
+                      <label className={styles.fieldGroup}>
+                        <span className={styles.fieldLabel}>Prénom</span>
+                        <input
+                          className={styles.field}
+                          placeholder="Prénom"
+                          value={createForm.firstName}
+                          onChange={(event) =>
+                            setCreateForm((currentForm) => ({
+                              ...currentForm,
+                              firstName: event.target.value,
+                            }))
+                          }
+                          required
+                          minLength={2}
+                        />
+                      </label>
+                      <label className={styles.fieldGroup}>
+                        <span className={styles.fieldLabel}>Nom</span>
+                        <input
+                          className={styles.field}
+                          placeholder="Nom"
+                          value={createForm.lastName}
+                          onChange={(event) =>
+                            setCreateForm((currentForm) => ({
+                              ...currentForm,
+                              lastName: event.target.value,
+                            }))
+                          }
+                        />
+                      </label>
+                      <label className={styles.fieldGroup}>
+                        <span className={styles.fieldLabel}>Email</span>
+                        <input
+                          className={styles.field}
+                          placeholder="Email"
+                          type="email"
+                          value={createForm.email}
+                          onChange={(event) =>
+                            setCreateForm((currentForm) => ({
+                              ...currentForm,
+                              email: event.target.value,
+                            }))
+                          }
+                          required
+                        />
+                      </label>
+                      <label className={styles.fieldGroup}>
+                        <span className={styles.fieldLabel}>
+                          Mot de passe temporaire
+                        </span>
+                        <input
+                          className={styles.field}
+                          placeholder="6 caractères minimum"
+                          type="password"
+                          value={createForm.password}
+                          onChange={(event) =>
+                            setCreateForm((currentForm) => ({
+                              ...currentForm,
+                              password: event.target.value,
+                            }))
+                          }
+                          required
+                          minLength={6}
+                        />
+                      </label>
+                      <label className={styles.fieldGroup}>
+                        <span className={styles.fieldLabel}>Rôle</span>
+                        <span className={styles.selectWrap}>
+                          <select
+                            className={styles.select}
+                            value={createForm.role}
+                            onChange={(event) =>
+                              setCreateForm((currentForm) => ({
+                                ...currentForm,
+                                role: event.target.value as "USER" | "ADMIN",
+                              }))
+                            }
+                          >
+                            <option value="USER">Utilisateur</option>
+                            <option value="ADMIN">Administrateur</option>
+                          </select>
+                        </span>
+                      </label>
+                      <button
+                        type="submit"
+                        disabled={isCreatingUser}
+                        className={`${styles.primaryButton} ${styles.createButton}`}
                       >
-                        <option value="USER">Utilisateur</option>
-                        <option value="ADMIN">Administrateur</option>
-                      </select>
+                        <UserPlus size={16} aria-hidden="true" />
+                        {isCreatingUser ? "Création..." : "Créer le compte"}
+                      </button>
                     </div>
+                  </form>
 
-                    <button
-                      type="submit"
-                      disabled={isCreatingUser}
-                      className={`${buttonClass} mt-5 w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_18px_45px_rgba(139,92,246,0.22)] hover:scale-[1.01]`}
-                    >
-                      <UserPlus className="h-4 w-4" />
-                      Créer le compte
-                    </button>
-                  </div>
-                </form>
-
-                <div className="app-premium-surface relative overflow-hidden rounded-[30px] border border-white/[0.08] bg-[#181922]/92 p-6 backdrop-blur-xl">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_38%)]" />
-
-                  <div className="relative">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div className={styles.directory}>
+                    <header className={styles.directoryHeader}>
                       <div>
-                        <h2 className="text-xl font-semibold text-white">
+                        <span className={styles.sectionKicker}>
+                          Annuaire des accès
+                        </span>
+                        <h3 className={styles.sectionTitle}>
                           Gestion utilisateurs
-                        </h2>
-                        <p className="mt-1 text-sm text-zinc-500">
+                        </h3>
+                        <p className={styles.sectionDescription}>
                           Rôles, blocage, Strava et mot de passe.
                         </p>
                       </div>
-
-                      <div className="relative w-full lg:max-w-sm">
-                        <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                      <label className={styles.search}>
+                        <Search aria-hidden="true" />
+                        <span className="sr-only">
+                          Rechercher un utilisateur
+                        </span>
                         <input
-                          className={`${fieldClass} pl-11`}
+                          className={styles.field}
                           placeholder="Rechercher un utilisateur"
                           value={query}
                           onChange={(event) => setQuery(event.target.value)}
                         />
-                      </div>
-                    </div>
+                      </label>
+                    </header>
 
-                    <div className="mt-6 space-y-4">
+                    <div className={styles.userList}>
                       {filteredUsers.map((adminUser) => (
-                        <div
+                        <article
+                          className={styles.userEntry}
                           key={adminUser.id}
-                          className="rounded-[24px] border border-white/[0.08] bg-white/[0.035] p-4"
                         >
-                          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                            <div className="min-w-0">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <h3 className="text-lg font-semibold text-white">
-                                  {adminUser.firstName}{" "}
-                                  {adminUser.lastName ?? ""}
-                                </h3>
-                                <span
-                                  className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
-                                    adminUser.role === "ADMIN"
-                                      ? "border-violet-500/25 bg-violet-500/10 text-violet-200"
-                                      : "border-white/[0.08] bg-white/[0.04] text-zinc-300"
-                                  }`}
-                                >
-                                  {adminUser.role === "ADMIN"
-                                    ? "Admin"
-                                    : "Utilisateur"}
-                                </span>
-                                <span
-                                  className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
-                                    adminUser.isBlocked
-                                      ? "border-red-500/25 bg-red-500/10 text-red-300"
-                                      : "border-emerald-500/25 bg-emerald-500/10 text-emerald-300"
-                                  }`}
-                                >
-                                  {adminUser.isBlocked ? "Bloqué" : "Actif"}
-                                </span>
-                              </div>
-
-                              <p className="mt-1 text-sm text-zinc-500">
-                                {adminUser.email}
-                              </p>
-                              <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-400">
-                                <span className="rounded-full border border-white/[0.08] bg-black/15 px-3 py-1.5">
-                                  Créé le {formatShortDate(adminUser.createdAt)}
-                                </span>
-                                <span className="rounded-full border border-white/[0.08] bg-black/15 px-3 py-1.5">
-                                  {adminUser.activitiesCount} activité(s)
-                                </span>
-                                <span
-                                  className={`rounded-full border px-3 py-1.5 ${
-                                    adminUser.hasStrava
-                                      ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
-                                      : "border-white/[0.08] bg-black/15 text-zinc-400"
-                                  }`}
-                                >
-                                  {adminUser.hasStrava
-                                    ? "Strava connecté"
-                                    : "Strava non connecté"}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="grid gap-3 md:grid-cols-2 xl:w-[460px]">
-                              <button
-                                type="button"
-                                disabled={
-                                  impersonatingUserId === adminUser.id ||
-                                  adminUser.id === user?.id ||
-                                  adminUser.role === "ADMIN" ||
+                          <div>
+                            <div className={styles.userNameRow}>
+                              <h4 className={styles.userName}>
+                                {adminUser.firstName} {adminUser.lastName ?? ""}
+                              </h4>
+                              <span className={styles.roleBadge}>
+                                {adminUser.role === "ADMIN"
+                                  ? "Admin"
+                                  : "Utilisateur"}
+                              </span>
+                              <span
+                                className={`${styles.statusBadge} ${
                                   adminUser.isBlocked
-                                }
-                                onClick={() =>
-                                  void accessUserAccount(adminUser)
-                                }
-                                className={`${buttonClass} border border-violet-400/30 bg-violet-500/12 text-violet-100 hover:bg-violet-500/20 md:col-span-2`}
-                                title={
-                                  adminUser.role === "ADMIN"
-                                    ? "L’accès délégué à un autre administrateur est interdit"
-                                    : adminUser.isBlocked
-                                      ? "Débloquez le compte avant d’y accéder"
-                                      : "Accéder à l’application comme cet utilisateur"
-                                }
+                                    ? styles.statusBlocked
+                                    : styles.statusActive
+                                }`}
                               >
-                                <LogIn className="h-4 w-4" />
-                                {impersonatingUserId === adminUser.id
-                                  ? "Ouverture du compte..."
-                                  : adminUser.id === user?.id
-                                    ? "Compte actuel"
-                                    : adminUser.role === "ADMIN"
-                                      ? "Compte administrateur protégé"
-                                      : adminUser.isBlocked
-                                        ? "Compte bloqué"
-                                        : "Accéder au compte"}
-                              </button>
+                                {adminUser.isBlocked ? "Bloqué" : "Actif"}
+                              </span>
+                            </div>
+                            <p className={styles.userEmail}>
+                              {adminUser.email}
+                            </p>
+                            <div className={styles.userMeta}>
+                              <span className={styles.metaPill}>
+                                Créé le {formatShortDate(adminUser.createdAt)}
+                              </span>
+                              <span className={styles.metaPill}>
+                                {adminUser.activitiesCount} activité(s)
+                              </span>
+                              <span
+                                className={`${styles.metaPill} ${
+                                  adminUser.hasStrava
+                                    ? styles.metaPillConnected
+                                    : ""
+                                }`}
+                              >
+                                {adminUser.hasStrava
+                                  ? "Strava connecté"
+                                  : "Strava non connecté"}
+                              </span>
+                            </div>
+                          </div>
 
+                          <div className={styles.userControls}>
+                            <button
+                              type="button"
+                              disabled={
+                                impersonatingUserId === adminUser.id ||
+                                adminUser.id === user?.id ||
+                                adminUser.role === "ADMIN" ||
+                                adminUser.isBlocked
+                              }
+                              onClick={() => void accessUserAccount(adminUser)}
+                              className={styles.accessButton}
+                              title={
+                                adminUser.role === "ADMIN"
+                                  ? "L’accès délégué à un autre administrateur est interdit"
+                                  : adminUser.isBlocked
+                                    ? "Débloquez le compte avant d’y accéder"
+                                    : "Accéder à l’application comme cet utilisateur"
+                              }
+                            >
+                              <LogIn size={16} aria-hidden="true" />
+                              {impersonatingUserId === adminUser.id
+                                ? "Ouverture du compte..."
+                                : adminUser.id === user?.id
+                                  ? "Compte actuel"
+                                  : adminUser.role === "ADMIN"
+                                    ? "Compte administrateur protégé"
+                                    : adminUser.isBlocked
+                                      ? "Compte bloqué"
+                                      : "Accéder au compte"}
+                            </button>
+
+                            <span className={styles.selectWrap}>
                               <select
-                                className={fieldClass}
+                                className={styles.select}
+                                aria-label={`Rôle de ${adminUser.firstName}`}
                                 value={adminUser.role}
                                 onChange={(event) =>
                                   void updateUser(adminUser, {
@@ -927,75 +914,72 @@ export default function AdminPage() {
                                 <option value="USER">Utilisateur</option>
                                 <option value="ADMIN">Administrateur</option>
                               </select>
+                            </span>
 
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void updateUser(adminUser, {
+                                  isBlocked: !adminUser.isBlocked,
+                                })
+                              }
+                              className={styles.quietButton}
+                            >
+                              {adminUser.isBlocked ? (
+                                <CheckCircle2 size={16} aria-hidden="true" />
+                              ) : (
+                                <Ban size={16} aria-hidden="true" />
+                              )}
+                              {adminUser.isBlocked ? "Débloquer" : "Bloquer"}
+                            </button>
+
+                            <button
+                              type="button"
+                              disabled={
+                                deletingUserId === adminUser.id ||
+                                adminUser.id === user?.id
+                              }
+                              onClick={() => void deleteUser(adminUser)}
+                              className={styles.dangerButton}
+                            >
+                              <Trash2 size={16} aria-hidden="true" />
+                              {deletingUserId === adminUser.id
+                                ? "Suppression..."
+                                : adminUser.id === user?.id
+                                  ? "Compte actuel"
+                                  : "Supprimer"}
+                            </button>
+
+                            <div className={styles.passwordControl}>
+                              <LockKeyhole aria-hidden="true" />
+                              <input
+                                className={styles.field}
+                                aria-label={`Nouveau mot de passe de ${adminUser.firstName}`}
+                                placeholder="Nouveau mot de passe"
+                                type="password"
+                                value={passwordByUserId[adminUser.id] ?? ""}
+                                onChange={(event) =>
+                                  setPasswordByUserId((currentPasswords) => ({
+                                    ...currentPasswords,
+                                    [adminUser.id]: event.target.value,
+                                  }))
+                                }
+                              />
                               <button
                                 type="button"
-                                onClick={() =>
-                                  void updateUser(adminUser, {
-                                    isBlocked: !adminUser.isBlocked,
-                                  })
-                                }
-                                className={`${buttonClass} border ${
-                                  adminUser.isBlocked
-                                    ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/15"
-                                    : "border-red-500/25 bg-red-500/10 text-red-300 hover:bg-red-500/15"
-                                }`}
+                                onClick={() => void updatePassword(adminUser)}
+                                className={styles.passwordButton}
                               >
-                                {adminUser.isBlocked ? (
-                                  <CheckCircle2 className="h-4 w-4" />
-                                ) : (
-                                  <Ban className="h-4 w-4" />
-                                )}
-                                {adminUser.isBlocked ? "Débloquer" : "Bloquer"}
+                                <KeyRound size={14} aria-hidden="true" />
+                                Modifier
                               </button>
-
-                              <button
-                                type="button"
-                                disabled={
-                                  deletingUserId === adminUser.id ||
-                                  adminUser.id === user?.id
-                                }
-                                onClick={() => void deleteUser(adminUser)}
-                                className={`${buttonClass} border border-red-500/25 bg-red-500/10 text-red-300 hover:bg-red-500/15 md:col-span-2`}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                {deletingUserId === adminUser.id
-                                  ? "Suppression..."
-                                  : adminUser.id === user?.id
-                                    ? "Compte actuel"
-                                    : "Supprimer l'utilisateur"}
-                              </button>
-
-                              <div className="relative md:col-span-2">
-                                <LockKeyhole className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                                <input
-                                  className={`${fieldClass} pr-36 pl-11`}
-                                  placeholder="Nouveau mot de passe"
-                                  type="password"
-                                  value={passwordByUserId[adminUser.id] ?? ""}
-                                  onChange={(event) =>
-                                    setPasswordByUserId((currentPasswords) => ({
-                                      ...currentPasswords,
-                                      [adminUser.id]: event.target.value,
-                                    }))
-                                  }
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => void updatePassword(adminUser)}
-                                  className="absolute top-1.5 right-1.5 inline-flex h-9 items-center gap-2 rounded-xl bg-white/[0.08] px-3 text-xs font-semibold text-white transition hover:bg-white/[0.12]"
-                                >
-                                  <KeyRound className="h-3.5 w-3.5" />
-                                  Modifier
-                                </button>
-                              </div>
                             </div>
                           </div>
-                        </div>
+                        </article>
                       ))}
 
                       {filteredUsers.length === 0 && (
-                        <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.035] p-8 text-center text-sm text-zinc-400">
+                        <div className={styles.empty}>
                           Aucun utilisateur trouvé.
                         </div>
                       )}
