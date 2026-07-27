@@ -271,9 +271,9 @@
 }
 
 .filterScroller button:hover {
-  border-color: rgba(47, 93, 70, 0.16);
-  background: rgba(47, 93, 70, 0.055);
-  color: var(--atlas-forest);
+  border-color: rgba(200, 91, 47, 0.24);
+  background: rgba(200, 91, 47, 0.07);
+  color: var(--atlas-clay);
 }
 
 .filterScroller button:focus-visible,
@@ -300,9 +300,16 @@
 }
 
 .filterScroller .filterActive {
-  border-color: rgba(47, 93, 70, 0.3);
-  background: var(--atlas-forest);
-  color: var(--atlas-paper-solid);
+  border-color: var(--atlas-clay);
+  background: var(--atlas-clay);
+  color: #fffaf2;
+  box-shadow: 0 5px 14px rgba(200, 91, 47, 0.16);
+}
+
+.filterScroller .filterActive:hover {
+  border-color: #ad4625;
+  background: #ad4625;
+  color: #fffaf2;
 }
 
 .visibleCount {
