@@ -540,6 +540,13 @@
   overflow: hidden;
   min-height: 280px;
   border-right: 1px solid var(--border);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(248, 244, 234, 0.2),
+      rgba(225, 229, 211, 0.38)
+    ),
+    url("/landing/summit-discovery-wildflowers.jpg") center 56% / cover;
 }
 
 .latestEmptyArtwork::before,
@@ -565,24 +572,58 @@
   clip-path: polygon(0 100%, 30% 54%, 50% 72%, 72% 25%, 100% 100%);
 }
 
-.latestEmptyArtwork span {
-  position: absolute;
+.latestEmptyArtwork::before {
   z-index: 2;
-  right: 18%;
-  bottom: 31%;
-  width: 70px;
-  border-top: 2px dashed var(--terracotta);
-  transform: rotate(-20deg);
+  inset: 0;
+  height: auto;
+  clip-path: none;
+  background: linear-gradient(
+    90deg,
+    rgba(248, 244, 234, 0.18),
+    rgba(248, 244, 234, 0.04) 56%,
+    rgba(248, 244, 234, 0.26)
+  );
 }
 
-.latestEmptyArtwork svg {
+.latestEmptyArtwork::after {
+  z-index: 2;
+  inset: 0;
+  height: auto;
+  clip-path: none;
+  background: linear-gradient(
+    0deg,
+    rgba(31, 61, 46, 0.2),
+    transparent 52%,
+    rgba(248, 244, 234, 0.16)
+  );
+}
+
+.latestEmptyPhoto {
+  object-fit: cover;
+  filter: saturate(0.78) contrast(0.94);
+  opacity: 0.72;
+}
+
+.latestEmptyPhotoFallback {
+  position: absolute;
+  inset: 0;
+  background: url("/landing/summit-discovery-wildflowers.jpg") center 56% /
+    cover;
+  filter: saturate(0.78) contrast(0.94);
+  opacity: 0.72;
+}
+
+.latestEmptyPhotoShade {
   position: absolute;
   z-index: 3;
-  right: 22%;
-  bottom: 22%;
-  width: 52px;
-  height: 52px;
-  color: var(--forest);
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(248, 244, 234, 0.08), transparent 58%),
+    radial-gradient(
+      circle at 58% 40%,
+      transparent 0,
+      rgba(32, 61, 46, 0.08) 88%
+    );
 }
 
 .latestEmpty > div:last-child {

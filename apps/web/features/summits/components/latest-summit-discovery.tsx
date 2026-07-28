@@ -34,8 +34,17 @@ export function LatestSummitDiscovery({
     return (
       <section className={styles.latestEmpty}>
         <div className={styles.latestEmptyArtwork} aria-hidden="true">
-          <span />
-          <Mountain />
+          {fallbackSummit ? (
+            <SummitVisual
+              summit={fallbackSummit}
+              sizes="(max-width: 900px) 100vw, 38vw"
+              className={styles.latestEmptyPhoto}
+              showCredit={false}
+            />
+          ) : (
+            <span className={styles.latestEmptyPhotoFallback} />
+          )}
+          <span className={styles.latestEmptyPhotoShade} />
         </div>
         <div>
           <span className={styles.sectionLabel}>Ton carnet commence ici</span>

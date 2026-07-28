@@ -26,6 +26,7 @@ import { api } from "@/lib/api";
 
 interface StravaStatus {
   connected: boolean;
+  requiresReconnect?: boolean;
   athleteId?: string;
   expiresAt?: string;
   lastUpdatedAt?: string;
@@ -315,6 +316,15 @@ export default function StravaIntegrationPage() {
       const { data } = await api.get<StravaStatus>("/strava/status");
 
       setStatus(data);
+      if (data.requiresReconnect) {
+        setMessage(
+          (currentMessage) =>
+            currentMessage ?? {
+              text: "La connexion Strava doit être renouvelée. Tes sorties déjà importées sont conservées.",
+              variant: "warning",
+            },
+        );
+      }
     } catch (error) {
       console.error(error);
 
@@ -478,7 +488,9 @@ export default function StravaIntegrationPage() {
                 ) : (
                   <ArrowRight className="h-4 w-4" />
                 )}
-                {status.connected ? "Reconnecter Strava" : "Connecter Strava"}
+                {status.connected || status.requiresReconnect
+                  ? "Reconnecter Strava"
+                  : "Connecter Strava"}
               </button>
 
               {status.connected && (
@@ -623,13 +635,17 @@ export default function StravaIntegrationPage() {
                   ? "Vérification..."
                   : status.connected
                     ? "Compte Strava connecté"
-                    : "Aucun compte connecté"}
+                    : status.requiresReconnect
+                      ? "Connexion Strava à renouveler"
+                      : "Aucun compte connecté"}
               </p>
 
               <p className="mt-1 text-sm text-zinc-400">
                 {status.connected
                   ? `Athlète Strava ${status.athleteId}`
-                  : "Connecte Strava pour importer tes traces."}
+                  : status.requiresReconnect
+                    ? "Reconnecte Strava pour reprendre les synchronisations. Ton historique HOVREN est conservé."
+                    : "Connecte Strava pour importer tes traces."}
               </p>
             </div>
 
@@ -637,11 +653,17 @@ export default function StravaIntegrationPage() {
               className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs ${
                 status.connected
                   ? "bg-emerald-500/10 text-emerald-300"
-                  : "bg-zinc-800 text-zinc-400"
+                  : status.requiresReconnect
+                    ? "bg-amber-500/10 text-amber-300"
+                    : "bg-zinc-800 text-zinc-400"
               }`}
             >
               {status.connected && <CheckCircle2 className="h-3.5 w-3.5" />}
-              {status.connected ? "Connecté" : "Non connecté"}
+              {status.connected
+                ? "Connecté"
+                : status.requiresReconnect
+                  ? "À reconnecter"
+                  : "Non connecté"}
             </div>
           </div>
         </section>

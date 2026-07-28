@@ -128,6 +128,8 @@ export class StravaService {
         },
         select: {
           athleteId: true,
+          accessToken: true,
+          refreshToken: true,
           expiresAt: true,
           updatedAt: true,
           lastSyncAttemptAt: true,
@@ -151,8 +153,27 @@ export class StravaService {
       };
     }
 
+    try {
+      this.tokenEncryption.decrypt(connection.accessToken, {
+        userId,
+        tokenType: 'access',
+      });
+      this.tokenEncryption.decrypt(connection.refreshToken, {
+        userId,
+        tokenType: 'refresh',
+      });
+    } catch {
+      return {
+        connected: false,
+        requiresReconnect: true,
+        syncedActivitiesCount,
+        hasSyncedActivities: syncedActivitiesCount > 0,
+      };
+    }
+
     return {
       connected: true,
+      requiresReconnect: false,
       athleteId: connection.athleteId,
       expiresAt: connection.expiresAt,
       lastUpdatedAt: connection.updatedAt,
@@ -448,10 +469,10 @@ export class StravaService {
       userId,
       tokenType: 'access',
     });
-    const refreshToken = this.tokenEncryption.decrypt(
-      connection.refreshToken,
-      { userId, tokenType: 'refresh' },
-    );
+    const refreshToken = this.tokenEncryption.decrypt(connection.refreshToken, {
+      userId,
+      tokenType: 'refresh',
+    });
 
     const expiresSoon = connection.expiresAt.getTime() <= Date.now() + 60_000;
 

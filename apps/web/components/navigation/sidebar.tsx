@@ -27,6 +27,7 @@ import refugeShell from "@/components/layout/refuge-shell.module.css";
 
 interface StravaStatus {
   connected: boolean;
+  requiresReconnect?: boolean;
   hasSyncedActivities?: boolean;
   syncedActivitiesCount?: number;
 }
@@ -110,6 +111,8 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
   const user = useAuthStore((state) => state.user);
 
   const [hasStravaIntegration, setHasStravaIntegration] = useState(false);
+  const [requiresStravaReconnect, setRequiresStravaReconnect] = useState(false);
+  const [isStravaStatusLoaded, setIsStravaStatusLoaded] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -119,13 +122,17 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
         const { data } = await api.get<StravaStatus>("/strava/status");
 
         if (isMounted) {
-          setHasStravaIntegration(
-            Boolean(data.connected || data.hasSyncedActivities),
-          );
+          setHasStravaIntegration(Boolean(data.connected));
+          setRequiresStravaReconnect(Boolean(data.requiresReconnect));
         }
       } catch {
         if (isMounted) {
           setHasStravaIntegration(false);
+          setRequiresStravaReconnect(false);
+        }
+      } finally {
+        if (isMounted) {
+          setIsStravaStatusLoaded(true);
         }
       }
     }
@@ -198,6 +205,56 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
               aria-label="Navigation secondaire"
             >
               {renderPaperItems(secondaryItems)}
+            </nav>
+          </section>
+
+          <section className={refugeShell.navSection}>
+            <p className={refugeShell.navLabel}>Connexions</p>
+            <nav className={refugeShell.navList} aria-label="Connexions">
+              {integrationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = isActiveRoute(item.href);
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`${refugeShell.navItem} ${
+                      isActive ? refugeShell.navItemActive : ""
+                    } ${
+                      hasStravaIntegration ? refugeShell.navItemConnected : ""
+                    } ${refugeShell.integrationItem}`}
+                  >
+                    <Icon aria-hidden="true" />
+                    <span>{item.title}</span>
+
+                    {isStravaStatusLoaded ? (
+                      <span
+                        className={`${refugeShell.integrationStatus} ${
+                          hasStravaIntegration
+                            ? refugeShell.integrationStatusConnected
+                            : refugeShell.integrationStatusPending
+                        }`}
+                      >
+                        {hasStravaIntegration ? (
+                          <CheckCircle2 aria-hidden="true" />
+                        ) : (
+                          <span
+                            className={refugeShell.integrationStatusDot}
+                            aria-hidden="true"
+                          />
+                        )}
+                        {hasStravaIntegration
+                          ? "Connecté"
+                          : requiresStravaReconnect
+                            ? "À reconnecter"
+                            : "À connecter"}
+                      </span>
+                    ) : null}
+                  </Link>
+                );
+              })}
             </nav>
           </section>
 
@@ -438,6 +495,8 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
               const isActive = isActiveRoute(item.href);
               const isConnectedIntegration =
                 item.title === "Strava" && hasStravaIntegration;
+              const needsReconnect =
+                item.title === "Strava" && requiresStravaReconnect;
 
               return (
                 <Link
@@ -449,7 +508,9 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
                       ? "border border-orange-500/20 bg-orange-500/10 text-white"
                       : isConnectedIntegration
                         ? "border border-emerald-500/10 bg-emerald-500/[0.055] text-emerald-100/80 hover:border-emerald-500/18 hover:bg-emerald-500/[0.085] hover:text-emerald-100"
-                        : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
+                        : needsReconnect
+                          ? "border border-orange-500/10 bg-orange-500/[0.055] text-orange-100/80 hover:border-orange-500/20 hover:bg-orange-500/[0.085] hover:text-orange-100"
+                          : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-200"
                   }`}
                 >
                   {isActive && (
@@ -466,7 +527,9 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
                         ? "bg-orange-400 opacity-100"
                         : isConnectedIntegration
                           ? "bg-emerald-400/70 opacity-100"
-                          : "opacity-0"
+                          : needsReconnect
+                            ? "bg-orange-400/70 opacity-100"
+                            : "opacity-0"
                     }`}
                   />
 
@@ -477,7 +540,9 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
                         ? "text-orange-300"
                         : isConnectedIntegration
                           ? "text-emerald-300/75 group-hover:text-emerald-300"
-                          : "text-zinc-500 group-hover:text-zinc-300"
+                          : needsReconnect
+                            ? "text-orange-300/75 group-hover:text-orange-300"
+                            : "text-zinc-500 group-hover:text-zinc-300"
                     }`}
                   />
 
@@ -487,6 +552,11 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
 
                   {isConnectedIntegration && (
                     <CheckCircle2 className="relative ml-auto h-4 w-4 text-emerald-300/70 group-hover:text-emerald-300" />
+                  )}
+                  {needsReconnect && (
+                    <span className="relative ml-auto text-[0.62rem] font-semibold text-orange-300/80">
+                      Reconnecter
+                    </span>
                   )}
                 </Link>
               );

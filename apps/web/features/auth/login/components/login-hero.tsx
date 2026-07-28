@@ -84,7 +84,11 @@ export function LoginHero() {
   );
 }
 
-export function BrandMark() {
+export function BrandMark({
+  showJointDot = true,
+}: {
+  showJointDot?: boolean;
+} = {}) {
   return (
     <svg
       className={styles.brandMark}
@@ -101,7 +105,9 @@ export function BrandMark() {
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <circle cx="15" cy="13" r="1.6" fill="currentColor" />
+      {showJointDot ? (
+        <circle cx="15" cy="13" r="1.6" fill="currentColor" />
+      ) : null}
     </svg>
   );
 }

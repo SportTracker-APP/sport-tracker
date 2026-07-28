@@ -668,8 +668,6 @@ export default function RefugeView() {
               <div className={styles.challengeLandscape} aria-hidden="true">
                 <span />
                 <span />
-                <span />
-                <Flag />
               </div>
               <div className={styles.challengeFooter}>
                 <div>

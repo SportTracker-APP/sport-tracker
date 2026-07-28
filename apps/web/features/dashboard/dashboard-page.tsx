@@ -83,6 +83,7 @@ import {
 
 type StravaStatus = {
   connected: boolean;
+  requiresReconnect?: boolean;
   hasSyncedActivities?: boolean;
   syncedActivitiesCount?: number;
 };
@@ -1082,7 +1083,13 @@ function ExplorationHeatmap({ activities }: { activities: SportActivity[] }) {
   );
 }
 
-function StravaConnectionCard({ compact }: { compact: boolean }) {
+function StravaConnectionCard({
+  compact,
+  requiresReconnect,
+}: {
+  compact: boolean;
+  requiresReconnect: boolean;
+}) {
   return (
     <div
       className={`${styles.stravaConnectionCard} ${
@@ -1091,16 +1098,26 @@ function StravaConnectionCard({ compact }: { compact: boolean }) {
     >
       <div className={styles.emptyDashboardIcon}><Link2 aria-hidden="true" /></div>
       <div className={styles.stravaConnectionContent}>
-        <p className={styles.emptyDashboardKicker}>Premières traces à révéler</p>
-        <h2>Synchronise Strava pour révéler tes premiers sommets</h2>
+        <p className={styles.emptyDashboardKicker}>
+          {requiresReconnect
+            ? "Connexion à renouveler"
+            : "Premières traces à révéler"}
+        </p>
+        <h2>
+          {requiresReconnect
+            ? "Reconnecte Strava pour reprendre tes synchronisations"
+            : "Synchronise Strava pour révéler tes premiers sommets"}
+        </h2>
         <p>
-          Tes sorties manuelles restent dans le carnet, mais Strava peut ramener
-          tes traces, tes sommets et tes souvenirs en quelques secondes.
+          {requiresReconnect
+            ? "Tes traces, tes sommets et ton historique HOVREN sont conservés."
+            : "Tes sorties manuelles restent dans le carnet, mais Strava peut ramener tes traces, tes sommets et tes souvenirs en quelques secondes."}
         </p>
       </div>
       <div className={styles.emptyDashboardActions}>
         <Link href="/integrations/strava" className={styles.primaryButton}>
-          <Link2 aria-hidden="true" /> Connecter Strava
+          <Link2 aria-hidden="true" />{" "}
+          {requiresReconnect ? "Reconnecter Strava" : "Connecter Strava"}
         </Link>
         <Link href="/activites/nouvelle" className={styles.secondaryButton}>
           <Plus aria-hidden="true" /> Tracer une sortie
@@ -1719,12 +1736,14 @@ export default function DashboardPage() {
       Boolean(activity.stravaActivityId),
     );
   const hasAnyActivity = dashboardData.completedActivities.length > 0;
+  const requiresStravaReconnect = Boolean(stravaStatus?.requiresReconnect);
   const pendingCelebration = useMemo(
     () => getPendingCelebration(activities),
     [activities],
   );
   const showStravaConnectionCard =
-    !isLoadingStravaStatus && !hasStravaIntegration;
+    !isLoadingStravaStatus &&
+    (!hasStravaIntegration || requiresStravaReconnect);
   const weeklyDelta =
     dashboardData.weeklyDistance - dashboardData.previousWeeklyDistance;
   const nextAdventure = getAdventureName(dashboardData.completedActivities);
@@ -1834,13 +1853,26 @@ export default function DashboardPage() {
 
   const recommendations = [
     {
-      title: hasStravaIntegration ? "Strava synchronisé" : "Strava à connecter",
-      description: hasStravaIntegration
+      title: requiresStravaReconnect
+        ? "Strava à reconnecter"
+        : hasStravaIntegration
+          ? "Strava synchronisé"
+          : "Strava à connecter",
+      description: requiresStravaReconnect
+        ? "Renouvelle l’autorisation pour reprendre les synchronisations."
+        : hasStravaIntegration
         ? "Les données du dashboard sont alimentées automatiquement."
         : "Le refuge utilise encore tes sorties ajoutées à la main.",
-      icon: hasStravaIntegration ? CheckCircle2 : AlertTriangle,
+      icon:
+        hasStravaIntegration && !requiresStravaReconnect
+          ? CheckCircle2
+          : AlertTriangle,
       href: "/integrations/strava",
-      label: hasStravaIntegration ? "OK" : "Connecter",
+      label: requiresStravaReconnect
+        ? "Reconnecter"
+        : hasStravaIntegration
+          ? "OK"
+          : "Connecter",
       tone: "success",
     },
     {
@@ -1900,7 +1932,10 @@ export default function DashboardPage() {
 
         <>
           {showStravaConnectionCard ? (
-            <StravaConnectionCard compact={hasAnyActivity} />
+            <StravaConnectionCard
+              compact={hasAnyActivity}
+              requiresReconnect={requiresStravaReconnect}
+            />
           ) : null}
 
           {pendingCelebration ? (

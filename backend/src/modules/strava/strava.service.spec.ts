@@ -19,6 +19,84 @@ describe('StravaService security', () => {
     jest.restoreAllMocks();
   });
 
+  it('reports an unreadable Strava connection as requiring reconnection', async () => {
+    const decrypt = jest.fn().mockImplementation(() => {
+      throw new Error('Unreadable encrypted token');
+    });
+    const service = new StravaService(
+      {
+        stravaConnection: {
+          findUnique: jest.fn().mockResolvedValue({
+            athleteId: 'athlete-1',
+            accessToken: 'encrypted-access-token',
+            refreshToken: 'encrypted-refresh-token',
+            expiresAt: new Date('2026-07-27T18:00:00.000Z'),
+            updatedAt: new Date('2026-07-27T17:00:00.000Z'),
+            lastSyncAttemptAt: null,
+          }),
+        },
+        activity: {
+          count: jest.fn().mockResolvedValue(42),
+        },
+      } as unknown as PrismaService,
+      {} as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      {
+        decrypt,
+      } as unknown as StravaTokenEncryptionService,
+    );
+
+    await expect(service.getStatus('user-1')).resolves.toEqual({
+      connected: false,
+      requiresReconnect: true,
+      syncedActivitiesCount: 42,
+      hasSyncedActivities: true,
+    });
+    expect(decrypt).toHaveBeenCalledWith('encrypted-access-token', {
+      userId: 'user-1',
+      tokenType: 'access',
+    });
+  });
+
+  it('reports a readable Strava connection as connected', async () => {
+    const updatedAt = new Date('2026-07-27T17:00:00.000Z');
+    const expiresAt = new Date('2026-07-27T18:00:00.000Z');
+    const decrypt = jest.fn((token: string) => token);
+    const service = new StravaService(
+      {
+        stravaConnection: {
+          findUnique: jest.fn().mockResolvedValue({
+            athleteId: 'athlete-1',
+            accessToken: 'encrypted-access-token',
+            refreshToken: 'encrypted-refresh-token',
+            expiresAt,
+            updatedAt,
+            lastSyncAttemptAt: null,
+          }),
+        },
+        activity: {
+          count: jest.fn().mockResolvedValue(42),
+        },
+      } as unknown as PrismaService,
+      {} as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      {
+        decrypt,
+      } as unknown as StravaTokenEncryptionService,
+    );
+
+    await expect(service.getStatus('user-1')).resolves.toMatchObject({
+      connected: true,
+      requiresReconnect: false,
+      athleteId: 'athlete-1',
+      expiresAt,
+      lastUpdatedAt: updatedAt,
+      syncedActivitiesCount: 42,
+      hasSyncedActivities: true,
+    });
+    expect(decrypt).toHaveBeenCalledTimes(2);
+  });
+
   it('rejects invalid OAuth state without exchanging the authorization code', async () => {
     const fetchSpy = jest
       .spyOn(global, 'fetch')
@@ -164,11 +242,15 @@ describe('StravaService security', () => {
       expect((error as HttpException).getStatus()).toBe(
         HttpStatus.TOO_MANY_REQUESTS,
       );
-      expect((error as HttpException).getResponse()).toMatchObject({
-        statusCode: HttpStatus.TOO_MANY_REQUESTS,
-        retryAfterSeconds: expect.any(Number),
-        nextSyncAllowedAt: expect.any(String),
-      });
+      const response = (error as HttpException).getResponse() as {
+        statusCode: number;
+        retryAfterSeconds: number;
+        nextSyncAllowedAt: string;
+      };
+
+      expect(response.statusCode).toBe(HttpStatus.TOO_MANY_REQUESTS);
+      expect(typeof response.retryAfterSeconds).toBe('number');
+      expect(typeof response.nextSyncAllowedAt).toBe('string');
     }
 
     expect(fetchSpy).not.toHaveBeenCalled();
