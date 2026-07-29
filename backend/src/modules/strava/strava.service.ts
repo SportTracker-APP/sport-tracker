@@ -83,7 +83,7 @@ interface StravaPhoto {
 }
 
 interface StravaActivityStream {
-  data?: number[];
+  data?: Array<number | string | null>;
 }
 
 interface StravaActivityStreamsResponse {
@@ -436,22 +436,47 @@ export class StravaService {
       throw new BadRequestException('Identifiant Strava invalide');
     }
 
-    const [details, streams] = await Promise.all([
+    const [detailsResult, streamsResult] = await Promise.allSettled([
       this.fetchActivityDetails(activityId, connection.accessToken),
       this.fetchActivityStreams(activityId, connection.accessToken),
     ]);
+    const details =
+      detailsResult.status === 'fulfilled' ? detailsResult.value : null;
+    const streams =
+      streamsResult.status === 'fulfilled' ? streamsResult.value : null;
+
+    if (
+      detailsResult.status === 'rejected' &&
+      streamsResult.status === 'rejected'
+    ) {
+      throw streamsResult.reason;
+    }
+
+    const photoUrls = details ? this.getPhotoUrls(details) : [];
 
     return {
-      altitudeStream: streams.altitude?.data ?? null,
-      distanceStream: streams.distance?.data ?? null,
-      photoUrls: this.getPhotoUrls(details),
-      photoCount: this.getPhotoCount(details),
-      coverImageUrl: this.getPhotoUrls(details)[0] ?? null,
+      altitudeStream: this.normalizeNumericStream(streams?.altitude),
+      distanceStream: this.normalizeNumericStream(streams?.distance),
+      photoUrls,
+      photoCount: details ? this.getPhotoCount(details) : null,
+      coverImageUrl: photoUrls[0] ?? null,
       maxAltitude:
-        details.elev_high !== undefined ? Math.round(details.elev_high) : null,
+        details?.elev_high !== undefined
+          ? Math.round(details.elev_high)
+          : null,
       minAltitude:
-        details.elev_low !== undefined ? Math.round(details.elev_low) : null,
+        details?.elev_low !== undefined ? Math.round(details.elev_low) : null,
     };
+  }
+
+  private normalizeNumericStream(stream?: StravaActivityStream) {
+    if (!stream?.data || stream.data.length < 2) {
+      return null;
+    }
+
+    const values = stream.data.map((value) => Number(value));
+
+    return values.every((value) => Number.isFinite(value)) ? values : null;
   }
 
   private async getValidConnection(userId: string) {
@@ -686,11 +711,18 @@ export class StravaService {
     url.searchParams.set('keys', 'altitude,distance');
     url.searchParams.set('key_by_type', 'true');
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const request = () =>
+      fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    let response = await request();
+
+    if (response.status >= 500) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      response = await request();
+    }
 
     if (!response.ok) {
       throw this.createStravaApiException(

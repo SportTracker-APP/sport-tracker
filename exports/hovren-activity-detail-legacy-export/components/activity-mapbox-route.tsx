@@ -504,9 +504,9 @@ export function ActivityMapboxRoute({
               source: "activity-route",
               paint: {
                 "line-blur": 1.2,
-                "line-color": "rgba(24, 55, 43, 0.78)",
-                "line-opacity": 0.72,
-                "line-width": 10,
+                "line-color": "rgba(3, 7, 18, 0.82)",
+                "line-opacity": 0.8,
+                "line-width": 11,
               },
               layout: {
                 "line-cap": "round",
@@ -521,9 +521,9 @@ export function ActivityMapboxRoute({
               type: "line",
               source: "activity-route",
               paint: {
-                "line-color": "rgba(248, 244, 234, 0.9)",
-                "line-opacity": 0.94,
-                "line-width": 7,
+                "line-color": "rgba(255, 255, 255, 0.86)",
+                "line-opacity": 0.96,
+                "line-width": 7.2,
               },
               layout: {
                 "line-cap": "round",
@@ -538,9 +538,19 @@ export function ActivityMapboxRoute({
               type: "line",
               source: "activity-route",
               paint: {
-                "line-color": "#cf5a2d",
+                "line-gradient": [
+                  "interpolate",
+                  ["linear"],
+                  ["line-progress"],
+                  0,
+                  "#34d399",
+                  0.55,
+                  "#38bdf8",
+                  1,
+                  "#fb7185",
+                ],
                 "line-opacity": 1,
-                "line-width": 4.6,
+                "line-width": 4.8,
               },
               layout: {
                 "line-cap": "round",

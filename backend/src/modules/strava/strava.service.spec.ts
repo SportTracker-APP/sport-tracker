@@ -255,4 +255,110 @@ describe('StravaService security', () => {
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+
+  it('keeps the altitude stream when Strava activity details are unavailable', async () => {
+    jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const url = String(input);
+
+      if (url.includes('/streams')) {
+        return new Response(
+          JSON.stringify({
+            altitude: { data: ['412', 438, 493] },
+            distance: { data: [0, '3500', 7100] },
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
+      }
+
+      return new Response(JSON.stringify({ message: 'details unavailable' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+
+    const service = new StravaService(
+      {
+        stravaConnection: {
+          findUnique: jest.fn().mockResolvedValue({
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+          }),
+        },
+      } as unknown as PrismaService,
+      {} as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      createTokenEncryptionMock(),
+    );
+
+    await expect(
+      service.getActivityEnrichment('user-1', '123'),
+    ).resolves.toMatchObject({
+      altitudeStream: [412, 438, 493],
+      distanceStream: [0, 3500, 7100],
+      photoUrls: [],
+      coverImageUrl: null,
+    });
+  });
+
+  it('retries the altitude stream once after a temporary Strava failure', async () => {
+    let streamAttempts = 0;
+
+    jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
+      const url = String(input);
+
+      if (url.includes('/streams')) {
+        streamAttempts += 1;
+
+        if (streamAttempts === 1) {
+          return new Response(JSON.stringify({ message: 'temporary error' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(
+          JSON.stringify({
+            altitude: { data: [335, 382, 433] },
+            distance: { data: [0, 9_000, 18_100] },
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
+      }
+
+      return new Response(JSON.stringify({ elev_low: 335, elev_high: 433 }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+
+    const service = new StravaService(
+      {
+        stravaConnection: {
+          findUnique: jest.fn().mockResolvedValue({
+            accessToken: 'access-token',
+            refreshToken: 'refresh-token',
+            expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+          }),
+        },
+      } as unknown as PrismaService,
+      {} as ConfigService,
+      { processActivities: jest.fn() } as unknown as SummitsService,
+      createTokenEncryptionMock(),
+    );
+
+    await expect(
+      service.getActivityEnrichment('user-1', '123'),
+    ).resolves.toMatchObject({
+      altitudeStream: [335, 382, 433],
+      distanceStream: [0, 9000, 18100],
+    });
+    expect(streamAttempts).toBe(2);
+  });
 });

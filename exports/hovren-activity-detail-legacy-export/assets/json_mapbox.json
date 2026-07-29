@@ -1,0 +1,276 @@
+{
+  "version": 8,
+  "name": "Summit Outdoor 3D Premium",
+  "metadata": {
+    "mapbox:autocomposite": true,
+    "mapbox:type": "template",
+    "sport-tracker:theme": "outdoor-premium"
+  },
+  "center": [6.129, 45.899],
+  "zoom": 10,
+  "bearing": -20,
+  "pitch": 62,
+  "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  "sprite": "mapbox://sprites/mapbox/outdoors-v12",
+  "sources": {
+    "composite": {
+      "type": "vector",
+      "url": "mapbox://mapbox.mapbox-streets-v8"
+    },
+    "satellite": {
+      "type": "raster",
+      "url": "mapbox://mapbox.satellite",
+      "tileSize": 256
+    },
+    "terrain-dem": {
+      "type": "raster-dem",
+      "url": "mapbox://mapbox.mapbox-terrain-dem-v1",
+      "tileSize": 512,
+      "maxzoom": 14
+    }
+  },
+  "terrain": {
+    "source": "terrain-dem",
+    "exaggeration": 1.55
+  },
+  "fog": {
+    "range": [0.5, 10],
+    "color": "#e8fff2",
+    "horizon-blend": 0.2,
+    "high-color": "#7dd3fc",
+    "space-color": "#06130f",
+    "star-intensity": 0.12
+  },
+  "light": {
+    "anchor": "viewport",
+    "color": "#ffffff",
+    "intensity": 0.5,
+    "position": [1.2, 210, 35]
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#07120d"
+      }
+    },
+    {
+      "id": "satellite-muted",
+      "type": "raster",
+      "source": "satellite",
+      "paint": {
+        "raster-opacity": 0.9,
+        "raster-brightness-min": 0.04,
+        "raster-brightness-max": 0.78,
+        "raster-contrast": 0.22,
+        "raster-saturation": -0.12,
+        "raster-hue-rotate": 8
+      }
+    },
+    {
+      "id": "forest-overlay",
+      "type": "fill",
+      "source": "composite",
+      "source-layer": "landuse",
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["wood", "forest", "park", "grass"],
+        true,
+        false
+      ],
+      "paint": {
+        "fill-color": "#123f2a",
+        "fill-opacity": 0.28
+      }
+    },
+    {
+      "id": "glacier-overlay",
+      "type": "fill",
+      "source": "composite",
+      "source-layer": "landuse",
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["glacier", "snow"],
+        true,
+        false
+      ],
+      "paint": {
+        "fill-color": "#dff7ff",
+        "fill-opacity": 0.42
+      }
+    },
+    {
+      "id": "water-premium",
+      "type": "fill",
+      "source": "composite",
+      "source-layer": "water",
+      "paint": {
+        "fill-color": "#062f3f",
+        "fill-opacity": 0.55
+      }
+    },
+    {
+      "id": "hillshade-premium",
+      "type": "hillshade",
+      "source": "terrain-dem",
+      "paint": {
+        "hillshade-exaggeration": 0.65,
+        "hillshade-shadow-color": "#06100c",
+        "hillshade-highlight-color": "#eafff2",
+        "hillshade-accent-color": "#20c266"
+      }
+    },
+    {
+      "id": "roads-main",
+      "type": "line",
+      "source": "composite",
+      "source-layer": "road",
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["motorway", "trunk", "primary", "secondary", "tertiary"],
+        true,
+        false
+      ],
+      "paint": {
+        "line-color": "#f5c542",
+        "line-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          8,
+          0.6,
+          12,
+          1.6,
+          15,
+          4
+        ],
+        "line-opacity": 0.75
+      }
+    },
+    {
+      "id": "trails-paths",
+      "type": "line",
+      "source": "composite",
+      "source-layer": "road",
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["path", "track", "pedestrian"],
+        true,
+        false
+      ],
+      "paint": {
+        "line-color": "#7CFF9B",
+        "line-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          10,
+          0.4,
+          14,
+          1.2,
+          16,
+          2.2
+        ],
+        "line-opacity": 0.65,
+        "line-dasharray": [1.5, 1.2]
+      }
+    },
+    {
+      "id": "peaks-label",
+      "type": "symbol",
+      "source": "composite",
+      "source-layer": "natural_label",
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["peak", "mountain", "volcano"],
+        true,
+        false
+      ],
+      "layout": {
+        "text-field": ["coalesce", ["get", "name_fr"], ["get", "name"]],
+        "text-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          9,
+          10,
+          13,
+          13,
+          16,
+          16
+        ],
+        "text-font": ["DIN Pro Bold", "Arial Unicode MS Bold"],
+        "text-anchor": "top",
+        "text-offset": [0, 0.8],
+        "icon-image": "mountain-15",
+        "icon-size": 0.85,
+        "text-optional": true
+      },
+      "paint": {
+        "text-color": "#f8fff7",
+        "text-halo-color": "#06100c",
+        "text-halo-width": 1.6,
+        "text-opacity": 0.95,
+        "icon-color": "#f8fff7",
+        "icon-opacity": 0.95
+      }
+    },
+    {
+      "id": "city-labels",
+      "type": "symbol",
+      "source": "composite",
+      "source-layer": "place_label",
+      "filter": [
+        "match",
+        ["get", "class"],
+        ["city", "town", "village"],
+        true,
+        false
+      ],
+      "layout": {
+        "text-field": ["coalesce", ["get", "name_fr"], ["get", "name"]],
+        "text-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          7,
+          11,
+          11,
+          14,
+          15,
+          18
+        ],
+        "text-font": ["DIN Pro Medium", "Arial Unicode MS Regular"]
+      },
+      "paint": {
+        "text-color": "#f4fff7",
+        "text-halo-color": "#06100c",
+        "text-halo-width": 1.5,
+        "text-opacity": 0.92
+      }
+    },
+    {
+      "id": "water-labels",
+      "type": "symbol",
+      "source": "composite",
+      "source-layer": "water_label",
+      "layout": {
+        "text-field": ["coalesce", ["get", "name_fr"], ["get", "name"]],
+        "text-size": 12,
+        "text-font": ["DIN Pro Italic", "Arial Unicode MS Regular"]
+      },
+      "paint": {
+        "text-color": "#b8f2ff",
+        "text-halo-color": "#031d26",
+        "text-halo-width": 1.2,
+        "text-opacity": 0.78
+      }
+    }
+  ]
+}

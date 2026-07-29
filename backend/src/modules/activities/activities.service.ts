@@ -110,10 +110,10 @@ export class ActivitiesService {
         minAltitude: enrichment.minAltitude,
       };
     } catch (error) {
-      console.warn('Strava enrichment skipped for activity detail:', {
+      this.logger.warn({
         activityId,
-        stravaActivityId: activity.stravaActivityId,
-        message: error instanceof Error ? error.message : String(error),
+        sport: activity.sport,
+        message: 'Strava elevation profile unavailable for activity detail',
       });
     }
 

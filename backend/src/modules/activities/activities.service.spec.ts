@@ -26,6 +26,7 @@ type ActivityMock = {
   completedActivityId: string | null;
   completedAt: Date | null;
   celebrationSeenAt: Date | null;
+  stravaActivityId: string | null;
 };
 
 type ActivityDelegateMock = {
@@ -71,6 +72,7 @@ function makeActivity(overrides: Partial<ActivityMock> = {}): ActivityMock {
     completedActivityId: null,
     completedAt: null,
     celebrationSeenAt: null,
+    stravaActivityId: null,
     ...overrides,
   };
 }
@@ -109,10 +111,11 @@ function makeSchedulerMock(): ActivityMailSchedulerMock {
 function makeService(
   prisma: PrismaMock,
   scheduler: ActivityMailSchedulerMock = makeSchedulerMock(),
+  stravaService: StravaService = {} as StravaService,
 ) {
   return new ActivitiesService(
     prisma as unknown as PrismaService,
-    {} as unknown as StravaService,
+    stravaService,
     scheduler as unknown as ActivityMailSchedulerService,
     {
       processActivities: jest.fn().mockResolvedValue(undefined),
@@ -127,6 +130,42 @@ describe('ActivitiesService planned workout completion', () => {
 
   afterEach(() => {
     jest.useRealTimers();
+  });
+
+  it('returns the Strava altitude profile on the activity detail response', async () => {
+    const prisma = makePrismaMock();
+    prisma.activity.findFirst.mockResolvedValue(
+      makeActivity({
+        id: 'mtb-activity',
+        sport: SportType.MTB,
+        stravaActivityId: '123456',
+      }),
+    );
+    const stravaService = {
+      getActivityEnrichment: jest.fn().mockResolvedValue({
+        altitudeStream: [335, 382, 433],
+        distanceStream: [0, 9_000, 18_100],
+        photoUrls: [],
+        photoCount: 0,
+        coverImageUrl: null,
+        maxAltitude: 433,
+        minAltitude: 335,
+      }),
+    } as unknown as StravaService;
+
+    await expect(
+      makeService(prisma, makeSchedulerMock(), stravaService).findOne(
+        'user-1',
+        'mtb-activity',
+      ),
+    ).resolves.toMatchObject({
+      id: 'mtb-activity',
+      sport: SportType.MTB,
+      altitudeStream: [335, 382, 433],
+      distanceStream: [0, 9_000, 18_100],
+      maxAltitude: 433,
+      minAltitude: 335,
+    });
   });
 
   it('creates a completed activity, completes the planned workout and schedules congratulations', async () => {

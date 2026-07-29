@@ -27,10 +27,6 @@ export function useActivity(id: string) {
     queryFn: () => getActivity(id),
 
     enabled: Boolean(id),
-
-    refetchOnMount: "always",
-
-    refetchOnWindowFocus: true,
   });
 }
 
