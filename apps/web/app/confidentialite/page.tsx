@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Mountain } from "lucide-react";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Confidentialite | HOVREN",
-  description: "Politique de confidentialite de HOVREN.",
-};
+export const metadata: Metadata = createPublicMetadata({
+  path: "/confidentialite",
+  title: "Politique de confidentialité HOVREN",
+  description:
+    "Découvre comment HOVREN protège les données de ton compte, de tes sorties outdoor, de tes traces et de tes intégrations.",
+});
 
 const privacySections = [
   {

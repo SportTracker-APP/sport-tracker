@@ -1,24 +1,20 @@
 import type { MetadataRoute } from "next";
-
-const baseUrl = "https://hovren.fr";
+import { SITE_URL } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: baseUrl,
-      lastModified: new Date(),
+      url: SITE_URL,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/conditions`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/conditions`,
       changeFrequency: "monthly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/confidentialite`,
-      lastModified: new Date(),
+      url: `${SITE_URL}/confidentialite`,
       changeFrequency: "monthly",
       priority: 0.3,
     },

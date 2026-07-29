@@ -1,4 +1,29 @@
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const noIndexHeaderValue =
+  "noindex, nofollow, noarchive, nosnippet, noimageindex";
+const noIndexRoutes = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/refuge",
+  "/sommets",
+  "/activites",
+  "/activites/:path*",
+  "/admin",
+  "/badges",
+  "/calendrier",
+  "/carte",
+  "/integrations/:path*",
+  "/journal",
+  "/objectifs",
+  "/parametres",
+  "/performances",
+  "/statistiques",
+  "/landing-page-v1",
+  "/theme-lab",
+];
 
 const cspReportOnly = [
   "default-src 'self'",
@@ -40,6 +65,16 @@ const nextConfig = {
     ],
   },
   async headers() {
+    const noIndexHeaders = noIndexRoutes.map((source) => ({
+      source,
+      headers: [
+        {
+          key: "X-Robots-Tag",
+          value: noIndexHeaderValue,
+        },
+      ],
+    }));
+
     return [
       {
         source: "/:path*",
@@ -66,6 +101,7 @@ const nextConfig = {
           },
         ],
       },
+      ...noIndexHeaders,
     ];
   },
 };

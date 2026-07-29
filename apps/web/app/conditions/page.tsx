@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Mountain } from "lucide-react";
+import { createPublicMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Conditions | HOVREN",
-  description: "Conditions d'utilisation de HOVREN.",
-};
+export const metadata: Metadata = createPublicMetadata({
+  path: "/conditions",
+  title: "Conditions d’utilisation de HOVREN",
+  description:
+    "Consulte les conditions d’utilisation de HOVREN, le carnet d’exploration outdoor pour tes sorties, traces et sommets.",
+});
 
 const termsSections = [
   {

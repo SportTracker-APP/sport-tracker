@@ -7,34 +7,38 @@ import { QueryProvider } from "@/providers/query-provider";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
 import { TawkToWidget } from "@/components/integrations/tawk-to-widget";
+import {
+  DEFAULT_TITLE,
+  PRIVATE_ROBOTS,
+  SEO_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
 });
 
+const googleSiteVerification =
+  process.env.GOOGLE_SITE_VERIFICATION?.trim() || undefined;
+
 export const metadata: Metadata = {
   title: {
-    default: "HOVREN — Ton carnet outdoor",
+    default: DEFAULT_TITLE,
     template: "%s | HOVREN",
   },
-  description:
-    "Suis tes sorties, découvre tes sommets et construis ton carnet d’exploration outdoor avec HOVREN.",
-  metadataBase: new URL("https://hovren.fr"),
-  applicationName: "HOVREN",
-  authors: [{ name: "HOVREN", url: "https://hovren.fr" }],
-  creator: "HOVREN",
-  publisher: "HOVREN",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+  description: SEO_DESCRIPTION,
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  robots: PRIVATE_ROBOTS,
+  verification: googleSiteVerification
+    ? {
+        google: googleSiteVerification,
+      }
+    : undefined,
   manifest: "/site.webmanifest",
   icons: {
     icon: [
