@@ -154,6 +154,41 @@ describe("createRefugeViewModel", () => {
     });
     expect(result.storyEvents.at(-1)?.title).toBe("100 % du carnet");
     expect(result.challenge.currentLabel).toBe("12,4 km");
+    expect(result.recentActivitiesCopy).toEqual({
+      heading: "Tes dernières sorties",
+      linkLabel: "Voir toutes mes sorties",
+    });
+  });
+
+  it("adapte le vocabulaire lorsqu'une musculation figure dans les quatre activités récentes", () => {
+    const result = createRefugeViewModel({
+      activities: [
+        createActivity({
+          id: "gym-activity",
+          title: "Renforcement du soir",
+          type: "WORKOUT",
+          sport: "GYM",
+          city: null,
+          country: null,
+          distance: 0,
+          elevationGain: 0,
+          startedAt: "2026-07-04T18:00:00.000Z",
+        }),
+        createActivity(),
+      ],
+      summits: [summit],
+      badges: [badge],
+      goals: [goal],
+    });
+
+    expect(result.recentActivitiesCopy).toEqual({
+      heading: "Tes dernières activités",
+      linkLabel: "Voir toutes mes activités",
+    });
+    expect(result.recentActivities[0]).toMatchObject({
+      id: "gym-activity",
+      place: "Séance de musculation",
+    });
   });
 
   it("n'utilise jamais les médias Strava dans la mise en scène du Refuge", () => {

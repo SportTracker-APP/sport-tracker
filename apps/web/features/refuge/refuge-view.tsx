@@ -583,9 +583,10 @@ export default function RefugeView() {
           ) : (
             <section className={styles.outingsCard}>
               <div className={styles.cardHeading}>
-                <h2>Tes dernières sorties</h2>
+                <h2>{viewModel.recentActivitiesCopy.heading}</h2>
                 <Link href="/activites">
-                  Voir toutes mes sorties <ArrowRight aria-hidden="true" />
+                  {viewModel.recentActivitiesCopy.linkLabel}{" "}
+                  <ArrowRight aria-hidden="true" />
                 </Link>
               </div>
               {viewModel.recentActivities.length > 0 ? (

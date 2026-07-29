@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { Mountain } from "lucide-react";
+import { LegalPage } from "@/components/legal/legal-page";
 import { createPublicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = createPublicMetadata({
@@ -115,60 +114,12 @@ const termsSections = [
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-[#08070f] px-6 py-10 text-white">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
-        <header className="flex items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-3 text-zinc-300 transition hover:text-white"
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10">
-              <Mountain className="h-5 w-5 text-violet-300" />
-            </span>
-            <span className="text-xl font-semibold">HOVREN</span>
-          </Link>
-          <Link
-            href="/"
-            className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:border-violet-300/30 hover:text-white"
-          >
-            Retour
-          </Link>
-        </header>
-
-        <section className="space-y-5">
-          <p className="text-sm font-semibold tracking-[0.24em] text-violet-300 uppercase">
-            Conditions d'utilisation
-          </p>
-          <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-            Cadre d'utilisation de HOVREN
-          </h1>
-          <p className="max-w-3xl text-base leading-8 text-zinc-400">
-            Derniere mise a jour : 26 juin 2026. Ces conditions definissent les
-            regles d'acces et d'utilisation de HOVREN, ainsi que les droits et
-            responsabilites de chacun.
-          </p>
-        </section>
-
-        <section className="grid gap-4">
-          {termsSections.map((section) => (
-            <article
-              key={section.title}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-violet-950/10"
-            >
-              <h2 className="text-lg font-semibold text-white">
-                {section.title}
-              </h2>
-              <div className="mt-4 space-y-3">
-                {section.paragraphs.map((paragraph) => (
-                  <p key={paragraph} className="leading-7 text-zinc-400">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </article>
-          ))}
-        </section>
-      </div>
-    </main>
+    <LegalPage
+      eyebrow="Conditions d'utilisation"
+      title="Cadre d'utilisation de HOVREN"
+      introduction="Ces conditions définissent les règles d'accès et d'utilisation de HOVREN, ainsi que les droits et responsabilités de chacun."
+      documentLabel="Conditions d'utilisation"
+      sections={termsSections}
+    />
   );
 }

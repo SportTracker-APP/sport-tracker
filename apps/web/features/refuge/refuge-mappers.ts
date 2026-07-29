@@ -77,6 +77,10 @@ export type RefugeViewModel = {
   primaryAction: RefugePrimaryAction;
   storyEvents: RefugeStoryEvent[];
   recentActivities: RefugeActivity[];
+  recentActivitiesCopy: {
+    heading: string;
+    linkLabel: string;
+  };
   challenge: {
     title: string;
     description: string;
@@ -106,8 +110,17 @@ function formatDate(value: string) {
     .replace(".", "");
 }
 
+function isStrengthActivity(activity: Activity) {
+  return activity.sport.toUpperCase() === "GYM";
+}
+
 function getActivityTitle(activity: Activity) {
-  return activity.title?.trim() || "Sortie outdoor";
+  return (
+    activity.title?.trim() ||
+    (isStrengthActivity(activity)
+      ? "Séance de musculation"
+      : "Sortie outdoor")
+  );
 }
 
 function getActivityPlace(activity: Activity) {
@@ -115,7 +128,13 @@ function getActivityPlace(activity: Activity) {
     return `${activity.city} · ${activity.country}`;
   }
 
-  return activity.city || activity.country || "Trace HOVREN";
+  return (
+    activity.city ||
+    activity.country ||
+    (isStrengthActivity(activity)
+      ? "Séance de musculation"
+      : "Trace HOVREN")
+  );
 }
 
 function mapActivity(activity: Activity): RefugeActivity {
@@ -295,6 +314,9 @@ export function createRefugeViewModel(input: {
         new Date(second.startedAt).getTime() -
         new Date(first.startedAt).getTime(),
     );
+  const recentActivitySources = completedActivities.slice(0, 4);
+  const includesStrengthActivity =
+    recentActivitySources.some(isStrengthActivity);
   const discoveredSummits = input.summits
     .filter((summit) => summit.discovered)
     .sort(
@@ -476,7 +498,16 @@ export function createRefugeViewModel(input: {
       : null,
     primaryAction,
     storyEvents,
-    recentActivities: completedActivities.slice(0, 4).map(mapActivity),
+    recentActivities: recentActivitySources.map(mapActivity),
+    recentActivitiesCopy: includesStrengthActivity
+      ? {
+          heading: "Tes dernières activités",
+          linkLabel: "Voir toutes mes activités",
+        }
+      : {
+          heading: "Tes dernières sorties",
+          linkLabel: "Voir toutes mes sorties",
+        },
     challenge: {
       title: primaryGoal.title,
       description: `Avance à ton rythme vers ${formatGoalValue(primaryGoal.target, primaryGoal.type)} sur la période.`,
