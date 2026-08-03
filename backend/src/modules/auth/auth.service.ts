@@ -104,7 +104,11 @@ export class AuthService {
     );
   }
 
-  private async updateRefreshToken(userId: string, refreshToken: string) {
+  private async updateRefreshToken(
+    userId: string,
+    refreshToken: string,
+    lastLoginAt?: Date,
+  ) {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, BCRYPT_COST);
 
     await this.prisma.user.update({
@@ -114,6 +118,7 @@ export class AuthService {
 
       data: {
         refreshToken: hashedRefreshToken,
+        ...(lastLoginAt ? { lastLoginAt } : {}),
       },
     });
   }
@@ -375,7 +380,11 @@ export class AuthService {
       verificationToken.user.role,
     );
 
-    await this.updateRefreshToken(verificationToken.user.id, refreshToken);
+    await this.updateRefreshToken(
+      verificationToken.user.id,
+      refreshToken,
+      now,
+    );
 
     try {
       await this.mailService.sendWelcomeEmail({
@@ -449,7 +458,7 @@ export class AuthService {
       user.role,
     );
 
-    await this.updateRefreshToken(user.id, refreshToken);
+    await this.updateRefreshToken(user.id, refreshToken, new Date());
 
     return {
       accessToken,

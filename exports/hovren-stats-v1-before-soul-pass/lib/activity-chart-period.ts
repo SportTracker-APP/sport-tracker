@@ -4,19 +4,14 @@ export type ActivityChartPeriod = "7d" | "30d" | "3m" | "1y";
 
 export type ActivityChartDatum = {
   day: string;
-  startAt: string;
-  endAt: string;
   distance: number;
   elevation: number;
   duration: number;
-  activityIds: string[];
-  activityCount: number;
-  sports: string[];
 };
 
 type ChartActivity = Pick<
   Activity,
-  "id" | "sport" | "distance" | "duration" | "elevationGain" | "startedAt"
+  "distance" | "duration" | "elevationGain" | "startedAt"
 >;
 
 type ActivityChartPeriodConfiguration = {
@@ -202,13 +197,6 @@ export function getActivityChartSummary<TActivity extends ChartActivity>(
 
     return {
       day: bucket.label,
-      startAt: bucket.start.toISOString(),
-      endAt: bucket.end.toISOString(),
-      activityIds: bucketActivities.map((activity) => activity.id),
-      activityCount: bucketActivities.length,
-      sports: Array.from(
-        new Set(bucketActivities.map((activity) => activity.sport)),
-      ),
       distance: Number(
         bucketActivities
           .reduce((total, activity) => total + (activity.distance ?? 0), 0)

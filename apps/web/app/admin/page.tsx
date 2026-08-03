@@ -51,6 +51,7 @@ interface AdminUser {
   role: "USER" | "ADMIN";
   isBlocked: boolean;
   createdAt: string;
+  lastLoginAt: string | null;
   hasStrava: boolean;
   stravaUpdatedAt: string | null;
   activitiesCount: number;
@@ -82,6 +83,20 @@ function formatShortDate(value: string) {
     day: "2-digit",
     month: "short",
     year: "numeric",
+  }).format(new Date(value));
+}
+
+function formatLastLogin(value: string | null) {
+  if (!value) {
+    return "jamais";
+  }
+
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(value));
 }
 
@@ -849,6 +864,10 @@ export default function AdminPage() {
                             <div className={styles.userMeta}>
                               <span className={styles.metaPill}>
                                 Créé le {formatShortDate(adminUser.createdAt)}
+                              </span>
+                              <span className={styles.metaPill}>
+                                Dernière connexion :{" "}
+                                {formatLastLogin(adminUser.lastLoginAt)}
                               </span>
                               <span className={styles.metaPill}>
                                 {adminUser.activitiesCount} activité(s)

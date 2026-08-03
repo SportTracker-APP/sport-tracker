@@ -3,6 +3,53 @@ import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
 import helmet from 'helmet';
 
+function normalizeOrigin(origin: string): string | null {
+  try {
+    return new URL(origin.trim()).origin;
+  } catch {
+    return null;
+  }
+}
+
+function isLoopbackOrigin(origin: string): boolean {
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  if (!normalizedOrigin) {
+    return false;
+  }
+
+  const { hostname, protocol } = new URL(normalizedOrigin);
+  const isHttpProtocol = protocol === 'http:' || protocol === 'https:';
+  const isLoopbackHost =
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '[::1]';
+
+  return isHttpProtocol && isLoopbackHost;
+}
+
+export function isCorsOriginAllowed(
+  origin: string | undefined,
+  allowedOrigins: ReadonlySet<string>,
+  isProduction: boolean,
+): boolean {
+  if (!origin) {
+    return true;
+  }
+
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  if (!normalizedOrigin) {
+    return false;
+  }
+
+  if (allowedOrigins.has(normalizedOrigin)) {
+    return true;
+  }
+
+  return !isProduction && isLoopbackOrigin(normalizedOrigin);
+}
+
 export function configureApplication(app: INestApplication): void {
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
 
@@ -15,17 +62,17 @@ export function configureApplication(app: INestApplication): void {
   app.use(json({ limit: '1mb' }));
   app.use(urlencoded({ extended: true, limit: '1mb' }));
 
-  const allowedOrigins = new Set(
-    [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      process.env.FRONTEND_URL,
-    ].filter((origin): origin is string => Boolean(origin)),
-  );
+  const isProduction = process.env.NODE_ENV === 'production';
+  const configuredOrigins = [process.env.FRONTEND_URL]
+    .filter((origin): origin is string => Boolean(origin))
+    .flatMap((origin) => origin.split(','))
+    .map(normalizeOrigin)
+    .filter((origin): origin is string => origin !== null);
+  const allowedOrigins = new Set(configuredOrigins);
 
   app.enableCors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
+      if (isCorsOriginAllowed(origin, allowedOrigins, isProduction)) {
         callback(null, true);
         return;
       }

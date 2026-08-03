@@ -64,6 +64,7 @@ export type RefugeViewModel = {
   } | null;
   nextBadge: {
     name: string;
+    criterionLabel: string;
     remainingLabel: string;
     progressLabel: string;
     progress: number;
@@ -160,7 +161,19 @@ function getBadgeRemainingLabel(badge: SummitBadge) {
     return "Prêt à rejoindre ta collection.";
   }
 
+  if (badge.category === "Exploits D+") {
+    return `Plus que ${integerFormatter.format(remaining)} ${badge.progress.unit} sur une même sortie pour le débloquer.`;
+  }
+
   return `Plus que ${integerFormatter.format(remaining)} ${badge.progress.unit} avant de le débloquer.`;
+}
+
+function getBadgeCriterionLabel(badge: SummitBadge) {
+  if (badge.category === "Exploits D+") {
+    return badge.hint.replace("sur une sortie", "sur une seule sortie");
+  }
+
+  return badge.hint;
 }
 
 function getBadgeProgressLabel(badge: SummitBadge) {
@@ -168,7 +181,13 @@ function getBadgeProgressLabel(badge: SummitBadge) {
     return "À découvrir";
   }
 
-  return `${integerFormatter.format(badge.progress.current)} / ${integerFormatter.format(badge.progress.target)} ${badge.progress.unit}`;
+  const progress = `${integerFormatter.format(badge.progress.current)} / ${integerFormatter.format(badge.progress.target)} ${badge.progress.unit}`;
+
+  if (badge.category === "Exploits D+") {
+    return `Meilleure sortie : ${progress}`;
+  }
+
+  return progress;
 }
 
 function getBadgeProgress(badge: SummitBadge) {
@@ -483,6 +502,7 @@ export function createRefugeViewModel(input: {
     nextBadge: nextBadge
       ? {
           name: nextBadge.name,
+          criterionLabel: getBadgeCriterionLabel(nextBadge),
           remainingLabel: getBadgeRemainingLabel(nextBadge),
           progressLabel: getBadgeProgressLabel(nextBadge),
           progress: getBadgeProgress(nextBadge),

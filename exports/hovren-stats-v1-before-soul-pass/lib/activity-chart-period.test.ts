@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 import { getActivityChartSummary } from "./activity-chart-period";
 
 type TestActivity = {
-  id: string;
-  sport: string;
   distance: number;
   duration: number;
   elevationGain: number;
@@ -18,8 +16,6 @@ function createActivity(
   elevationGain = 100,
 ): TestActivity {
   return {
-    id: `activity-${startedAt.toISOString()}`,
-    sport: "TRAIL",
     distance,
     duration,
     elevationGain,

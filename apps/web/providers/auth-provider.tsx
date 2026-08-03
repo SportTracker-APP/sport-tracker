@@ -149,7 +149,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           aria-live="polite"
         >
           <div className="app-auth-loading-brand">
-            <BrandMark showJointDot={false} />
+            <BrandMark />
             <p>
               HOVREN<span>.fr</span>
             </p>

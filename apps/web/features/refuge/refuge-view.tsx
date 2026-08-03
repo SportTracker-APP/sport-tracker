@@ -418,6 +418,11 @@ export default function RefugeView() {
                       <strong>
                         {viewModel.nextBadge?.name ?? "Premier palier"}
                       </strong>
+                      {viewModel.nextBadge ? (
+                        <p className={styles.collectionBadgeCriterion}>
+                          Objectif : {viewModel.nextBadge.criterionLabel}
+                        </p>
+                      ) : null}
                     </div>
                     <Award aria-hidden="true" />
                   </div>

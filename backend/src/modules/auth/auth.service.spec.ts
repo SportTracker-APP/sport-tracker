@@ -377,6 +377,15 @@ describe('AuthService password reset', () => {
         usedAt: expect.objectContaining({}),
       },
     });
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refreshToken: expect.stringMatching(/^\$2[ab]\$/),
+        lastLoginAt: expect.any(Date),
+      },
+    });
     expect(mail.sendWelcomeEmail).toHaveBeenCalledWith({
       to: user.email,
       userName: user.firstName,
@@ -815,6 +824,7 @@ describe('AuthService password reset', () => {
         },
         data: expect.objectContaining({
           refreshToken: expect.stringMatching(/^\$2[ab]\$/),
+          lastLoginAt: expect.any(Date),
         }),
       }),
     );

@@ -66,6 +66,8 @@ model User {
   // DATES
   createdAt DateTime @default(now())
 
+  lastLoginAt DateTime?
+
   updatedAt DateTime @updatedAt
 
   stravaConnection StravaConnection?

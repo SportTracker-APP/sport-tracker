@@ -99,6 +99,7 @@ export class AdminService {
         role: true,
         isBlocked: true,
         createdAt: true,
+        lastLoginAt: true,
         stravaConnection: {
           select: {
             id: true,
@@ -121,6 +122,7 @@ export class AdminService {
       role: user.role,
       isBlocked: user.isBlocked,
       createdAt: user.createdAt,
+      lastLoginAt: user.lastLoginAt,
       hasStrava: Boolean(user.stravaConnection),
       stravaUpdatedAt: user.stravaConnection?.updatedAt ?? null,
       activitiesCount: user._count.activities,
@@ -159,6 +161,7 @@ export class AdminService {
         role: true,
         isBlocked: true,
         createdAt: true,
+        lastLoginAt: true,
       },
     });
 
@@ -202,6 +205,7 @@ export class AdminService {
         role: true,
         isBlocked: true,
         createdAt: true,
+        lastLoginAt: true,
         stravaConnection: {
           select: {
             id: true,
@@ -224,6 +228,7 @@ export class AdminService {
       role: user.role,
       isBlocked: user.isBlocked,
       createdAt: user.createdAt,
+      lastLoginAt: user.lastLoginAt,
       hasStrava: Boolean(user.stravaConnection),
       stravaUpdatedAt: user.stravaConnection?.updatedAt ?? null,
       activitiesCount: user._count.activities,

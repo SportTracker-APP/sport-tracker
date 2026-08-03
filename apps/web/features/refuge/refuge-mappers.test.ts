@@ -135,6 +135,7 @@ describe("createRefugeViewModel", () => {
     expect(result.latestSummit?.name).toBe("Mont Veyrier");
     expect(result.recentActivities[0]?.distance).toBe("12,4 km");
     expect(result.nextBadge?.remainingLabel).toContain("9 sommets");
+    expect(result.nextBadge?.criterionLabel).toBe("Atteins dix sommets.");
     expect(result.nextBadge?.progressLabel).toBe("1 / 10 sommets");
     expect(result.nextBadge?.progress).toBe(10);
     expect(result.strongestMassif).toEqual({
@@ -157,6 +158,32 @@ describe("createRefugeViewModel", () => {
     expect(result.recentActivitiesCopy).toEqual({
       heading: "Tes dernières sorties",
       linkLabel: "Voir toutes mes sorties",
+    });
+  });
+
+  it("précise qu'un badge de dénivelé doit être réalisé sur une seule sortie", () => {
+    const elevationBadge: SummitBadge = {
+      ...badge,
+      id: "badge-elevation",
+      name: "Chasseur de sommets (1 500 m D+)",
+      hint: "Réalise 1 500 m D+ sur une sortie.",
+      category: "Exploits D+",
+      criterion: "Réaliser 1 500 m de dénivelé positif sur une sortie",
+      progress: { current: 1_470, target: 1_500, unit: "m D+" },
+    };
+
+    const result = createRefugeViewModel({
+      activities: [createActivity()],
+      summits: [summit],
+      badges: [elevationBadge],
+      goals: [goal],
+    });
+
+    expect(result.nextBadge).toMatchObject({
+      criterionLabel: "Réalise 1 500 m D+ sur une seule sortie.",
+      progressLabel: "Meilleure sortie : 1 470 / 1 500 m D+",
+      remainingLabel:
+        "Plus que 30 m D+ sur une même sortie pour le débloquer.",
     });
   });
 

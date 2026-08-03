@@ -930,6 +930,14 @@
   font-weight: 550;
 }
 
+.collectionBadgeCriterion {
+  max-width: 330px;
+  margin-top: 8px;
+  color: var(--moss);
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
 .collectionBadgeHeading > svg {
   width: 42px;
   height: 42px;
@@ -1781,6 +1789,9 @@
   .collectionProgressHeading span {
     max-width: none;
     text-align: left;
+  }
+  .collectionBadgeCriterion {
+    max-width: none;
   }
   .collectionTerritories {
     grid-template-columns: minmax(0, 1fr);
