@@ -1,0 +1,10 @@
+Référence visuelle utilisée : auth-reset-password-resend(1).html
+Image commune conservée : https://hovren.fr/email-assets/hovren-email-activity-ascent.jpg
+Syntaxe de variables alignée sur la référence : {{{VARIABLE}}}
+
+- activity-first-created-resend.html: 12 variables conservées, image et template de référence présents.
+- activity-upcoming-reminder-resend.html: 10 variables conservées, image et template de référence présents.
+- auth-password-changed-resend.html: 9 variables conservées, image et template de référence présents.
+- auth-verify-email-resend.html: 6 variables conservées, image et template de référence présents.
+- auth-welcome-resend-v2-strava.html: 6 variables conservées, image et template de référence présents.
+- summit-first-validated-resend.html: 11 variables conservées, image et template de référence présents.

@@ -4,133 +4,374 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="x-apple-disable-message-reformatting" />
+    <meta
+      name="format-detection"
+      content="telephone=no,address=no,email=no,date=no,url=no"
+    />
     <meta name="color-scheme" content="light" />
     <meta name="supported-color-schemes" content="light" />
-    <title>Bienvenue dans votre carnet d’exploration</title>
+    <title>Bienvenue dans ton carnet HOVREN</title>
+
     <style>
-      @media only screen and (max-width: 620px) {
-        .page { padding: 16px !important; }
-        .card { width: 100% !important; border-radius: 20px !important; }
-        .content { padding: 28px 22px !important; }
-        .hero-title { font-size: 34px !important; line-height: 1.08 !important; }
-        .button { display: block !important; width: 100% !important; box-sizing: border-box !important; }
-        .secondary-button { display: block !important; width: 100% !important; box-sizing: border-box !important; }
-        .feature-cell { display: block !important; width: 100% !important; padding: 0 0 12px !important; }
+
+      html,
+      body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
+
+      table,
+      td {
+        border-collapse: collapse !important;
+        mso-table-lspace: 0pt !important;
+        mso-table-rspace: 0pt !important;
+      }
+
+      img {
+        display: block;
+        border: 0;
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      @media only screen and (max-width: 620px) {
+        .page {
+          padding: 12px 8px !important;
+        }
+
+        .shell {
+          width: 100% !important;
+          border-radius: 18px !important;
+        }
+
+        .content {
+          padding: 26px 20px 28px !important;
+        }
+
+        .hero-image {
+          width: 100% !important;
+          height: auto !important;
+        }
+
+        .brand-cell,
+        .status-cell {
+          display: block !important;
+          width: 100% !important;
+          text-align: left !important;
+        }
+
+        .status-cell {
+          padding-top: 14px !important;
+        }
+
+        .title {
+          font-size: 31px !important;
+          line-height: 1.14 !important;
+          letter-spacing: -0.015em !important;
+        }
+
+        .button-wrapper {
+          width: 100% !important;
+        }
+
+        .button {
+          display: block !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+      }
+
     </style>
   </head>
 
-  <body style="margin:0; padding:0; background:#f3f7f4; color:#10251d; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-    <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent;">
-      Votre espace est prêt. Importez votre historique Strava ou ajoutez votre première sortie.
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background: #ebe6da;
+      color: #19382d;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial,
+        Helvetica, sans-serif;
+    "
+  >
+    <div
+      style="
+        display: none;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        color: transparent;
+        mso-hide: all;
+      "
+    >
+      Ton espace HOVREN est prêt. Importe ton historique Strava ou ajoute ta première sortie.
     </div>
 
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background:#f3f7f4;">
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="width: 100%; background: #ebe6da"
+    >
       <tr>
-        <td align="center" class="page" style="padding:32px 16px;">
-          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" class="card"
-            style="width:600px; max-width:600px; background:#ffffff; border:1px solid #dce7e0; border-radius:24px; overflow:hidden;">
-
+        <td align="center" class="page" style="padding: 32px 16px">
+          <!--[if mso]>
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0">
             <tr>
-              <td style="height:10px; background:#16a36d; font-size:0; line-height:0;">&nbsp;</td>
+              <td>
+          <![endif]-->
+
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            class="shell"
+            style="
+              width: 600px;
+              max-width: 600px;
+              background: #f8f4e9;
+              border: 1px solid #d8d0bf;
+              border-radius: 24px;
+              overflow: hidden;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  height: 6px;
+                  background: #cf5b3a;
+                  font-size: 0;
+                  line-height: 0;
+                "
+              >
+                &nbsp;
+              </td>
             </tr>
 
             <tr>
-              <td class="content" style="padding:38px 40px 36px;">
-                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                  <tr>
-                    <td style="padding-bottom:28px;">
-                      <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                        <tr>
-                          <td valign="middle"
-                            style="width:42px; height:42px; border-radius:14px; background:#e8f8f0; text-align:center; font-size:21px;">
-                            ⛰️
-                          </td>
-                          <td valign="middle" style="padding-left:12px;">
-                            <div style="font-size:18px; font-weight:800; letter-spacing:-0.02em; color:#10251d;">
-                              {{APP_NAME}}
-                            </div>
-                            <div style="font-size:12px; color:#6b7f75; margin-top:2px;">
-                              Carnet d’exploration outdoor
-                            </div>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
+              <td style="background: #f3eee1">
+                <img
+                  src="https://hovren.fr/email-assets/hovren-email-activity-ascent.jpg"
+                  width="600"
+                  alt="Illustration topographique HOVREN d’un itinéraire de montagne"
+                  class="hero-image"
+                  style="
+                    width: 600px;
+                    max-width: 100%;
+                    height: auto;
+                    background: #f3eee1;
+                  "
+                />
+              </td>
+            </tr>
 
+            <tr>
+              <td class="content" style="padding: 34px 40px 38px">
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                >
                   <tr>
-                    <td>
-                      <div style="display:inline-block; padding:8px 12px; border-radius:999px; background:#edf9f3; color:#0d7a53; font-size:12px; font-weight:800; letter-spacing:0.06em; text-transform:uppercase;">
-                        Bienvenue dans l’aventure
+                    <td class="brand-cell" valign="middle">
+                      <div
+                        style="
+                          font-size: 18px;
+                          line-height: 1.1;
+                          font-weight: 800;
+                          letter-spacing: 0.08em;
+                          color: #19382d;
+                        "
+                      >
+                        {{{APP_NAME}}}
+                      </div>
+
+                      <div
+                        style="
+                          margin-top: 7px;
+                          font-size: 11px;
+                          line-height: 1.4;
+                          font-weight: 700;
+                          letter-spacing: 0.12em;
+                          text-transform: uppercase;
+                          color: #718075;
+                        "
+                      >
+                        Carnet d’exploration outdoor
                       </div>
                     </td>
+
+                    <td class="status-cell" align="right" valign="middle">
+                      <span
+                        style="
+                          display: inline-block;
+                          padding: 8px 11px;
+                          border: 1px solid #e0cfc5;
+                          border-radius: 999px;
+                          background: #f6e8df;
+                          color: #9b452d;
+                          font-size: 11px;
+                          line-height: 1;
+                          font-weight: 700;
+                          letter-spacing: 0.08em;
+                          text-transform: uppercase;
+                        "
+                      >
+                        Bienvenue
+                      </span>
+                    </td>
                   </tr>
 
                   <tr>
-                    <td style="padding-top:20px;">
-                      <h1 class="hero-title" style="margin:0; font-size:40px; line-height:1.1; letter-spacing:-0.04em; color:#10251d;">
-                        Votre carnet est<br />
-                        <span style="color:#16a36d;">prêt à prendre vie.</span>
+                    <td colspan="2" style="padding-top: 26px">
+                      <div
+                        style="
+                          font-size: 11px;
+                          line-height: 1.4;
+                          font-weight: 800;
+                          letter-spacing: 0.13em;
+                          text-transform: uppercase;
+                          color: #cf5b3a;
+                        "
+                      >
+                        Ton refuge est prêt
+                      </div>
+
+                      <h1
+                        class="title"
+                        style="
+                          margin: 10px 0 0;
+                          font-family: -apple-system, BlinkMacSystemFont,
+                            'Segoe UI', Arial, Helvetica, sans-serif;
+                          font-size: 40px;
+                          line-height: 1.14;
+                          letter-spacing: -0.02em;
+                          font-weight: 800;
+                          color: #19382d;
+                        "
+                      >
+                        Ton carnet est prêt<br />
+                        <span style="color: #cf5b3a">à prendre vie.</span>
                       </h1>
                     </td>
                   </tr>
 
                   <tr>
-                    <td style="padding-top:20px;">
-                      <p style="margin:0; font-size:16px; line-height:1.7; color:#52665c;">
-                        Bonjour {{USER_NAME}},
+                    <td colspan="2" style="padding-top: 20px">
+                      
+                      <p
+                        style="
+                          margin: 0;
+                          font-size: 16px;
+                          line-height: 1.7;
+                          color: #53675c;
+                        "
+                      >
+                        Bonjour {{{USER_NAME}}},
                       </p>
-                      <p style="margin:14px 0 0; font-size:16px; line-height:1.7; color:#52665c;">
-                        Votre adresse est confirmée et votre espace est prêt. Vous pouvez maintenant enregistrer vos sorties,
-                        suivre votre progression et commencer à construire votre collection de sommets.
+
+                      <p
+                        style="
+                          margin: 12px 0 0;
+                          font-size: 16px;
+                          line-height: 1.7;
+                          color: #53675c;
+                        "
+                      >
+                        Ton adresse est confirmée et ton espace est prêt. Tu peux maintenant enregistrer tes sorties, suivre ta progression et construire ta collection de sommets.
                       </p>
+
+
                     </td>
                   </tr>
 
+
                   <tr>
-                    <td style="padding-top:28px;">
-                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <td colspan="2" style="padding-top: 28px">
+                      <table
+                        role="presentation"
+                        width="100%"
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                        style="
+                          background: #f1ecdf;
+                          border: 1px solid #dcd4c4;
+                          border-radius: 18px;
+                          overflow: hidden;
+                        "
+                      >
                         <tr>
-                          <td class="feature-cell" width="33.33%" valign="top" style="padding-right:8px;">
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
-                              style="background:#f7faf8; border:1px solid #e4ece7; border-radius:16px;">
+                          <td style="padding: 19px 20px">
+                            <table
+                              role="presentation"
+                              width="100%"
+                              cellspacing="0"
+                              cellpadding="0"
+                              border="0"
+                            >
                               <tr>
-                                <td style="padding:18px 14px;">
-                                  <div style="font-size:22px; margin-bottom:10px;">🥾</div>
-                                  <div style="font-size:13px; font-weight:800; color:#233b30;">Ajoutez vos sorties</div>
-                                  <div style="font-size:12px; line-height:1.5; color:#71837a; margin-top:5px;">
-                                    Trail, course, randonnée ou vélo.
-                                  </div>
+                                <td
+                                  valign="top"
+                                  style="
+                                    width: 18px;
+                                    padding: 5px 0 0;
+                                    font-size: 0;
+                                    line-height: 0;
+                                  "
+                                >
+                                  <span
+                                    style="
+                                      display: block;
+                                      width: 8px;
+                                      height: 8px;
+                                      border-radius: 999px;
+                                      background: #cf5b3a;
+                                    "
+                                  >
+                                    &nbsp;
+                                  </span>
                                 </td>
-                              </tr>
-                            </table>
-                          </td>
 
-                          <td class="feature-cell" width="33.33%" valign="top" style="padding:0 4px;">
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
-                              style="background:#f7faf8; border:1px solid #e4ece7; border-radius:16px;">
-                              <tr>
-                                <td style="padding:18px 14px;">
-                                  <div style="font-size:22px; margin-bottom:10px;">📈</div>
-                                  <div style="font-size:13px; font-weight:800; color:#233b30;">Suivez vos progrès</div>
-                                  <div style="font-size:12px; line-height:1.5; color:#71837a; margin-top:5px;">
-                                    Distance, dénivelé et régularité.
+                                <td valign="top" style="padding: 0">
+                                  <div
+                                    style="
+                                      font-size: 10px;
+                                      line-height: 1.3;
+                                      font-weight: 800;
+                                      letter-spacing: 0.13em;
+                                      text-transform: uppercase;
+                                      color: #718075;
+                                    "
+                                  >
+                                    Tes premiers repères
                                   </div>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
 
-                          <td class="feature-cell" width="33.33%" valign="top" style="padding-left:8px;">
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
-                              style="background:#f7faf8; border:1px solid #e4ece7; border-radius:16px;">
-                              <tr>
-                                <td style="padding:18px 14px;">
-                                  <div style="font-size:22px; margin-bottom:10px;">🏔️</div>
-                                  <div style="font-size:13px; font-weight:800; color:#233b30;">Validez vos sommets</div>
-                                  <div style="font-size:12px; line-height:1.5; color:#71837a; margin-top:5px;">
-                                    Gardez une trace de chaque ascension.
+                                  <div
+                                    style="
+                                      margin: 7px 0 0;
+                                      font-size: 14px;
+                                      line-height: 1.65;
+                                      color: #53675c;
+                                    "
+                                  >
+                                    
+                                    <strong style="color:#19382d">Ajoute tes sorties</strong> — trail, course, randonnée ou vélo.<br />
+                                    <strong style="color:#19382d">Suis ta progression</strong> — distance, dénivelé et régularité.<br />
+                                    <strong style="color:#19382d">Valide tes sommets</strong> — garde une trace de chaque ascension.
+            
                                   </div>
                                 </td>
                               </tr>
@@ -142,68 +383,56 @@
                   </tr>
 
                   <tr>
-                    <td style="padding-top:28px;">
-                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
-                        style="background:#fff7f2; border:1px solid #ffd8c5; border-radius:18px;">
+                    <td colspan="2" style="padding-top: 26px">
+                      <table
+                        role="presentation"
+                        width="100%"
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                        style="
+                          background: #f4efe3;
+                          border: 1px solid #ded7c8;
+                          border-radius: 16px;
+                        "
+                      >
                         <tr>
-                          <td style="padding:22px;">
-                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                              <tr>
-                                <td valign="top" style="width:46px;">
-                                  <div style="width:42px; height:42px; border-radius:13px; background:#fc4c02; color:#ffffff; text-align:center; line-height:42px; font-size:19px; font-weight:900;">
-                                    S
-                                  </div>
-                                </td>
-                                <td valign="top" style="padding-left:14px;">
-                                  <div style="font-size:12px; font-weight:800; color:#c63e00; text-transform:uppercase; letter-spacing:0.06em;">
-                                    Vous utilisez Strava ?
-                                  </div>
-                                  <div style="font-size:18px; line-height:1.35; font-weight:800; color:#35261f; margin-top:7px;">
-                                    Importez votre historique en quelques instants
-                                  </div>
-                                  <div style="font-size:13px; line-height:1.65; color:#7b6256; margin-top:8px;">
-                                    Connectez votre compte Strava pour retrouver vos anciennes activités et commencer
-                                    avec un carnet déjà rempli. La synchronisation reste facultative et vous gardez
-                                    le contrôle sur les données importées.
-                                  </div>
-                                  <div style="padding-top:16px;">
-                                    <a href="{{STRAVA_CONNECT_URL}}" class="secondary-button"
-                                      style="display:inline-block; background:#fc4c02; color:#ffffff; text-decoration:none; font-size:14px; font-weight:800; line-height:1; padding:14px 18px; border-radius:12px; text-align:center;">
-                                      Connecter Strava
-                                    </a>
-                                  </div>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td style="padding-top:28px;">
-                      <a href="{{DASHBOARD_URL}}" class="button"
-                        style="display:inline-block; background:#16a36d; color:#ffffff; text-decoration:none; font-size:16px; font-weight:800; line-height:1; padding:18px 24px; border-radius:14px; text-align:center;">
-                        Découvrir mon espace
-                      </a>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td style="padding-top:24px;">
-                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"
-                        style="background:#10251d; border-radius:18px;">
-                        <tr>
-                          <td style="padding:22px;">
-                            <div style="font-size:13px; font-weight:800; color:#9ff0c5; text-transform:uppercase; letter-spacing:0.06em;">
-                              Premier objectif
+                          <td style="padding: 17px 18px">
+                            <div
+                              style="
+                                font-size: 12px;
+                                line-height: 1.5;
+                                font-weight: 800;
+                                color: #315544;
+                              "
+                            >
+                              Tu utilises Strava ?
                             </div>
-                            <div style="font-size:17px; font-weight:800; color:#ffffff; margin-top:8px;">
-                              Commencez à construire votre historique
-                            </div>
-                            <div style="font-size:13px; line-height:1.6; color:#c9d7d0; margin-top:8px;">
-                              Importez vos activités Strava ou ajoutez une sortie déjà réalisée pour faire apparaître vos premières statistiques.
+
+                            <div
+                              style="
+                                margin: 7px 0 0;
+                                font-size: 12px;
+                                line-height: 1.65;
+                                color: #829087;
+                              "
+                            >
+                              
+                              Connecte ton compte pour retrouver ton historique et commencer avec un carnet déjà rempli.
+                              La synchronisation reste facultative et tu gardes le contrôle sur les données importées.
+                              <br /><br />
+                              <a href="{{{STRAVA_CONNECT_URL}}}" style="
+                                display:inline-block;
+                                padding:13px 16px;
+                                border-radius:11px;
+                                background:#fc4c02;
+                                color:#ffffff;
+                                font-weight:700;
+                                text-decoration:none;
+                              ">
+                                Connecter Strava
+                              </a>
+            
                             </div>
                           </td>
                         </tr>
@@ -212,21 +441,126 @@
                   </tr>
 
                   <tr>
-                    <td style="padding-top:30px;">
-                      <div style="height:1px; background:#e7eee9;"></div>
+                    <td colspan="2" style="padding-top: 26px">
+                      <table
+                        role="presentation"
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                        class="button-wrapper"
+                      >
+                        <tr>
+                          <td bgcolor="#19382d" style="border-radius: 13px">
+                            <a
+                              href="{{{DASHBOARD_URL}}}"
+                              class="button"
+                              style="
+                                display: inline-block;
+                                padding: 17px 23px;
+                                border-radius: 13px;
+                                background: #19382d;
+                                color: #fffdf6;
+                                font-size: 15px;
+                                line-height: 1;
+                                font-weight: 700;
+                                text-decoration: none;
+                                text-align: center;
+                              "
+                            >
+                              Découvrir mon espace&nbsp;&nbsp;→
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                   </tr>
 
                   <tr>
-                    <td style="padding-top:22px;">
-                      <p style="margin:0; font-size:12px; line-height:1.7; color:#8b9a92;">
-                        Une question ? Écrivez-nous à
-                        <a href="mailto:{{SUPPORT_EMAIL}}" style="color:#0d7a53; text-decoration:none;">
-                          {{SUPPORT_EMAIL}}
+                    <td colspan="2" style="padding-top: 28px">
+                      <table
+                        role="presentation"
+                        width="100%"
+                        cellspacing="0"
+                        cellpadding="0"
+                        border="0"
+                      >
+                        <tr>
+                          <td
+                            valign="top"
+                            style="
+                              width: 18px;
+                              padding: 5px 0 0;
+                              font-size: 0;
+                              line-height: 0;
+                            "
+                          >
+                            <span
+                              style="
+                                display: block;
+                                width: 8px;
+                                height: 8px;
+                                border-radius: 999px;
+                                background: #cf5b3a;
+                              "
+                            >
+                              &nbsp;
+                            </span>
+                          </td>
+
+                          <td valign="top" style="padding: 0">
+                            <p
+                              style="
+                                margin: 0;
+                                font-size: 13px;
+                                line-height: 1.65;
+                                color: #65756c;
+                              "
+                            >
+                              <strong style="color: #315544">Premier cap.</strong>
+                              <br />
+                              Importe tes activités Strava ou ajoute une sortie déjà réalisée pour faire apparaître tes premières statistiques.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td colspan="2" style="padding-top: 30px">
+                      <div style="height: 1px; background: #ded7c8"></div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td colspan="2" style="padding-top: 20px">
+                      <p
+                        style="
+                          margin: 0;
+                          font-size: 12px;
+                          line-height: 1.7;
+                          color: #829087;
+                        "
+                      >
+                        Besoin d’aide ? Écris-nous à
+                        <a
+                          href="mailto:{{{SUPPORT_EMAIL}}}"
+                          style="color: #315544; text-decoration: none"
+                        >
+                          {{{SUPPORT_EMAIL}}}
                         </a>
                       </p>
-                      <p style="margin:8px 0 0; font-size:12px; line-height:1.7; color:#a0ada6;">
-                        © {{CURRENT_YEAR}} {{APP_NAME}}. Tous droits réservés.
+
+                      <p
+                        style="
+                          margin: 9px 0 0;
+                          font-size: 11px;
+                          line-height: 1.7;
+                          color: #9aa49e;
+                        "
+                      >
+                        © {{{CURRENT_YEAR}}} {{{APP_NAME}}} · hovren.fr
                       </p>
                     </td>
                   </tr>
@@ -235,15 +569,37 @@
             </tr>
           </table>
 
-          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:600px; max-width:600px;">
+          <table
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="width: 600px; max-width: 600px"
+          >
             <tr>
-              <td align="center" style="padding:18px 20px 0; font-size:11px; line-height:1.6; color:#9aa8a0;">
-                Cet email vous est envoyé après la confirmation de votre compte.
+              <td
+                align="center"
+                style="
+                  padding: 16px 20px 0;
+                  font-size: 11px;
+                  line-height: 1.6;
+                  color: #8c958f;
+                "
+              >
+                Email transactionnel envoyé après la confirmation de ton compte.
               </td>
             </tr>
           </table>
+
+          <!--[if mso]>
+              </td>
+            </tr>
+          </table>
+          <![endif]-->
         </td>
       </tr>
     </table>
   </body>
 </html>
+

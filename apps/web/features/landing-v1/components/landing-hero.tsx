@@ -66,7 +66,7 @@ export function LandingHero() {
           </p>
 
           <h1 className="mt-7 text-5xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl min-[1536px]:text-[5.8rem] min-[1800px]:text-[6.45rem]">
-            Tes sorties deviennent ton carnet outdoor.
+           CHAQUE SOMMET MÉRITE UNE PLACE DANS TON HISTOIRE.
           </h1>
 
           <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl sm:leading-9">
