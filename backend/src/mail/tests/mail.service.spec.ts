@@ -9,16 +9,6 @@ const mailConfig: MailConfig = {
   replyTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
-  templates: {
-    authVerify: 'auth-verify-email',
-    authWelcome: 'auth-welcome',
-    authResetPassword: 'auth-reset-password',
-    authPasswordChanged: 'auth-password-changed',
-    activityFirstCreated: 'activity-first-created',
-    activityUpcomingReminder: 'activity-upcoming-reminder',
-    activityCompletedCongratulations: 'activity-completed',
-    summitFirstValidated: 'summit-first-validated',
-  },
 };
 
 function makeProvider() {
@@ -47,7 +37,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'auth.verify_email',
       to: 'user@example.test',
-      templateId: 'auth-verify-email',
       businessId: 'verification-1',
       variables: expect.objectContaining({
         APP_NAME: 'Hovren',
@@ -72,7 +61,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'auth.welcome',
       to: 'user@example.test',
-      templateId: 'auth-welcome',
       businessId: undefined,
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
@@ -97,7 +85,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'auth.reset_password',
       to: 'user@example.test',
-      templateId: 'auth-reset-password',
       businessId: 'reset-1',
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
@@ -122,7 +109,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'auth.password_changed',
       to: 'user@example.test',
-      templateId: 'auth-password-changed',
       businessId: undefined,
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
@@ -155,7 +141,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'activity.first_created',
       to: 'user@example.test',
-      templateId: 'activity-first-created',
       businessId: 'activity-1',
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
@@ -189,7 +174,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'summit.first_validated',
       to: 'user@example.test',
-      templateId: 'summit-first-validated',
       businessId: undefined,
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
@@ -223,7 +207,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'activity.upcoming_reminder',
       to: 'user@example.test',
-      templateId: 'activity-upcoming-reminder',
       businessId: 'scheduled-email-1',
       variables: expect.objectContaining({
         USER_NAME: 'Camille',
@@ -257,7 +240,6 @@ describe('MailService', () => {
     expect(provider.sendTemplate).toHaveBeenCalledWith({
       type: 'activity.completed_congratulations',
       to: 'user@example.test',
-      templateId: 'activity-completed',
       businessId: 'scheduled-email-2',
       variables: expect.objectContaining({
         USER_NAME: 'Camille',

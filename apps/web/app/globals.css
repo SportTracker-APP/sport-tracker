@@ -5281,29 +5281,41 @@ html.sport-theme-nature .app-account-menu {
 }
 
 html.sport-theme-nature .app-notification-menu {
-  border-color: rgba(6, 78, 59, 0.14) !important;
-  background: rgba(239, 248, 242, 0.985) !important;
-  color: #102033 !important;
+  border-color: rgba(91, 78, 58, 0.2) !important;
+  background:
+    radial-gradient(
+      circle at 1px 1px,
+      rgba(35, 76, 57, 0.045) 1px,
+      transparent 0
+    ),
+    linear-gradient(
+      145deg,
+      rgba(252, 248, 239, 0.99),
+      rgba(244, 238, 225, 0.99)
+    ) !important;
+  background-size:
+    18px 18px,
+    100% 100% !important;
+  color: #183126 !important;
   box-shadow:
-    0 30px 80px rgba(6, 78, 59, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.72),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+    0 28px 72px rgba(55, 43, 27, 0.2),
+    inset 0 1px 0 rgba(255, 252, 244, 0.72) !important;
 }
 
 html.sport-theme-nature .app-notification-header {
-  border-color: rgba(6, 78, 59, 0.1) !important;
-  background: rgba(255, 255, 255, 0.36) !important;
+  border-color: rgba(91, 78, 58, 0.16) !important;
+  background: rgba(255, 252, 244, 0.58) !important;
 }
 
 html.sport-theme-nature .app-notification-menu h2,
 html.sport-theme-nature .app-notification-menu strong {
-  color: #102033 !important;
+  color: #183126 !important;
 }
 
 html.sport-theme-nature .app-notification-menu h3,
 html.sport-theme-nature .app-notification-menu p,
 html.sport-theme-nature .app-notification-menu [class*="text-zinc-500"] {
-  color: #607268 !important;
+  color: #667468 !important;
 }
 
 html.sport-theme-nature .app-topbar .app-notification-item,
@@ -5314,23 +5326,29 @@ html.sport-theme-nature .app-topbar .app-notification-section-link {
 }
 
 html.sport-theme-nature .app-topbar .app-notification-item:hover {
-  background: rgba(255, 255, 255, 0.62) !important;
+  background: rgba(200, 91, 47, 0.065) !important;
 }
 
 html.sport-theme-nature .app-topbar .app-notification-section-link {
-  color: #047857 !important;
+  color: #c85b2f !important;
 }
 
 html.sport-theme-nature .app-topbar .app-notification-section-link:hover {
   background: transparent !important;
-  color: #065f46 !important;
+  color: #aa4325 !important;
   box-shadow: none !important;
 }
 
 html.sport-theme-nature .app-notification-icon {
-  border-color: rgba(5, 150, 105, 0.14) !important;
-  background: rgba(209, 250, 229, 0.62) !important;
-  color: #047857 !important;
+  border-color: rgba(47, 93, 70, 0.18) !important;
+  background: rgba(47, 93, 70, 0.07) !important;
+  color: #234c39 !important;
+}
+
+html.sport-theme-nature .app-notification-icon[data-tone="badge"] {
+  border-color: rgba(200, 91, 47, 0.22) !important;
+  background: rgba(200, 91, 47, 0.08) !important;
+  color: #c85b2f !important;
 }
 
 html.sport-theme-nature .app-account-identity {

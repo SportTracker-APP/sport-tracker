@@ -8,6 +8,7 @@ import type {
   GeoJsonFeatureCollection,
   NotableRoute,
 } from "./exploration-types";
+import { getEditorialActivityImage } from "@/lib/mountain-visuals";
 
 export const MAP_ROUTE_LIMIT = 18;
 
@@ -79,7 +80,10 @@ export function mapActivitiesToRoutes(
       startedAt: activity.startedAt,
       city: activity.city,
       country: activity.country,
-      coverImageUrl: activity.coverImageUrl,
+      coverImageUrl:
+        activity.coverImageUrl ??
+        activity.photoUrls?.[0] ??
+        getEditorialActivityImage(activity.id, activity.sport),
     }))
     .filter((route) => route.points.length > 1)
     .sort(

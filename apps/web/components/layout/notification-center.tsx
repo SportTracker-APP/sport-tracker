@@ -18,6 +18,8 @@ import { getBadgeIcon } from "@/lib/badge-icons";
 const MAX_UPCOMING_ACTIVITIES = 3;
 const MAX_RECENT_BADGES = 5;
 const MAX_RECENT_SUMMITS = 3;
+const SEEN_NOTIFICATIONS_STORAGE_KEY = "hovren.notifications.seen.v1";
+const MAX_STORED_NOTIFICATION_KEYS = 200;
 
 function formatNotificationDateTime(value: string) {
   return new Intl.DateTimeFormat("fr-FR", {
@@ -48,6 +50,8 @@ function getSportLabel(sport: string) {
 
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
+  const [seenNotificationKeys, setSeenNotificationKeys] =
+    useState<Set<string> | null>(null);
   const [referenceTime] = useState(() => Date.now());
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -102,9 +106,72 @@ export function NotificationCenter() {
         .slice(0, MAX_RECENT_SUMMITS),
     [summits],
   );
+  const notificationKeys = useMemo(
+    () => [
+      ...upcomingActivities.map((activity) => `activity:${activity.id}`),
+      ...recentBadges.map((badge) => `badge:${badge.id}:${badge.unlockedAt}`),
+      ...recentSummits.map(
+        (summit) => `summit:${summit.id}:${summit.latestDiscoveredAt}`,
+      ),
+    ],
+    [recentBadges, recentSummits, upcomingActivities],
+  );
   const hasNotifications =
     upcomingActivities.length + recentBadges.length + recentSummits.length > 0;
   const isLoading = activitiesLoading || badgesLoading || summitsLoading;
+  const hasUnreadNotifications =
+    !isLoading &&
+    seenNotificationKeys !== null &&
+    notificationKeys.some((key) => !seenNotificationKeys.has(key));
+
+  useEffect(() => {
+    try {
+      const storedKeys = window.localStorage.getItem(
+        SEEN_NOTIFICATIONS_STORAGE_KEY,
+      );
+      const parsedKeys: unknown = storedKeys ? JSON.parse(storedKeys) : [];
+
+      setSeenNotificationKeys(
+        new Set(
+          Array.isArray(parsedKeys)
+            ? parsedKeys.filter((key): key is string => typeof key === "string")
+            : [],
+        ),
+      );
+    } catch {
+      setSeenNotificationKeys(new Set());
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || isLoading || seenNotificationKeys === null) {
+      return;
+    }
+
+    const hasNewKeys = notificationKeys.some(
+      (key) => !seenNotificationKeys.has(key),
+    );
+
+    if (!hasNewKeys) {
+      return;
+    }
+
+    const updatedKeys = new Set([...seenNotificationKeys, ...notificationKeys]);
+    const storedKeys = Array.from(updatedKeys).slice(
+      -MAX_STORED_NOTIFICATION_KEYS,
+    );
+
+    try {
+      window.localStorage.setItem(
+        SEEN_NOTIFICATIONS_STORAGE_KEY,
+        JSON.stringify(storedKeys),
+      );
+    } catch {
+      // The visual read state still works when browser storage is unavailable.
+    }
+
+    setSeenNotificationKeys(new Set(storedKeys));
+  }, [isLoading, isOpen, notificationKeys, seenNotificationKeys]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -144,11 +211,14 @@ export function NotificationCenter() {
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}
-        className="app-notification-trigger relative flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.03] text-zinc-400 backdrop-blur-xl transition-all duration-200 hover:border-violet-400/25 hover:bg-violet-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-violet-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
+        className="app-notification-trigger relative flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#c85b2f]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none"
       >
         <Bell size={18} aria-hidden="true" />
-        {hasNotifications && (
-          <span className="app-notification-dot absolute top-2.5 right-2.5 h-2.5 w-2.5 rounded-full border-2 border-[#0b0b0f] bg-violet-400 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
+        {hasNotifications && hasUnreadNotifications && (
+          <span
+            aria-label="Nouveaux éléments"
+            className="app-notification-dot absolute top-2.5 right-2.5 h-2.5 w-2.5 rounded-full border-2"
+          />
         )}
       </button>
 
@@ -167,8 +237,8 @@ export function NotificationCenter() {
                 Ton fil d’exploration
               </p>
             </div>
-            <span className="rounded-full border border-violet-400/15 bg-violet-500/10 px-2 py-1 text-[0.62rem] font-semibold text-violet-300">
-              À jour
+            <span className="app-notification-status rounded-full border px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.04em] uppercase">
+              {hasUnreadNotifications ? "Nouveau" : "À jour"}
             </span>
           </div>
 
@@ -181,7 +251,7 @@ export function NotificationCenter() {
                 {[0, 1, 2].map((item) => (
                   <div
                     key={item}
-                    className="h-16 animate-pulse rounded-[14px] bg-white/[0.04]"
+                    className="app-notification-skeleton h-16 animate-pulse rounded-[12px]"
                   />
                 ))}
               </div>
@@ -191,7 +261,7 @@ export function NotificationCenter() {
                   <div className="flex items-center justify-between px-2 pt-1 pb-2">
                     <h3
                       id="notification-upcoming-title"
-                      className="flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] text-zinc-500 uppercase"
+                      className="app-notification-section-title flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase"
                     >
                       <CalendarClock
                         className="h-3.5 w-3.5"
@@ -202,7 +272,7 @@ export function NotificationCenter() {
                     <Link
                       href="/calendrier"
                       onClick={() => setIsOpen(false)}
-                      className="app-notification-section-link text-[0.67rem] font-medium text-violet-300 hover:text-violet-200"
+                      className="app-notification-section-link text-[0.67rem] font-semibold"
                     >
                       Planning
                     </Link>
@@ -214,44 +284,47 @@ export function NotificationCenter() {
                           key={activity.id}
                           href="/calendrier"
                           onClick={() => setIsOpen(false)}
-                          className="app-notification-item group flex items-center gap-3 rounded-[14px] px-2.5 py-2.5 transition hover:bg-white/[0.045]"
+                          className="app-notification-item group flex items-center gap-3 rounded-[12px] px-2.5 py-2.5 transition"
                         >
-                          <span className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-sky-400/15 bg-sky-400/10 text-sky-300">
+                          <span
+                            data-tone="calendar"
+                            className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border"
+                          >
                             <CalendarClock
                               className="h-4 w-4"
                               aria-hidden="true"
                             />
                           </span>
                           <span className="min-w-0 flex-1">
-                            <strong className="block truncate text-xs font-semibold text-zinc-100">
+                            <strong className="app-notification-item-title block truncate text-xs font-semibold">
                               {activity.title || "Séance prévue"}
                             </strong>
-                            <span className="mt-0.5 block truncate text-[0.68rem] text-zinc-500">
+                            <span className="app-notification-item-meta mt-0.5 block truncate text-[0.68rem]">
                               {getSportLabel(activity.sport)} ·{" "}
                               {formatNotificationDateTime(activity.startedAt)}
                             </span>
                           </span>
                           <ChevronRight
-                            className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300"
+                            className="app-notification-chevron h-4 w-4 shrink-0 transition group-hover:translate-x-0.5"
                             aria-hidden="true"
                           />
                         </Link>
                       ))}
                     </div>
                   ) : (
-                    <p className="px-2.5 py-3 text-xs text-zinc-500">
+                    <p className="app-notification-empty px-2.5 py-3 text-xs">
                       Aucune sortie planifiée pour le moment.
                     </p>
                   )}
                 </section>
 
-                <div className="mx-2 my-2 h-px bg-white/[0.06]" />
+                <div className="app-notification-divider mx-2 my-2 h-px" />
 
                 <section aria-labelledby="notification-badges-title">
                   <div className="flex items-center justify-between px-2 py-2">
                     <h3
                       id="notification-badges-title"
-                      className="flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] text-zinc-500 uppercase"
+                      className="app-notification-section-title flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase"
                     >
                       <Trophy className="h-3.5 w-3.5" aria-hidden="true" />
                       Badges gagnés
@@ -259,7 +332,7 @@ export function NotificationCenter() {
                     <Link
                       href="/badges"
                       onClick={() => setIsOpen(false)}
-                      className="app-notification-section-link text-[0.67rem] font-medium text-violet-300 hover:text-violet-200"
+                      className="app-notification-section-link text-[0.67rem] font-semibold"
                     >
                       Historique
                     </Link>
@@ -274,25 +347,28 @@ export function NotificationCenter() {
                             key={badge.id}
                             href="/badges"
                             onClick={() => setIsOpen(false)}
-                            className="app-notification-item group flex items-center gap-3 rounded-[14px] px-2.5 py-2.5 transition hover:bg-white/[0.045]"
+                            className="app-notification-item group flex items-center gap-3 rounded-[12px] px-2.5 py-2.5 transition"
                           >
-                            <span className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-violet-400/15 bg-violet-500/10 text-violet-300">
+                            <span
+                              data-tone="badge"
+                              className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border"
+                            >
                               <BadgeIcon
                                 className="h-4 w-4"
                                 aria-hidden="true"
                               />
                             </span>
                             <span className="min-w-0 flex-1">
-                              <strong className="block truncate text-xs font-semibold text-zinc-100">
+                              <strong className="app-notification-item-title block truncate text-xs font-semibold">
                                 {badge.name}
                               </strong>
-                              <span className="mt-0.5 block truncate text-[0.68rem] text-zinc-500">
+                              <span className="app-notification-item-meta mt-0.5 block truncate text-[0.68rem]">
                                 {badge.category} ·{" "}
                                 {formatNotificationDateTime(badge.unlockedAt)}
                               </span>
                             </span>
                             <ChevronRight
-                              className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300"
+                              className="app-notification-chevron h-4 w-4 shrink-0 transition group-hover:translate-x-0.5"
                               aria-hidden="true"
                             />
                           </Link>
@@ -300,7 +376,7 @@ export function NotificationCenter() {
                       })}
                     </div>
                   ) : (
-                    <p className="px-2.5 py-3 text-xs text-zinc-500">
+                    <p className="app-notification-empty px-2.5 py-3 text-xs">
                       Ton premier badge apparaîtra ici.
                     </p>
                   )}
@@ -308,12 +384,12 @@ export function NotificationCenter() {
 
                 {recentSummits.length > 0 && (
                   <>
-                    <div className="mx-2 my-2 h-px bg-white/[0.06]" />
+                    <div className="app-notification-divider mx-2 my-2 h-px" />
                     <section aria-labelledby="notification-summits-title">
                       <div className="flex items-center justify-between px-2 py-2">
                         <h3
                           id="notification-summits-title"
-                          className="flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] text-zinc-500 uppercase"
+                          className="app-notification-section-title flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-[0.14em] uppercase"
                         >
                           <Mountain
                             className="h-3.5 w-3.5"
@@ -324,7 +400,7 @@ export function NotificationCenter() {
                         <Link
                           href="/sommets"
                           onClick={() => setIsOpen(false)}
-                          className="app-notification-section-link text-[0.67rem] font-medium text-violet-300 hover:text-violet-200"
+                          className="app-notification-section-link text-[0.67rem] font-semibold"
                         >
                           Carnet
                         </Link>
@@ -335,19 +411,22 @@ export function NotificationCenter() {
                             key={summit.id}
                             href="/sommets"
                             onClick={() => setIsOpen(false)}
-                            className="app-notification-item group flex items-center gap-3 rounded-[14px] px-2.5 py-2.5 transition hover:bg-white/[0.045]"
+                            className="app-notification-item group flex items-center gap-3 rounded-[12px] px-2.5 py-2.5 transition"
                           >
-                            <span className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-emerald-400/15 bg-emerald-400/10 text-emerald-300">
+                            <span
+                              data-tone="summit"
+                              className="app-notification-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border"
+                            >
                               <Mountain
                                 className="h-4 w-4"
                                 aria-hidden="true"
                               />
                             </span>
                             <span className="min-w-0 flex-1">
-                              <strong className="block truncate text-xs font-semibold text-zinc-100">
+                              <strong className="app-notification-item-title block truncate text-xs font-semibold">
                                 {summit.name}
                               </strong>
-                              <span className="mt-0.5 block truncate text-[0.68rem] text-zinc-500">
+                              <span className="app-notification-item-meta mt-0.5 block truncate text-[0.68rem]">
                                 {summit.altitude.toLocaleString("fr-FR")} m ·{" "}
                                 {formatNotificationDateTime(
                                   summit.latestDiscoveredAt,
@@ -355,7 +434,7 @@ export function NotificationCenter() {
                               </span>
                             </span>
                             <ChevronRight
-                              className="h-4 w-4 shrink-0 text-zinc-600 transition group-hover:translate-x-0.5 group-hover:text-zinc-300"
+                              className="app-notification-chevron h-4 w-4 shrink-0 transition group-hover:translate-x-0.5"
                               aria-hidden="true"
                             />
                           </Link>

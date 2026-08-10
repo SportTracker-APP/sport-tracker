@@ -28,7 +28,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'auth.verify_email',
       to: input.to,
-      templateId: this.config.templates.authVerify,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -43,7 +42,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'auth.welcome',
       to: input.to,
-      templateId: this.config.templates.authWelcome,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -60,7 +58,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'auth.reset_password',
       to: input.to,
-      templateId: this.config.templates.authResetPassword,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -77,7 +74,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'auth.password_changed',
       to: input.to,
-      templateId: this.config.templates.authPasswordChanged,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -97,7 +93,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'activity.first_created',
       to: input.to,
-      templateId: this.config.templates.activityFirstCreated,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -120,7 +115,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'activity.upcoming_reminder',
       to: input.to,
-      templateId: this.config.templates.activityUpcomingReminder,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -141,7 +135,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'activity.completed_congratulations',
       to: input.to,
-      templateId: this.config.templates.activityCompletedCongratulations,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),
@@ -163,7 +156,6 @@ export class MailService {
     return this.provider.sendTemplate({
       type: 'summit.first_validated',
       to: input.to,
-      templateId: this.config.templates.summitFirstValidated,
       businessId: input.businessId,
       variables: {
         ...this.commonVariables(),

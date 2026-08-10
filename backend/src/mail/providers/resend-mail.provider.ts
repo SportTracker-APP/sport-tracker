@@ -8,6 +8,10 @@ import { Resend } from 'resend';
 
 import { MAIL_CONFIG, RESEND_CLIENT } from '../mail.constants';
 import type { MailProvider } from '../mail-provider.interface';
+import {
+  MailTemplateRenderer,
+  type RenderedMailTemplate,
+} from '../mail-template.renderer';
 import type {
   MailConfig,
   MailSendRequest,
@@ -30,6 +34,7 @@ export class ResendMailProvider implements MailProvider {
   constructor(
     @Inject(MAIL_CONFIG) private readonly config: MailConfig,
     @Inject(RESEND_CLIENT) private readonly resend: ResendEmailClient,
+    private readonly renderer: MailTemplateRenderer,
   ) {}
 
   async sendTemplate(request: MailSendRequest): Promise<MailSendResult> {
@@ -44,14 +49,28 @@ export class ResendMailProvider implements MailProvider {
       return { skipped: true };
     }
 
+    let renderedTemplate: RenderedMailTemplate;
+
+    try {
+      renderedTemplate = await this.renderer.render(
+        request.type,
+        request.variables,
+      );
+    } catch {
+      this.logger.error({
+        ...logContext,
+        message: 'Transactional email rendering failed',
+      });
+
+      throw new Error('Transactional email rendering failed');
+    }
+
     const payload: CreateEmailOptions = {
       from: this.config.from,
       to: request.to,
       ...(this.config.replyTo ? { replyTo: this.config.replyTo } : {}),
-      template: {
-        id: request.templateId,
-        variables: request.variables,
-      },
+      subject: renderedTemplate.subject,
+      html: renderedTemplate.html,
     };
 
     const options = this.buildRequestOptions(request);

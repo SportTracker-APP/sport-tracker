@@ -38,16 +38,6 @@ const config: MailConfig = {
   replyTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
-  templates: {
-    authVerify: 'auth-verify-email',
-    authWelcome: 'auth-welcome',
-    authResetPassword: 'auth-reset-password',
-    authPasswordChanged: 'auth-password-changed',
-    activityFirstCreated: 'activity-first-created',
-    activityUpcomingReminder: 'activity-upcoming-reminder',
-    activityCompletedCongratulations: 'activity-completed',
-    summitFirstValidated: 'summit-first-validated',
-  },
 };
 
 function makePrismaMock(): PrismaMock {
@@ -304,7 +294,9 @@ describe('ActivityMailWorkerService', () => {
 
     await makeService(prisma, mailService).processDueEmails();
 
-    expect(mailService.sendActivityUpcomingReminderEmail).not.toHaveBeenCalled();
+    expect(
+      mailService.sendActivityUpcomingReminderEmail,
+    ).not.toHaveBeenCalled();
   });
 
   it('releases stuck processing tasks before selecting due work', async () => {
@@ -347,7 +339,9 @@ describe('ActivityMailWorkerService', () => {
 
     await makeService(prisma, mailService).processDueEmails();
 
-    expect(mailService.sendActivityUpcomingReminderEmail).not.toHaveBeenCalled();
+    expect(
+      mailService.sendActivityUpcomingReminderEmail,
+    ).not.toHaveBeenCalled();
     expect(prisma.scheduledEmail.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -386,7 +380,9 @@ describe('ActivityMailWorkerService', () => {
 
     await makeService(prisma, mailService).processDueEmails();
 
-    expect(mailService.sendActivityUpcomingReminderEmail).not.toHaveBeenCalled();
+    expect(
+      mailService.sendActivityUpcomingReminderEmail,
+    ).not.toHaveBeenCalled();
     expect(prisma.scheduledEmail.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

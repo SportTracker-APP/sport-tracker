@@ -1,13 +1,10 @@
 import { MapPin, Route } from "lucide-react";
 
 import type { Activity } from "@/lib/activities";
+import { getEditorialActivityImage } from "@/lib/mountain-visuals";
 
 import { getSportLabel } from "./statistics-utils";
 import styles from "./statistics.module.css";
-
-function getVisualUrl(activity: Activity) {
-  return activity.coverImageUrl ?? activity.photoUrls?.[0] ?? null;
-}
 
 const HOVREN_EDITORIAL_VISUAL = "/landing/summit-discovery-wildflowers.jpg";
 
@@ -32,9 +29,17 @@ export function StatisticsActivityVisual({
   placement?: "default" | "hero";
   visualSource?: "activity" | "hovren";
 }) {
-  const visualUrl = visualSource === "hovren"
+  const activityPhotoUrl = activity.coverImageUrl ?? activity.photoUrls?.[0] ?? null;
+  const fallbackUrl = visualSource === "hovren"
     ? HOVREN_EDITORIAL_VISUAL
-    : getVisualUrl(activity);
+    : getEditorialActivityImage(activity.id, activity.sport);
+  const visualUrl = visualSource === "activity" && activityPhotoUrl
+    ? activityPhotoUrl
+    : fallbackUrl;
+  const backgroundImage = visualUrl === fallbackUrl
+    ? `url(${JSON.stringify(fallbackUrl)})`
+    : `url(${JSON.stringify(visualUrl)}), url(${JSON.stringify(fallbackUrl)})`;
+  const hasActivityPhoto = Boolean(activityPhotoUrl);
   const hasRoute = Boolean(activity.routePolyline);
   const location = activity.city || activity.country;
 
@@ -42,33 +47,18 @@ export function StatisticsActivityVisual({
     <div
       className={styles.activityVisual}
       data-compact={compact || undefined}
-      data-has-photo={Boolean(visualUrl) || undefined}
+      data-has-photo="true"
       data-placement={placement === "hero" ? "hero" : undefined}
-      style={visualUrl ? { backgroundImage: `url("${visualUrl}")` } : undefined}
+      style={{ backgroundImage }}
     >
-      <div className={styles.activityVisualFallback} aria-hidden="true">
-        <svg viewBox="0 0 640 380" fill="none">
-          <path d="M0 380 135 188l91 84L347 89l91 151 69-66 133 206H0Z" fill="#aab7a5" fillOpacity=".42" />
-          <path d="M0 380 166 263l92 78 126-128 94 91 61-49 101 125H0Z" fill="#2f5d46" fillOpacity=".28" />
-          <path d="M54 279c75-53 116-67 169-45 45 18 75 72 137 40 56-29 79-93 141-85 42 6 59 42 92 49" stroke="#c85b2f" strokeWidth="3" strokeDasharray="8 11" strokeLinecap="round" />
-          <path d="M82 114c45-61 118-61 163 0-45 61-118 61-163 0Z" stroke="#2f5d46" strokeOpacity=".18" />
-          <path d="M105 114c32-42 84-42 116 0-32 42-84 42-116 0Z" stroke="#2f5d46" strokeOpacity=".2" />
-          <path d="M410 88c31-42 82-42 113 0-31 42-82 42-113 0Z" stroke="#2f5d46" strokeOpacity=".16" />
-        </svg>
-      </div>
-
       <div className={styles.activityVisualVeil} aria-hidden="true" />
       <div className={styles.activityVisualTopline}>
         <span>{eyebrow}</span>
         {placement !== "hero" ? (
           <span className={styles.activityVisualSource}>
-            {visualSource === "hovren"
+            {visualSource === "hovren" || !hasActivityPhoto
               ? "Sélection HOVREN"
-              : visualUrl
-                ? "Souvenir de sortie"
-                : hasRoute
-                  ? "Trace GPS"
-                  : "Carnet HOVREN"}
+              : "Souvenir de sortie"}
           </span>
         ) : null}
       </div>

@@ -1,16 +1,17 @@
 import { Logger } from '@nestjs/common';
-import {
+import type {
   CreateEmailOptions,
   CreateEmailRequestOptions,
   CreateEmailResponse,
 } from 'resend';
 
-import { MailConfig, MailSendRequest } from '../mail.types';
+import { MailTemplateRenderer } from '../mail-template.renderer';
+import type { MailConfig, MailSendRequest } from '../mail.types';
 import {
   maskEmailAddress,
-  ResendEmailClient,
   ResendMailProvider,
 } from '../providers/resend-mail.provider';
+import type { ResendEmailClient } from '../providers/resend-mail.provider';
 
 type ResendEmailClientMock = {
   emails: {
@@ -28,26 +29,19 @@ const enabledConfig: MailConfig = {
   replyTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
-  templates: {
-    authVerify: 'auth-verify-email',
-    authWelcome: 'auth-welcome',
-    authResetPassword: 'auth-reset-password',
-    authPasswordChanged: 'auth-password-changed',
-    activityFirstCreated: 'activity-first-created',
-    activityUpcomingReminder: 'activity-upcoming-reminder',
-    activityCompletedCongratulations: 'activity-completed',
-    summitFirstValidated: 'summit-first-validated',
-  },
 };
 
 const request: MailSendRequest = {
   type: 'auth.verify_email',
   to: 'camille@example.test',
-  templateId: 'auth-verify-email',
   businessId: 'user-1',
   variables: {
+    APP_NAME: 'Hovren',
+    SUPPORT_EMAIL: 'contact@hovren.fr',
+    CURRENT_YEAR: 2026,
     VERIFY_URL: 'https://app.example.test/verify?token=secret-token',
     USER_NAME: 'Camille',
+    EXPIRATION_MINUTES: 30,
   },
 };
 
@@ -75,6 +69,7 @@ describe('ResendMailProvider', () => {
     const provider = new ResendMailProvider(
       { ...enabledConfig, enabled: false },
       resend,
+      new MailTemplateRenderer(),
     );
 
     const result = await provider.sendTemplate(request);
@@ -85,7 +80,11 @@ describe('ResendMailProvider', () => {
 
   it('sends template emails through Resend with an idempotency key', async () => {
     const resend = makeResendMock();
-    const provider = new ResendMailProvider(enabledConfig, resend);
+    const provider = new ResendMailProvider(
+      enabledConfig,
+      resend,
+      new MailTemplateRenderer(),
+    );
 
     const result = await provider.sendTemplate(request);
 
@@ -95,10 +94,10 @@ describe('ResendMailProvider', () => {
         from: 'Hovren <sender@example.test>',
         to: 'camille@example.test',
         replyTo: 'contact@hovren.fr',
-        template: {
-          id: 'auth-verify-email',
-          variables: request.variables,
-        },
+        subject: 'Confirme ton adresse email HOVREN',
+        html: expect.stringContaining(
+          'https://app.example.test/verify?token=secret-token',
+        ),
       },
       {
         idempotencyKey: 'sport-tracker:auth.verify_email:user-1',
@@ -108,7 +107,11 @@ describe('ResendMailProvider', () => {
 
   it('does not add an idempotency key without a business id', async () => {
     const resend = makeResendMock();
-    const provider = new ResendMailProvider(enabledConfig, resend);
+    const provider = new ResendMailProvider(
+      enabledConfig,
+      resend,
+      new MailTemplateRenderer(),
+    );
 
     await provider.sendTemplate({ ...request, businessId: undefined });
 
@@ -127,7 +130,11 @@ describe('ResendMailProvider', () => {
       headers: null,
     } satisfies CreateEmailResponse);
     const errorSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation();
-    const provider = new ResendMailProvider(enabledConfig, resend);
+    const provider = new ResendMailProvider(
+      enabledConfig,
+      resend,
+      new MailTemplateRenderer(),
+    );
 
     await expect(provider.sendTemplate(request)).rejects.toThrow(
       'Transactional email failed',
@@ -145,6 +152,33 @@ describe('ResendMailProvider', () => {
         VERIFY_URL: expect.stringContaining('token'),
       }),
     );
+  });
+
+  it('blocks invalid CTA URLs before calling Resend and sanitizes the log', async () => {
+    const resend = makeResendMock();
+    const errorSpy = jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    const provider = new ResendMailProvider(
+      enabledConfig,
+      resend,
+      new MailTemplateRenderer(),
+    );
+
+    await expect(
+      provider.sendTemplate({
+        ...request,
+        variables: {
+          ...request.variables,
+          VERIFY_URL: '/verify?token=must-not-be-logged',
+        },
+      }),
+    ).rejects.toThrow('Transactional email rendering failed');
+
+    expect(resend.emails.send).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith({
+      emailType: 'auth.verify_email',
+      recipient: 'ca***@example.test',
+      message: 'Transactional email rendering failed',
+    });
   });
 
   it('masks email addresses for logs', () => {

@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 import { createMailConfigFromEnv } from '../mail.config';
 import { MailService } from '../mail.service';
+import { MailTemplateRenderer } from '../mail-template.renderer';
 import type { MailEnvValues } from '../mail.config';
 import type { MailConfig } from '../mail.types';
 import {
@@ -44,7 +45,11 @@ async function runSmokeTest() {
   }
 
   const resendClient = createResendClient(config);
-  const mailProvider = new ResendMailProvider(config, resendClient);
+  const mailProvider = new ResendMailProvider(
+    config,
+    resendClient,
+    new MailTemplateRenderer(),
+  );
   const mailService = new MailService(config, mailProvider);
   const smokeType = getMailSmokeType(process.env.MAIL_SMOKE_TYPE);
   const selectedTypes =
@@ -74,7 +79,10 @@ async function sendSmokeEmail(
       await mailService.sendEmailVerification({
         to: recipient,
         userName: 'Camille',
-        verifyUrl: buildUrl(config.appBaseUrl, '/verify-email?token=smoke-test'),
+        verifyUrl: buildUrl(
+          config.appBaseUrl,
+          '/verify-email?token=smoke-test',
+        ),
         expirationMinutes: 30,
         businessId: smokeId,
       });
@@ -197,20 +205,6 @@ function getMailEnvValues(): MailEnvValues {
     APP_BASE_URL: process.env.APP_BASE_URL,
     FRONTEND_URL: process.env.FRONTEND_URL,
     APP_DEFAULT_TIMEZONE: process.env.APP_DEFAULT_TIMEZONE,
-    RESEND_TEMPLATE_AUTH_VERIFY: process.env.RESEND_TEMPLATE_AUTH_VERIFY,
-    RESEND_TEMPLATE_AUTH_WELCOME: process.env.RESEND_TEMPLATE_AUTH_WELCOME,
-    RESEND_TEMPLATE_AUTH_RESET_PASSWORD:
-      process.env.RESEND_TEMPLATE_AUTH_RESET_PASSWORD,
-    RESEND_TEMPLATE_AUTH_PASSWORD_CHANGED:
-      process.env.RESEND_TEMPLATE_AUTH_PASSWORD_CHANGED,
-    RESEND_TEMPLATE_ACTIVITY_FIRST_CREATED:
-      process.env.RESEND_TEMPLATE_ACTIVITY_FIRST_CREATED,
-    RESEND_ACTIVITY_UPCOMING_REMINDER_TEMPLATE_ID:
-      process.env.RESEND_ACTIVITY_UPCOMING_REMINDER_TEMPLATE_ID,
-    RESEND_ACTIVITY_COMPLETED_TEMPLATE_ID:
-      process.env.RESEND_ACTIVITY_COMPLETED_TEMPLATE_ID,
-    RESEND_TEMPLATE_SUMMIT_FIRST_VALIDATED:
-      process.env.RESEND_TEMPLATE_SUMMIT_FIRST_VALIDATED,
   };
 }
 

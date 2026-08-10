@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -19,9 +19,26 @@ vi.mock("@/hooks/use-summits", () => ({
 const mockedUseActivities = vi.mocked(useActivities);
 const mockedUseSummitBadges = vi.mocked(useSummitBadges);
 const mockedUseSummits = vi.mocked(useSummits);
+const localStorageValues = new Map<string, string>();
+const localStorageMock: Storage = {
+  clear: () => localStorageValues.clear(),
+  getItem: (key) => localStorageValues.get(key) ?? null,
+  key: (index) => Array.from(localStorageValues.keys())[index] ?? null,
+  get length() {
+    return localStorageValues.size;
+  },
+  removeItem: (key) => localStorageValues.delete(key),
+  setItem: (key, value) => localStorageValues.set(key, value),
+};
+
+Object.defineProperty(window, "localStorage", {
+  configurable: true,
+  value: localStorageMock,
+});
 
 describe("NotificationCenter", () => {
   beforeEach(() => {
+    window.localStorage.clear();
     mockedUseActivities.mockReturnValue({
       data: [
         {
@@ -78,5 +95,55 @@ describe("NotificationCenter", () => {
     expect(screen.getByText(/18:30/)).toBeVisible();
     expect(screen.getByText(/09:15/)).toBeVisible();
     expect(screen.getByText(/11:45/)).toBeVisible();
+  });
+
+  it("masque le témoin après lecture puis le réaffiche pour un nouvel élément", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<NotificationCenter />);
+
+    expect(
+      await screen.findByLabelText("Nouveaux éléments"),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "Ouvrir les notifications" }),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByLabelText("Nouveaux éléments"),
+      ).not.toBeInTheDocument();
+    });
+
+    mockedUseSummitBadges.mockReturnValue({
+      data: [
+        {
+          id: "first-summit",
+          name: "Premier sommet",
+          category: "Sommets",
+          icon: "Mountain",
+          unlocked: true,
+          unlockedAt: "2026-07-07T09:15:00",
+        },
+        {
+          id: "ten-summits",
+          name: "10 sommets",
+          category: "Sommets",
+          icon: "Trophy",
+          unlocked: true,
+          unlockedAt: "2026-07-08T09:15:00",
+        },
+      ],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useSummitBadges>);
+
+    await user.click(
+      screen.getByRole("button", { name: "Ouvrir les notifications" }),
+    );
+    rerender(<NotificationCenter />);
+
+    expect(
+      await screen.findByLabelText("Nouveaux éléments"),
+    ).toBeInTheDocument();
   });
 });

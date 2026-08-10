@@ -8,16 +8,6 @@ const config: MailConfig = {
   replyTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
-  templates: {
-    authVerify: 'auth-verify-email',
-    authWelcome: 'auth-welcome',
-    authResetPassword: 'auth-reset-password',
-    authPasswordChanged: 'auth-password-changed',
-    activityFirstCreated: 'activity-first-created',
-    activityUpcomingReminder: 'activity-upcoming-reminder',
-    activityCompletedCongratulations: 'activity-completed',
-    summitFirstValidated: 'summit-first-validated',
-  },
 };
 
 describe('ActivityMailTimeService', () => {

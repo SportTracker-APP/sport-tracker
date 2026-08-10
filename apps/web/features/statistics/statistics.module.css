@@ -20,14 +20,15 @@
 
 .hero {
   background:
-    radial-gradient(circle at 76% 28%, rgba(200, 91, 47, 0.1), transparent 24%),
-    linear-gradient(110deg, rgba(248, 244, 234, 0.96), rgba(235, 232, 217, 0.76));
+    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.72), transparent 26%),
+    radial-gradient(circle at 78% 20%, rgba(200, 91, 47, 0.09), transparent 25%),
+    linear-gradient(120deg, #f8f3e7 0%, #f2ecde 56%, #e8e8d9 100%);
   border: 1px solid var(--line);
-  border-radius: 6px;
-  box-shadow: 0 20px 52px rgba(32, 55, 43, 0.09);
+  border-radius: 8px;
+  box-shadow: 0 22px 58px rgba(54, 65, 49, 0.1);
   display: grid;
-  grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1.12fr);
-  min-height: 520px;
+  grid-template-columns: minmax(0, 1.02fr) minmax(390px, 0.98fr);
+  min-height: 500px;
   overflow: hidden;
   position: relative;
 }
@@ -52,13 +53,13 @@
 }
 
 .hero::after {
-  border: 1px solid rgba(47, 93, 70, 0.06);
-  inset: 12px;
+  border: 1px solid rgba(47, 93, 70, 0.055);
+  inset: 11px;
 }
 
 .heroCopy {
   align-self: center;
-  padding: 58px 34px 128px 56px;
+  padding: 52px 58px 132px 58px;
   position: relative;
   z-index: 2;
 }
@@ -82,35 +83,52 @@
 }
 
 .hero h1 {
+  color: #294b3a;
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: 5.15rem;
-  font-weight: 600;
+  font-size: clamp(3.9rem, 4.45vw, 4.85rem);
+  font-weight: 500;
   letter-spacing: 0;
-  line-height: 0.94;
-  margin: 24px 0 24px;
-  max-width: 620px;
+  line-height: 0.96;
+  margin: 22px 0 22px;
+  max-width: 590px;
 }
 
 .heroCopy > p {
-  color: var(--moss);
-  font-size: 1.08rem;
-  line-height: 1.65;
-  margin: 0 0 28px;
-  max-width: 540px;
+  color: #687166;
+  font-size: 1.02rem;
+  line-height: 1.68;
+  margin: 0 0 27px;
+  max-width: 515px;
+}
+
+.heroControls {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heroSelectLabel {
+  color: #778074;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
 }
 
 .periodSelect {
   align-items: center;
-  background: var(--paper-strong);
-  border: 1px solid var(--line);
-  border-radius: 4px;
+  background: rgba(251, 248, 240, 0.76);
+  border: 1px solid rgba(103, 116, 104, 0.3);
+  border-radius: 6px;
+  box-shadow: 0 8px 22px rgba(63, 73, 57, 0.06);
   color: var(--forest-deep);
   cursor: pointer;
   display: inline-flex;
   font-weight: 700;
-  gap: 24px;
-  min-height: 48px;
-  padding: 0 16px;
+  gap: 28px;
+  min-height: 46px;
+  padding: 0 15px 0 17px;
   position: relative;
   transition:
     border-color 180ms ease,
@@ -119,7 +137,8 @@
 }
 
 .periodSelect:hover {
-  border-color: rgba(47, 93, 70, 0.44);
+  background: rgba(255, 253, 247, 0.94);
+  border-color: rgba(47, 93, 70, 0.46);
   transform: translateY(-1px);
 }
 
@@ -142,13 +161,17 @@
 
 .heroStory {
   align-items: center;
-  background: rgba(170, 183, 165, 0.12);
-  border-left: 1px solid var(--line-soft);
+  background: rgba(170, 183, 165, 0.1);
+  border: 1px solid rgba(47, 93, 70, 0.17);
+  border-radius: 5px;
+  box-shadow: 0 20px 38px rgba(32, 55, 43, 0.13);
   display: flex;
   justify-content: center;
-  min-height: 380px;
+  margin: 28px 28px 136px 0;
+  min-height: 332px;
   overflow: hidden;
   position: relative;
+  z-index: 2;
 }
 
 .heroStoryLink {
@@ -168,25 +191,27 @@
 
 .heroStory .activityVisual {
   height: 100%;
-  min-height: 404px;
+  min-height: 334px;
 }
 
 .activityVisual[data-placement="hero"] .activityVisualCopy {
-  bottom: 142px;
+  bottom: 30px;
 }
 
 .heroPeriodSummary {
-  background: rgba(248, 244, 234, 0.94);
-  border: 1px solid rgba(47, 93, 70, 0.2);
+  background: rgba(250, 246, 236, 0.93);
+  border: 1px solid rgba(47, 93, 70, 0.18);
+  border-left: 3px solid var(--terracotta);
+  box-shadow: 0 11px 24px rgba(26, 45, 35, 0.12);
   color: var(--forest-deep);
   display: flex;
   flex-direction: column;
   gap: 3px;
-  max-width: 210px;
-  padding: 16px 19px;
+  max-width: 248px;
+  padding: 14px 18px 15px;
   position: absolute;
-  right: 28px;
-  top: 28px;
+  right: 18px;
+  top: 18px;
   z-index: 4;
 }
 
@@ -201,8 +226,8 @@
 
 .heroPeriodSummary strong {
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.65rem;
+  font-weight: 500;
   line-height: 1;
 }
 
@@ -379,14 +404,14 @@
 }
 
 .heroMetrics {
-  background: rgba(251, 248, 240, 0.92);
+  background: rgba(250, 247, 238, 0.82);
   border-top: 1px solid var(--line);
   bottom: 0;
   display: grid;
   grid-column: 1 / -1;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   left: 0;
-  min-height: 116px;
+  min-height: 112px;
   position: absolute;
   right: 0;
   z-index: 3;
@@ -397,7 +422,8 @@
   display: flex;
   gap: 16px;
   min-width: 0;
-  padding: 22px 28px;
+  padding: 21px 28px;
+  position: relative;
 }
 
 .heroMetrics > div + div {
@@ -405,7 +431,7 @@
 }
 
 .heroMetrics svg {
-  color: var(--forest);
+  color: #6e7c70;
   flex: 0 0 auto;
   height: 30px;
   width: 30px;
@@ -424,13 +450,18 @@
 }
 
 .heroMetrics strong {
-  color: var(--forest-deep);
+  color: #2c4c3c;
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: 1.8rem;
-  font-weight: 600;
+  font-size: 1.72rem;
+  font-weight: 500;
   letter-spacing: 0;
   line-height: 1.05;
   text-transform: none;
+}
+
+.heroMetrics > div:nth-child(3) strong,
+.heroMetrics > div:nth-child(4) strong {
+  color: var(--terracotta);
 }
 
 .readingSection,
@@ -1653,11 +1684,12 @@
   }
 
   .heroCopy {
-    padding-left: 38px;
+    padding-left: 42px;
+    padding-right: 36px;
   }
 
   .hero h1 {
-    font-size: 4.35rem;
+    font-size: clamp(3.7rem, 5.6vw, 4.35rem);
   }
 
   .heroMetrics > div {
@@ -1711,17 +1743,17 @@
   }
 
   .heroCopy {
-    padding: 46px 34px 24px;
+    padding: 42px 34px 28px;
   }
 
   .heroStory {
-    border-left: 0;
-    border-top: 1px solid var(--line-soft);
-    min-height: 250px;
+    border: 1px solid rgba(47, 93, 70, 0.17);
+    margin: 0 34px 24px;
+    min-height: 280px;
   }
 
   .heroStory .activityVisual {
-    min-height: 250px;
+    min-height: 280px;
   }
 
   .activityVisual[data-placement="hero"] .activityVisualCopy {
@@ -1801,11 +1833,11 @@
   }
 
   .heroCopy {
-    padding: 34px 22px 20px;
+    padding: 32px 22px 22px;
   }
 
   .hero h1 {
-    font-size: 3.35rem;
+    font-size: clamp(2.85rem, 15vw, 3.15rem);
     margin-block: 18px;
   }
 
@@ -1820,11 +1852,12 @@
   }
 
   .heroStory {
-    min-height: 176px;
+    margin: 0 16px 18px;
+    min-height: 210px;
   }
 
   .heroStory .activityVisual {
-    min-height: 176px;
+    min-height: 210px;
   }
 
   .activityVisual[data-placement="hero"] .activityVisualCopy {

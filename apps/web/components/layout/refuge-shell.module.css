@@ -930,13 +930,25 @@
 
 .shell :global(.app-notification-menu) {
   border-color: var(--refuge-border) !important;
-  background: rgba(248, 244, 234, 0.98) !important;
+  background:
+    radial-gradient(
+      circle at 1px 1px,
+      rgba(35, 76, 57, 0.045) 1px,
+      transparent 0
+    ),
+    linear-gradient(145deg, rgba(252, 248, 239, 0.99), rgba(244, 238, 225, 0.99)) !important;
+  background-size:
+    18px 18px,
+    100% 100% !important;
   color: var(--refuge-ink) !important;
-  box-shadow: 0 28px 70px rgba(24, 49, 38, 0.2) !important;
+  box-shadow:
+    0 26px 64px rgba(55, 43, 27, 0.2),
+    0 0 0 1px rgba(255, 252, 244, 0.62) inset !important;
 }
 
 .shell :global(.app-notification-header) {
   border-color: var(--refuge-border) !important;
+  background: rgba(255, 252, 244, 0.58);
 }
 
 .shell :global(.app-notification-header h2),
@@ -945,11 +957,76 @@
 }
 
 .shell :global(.app-notification-item:hover) {
-  background: rgba(35, 76, 57, 0.055) !important;
+  background: rgba(200, 91, 47, 0.065) !important;
 }
 
 .shell :global(.app-notification-section-link) {
   color: var(--refuge-terracotta) !important;
+}
+
+.shell :global(.app-notification-section-link:hover) {
+  color: var(--refuge-terracotta-hover) !important;
+}
+
+.shell :global(.app-notification-status) {
+  border-color: rgba(200, 91, 47, 0.32) !important;
+  background: rgba(200, 91, 47, 0.08) !important;
+  color: var(--refuge-terracotta) !important;
+}
+
+.shell :global(.app-notification-section-title) {
+  color: var(--refuge-moss) !important;
+}
+
+.shell :global(.app-notification-divider) {
+  background: var(--refuge-border) !important;
+}
+
+.shell :global(.app-notification-item-title) {
+  color: var(--refuge-forest-deep) !important;
+}
+
+.shell :global(.app-notification-item-meta),
+.shell :global(.app-notification-empty) {
+  color: var(--refuge-muted) !important;
+}
+
+.shell :global(.app-notification-chevron) {
+  color: rgba(47, 93, 70, 0.62) !important;
+}
+
+.shell :global(.app-notification-item:hover .app-notification-chevron) {
+  color: var(--refuge-terracotta) !important;
+}
+
+.shell :global(.app-notification-icon) {
+  border-color: rgba(47, 93, 70, 0.18) !important;
+  background: rgba(47, 93, 70, 0.07) !important;
+  color: var(--refuge-forest) !important;
+}
+
+.shell :global(.app-notification-icon[data-tone="badge"]) {
+  border-color: rgba(200, 91, 47, 0.22) !important;
+  background: rgba(200, 91, 47, 0.08) !important;
+  color: var(--refuge-terracotta) !important;
+}
+
+.shell :global(.app-notification-skeleton) {
+  background: rgba(47, 93, 70, 0.075) !important;
+}
+
+.shell :global(.app-notification-scroll) {
+  scrollbar-color: rgba(47, 93, 70, 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.shell :global(.app-notification-scroll::-webkit-scrollbar) {
+  width: 6px;
+}
+
+.shell :global(.app-notification-scroll::-webkit-scrollbar-thumb) {
+  border-radius: 999px;
+  background: rgba(47, 93, 70, 0.24);
 }
 
 .shell :global(.app-mobile-bottom-nav-shell) {

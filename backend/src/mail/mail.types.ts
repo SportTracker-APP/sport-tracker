@@ -1,13 +1,3 @@
-export type MailTemplateKey =
-  | 'authVerify'
-  | 'authWelcome'
-  | 'authResetPassword'
-  | 'authPasswordChanged'
-  | 'activityFirstCreated'
-  | 'activityUpcomingReminder'
-  | 'activityCompletedCongratulations'
-  | 'summitFirstValidated';
-
 export type MailEmailType =
   | 'auth.verify_email'
   | 'auth.welcome'
@@ -20,8 +10,6 @@ export type MailEmailType =
 
 export type MailTemplateVariables = Record<string, string | number>;
 
-export type MailTemplatesConfig = Record<MailTemplateKey, string>;
-
 export type MailConfig = {
   enabled: boolean;
   apiKey?: string;
@@ -30,13 +18,11 @@ export type MailConfig = {
   testRecipient?: string;
   appBaseUrl: string;
   defaultTimezone: string;
-  templates: MailTemplatesConfig;
 };
 
 export type MailSendRequest = {
   type: MailEmailType;
   to: string;
-  templateId: string;
   variables: MailTemplateVariables;
   businessId?: string;
 };

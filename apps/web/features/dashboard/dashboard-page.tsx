@@ -66,6 +66,7 @@ import {
   type ActivityChartPeriod,
 } from "@/lib/activity-chart-period";
 import { getBadgeIcon } from "@/lib/badge-icons";
+import { getEditorialActivityImage } from "@/lib/mountain-visuals";
 import type { SummitBadge } from "@/lib/summit-api";
 import { getMassifProgress, type SummitView } from "@/lib/summit-discovery";
 import {
@@ -496,7 +497,10 @@ function getActivityPhotoUrl(activity: SportActivity) {
     }
   }
 
-  return findBestPhotoUrl(activityWithMedia.photos);
+  return (
+    findBestPhotoUrl(activityWithMedia.photos) ??
+    getEditorialActivityImage(activity.id, activity.sport)
+  );
 }
 
 function isChartMetric(value: string | null): value is ChartMetric {
@@ -886,6 +890,13 @@ function RecentTraceList({
         {activities.map((activity) => {
           const Icon = getSportIcon(activity.sport);
           const photoUrl = getActivityPhotoUrl(activity);
+          const fallbackPhotoUrl = getEditorialActivityImage(
+            activity.id,
+            activity.sport,
+          );
+          const thumbnailBackground = photoUrl === fallbackPhotoUrl
+            ? `linear-gradient(180deg, var(--trace-photo-overlay-start), var(--trace-photo-overlay-end)), url(${JSON.stringify(fallbackPhotoUrl)})`
+            : `linear-gradient(180deg, var(--trace-photo-overlay-start), var(--trace-photo-overlay-end)), url(${JSON.stringify(photoUrl)}), url(${JSON.stringify(fallbackPhotoUrl)})`;
 
           return (
             <Link
@@ -897,22 +908,8 @@ function RecentTraceList({
                 className={`${styles.traceThumbnail} ${getTraceToneClass(activity.sport)} ${
                   photoUrl ? styles.traceThumbnailHasPhoto : ""
                 }`}
-                style={
-                  photoUrl
-                    ? {
-                        backgroundImage: `linear-gradient(180deg, var(--trace-photo-overlay-start), var(--trace-photo-overlay-end)), url(${JSON.stringify(
-                          photoUrl,
-                        )})`,
-                      }
-                    : undefined
-                }
+                style={{ backgroundImage: thumbnailBackground }}
               >
-                {!photoUrl ? (
-                  <>
-                    <span className={styles.traceThumbnailSun} />
-                    <span className={styles.traceThumbnailRidge} />
-                  </>
-                ) : null}
                 <Icon aria-hidden="true" />
               </div>
               <div className={styles.traceContent}>

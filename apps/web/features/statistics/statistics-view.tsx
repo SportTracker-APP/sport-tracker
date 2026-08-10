@@ -334,11 +334,14 @@ export function StatisticsView() {
                   Chaque trace laisse un repère. Ici, ton rythme, tes terrains
                   et tes plus beaux efforts racontent la même histoire.
                 </p>
-                <ActivityPeriodSelect
-                  className={styles.periodSelect}
-                  value={period}
-                  onChange={handlePeriodChange}
-                />
+                <div className={styles.heroControls}>
+                  <span className={styles.heroSelectLabel}>Période observée</span>
+                  <ActivityPeriodSelect
+                    className={styles.periodSelect}
+                    value={period}
+                    onChange={handlePeriodChange}
+                  />
+                </div>
               </div>
 
               <div className={styles.heroStory}>
@@ -359,12 +362,14 @@ export function StatisticsView() {
                   <StatisticsHeroIllustration />
                 )}
                 <div className={styles.heroPeriodSummary}>
-                  <span>{summary.configuration.label}</span>
+                  <span>Dans ce chapitre</span>
                   <strong>
                     {summary.periodActivities.length.toLocaleString("fr-FR")} trace
                     {summary.periodActivities.length > 1 ? "s" : ""}
                   </strong>
-                  <small>{formatDistance(summary.totalDistance)} dessinés</small>
+                  <small>
+                    {formatDistance(summary.totalDistance)} dessinés · {summary.configuration.label}
+                  </small>
                 </div>
               </div>
 
