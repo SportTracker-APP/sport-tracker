@@ -43,12 +43,7 @@ import {
   selectPrimaryGoal,
   type GoalProgress,
 } from "@/lib/goal-progress";
-import type {
-  Goal,
-  GoalPeriod,
-  GoalType,
-  SportType,
-} from "@/lib/goals";
+import type { Goal, GoalPeriod, GoalType, SportType } from "@/lib/goals";
 
 import styles from "./goals-page.module.css";
 
@@ -123,7 +118,10 @@ const goalSports: GoalSportOption[] = [
 ];
 
 function getGoalSportLabel(sport: SportType | null | undefined) {
-  return goalSports.find((option) => option.value === sport)?.label ?? "Tous les sports";
+  return (
+    goalSports.find((option) => option.value === sport)?.label ??
+    "Tous les sports"
+  );
 }
 
 const goalIcons: Record<GoalType, typeof Footprints> = {
@@ -166,7 +164,11 @@ function toDateInputValue(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-function getPeriodDates(period: GoalPeriod, startDate: string, endDate: string) {
+function getPeriodDates(
+  period: GoalPeriod,
+  startDate: string,
+  endDate: string,
+) {
   const now = new Date();
 
   if (period === "WEEKLY") {
@@ -229,11 +231,7 @@ function formatGoalPeriodRange(
   }
 
   const prefix =
-    period === "WEEKLY"
-      ? "Semaine"
-      : period === "MONTHLY"
-        ? "Mois"
-        : "Période";
+    period === "WEEKLY" ? "Semaine" : period === "MONTHLY" ? "Mois" : "Période";
   const sameMonth =
     startDate.getFullYear() === endDate.getFullYear() &&
     startDate.getMonth() === endDate.getMonth();
@@ -275,10 +273,7 @@ function getNextGoalPeriodStart(period: GoalPeriod, startDate: Date) {
   return nextDate;
 }
 
-function getCompletedGoalSnapshots(
-  goal: Goal,
-  activities: SportActivity[],
-) {
+function getCompletedGoalSnapshots(goal: Goal, activities: SportActivity[]) {
   const snapshots: Array<{ goal: Goal; snapshot: GoalDisplaySnapshot }> = [];
 
   if (goal.period === "CUSTOM") {
@@ -384,7 +379,8 @@ function GoalCard({
   onEdit: (goal: Goal) => void;
   isBusy: boolean;
 }) {
-  const progress = snapshot?.progress ?? calculateGoalProgress(goal, activities ?? []);
+  const progress =
+    snapshot?.progress ?? calculateGoalProgress(goal, activities ?? []);
   const progressPercent = Math.max(0, Math.min(progress.progress, 100));
   const Icon = goalIcons[goal.type];
   const isCompleted = progress.remaining <= 0;
@@ -434,15 +430,19 @@ function GoalCard({
               snapshot
                 ? styles.statusActive
                 : goal.isPrimary
-                ? styles.statusPrimary
-                : goal.isActive
-                  ? styles.statusActive
-                  : styles.statusPaused
+                  ? styles.statusPrimary
+                  : goal.isActive
+                    ? styles.statusActive
+                    : styles.statusPaused
             }`}
           >
             {!snapshot && goal.isPrimary ? <Star aria-hidden="true" /> : null}
             {snapshot?.statusLabel ??
-              (goal.isPrimary ? "Principal" : goal.isActive ? "Actif" : "En pause")}
+              (goal.isPrimary
+                ? "Principal"
+                : goal.isActive
+                  ? "Actif"
+                  : "En pause")}
           </span>
 
           <details className={styles.goalMenu}>
@@ -463,7 +463,9 @@ function GoalCard({
                   disabled={isBusy || Boolean(goal.isPrimary)}
                 >
                   <Star aria-hidden="true" />
-                  {goal.isPrimary ? "Déjà principal" : "Choisir comme principal"}
+                  {goal.isPrimary
+                    ? "Déjà principal"
+                    : "Choisir comme principal"}
                 </button>
               )}
 
@@ -488,7 +490,9 @@ function GoalCard({
               <button
                 type="button"
                 onClick={(event) => {
-                  event.currentTarget.closest("details")?.removeAttribute("open");
+                  event.currentTarget
+                    .closest("details")
+                    ?.removeAttribute("open");
                   onDelete(goal);
                 }}
                 disabled={isBusy}
@@ -571,18 +575,14 @@ export default function GoalsPage() {
     [goals],
   );
   const primaryProgress = useMemo(
-    () =>
-      primaryGoal ? calculateGoalProgress(primaryGoal, activities) : null,
+    () => (primaryGoal ? calculateGoalProgress(primaryGoal, activities) : null),
     [activities, primaryGoal],
   );
 
   const goalProgressById = useMemo(
     () =>
       new Map(
-        goals.map((goal) => [
-          goal.id,
-          calculateGoalProgress(goal, activities),
-        ]),
+        goals.map((goal) => [goal.id, calculateGoalProgress(goal, activities)]),
       ),
     [activities, goals],
   );
@@ -630,17 +630,6 @@ export default function GoalsPage() {
 
     return true;
   });
-
-  const averageProgress =
-    goals.length > 0
-      ? Math.round(
-          goals.reduce(
-            (total, goal) =>
-              total + (goalProgressById.get(goal.id)?.progress ?? 0),
-            0,
-          ) / goals.length,
-        )
-      : 0;
 
   const selectedGoalType =
     goalTypes.find((goalType) => goalType.value === type) ?? goalTypes[0];
@@ -772,7 +761,7 @@ export default function GoalsPage() {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout variant="refuge">
       <main className={styles.page}>
         <FadeIn delay={0.05}>
           <section className={styles.hero}>
@@ -804,7 +793,11 @@ export default function GoalsPage() {
                       {activeGoals.length > 1 ? "s" : ""}
                     </span>
                     <span>
-                      <strong>{averageProgress}%</strong> de progression moyenne
+                      <strong>{pausedGoals.length}</strong> en pause
+                    </span>
+                    <span>
+                      <strong>{completedGoalSnapshots.length}</strong> terminé
+                      {completedGoalSnapshots.length > 1 ? "s" : ""}
                     </span>
                   </div>
                 </div>
@@ -828,9 +821,13 @@ export default function GoalsPage() {
                       <strong>{primaryProgress.progress}%</strong>
                     </div>
                     <p>
-                      {formatGoalValue(primaryProgress.current, primaryGoal.type)}
+                      {formatGoalValue(
+                        primaryProgress.current,
+                        primaryGoal.type,
+                      )}
                       <span>
-                        / {formatGoalValue(primaryGoal.target, primaryGoal.type)}
+                        /{" "}
+                        {formatGoalValue(primaryGoal.target, primaryGoal.type)}
                       </span>
                     </p>
                   </div>
@@ -902,7 +899,11 @@ export default function GoalsPage() {
                 <p>Suis ce qui compte, sans surcharger ton tableau de bord.</p>
               </div>
 
-              <div className={styles.filters} role="group" aria-label="Filtrer les objectifs">
+              <div
+                className={styles.filters}
+                role="group"
+                aria-label="Filtrer les objectifs"
+              >
                 <button
                   type="button"
                   onClick={() => setFilter("ACTIVE")}
@@ -946,7 +947,8 @@ export default function GoalsPage() {
 
             {mutationError && (
               <div className={styles.errorState}>
-                Impossible d’enregistrer l’objectif : {getErrorMessage(mutationError)}
+                Impossible d’enregistrer l’objectif :{" "}
+                {getErrorMessage(mutationError)}
               </div>
             )}
 
@@ -965,7 +967,7 @@ export default function GoalsPage() {
                 <div>
                   <h3>Ton prochain cap commence ici.</h3>
                   <p>
-                    Aucun objectif n’est imposé. Créez uniquement le cap qui te
+                    Aucun objectif n’est imposé. Crée uniquement le cap qui te
                     correspond, au moment qui te convient.
                   </p>
                   <button
@@ -985,10 +987,10 @@ export default function GoalsPage() {
               (filter === "COMPLETED"
                 ? completedGoalSnapshots.length === 0
                 : visibleGoals.length === 0) && (
-              <div className={styles.filterEmptyState}>
-                Aucun objectif dans cette catégorie.
-              </div>
-            )}
+                <div className={styles.filterEmptyState}>
+                  Aucun objectif dans cette catégorie.
+                </div>
+              )}
 
             <div className={styles.goalsList}>
               {filter === "COMPLETED"
@@ -1010,18 +1012,18 @@ export default function GoalsPage() {
                     </FadeIn>
                   ))
                 : visibleGoals.map((goal, index) => (
-                <FadeIn key={goal.id} delay={0.05 * index}>
-                  <GoalCard
-                    goal={goal}
-                    activities={activities}
-                    onToggle={handleToggle}
-                    onMakePrimary={handleMakePrimary}
-                    onDelete={handleDelete}
-                    onEdit={handleEdit}
-                    isBusy={isBusy}
-                  />
-                </FadeIn>
-              ))}
+                    <FadeIn key={goal.id} delay={0.05 * index}>
+                      <GoalCard
+                        goal={goal}
+                        activities={activities}
+                        onToggle={handleToggle}
+                        onMakePrimary={handleMakePrimary}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                        isBusy={isBusy}
+                      />
+                    </FadeIn>
+                  ))}
             </div>
           </section>
 
@@ -1032,7 +1034,9 @@ export default function GoalsPage() {
                   <Plus aria-hidden="true" />
                 </div>
                 <div>
-                  <h2>{editingGoal ? "Modifier l’objectif" : "Créer un objectif"}</h2>
+                  <h2>
+                    {editingGoal ? "Modifier l’objectif" : "Créer un objectif"}
+                  </h2>
                   <p>
                     {editingGoal
                       ? "Ajuste la cible sans perdre ta progression."
@@ -1055,7 +1059,9 @@ export default function GoalsPage() {
                           type="button"
                           onClick={() => setType(goalType.value)}
                           aria-pressed={isSelected}
-                          className={isSelected ? styles.typeSelected : undefined}
+                          className={
+                            isSelected ? styles.typeSelected : undefined
+                          }
                         >
                           <Icon aria-hidden="true" />
                           <span>{goalType.label}</span>
@@ -1074,14 +1080,17 @@ export default function GoalsPage() {
                     }
                   >
                     {goalSports.map((goalSport) => (
-                      <option key={goalSport.value || "ALL"} value={goalSport.value}>
+                      <option
+                        key={goalSport.value || "ALL"}
+                        value={goalSport.value}
+                      >
                         {goalSport.label}
                       </option>
                     ))}
                   </select>
                   <small className={styles.fieldHint}>
-                    Choisis un sport pour filtrer tes activités, ou
-                    laisse “Tous les sports”.
+                    Choisis un sport pour filtrer tes activités, ou laisse “Tous
+                    les sports”.
                   </small>
                 </label>
 
@@ -1143,7 +1152,9 @@ export default function GoalsPage() {
                       <input
                         type="date"
                         value={customEndDate}
-                        onChange={(event) => setCustomEndDate(event.target.value)}
+                        onChange={(event) =>
+                          setCustomEndDate(event.target.value)
+                        }
                       />
                     </label>
                   </div>
@@ -1182,8 +1193,8 @@ export default function GoalsPage() {
                 <div>
                   <h2>Conseil du refuge</h2>
                   <p>
-                    Associez un objectif de distance à un objectif de régularité :
-                    l’un donne le volume, l’autre protège le rythme.
+                    Associe un objectif de distance à un objectif de régularité
+                    : l’un donne le volume, l’autre protège le rythme.
                   </p>
                 </div>
               </div>
@@ -1200,21 +1211,25 @@ export default function GoalsPage() {
 
               {completedGoalSnapshots.length > 0 ? (
                 <div className={styles.historyList}>
-                  {completedGoalSnapshots.slice(0, 3).map(({ goal, snapshot }) => (
-                    <div key={`${goal.id}-${snapshot.startDate.toISOString()}`}>
-                      <div>
-                        <strong>{goal.title}</strong>
-                        <span>
-                          {formatGoalPeriodRange(
-                            goal.period,
-                            snapshot.startDate,
-                            snapshot.endDate,
-                          )}
-                        </span>
+                  {completedGoalSnapshots
+                    .slice(0, 3)
+                    .map(({ goal, snapshot }) => (
+                      <div
+                        key={`${goal.id}-${snapshot.startDate.toISOString()}`}
+                      >
+                        <div>
+                          <strong>{goal.title}</strong>
+                          <span>
+                            {formatGoalPeriodRange(
+                              goal.period,
+                              snapshot.startDate,
+                              snapshot.endDate,
+                            )}
+                          </span>
+                        </div>
+                        <CheckCircle2 aria-hidden="true" />
                       </div>
-                      <CheckCircle2 aria-hidden="true" />
-                    </div>
-                  ))}
+                    ))}
                 </div>
               ) : (
                 <p className={styles.historyEmpty}>
