@@ -4,7 +4,7 @@ import type { SummitCollectionSummary } from "../summits-types";
 import styles from "../summits.module.css";
 
 const ATLAS_POINTS = [
-  [70, 218],
+  [62, 201],
   [116, 153],
   [190, 218],
   [232, 166],
