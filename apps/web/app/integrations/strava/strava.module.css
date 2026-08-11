@@ -1,0 +1,957 @@
+.page {
+  --strava-paper: #f7f1e5;
+  --strava-paper-soft: #ece3d4;
+  --strava-forest: #234c39;
+  --strava-forest-deep: #183126;
+  --strava-moss: #667468;
+  --strava-border: #d6cabb;
+  --strava-border-strong: #c3b39f;
+  --strava-terracotta: #c85b2f;
+  --strava-terracotta-deep: #aa4325;
+  display: grid;
+  gap: 22px;
+  color: var(--strava-forest-deep);
+  font-family: var(--font-refuge-body), "Work Sans", sans-serif;
+}
+
+.hero,
+.activityCard,
+.statusCard,
+.dataSection,
+.workflowSection {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--strava-border);
+  background: var(--strava-paper);
+  box-shadow: none;
+}
+
+.hero {
+  display: grid;
+  min-height: 220px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(290px, 0.6fr);
+  border-left: 4px solid var(--strava-terracotta);
+  background:
+    linear-gradient(108deg, rgba(200, 91, 47, 0.035), transparent 36%), #f5eee1;
+}
+
+.hero::after,
+.dataSection::after {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(35, 76, 57, 0.045) 1px,
+    transparent 0
+  );
+  background-size: 18px 18px;
+  content: "";
+  pointer-events: none;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-width: 760px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(24px, 3vw, 36px);
+}
+
+.eyebrow,
+.sectionEyebrow,
+.heroStatusLabel {
+  color: var(--strava-terracotta);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eyebrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.hero h1 {
+  max-width: 700px;
+  margin-top: 9px;
+  color: var(--strava-forest);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: clamp(2.45rem, 3.5vw, 3.35rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.heroCopy > p {
+  max-width: 650px;
+  margin-top: 10px;
+  color: var(--strava-moss);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.primaryButton,
+.secondaryButton,
+.disconnectButton {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 9px 15px;
+  border: 1px solid transparent;
+  font-size: 0.78rem;
+  font-weight: 750;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.primaryButton svg,
+.secondaryButton svg,
+.disconnectButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.primaryButton {
+  background: var(--strava-terracotta);
+  color: #fffaf3;
+  box-shadow: 0 13px 24px -18px rgba(170, 67, 37, 0.8);
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--strava-terracotta-deep);
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  border-color: var(--strava-border-strong);
+  background: rgba(255, 252, 244, 0.62);
+  color: var(--strava-forest);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  border-color: rgba(35, 76, 57, 0.38);
+  background: rgba(35, 76, 57, 0.06);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.disconnectButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible,
+.disconnectButton:focus-visible {
+  outline: 2px solid rgba(200, 91, 47, 0.55);
+  outline-offset: 3px;
+}
+
+.heroStatus {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 3vw, 32px);
+  border-left: 1px solid #cdbda8;
+  background: #eadfce;
+}
+
+.heroStatusLabel {
+  color: var(--strava-moss);
+}
+
+.connectionBadge {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 7px 10px;
+  border: 1px solid;
+  color: var(--strava-forest);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.connectionBadge > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.connectionBadgeConnected {
+  border-color: rgba(47, 93, 70, 0.24);
+  background: rgba(47, 93, 70, 0.08);
+  color: #2f5d46;
+}
+
+.connectionBadgeWarning {
+  border-color: rgba(182, 117, 35, 0.28);
+  background: rgba(182, 117, 35, 0.08);
+  color: #98621e;
+}
+
+.connectionBadgeNeutral {
+  border-color: var(--strava-border-strong);
+  background: rgba(255, 252, 244, 0.62);
+  color: var(--strava-moss);
+}
+
+.heroStatus > p {
+  max-width: 330px;
+  margin-top: 9px;
+  color: var(--strava-moss);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.heroMark {
+  position: absolute;
+  right: 24px;
+  bottom: 16px;
+  width: min(42%, 150px);
+  color: var(--strava-terracotta);
+  opacity: 0.54;
+}
+
+.heroMark svg {
+  display: block;
+  width: 100%;
+}
+
+.heroMark path {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 4 7;
+}
+
+.heroMark circle {
+  fill: currentColor;
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 15px;
+  border: 1px solid;
+  background: var(--strava-paper);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.feedback svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.feedbackSuccess {
+  border-color: rgba(47, 93, 70, 0.25);
+  background: #edf3eb;
+  color: #2f5d46;
+}
+
+.feedbackWarning {
+  border-color: rgba(200, 91, 47, 0.3);
+  background: #efe2cf;
+  color: #6f513d;
+}
+
+.feedbackWarning svg {
+  color: var(--strava-terracotta);
+}
+
+.feedbackError {
+  border-color: rgba(170, 67, 37, 0.25);
+  background: #f8e9e3;
+  color: #9f4028;
+}
+
+.feedbackNeutral {
+  border-color: var(--strava-border);
+  background: var(--strava-paper-soft);
+  color: var(--strava-moss);
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+  gap: 22px;
+}
+
+.activityCard,
+.statusCard,
+.dataSection,
+.workflowSection {
+  padding: clamp(23px, 3vw, 34px);
+}
+
+.activityCard {
+  border-color: #cdbda8;
+  background: #f2e9dc;
+  box-shadow: 0 14px 34px -32px rgba(70, 49, 28, 0.46);
+}
+
+.statusCard {
+  background: #ede2d2;
+}
+
+.workflowSection {
+  background: #f5eee2;
+}
+
+.activityCard::before,
+.statusCard::before,
+.workflowSection::before {
+  position: absolute;
+  top: 0;
+  right: 28px;
+  left: 28px;
+  height: 2px;
+  background: var(--strava-forest);
+  content: "";
+}
+
+.statusCard::before {
+  background: var(--strava-terracotta);
+}
+
+.sectionHeading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sectionHeading h2,
+.sectionIntro h2 {
+  margin-top: 5px;
+  color: var(--strava-forest-deep);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: clamp(1.55rem, 2.3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.sportBadge,
+.statusPill {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 6px 9px;
+  border: 1px solid var(--strava-border);
+  background: var(--strava-paper-soft);
+  color: var(--strava-moss);
+  font-size: 0.66rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.activityContent {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.78fr) minmax(280px, 1.22fr);
+  gap: 28px;
+  margin-top: 24px;
+}
+
+.activityVisual {
+  position: relative;
+  min-height: 210px;
+  overflow: hidden;
+  border: 1px solid #cdbda8;
+  background:
+    radial-gradient(
+      circle at 78% 18%,
+      rgba(200, 91, 47, 0.06),
+      transparent 38%
+    ),
+    linear-gradient(rgba(35, 76, 57, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(35, 76, 57, 0.055) 1px, transparent 1px),
+    #e7ddcd;
+  background-size: 28px 28px;
+}
+
+.activityVisual::after {
+  position: absolute;
+  inset: auto -15% -45% 15%;
+  height: 80%;
+  border-radius: 50%;
+  background: rgba(47, 93, 70, 0.1);
+  content: "";
+}
+
+.activityVisualIcon {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 2;
+  display: grid;
+  width: 37px;
+  height: 37px;
+  place-items: center;
+  background: var(--strava-paper);
+  color: var(--strava-terracotta);
+  box-shadow: 0 10px 24px -18px rgba(70, 49, 28, 0.6);
+}
+
+.activityVisualIcon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.activityVisual > svg {
+  position: absolute;
+  right: -8%;
+  bottom: 4%;
+  z-index: 1;
+  width: 116%;
+}
+
+.topographicLine {
+  stroke: rgba(35, 76, 57, 0.22);
+  stroke-width: 24;
+}
+
+.routeLine {
+  stroke: var(--strava-terracotta);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  stroke-dasharray: 5 7;
+}
+
+.activityVisual circle {
+  fill: var(--strava-terracotta);
+  stroke: var(--strava-paper);
+  stroke-width: 3;
+}
+
+.activityDetails {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.activityDate {
+  color: var(--strava-terracotta);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.activityDetails h3,
+.activityEmpty h3,
+.statusBody h3,
+.dataItem h3 {
+  color: var(--strava-forest-deep);
+  font-weight: 760;
+}
+
+.activityDetails h3 {
+  margin-top: 7px;
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: clamp(1.65rem, 2.6vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.activityDetails > p {
+  max-width: 520px;
+  margin-top: 10px;
+  color: var(--strava-moss);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.activityMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 22px;
+  border-top: 1px solid var(--strava-border);
+  background: rgba(255, 252, 244, 0.22);
+}
+
+.activityMetrics > div {
+  min-width: 0;
+  padding: 14px 12px 0 0;
+}
+
+.activityMetrics > div + div {
+  padding-left: 14px;
+  border-left: 1px solid var(--strava-border);
+}
+
+.activityMetrics dt {
+  color: var(--strava-moss);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.activityMetrics dd {
+  margin-top: 4px;
+  color: var(--strava-forest-deep);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 1.16rem;
+  font-weight: 600;
+}
+
+.activityEmpty {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 210px;
+  align-items: center;
+  gap: 17px;
+  margin-top: 24px;
+  padding: 24px;
+  border: 1px dashed var(--strava-border-strong);
+  background: #e9dfd0;
+}
+
+.activityEmpty > span {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--strava-border);
+  background: var(--strava-paper);
+  color: var(--strava-terracotta);
+}
+
+.activityEmpty svg {
+  width: 19px;
+  height: 19px;
+}
+
+.activityEmpty p {
+  margin-top: 5px;
+  color: var(--strava-moss);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.statusCard {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.statusIcon {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  flex: none;
+  place-items: center;
+  border: 1px solid;
+  border-radius: 50%;
+}
+
+.statusIcon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.statusIconConnected {
+  border-color: rgba(47, 93, 70, 0.22);
+  background: rgba(47, 93, 70, 0.08);
+  color: var(--strava-forest);
+}
+
+.statusIconWarning {
+  border-color: rgba(182, 117, 35, 0.25);
+  background: rgba(182, 117, 35, 0.08);
+  color: #98621e;
+}
+
+.statusIconNeutral {
+  border-color: var(--strava-border);
+  background: var(--strava-paper-soft);
+  color: var(--strava-moss);
+}
+
+.statusBody {
+  flex: 1;
+  margin-top: 29px;
+}
+
+.statusPillConnected {
+  border-color: rgba(47, 93, 70, 0.22);
+  background: rgba(47, 93, 70, 0.08);
+  color: var(--strava-forest);
+}
+
+.statusPillWarning {
+  border-color: rgba(182, 117, 35, 0.25);
+  background: rgba(182, 117, 35, 0.08);
+  color: #98621e;
+}
+
+.statusPillNeutral {
+  background: rgba(255, 252, 244, 0.42);
+  color: var(--strava-moss);
+}
+
+.statusBody h3 {
+  margin-top: 17px;
+  font-size: 1rem;
+}
+
+.statusBody > p {
+  margin-top: 7px;
+  color: var(--strava-moss);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.statusMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 17px;
+  color: var(--strava-moss);
+  font-size: 0.68rem;
+}
+
+.statusMeta svg {
+  width: 13px;
+  height: 13px;
+}
+
+.disconnectButton {
+  width: 100%;
+  margin-top: 26px;
+  border-color: rgba(200, 91, 47, 0.22);
+  background: transparent;
+  color: var(--strava-terracotta);
+}
+
+.disconnectButton:hover:not(:disabled) {
+  border-color: rgba(200, 91, 47, 0.36);
+  background: rgba(200, 91, 47, 0.06);
+  color: var(--strava-terracotta-deep);
+}
+
+.dataSection {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.38fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+  background: #efe6d7;
+}
+
+.sectionIntro {
+  position: relative;
+  z-index: 1;
+}
+
+.sectionIntro > p {
+  max-width: 430px;
+  margin-top: 10px;
+  color: var(--strava-moss);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.dataGrid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+
+.dataItem {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 17px;
+  border-top: 1px solid var(--strava-border);
+}
+
+.dataItem:nth-child(4n + 2),
+.dataItem:nth-child(4n + 3) {
+  background: rgba(255, 252, 244, 0.2);
+}
+
+.dataItem:nth-child(odd) {
+  border-right: 1px solid var(--strava-border);
+}
+
+.dataIcon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--strava-border);
+  background: #f4e6d7;
+  color: var(--strava-terracotta);
+}
+
+.dataIcon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.dataItem h3 {
+  font-size: 0.78rem;
+}
+
+.dataItem p {
+  margin-top: 3px;
+  color: var(--strava-moss);
+  font-size: 0.67rem;
+  line-height: 1.45;
+}
+
+.workflowSection {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.38fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+}
+
+.workflowList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.workflowList li {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 92px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 20px;
+  border-left: 1px solid var(--strava-border);
+}
+
+.workflowList li::after {
+  position: absolute;
+  top: 50%;
+  right: -4px;
+  z-index: 1;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--strava-terracotta);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.workflowList li:last-child::after {
+  display: none;
+}
+
+.workflowList span {
+  color: var(--strava-terracotta);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 1.28rem;
+  font-weight: 600;
+}
+
+.workflowList strong {
+  color: var(--strava-forest-deep);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.spin {
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1120px) {
+  .overviewGrid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  }
+
+  .activityContent {
+    grid-template-columns: 1fr;
+  }
+
+  .activityVisual {
+    min-height: 170px;
+  }
+
+  .dataSection,
+  .workflowSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .page {
+    gap: 16px;
+  }
+
+  .hero,
+  .overviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroStatus {
+    display: none;
+  }
+
+  .heroMark {
+    display: none;
+  }
+
+  .overviewGrid {
+    gap: 16px;
+  }
+
+  .activityContent {
+    grid-template-columns: minmax(200px, 0.75fr) minmax(260px, 1.25fr);
+  }
+
+  .workflowList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workflowList li:nth-child(3) {
+    border-top: 1px solid var(--strava-border);
+  }
+}
+
+@media (max-width: 620px) {
+  .heroCopy,
+  .heroStatus,
+  .activityCard,
+  .statusCard,
+  .dataSection,
+  .workflowSection {
+    padding: 19px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.25rem, 11vw, 2.85rem);
+  }
+
+  .heroActions,
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+
+  .activityContent,
+  .dataGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .activityVisual {
+    min-height: 180px;
+  }
+
+  .dataItem:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .dataItem + .dataItem {
+    border-top: 1px solid var(--strava-border);
+  }
+
+  .workflowList {
+    grid-template-columns: 1fr;
+  }
+
+  .workflowList li {
+    min-height: 74px;
+    padding-left: 15px;
+  }
+
+  .workflowList li + li {
+    border-top: 1px solid var(--strava-border);
+  }
+
+  .workflowList li::after {
+    top: auto;
+    right: auto;
+    bottom: -4px;
+    left: -4px;
+    transform: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .heroCopy,
+  .heroStatus,
+  .activityCard,
+  .statusCard,
+  .dataSection,
+  .workflowSection {
+    padding: 16px;
+  }
+
+  .sectionHeading {
+    flex-direction: column;
+  }
+
+  .activityMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .activityMetrics > div,
+  .activityMetrics > div + div {
+    padding: 10px 0;
+    border-top: 1px solid var(--strava-border);
+    border-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryButton,
+  .secondaryButton,
+  .disconnectButton {
+    transition: none;
+  }
+
+  .spin {
+    animation: none;
+  }
+}

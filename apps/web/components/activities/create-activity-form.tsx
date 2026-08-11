@@ -16,14 +16,8 @@ import {
   Mountain,
   NotebookPen,
   Route,
-  Sparkles,
 } from "lucide-react";
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -61,15 +55,13 @@ const modeOptions = [
   {
     value: "COMPLETED" as const,
     label: "Activité réalisée",
-    description:
-      "Ajoute une sortie déjà terminée avec ses traces.",
+    description: "Ajoute une sortie déjà terminée avec ses traces.",
     icon: CheckCircle2,
   },
   {
     value: "PLANNED" as const,
     label: "Sortie à planifier",
-    description:
-      "Prépare une séance qui apparaîtra dans ton planning.",
+    description: "Prépare une sortie qui apparaîtra dans ton planning.",
     icon: CalendarPlus,
   },
 ] as const;
@@ -99,11 +91,7 @@ function FormSection({
 }
 
 function getSafeReturnPath(value: string | null) {
-  if (
-    value &&
-    value.startsWith("/") &&
-    !value.startsWith("//")
-  ) {
+  if (value && value.startsWith("/") && !value.startsWith("//")) {
     return value;
   }
 
@@ -111,10 +99,7 @@ function getSafeReturnPath(value: string | null) {
 }
 
 function getDefaultStartedAt(plannedDate: string | null) {
-  if (
-    plannedDate &&
-    /^\d{4}-\d{2}-\d{2}$/.test(plannedDate)
-  ) {
+  if (plannedDate && /^\d{4}-\d{2}-\d{2}$/.test(plannedDate)) {
     return `${plannedDate}T12:00`;
   }
 
@@ -163,10 +148,7 @@ function formatDateTime(value: string) {
   }).format(date);
 }
 
-function formatMetric(
-  value: number | undefined,
-  unit: string,
-) {
+function formatMetric(value: number | undefined, unit: string) {
   if (!Number.isFinite(value) || !value || value <= 0) {
     return "—";
   }
@@ -188,23 +170,17 @@ export function CreateActivityForm() {
   const plannedDuration = searchParams.get("duration");
   const plannedDistance = searchParams.get("distance");
   const requestedStatus = searchParams.get("status");
-  const safeReturnTo = getSafeReturnPath(
-    searchParams.get("returnTo"),
-  );
-  const initialMode: ActivityMode =
-    plannedWorkoutId
-      ? "COMPLETED"
-      : requestedStatus === "PLANNED"
+  const safeReturnTo = getSafeReturnPath(searchParams.get("returnTo"));
+  const initialMode: ActivityMode = plannedWorkoutId
+    ? "COMPLETED"
+    : requestedStatus === "PLANNED"
       ? "PLANNED"
       : "COMPLETED";
 
-  const [activityMode, setActivityMode] =
-    useState<ActivityMode>(initialMode);
+  const [activityMode, setActivityMode] = useState<ActivityMode>(initialMode);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
-  const [submitError, setSubmitError] = useState<
-    string | null
-  >(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [saveConfirmation, setSaveConfirmation] =
     useState<SaveConfirmation | null>(null);
   const lockedToPlannedWorkout = Boolean(plannedWorkoutId);
@@ -227,9 +203,7 @@ export function CreateActivityForm() {
     defaultValues: {
       sport: getActivitySport(plannedSport ?? "TRAIL").value,
       status: initialMode,
-      title:
-        plannedTitle ??
-        (initialMode === "PLANNED" ? "Séance prévue" : ""),
+      title: plannedTitle ?? "",
       distance: Number.isFinite(parsedPlannedDistance)
         ? parsedPlannedDistance
         : 0,
@@ -256,7 +230,8 @@ export function CreateActivityForm() {
   const isPlannedMode = activityMode === "PLANNED";
   const sport = getActivitySport(selectedSport);
   const SportIcon = sport.icon;
-  const isStrengthSport = selectedSport === "GYM" || selectedSport === "FITNESS";
+  const isStrengthSport =
+    selectedSport === "GYM" || selectedSport === "FITNESS";
   const shouldShowPerformanceMetrics = !isPlannedMode && !isStrengthSport;
 
   useEffect(() => {
@@ -283,12 +258,8 @@ export function CreateActivityForm() {
     () => [
       {
         label: "Statut",
-        value: isPlannedMode
-          ? "Planifiée"
-          : "Réalisée",
-        icon: isPlannedMode
-          ? CalendarDays
-          : CheckCircle2,
+        value: isPlannedMode ? "Planifiée" : "Réalisée",
+        icon: isPlannedMode ? CalendarDays : CheckCircle2,
       },
       {
         label: "Sport",
@@ -305,19 +276,12 @@ export function CreateActivityForm() {
         value: isStrengthSport
           ? "Notes et exercices"
           : isPlannedMode
-          ? "À compléter après la sortie"
-          : formatDuration(hours, minutes),
+            ? "À compléter après la sortie"
+            : formatDuration(hours, minutes),
         icon: isStrengthSport ? NotebookPen : Gauge,
       },
     ],
-    [
-      hours,
-      isPlannedMode,
-      isStrengthSport,
-      minutes,
-      sport,
-      startedAt,
-    ],
+    [hours, isPlannedMode, isStrengthSport, minutes, sport, startedAt],
   );
 
   useEffect(() => {
@@ -332,17 +296,7 @@ export function CreateActivityForm() {
       shouldDirty: true,
       shouldValidate: true,
     });
-
-    if (
-      activityMode === "PLANNED" &&
-      title.trim().length === 0
-    ) {
-      setValue("title", "Séance prévue", {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-    }
-  }, [activityMode, setValue, title]);
+  }, [activityMode, setValue]);
 
   async function onSubmit(data: CreateActivityInput) {
     setSubmitError(null);
@@ -381,7 +335,7 @@ export function CreateActivityForm() {
             ? "Sortie planifiée"
             : "Trace enregistrée",
         description: submittedPlannedWorkoutId
-          ? `Ta séance “${title || "planifiée"}” est maintenant reliée à la sortie réalisée.`
+          ? `Ta sortie prévue “${title || "sans titre"}” est maintenant reliée à la sortie réalisée.`
           : isPlannedMode
             ? `Ta sortie “${title || "sans titre"}” est bien ajoutée au planning.`
             : `Ta trace “${title || "sans titre"}” est bien enregistrée.`,
@@ -421,16 +375,15 @@ export function CreateActivityForm() {
       <div className={styles.formLayout}>
         <div className={styles.formCard}>
           <FormSection
-            eyebrow="Étape 1"
-            title="Quel type de sortie ajoutes-tu ?"
-            description="Distinguez une sortie terminée d’une séance à venir."
+            eyebrow="01 · Type de sortie"
+            title="Quelle aventure veux-tu consigner ?"
+            description="Distingue une sortie terminée d’une sortie à venir."
             icon={<Route aria-hidden="true" />}
           >
             <div className={styles.modeGrid}>
               {modeOptions.map((mode) => {
                 const Icon = mode.icon;
-                const isSelected =
-                  activityMode === mode.value;
+                const isSelected = activityMode === mode.value;
 
                 return (
                   <button
@@ -439,9 +392,7 @@ export function CreateActivityForm() {
                     data-selected={isSelected}
                     aria-pressed={isSelected}
                     disabled={lockedToPlannedWorkout}
-                    onClick={() =>
-                      updateMode(mode.value)
-                    }
+                    onClick={() => updateMode(mode.value)}
                     className={styles.modeCard}
                   >
                     <span className={styles.modeIcon}>
@@ -464,9 +415,9 @@ export function CreateActivityForm() {
           </FormSection>
 
           <FormSection
-            eyebrow="Étape 2"
-            title="Choisis ta discipline"
-            description="Le sport sélectionné adapte la lecture de tes futures traces."
+            eyebrow="02 · Discipline"
+            title="Choisis ton terrain"
+            description="La discipline adapte les informations utiles à ta sortie."
             icon={<Mountain aria-hidden="true" />}
           >
             <SportSelector
@@ -481,7 +432,7 @@ export function CreateActivityForm() {
           </FormSection>
 
           <FormSection
-            eyebrow="Étape 3"
+            eyebrow="03 · Informations"
             title="Informations essentielles"
             description={
               isPlannedMode
@@ -495,9 +446,7 @@ export function CreateActivityForm() {
                 label="Titre"
                 type="text"
                 placeholder={
-                  isPlannedMode
-                    ? "Ex. Sortie longue du dimanche"
-                    : "Ex. Trail du Semnoz"
+                  isPlannedMode ? "Sortie à venir" : "Sortie déjà réalisée"
                 }
                 error={errors.title?.message}
                 {...register("title")}
@@ -514,9 +463,9 @@ export function CreateActivityForm() {
 
           {shouldShowPerformanceMetrics ? (
             <FormSection
-              eyebrow="Étape 4"
-              title="Résultats de la sortie"
-              description="Renseigne les repères utiles à ton carnet."
+              eyebrow="04 · Résultats"
+              title="Les repères de ta sortie"
+              description="Ces données sont facultatives, mais donnent du relief à ton carnet."
               icon={<Gauge aria-hidden="true" />}
             >
               <div className={styles.performanceGrid}>
@@ -554,12 +503,7 @@ export function CreateActivityForm() {
                           value={hours}
                           onChange={(event) =>
                             setHours(
-                              Math.max(
-                                0,
-                                toSafeInteger(
-                                  event.target.value,
-                                ),
-                              ),
+                              Math.max(0, toSafeInteger(event.target.value)),
                             )
                           }
                         />
@@ -581,12 +525,7 @@ export function CreateActivityForm() {
                             setMinutes(
                               Math.min(
                                 59,
-                                Math.max(
-                                  0,
-                                  toSafeInteger(
-                                    event.target.value,
-                                  ),
-                                ),
+                                Math.max(0, toSafeInteger(event.target.value)),
                               ),
                             )
                           }
@@ -635,11 +574,11 @@ export function CreateActivityForm() {
                 <Dumbbell aria-hidden="true" />
               </span>
               <div>
-                <strong>Une séance de musculation se suit au carnet</strong>
+                <strong>La musculation se raconte au carnet</strong>
                 <p>
                   Pas besoin de distance, de kilomètres ou de dénivelé ici.
                   Notez plutôt les exercices, séries, charges et sensations dans
-                  le carnet de séance.
+                  le carnet.
                 </p>
               </div>
             </div>
@@ -651,28 +590,28 @@ export function CreateActivityForm() {
               <div>
                 <strong>Les résultats viendront après la sortie</strong>
                 <p>
-                  La séance sera ajoutée au calendrier sans distance,
-                  durée, dénivelé ni calories. Vous pourrez compléter
-                  ces données une fois la sortie réalisée.
+                  La sortie sera ajoutée au calendrier sans distance, durée,
+                  dénivelé ni calories. Vous pourrez compléter ces données une
+                  fois la sortie réalisée.
                 </p>
               </div>
             </div>
           )}
 
           <FormSection
-            eyebrow={shouldShowPerformanceMetrics ? "Étape 5" : "Étape 4"}
-            title="Carnet de séance"
+            eyebrow={
+              shouldShowPerformanceMetrics ? "05 · Carnet" : "04 · Carnet"
+            }
+            title="Carnet de sortie"
             description={
               isStrengthSport
-                ? "Notez les exercices, séries, charges ou sensations de la séance."
+                ? "Notez les exercices, séries, charges ou sensations à retenir."
                 : "Ajoute le contexte qui donnera du sens à tes souvenirs."
             }
             icon={<NotebookPen aria-hidden="true" />}
           >
             <div className={styles.notesField}>
-              <label htmlFor="activity-notes">
-                Notes et sensations
-              </label>
+              <label htmlFor="activity-notes">Notes et sensations</label>
               <textarea
                 id="activity-notes"
                 rows={5}
@@ -702,9 +641,7 @@ export function CreateActivityForm() {
               </div>
 
               {errors.notes ? (
-                <p className={styles.fieldError}>
-                  {errors.notes.message}
-                </p>
+                <p className={styles.fieldError}>{errors.notes.message}</p>
               ) : null}
             </div>
           </FormSection>
@@ -716,10 +653,7 @@ export function CreateActivityForm() {
           ) : null}
 
           <div className={styles.formActions}>
-            <Link
-              href={safeReturnTo}
-              className={styles.cancelButton}
-            >
+            <Link href={safeReturnTo} className={styles.cancelButton}>
               Annuler
             </Link>
 
@@ -730,10 +664,7 @@ export function CreateActivityForm() {
             >
               {isSubmitting ? (
                 <>
-                  <Loader2
-                    className={styles.spinner}
-                    aria-hidden="true"
-                  />
+                  <Loader2 className={styles.spinner} aria-hidden="true" />
                   Enregistrement...
                 </>
               ) : isPlannedMode ? (
@@ -759,7 +690,7 @@ export function CreateActivityForm() {
               </span>
 
               <div>
-                <p>Aperçu de la séance</p>
+                <p>Aperçu de la sortie</p>
                 <h2>
                   {title?.trim() ||
                     (isPlannedMode
@@ -789,60 +720,18 @@ export function CreateActivityForm() {
               <div className={styles.summaryMetrics}>
                 <div>
                   <span>Distance</span>
-                  <strong>
-                    {formatMetric(distance, "km")}
-                  </strong>
+                  <strong>{formatMetric(distance, "km")}</strong>
                 </div>
                 <div>
                   <span>Dénivelé</span>
-                  <strong>
-                    {formatMetric(elevationGain, "m")}
-                  </strong>
+                  <strong>{formatMetric(elevationGain, "m")}</strong>
                 </div>
                 <div>
                   <span>Calories</span>
-                  <strong>
-                    {formatMetric(calories, "kcal")}
-                  </strong>
+                  <strong>{formatMetric(calories, "kcal")}</strong>
                 </div>
               </div>
             ) : null}
-          </div>
-
-          <div className={styles.trackingCard}>
-            <div className={styles.trackingHeader}>
-              <span>
-                <Sparkles aria-hidden="true" />
-              </span>
-              <div>
-                <p>Smart tracking</p>
-                <h2>Des données propres, des conseils plus utiles.</h2>
-              </div>
-            </div>
-
-            <ul>
-              <li>
-                <Mountain aria-hidden="true" />
-                <span>
-                  <strong>Dénivelé</strong>
-                  Indispensable pour analyser le trail et la montagne.
-                </span>
-              </li>
-              <li>
-                <Clock3 aria-hidden="true" />
-                <span>
-                  <strong>Durée précise</strong>
-                  Permet de suivre ton volume outdoor réel.
-                </span>
-              </li>
-              <li>
-                <Dumbbell aria-hidden="true" />
-                <span>
-                  <strong>Ressenti</strong>
-                  Relie la performance aux sensations de la séance.
-                </span>
-              </li>
-            </ul>
           </div>
         </aside>
       </div>
@@ -851,8 +740,7 @@ export function CreateActivityForm() {
         open={saveConfirmation !== null}
         title={saveConfirmation?.title ?? "Enregistrement confirmé"}
         description={
-          saveConfirmation?.description ??
-          "Ta sortie a bien été enregistrée."
+          saveConfirmation?.description ?? "Ta sortie a bien été enregistrée."
         }
         confirmLabel="Voir le planning"
         cancelLabel="Rester ici"

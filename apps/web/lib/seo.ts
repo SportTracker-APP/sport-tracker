@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_URL = "https://hovren.fr";
 export const SITE_NAME = "HOVREN";
 export const SITE_LOCALE = "fr_FR";
-export const DEFAULT_TITLE = "HOVREN — Ton carnet outdoor";
+export const DEFAULT_TITLE = "HOVREN — Le carnet des sommets";
 export const SEO_DESCRIPTION =
   "HOVREN est ton carnet d’exploration outdoor : synchronise tes sorties, conserve tes traces GPS, découvre tes sommets et suis ta progression en randonnée ou trail.";
 export const SOCIAL_DESCRIPTION =
@@ -80,7 +80,7 @@ export function createPublicMetadata({
           width: 1200,
           height: 630,
           type: "image/png",
-          alt: `${SITE_NAME} — Ton carnet outdoor`,
+          alt: `${SITE_NAME} — Le carnet des sommets`,
         },
       ],
     },

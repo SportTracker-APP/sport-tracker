@@ -449,67 +449,82 @@
   width: min(21rem, calc(100vw - 2rem));
   overflow: hidden;
   padding: 8px;
-  border: 1px solid var(--refuge-border);
+  border: 1px solid var(--refuge-border, #d9d1c2);
   border-radius: 18px;
-  background: var(--refuge-paper);
-  color: var(--refuge-ink);
-  box-shadow: 0 24px 60px rgba(24, 49, 38, 0.18);
+  background:
+    radial-gradient(
+      circle at 1px 1px,
+      rgba(47, 93, 70, 0.035) 1px,
+      transparent 0
+    ),
+    var(--refuge-paper, #f8f4ea);
+  background-size:
+    18px 18px,
+    auto;
+  color: var(--refuge-ink, #20372b);
+  box-shadow:
+    0 24px 60px rgba(55, 43, 27, 0.18),
+    inset 0 1px 0 rgba(255, 252, 244, 0.9);
+  transform-origin: top right;
+  animation: account-menu-in 160ms ease-out;
 }
 
 .accountIdentity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
   padding: 12px 14px;
-  border: 1px solid var(--refuge-border);
+  border: 1px solid var(--refuge-border, #d9d1c2);
   border-radius: 13px;
-  background: var(--refuge-paper-muted);
+  background: rgba(238, 231, 218, 0.72);
+  box-shadow: inset 2px 0 0 rgba(200, 91, 47, 0.54);
+}
+
+.accountIdentityAvatar {
+  position: relative;
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--refuge-border-strong, #c6bcaa);
+  border-radius: 50%;
+  background: #f8f4ea;
+  color: var(--refuge-forest, #2f5d46);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.accountIdentityCopy {
+  display: block;
+  min-width: 0;
+  flex: 1;
 }
 
 .accountIdentity p:first-child {
-  color: var(--refuge-ink);
+  color: var(--refuge-ink, #20372b);
 }
 
 .accountIdentity p:last-child {
-  color: var(--refuge-muted);
+  color: var(--refuge-muted, #667468);
 }
 
 .menuHeading {
   padding: 14px 10px 7px;
-  color: var(--refuge-moss);
+  color: var(--refuge-moss, #667468);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-.themeGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.themeOption {
-  display: flex;
-  min-height: 72px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 10px;
-  border: 1px solid var(--refuge-border);
-  border-radius: 13px;
-  background: transparent;
-  color: var(--refuge-moss);
-  text-align: left;
-}
-
-.themeOptionActive {
-  border-color: var(--refuge-border-strong);
-  background: rgba(35, 76, 57, 0.07);
-  color: var(--refuge-forest);
-}
-
 .menuDivider {
   height: 1px;
   margin: 8px 0;
-  background: var(--refuge-border);
+  background: var(--refuge-border, #d9d1c2);
 }
 
 .menuItem {
@@ -519,7 +534,7 @@
   gap: 10px;
   padding: 10px 12px;
   border-radius: 11px;
-  color: var(--refuge-moss);
+  color: var(--refuge-moss, #667468);
   font-size: 0.82rem;
   transition:
     background-color 160ms ease,
@@ -528,12 +543,39 @@
 
 .menuItem:hover {
   background: rgba(35, 76, 57, 0.06);
-  color: var(--refuge-forest);
+  color: var(--refuge-forest, #2f5d46);
+}
+
+.menuItem:focus-visible {
+  outline: 2px solid rgba(200, 91, 47, 0.48);
+  outline-offset: -2px;
+}
+
+.logout {
+  color: var(--refuge-terracotta, #c85b2f);
 }
 
 .logout:hover {
   background: rgba(200, 82, 47, 0.08);
-  color: var(--refuge-terracotta-hover);
+  color: var(--refuge-terracotta-hover, #aa4325);
+}
+
+@keyframes account-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accountMenu {
+    animation: none;
+  }
 }
 
 .mobileTrigger {
@@ -936,7 +978,11 @@
       rgba(35, 76, 57, 0.045) 1px,
       transparent 0
     ),
-    linear-gradient(145deg, rgba(252, 248, 239, 0.99), rgba(244, 238, 225, 0.99)) !important;
+    linear-gradient(
+      145deg,
+      rgba(252, 248, 239, 0.99),
+      rgba(244, 238, 225, 0.99)
+    ) !important;
   background-size:
     18px 18px,
     100% 100% !important;

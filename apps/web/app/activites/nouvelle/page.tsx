@@ -1,127 +1,23 @@
 "use client";
 
-import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  Activity,
-  CalendarDays,
-  Flame,
-  Mountain,
-  Plus,
-  Timer,
-} from "lucide-react";
+import { CalendarDays, Plus } from "lucide-react";
 
-import {
-  ACTIVITY_SPORTS,
-} from "@/components/activities/activity-form.constants";
 import { CreateActivityForm } from "@/components/activities/create-activity-form";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useActivities } from "@/hooks/use-activities";
 
 import styles from "./new-activity-page.module.css";
 
-function formatDuration(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-
-  if (hours === 0) {
-    return `${remainingMinutes} min`;
-  }
-
-  if (remainingMinutes === 0) {
-    return `${hours} h`;
-  }
-
-  return `${hours} h ${remainingMinutes
-    .toString()
-    .padStart(2, "0")}`;
-}
-
-function formatCompactNumber(value: number) {
-  return new Intl.NumberFormat("fr-FR", {
-    maximumFractionDigits: 1,
-    notation: value >= 10_000 ? "compact" : "standard",
-  }).format(value);
-}
-
 export default function NewActivityPage() {
   const searchParams = useSearchParams();
-  const isPlanning =
-    searchParams.get("status") !== "COMPLETED";
-  const { data: activities = [], isLoading } =
-    useActivities();
-
-  const recentActivities = useMemo(() => {
-    const today = new Date();
-    const thirtyDaysAgo = new Date(today);
-
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-
-    return activities.filter((activity) => {
-      const startedAt = new Date(activity.startedAt);
-
-      return (
-        activity.status !== "PLANNED" &&
-        startedAt >= thirtyDaysAgo &&
-        startedAt <= today
-      );
-    });
-  }, [activities]);
-
-  const recentDuration = useMemo(
-    () =>
-      recentActivities.reduce(
-        (total, activity) =>
-          total + activity.duration,
-        0,
-      ),
-    [recentActivities],
-  );
-
-  const recentCalories = useMemo(
-    () =>
-      recentActivities.reduce(
-        (total, activity) =>
-          total + (activity.calories || 0),
-        0,
-      ),
-    [recentActivities],
-  );
-
-  const quickStats = [
-    {
-      label: "Activités sur 30 jours",
-      value: isLoading
-        ? "…"
-        : String(recentActivities.length),
-      icon: Activity,
-      tone: styles.statViolet,
-    },
-    {
-      label: "Temps en mouvement",
-      value: isLoading
-        ? "…"
-        : formatDuration(recentDuration),
-      icon: Timer,
-      tone: styles.statSky,
-    },
-    {
-      label: "Calories",
-      value: isLoading
-        ? "…"
-        : formatCompactNumber(recentCalories),
-      icon: Flame,
-      tone: styles.statAmber,
-    },
-  ];
+  const isPlanning = searchParams.get("status") !== "COMPLETED";
 
   return (
-    <DashboardLayout>
+    <DashboardLayout variant="refuge">
       <div className={styles.page}>
         <div className={styles.hero}>
           <div className={styles.heroPhoto} />
           <div className={styles.heroOverlay} />
-          <div className={styles.heroGrid} />
 
           <div className={styles.heroContent}>
             <div className={styles.heroCopy}>
@@ -139,78 +35,21 @@ export default function NewActivityPage() {
               <h1>
                 {isPlanning ? (
                   <>
-                    Planifie ta prochaine{" "}
-                    <span>sortie.</span>
+                    Planifie ta prochaine <span>sortie.</span>
                   </>
                 ) : (
                   <>
-                    Ajoute une sortie déjà{" "}
-                    <span>réalisée.</span>
+                    Ajoute une sortie déjà <span>réalisée.</span>
                   </>
                 )}
               </h1>
 
               <p>
                 {isPlanning
-                  ? "Prépare ta séance, choisis son créneau et retrouve-la dans ton planning. Tu pourras compléter ses résultats après la sortie."
-                  : "Renseigne les données d’une sortie terminée pour enrichir tes traces, tes sommets et tes souvenirs."}
+                  ? "Choisis le terrain, le créneau et l’intention. Ta prochaine aventure trouvera naturellement sa place dans le planning."
+                  : "Consigne l’essentiel de ta sortie pour enrichir tes traces, tes sommets et les pages de ton carnet."}
               </p>
-
-              <div className={styles.sportPills}>
-                {ACTIVITY_SPORTS.slice(0, 4).map(
-                  (sport) => {
-                    const Icon = sport.icon;
-
-                    return (
-                      <span key={sport.value}>
-                        <Icon aria-hidden="true" />
-                        {sport.shortLabel}
-                      </span>
-                    );
-                  },
-                )}
-              </div>
             </div>
-
-            <div className={styles.heroStats}>
-              {quickStats.map((stat) => {
-                const Icon = stat.icon;
-
-                return (
-                  <div
-                    key={stat.label}
-                    className={`${styles.heroStat} ${stat.tone}`}
-                  >
-                    <span>
-                      <Icon aria-hidden="true" />
-                    </span>
-                    <div>
-                      <p>{stat.label}</p>
-                      <strong>{stat.value}</strong>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.formIntro}>
-          <div>
-            <p>Nouvelle entrée</p>
-            <h2>
-              {isPlanning
-                ? "Construis ta séance"
-                : "Consigne ta sortie"}
-            </h2>
-            <span>
-              Le formulaire s’adapte automatiquement au
-              statut choisi.
-            </span>
-          </div>
-
-          <div className={styles.formIntroIcon}>
-            <Mountain aria-hidden="true" />
           </div>
         </div>
 

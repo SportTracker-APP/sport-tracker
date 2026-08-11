@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 
+import styles from "./settings.module.css";
+
 export function PasswordSettingsCard() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -68,14 +70,14 @@ export function PasswordSettingsCard() {
   }
 
   return (
-    <div className="app-settings-card-content">
-      <header className="app-settings-card-header">
+    <div className={styles.cardContent}>
+      <header className={styles.cardHeader}>
         <h2>Sécurité</h2>
         <p>Modifie ton mot de passe.</p>
       </header>
 
-      <div className="app-settings-form-stack">
-        <div className="app-settings-field">
+      <div className={styles.formStack}>
+        <div className={styles.field}>
           <label htmlFor="current-password">Mot de passe actuel</label>
 
           <Input
@@ -84,11 +86,11 @@ export function PasswordSettingsCard() {
             autoComplete="current-password"
             value={currentPassword}
             onChange={(event) => setCurrentPassword(event.target.value)}
-            className="h-12"
+            className={styles.input}
           />
         </div>
 
-        <div className="app-settings-field">
+        <div className={styles.field}>
           <label htmlFor="new-password">Nouveau mot de passe</label>
 
           <Input
@@ -97,11 +99,11 @@ export function PasswordSettingsCard() {
             autoComplete="new-password"
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
-            className="h-12"
+            className={styles.input}
           />
         </div>
 
-        <div className="app-settings-field">
+        <div className={styles.field}>
           <label htmlFor="confirm-password">Confirmation</label>
 
           <Input
@@ -110,33 +112,39 @@ export function PasswordSettingsCard() {
             autoComplete="new-password"
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
-            className="h-12"
+            className={styles.input}
           />
         </div>
 
         {errorMessage && (
-          <div role="alert" className="app-settings-feedback app-settings-feedback-error">
+          <div
+            role="alert"
+            className={`${styles.feedback} ${styles.feedbackError}`}
+          >
             {errorMessage}
           </div>
         )}
 
         {successMessage && (
-          <div role="status" className="app-settings-feedback app-settings-feedback-success">
+          <div
+            role="status"
+            className={`${styles.feedback} ${styles.feedbackSuccess}`}
+          >
             {successMessage}
           </div>
         )}
 
-        <div className="app-settings-actions">
+        <div className={styles.actions}>
           <Button
             variant="ghost"
             type="button"
             onClick={handleUpdatePassword}
             disabled={isSaving}
-            className="app-settings-primary-action h-11 rounded-2xl px-6"
+            className={styles.primaryAction}
           >
             {isSaving ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className={styles.spinner} />
                 Mise à jour...
               </>
             ) : (

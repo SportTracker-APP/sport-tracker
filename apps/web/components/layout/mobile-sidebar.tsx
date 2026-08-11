@@ -202,7 +202,7 @@ export function MobileSidebar({ variant = "default" }: MobileSidebarProps) {
                   HOVREN<em>.fr</em>
                 </SheetTitle>
                 <span className={refugeShell.mobileBrandTagline}>
-                  Carnet outdoor intelligent
+                  Le carnet des sommets
                 </span>
               </span>
             </Link>

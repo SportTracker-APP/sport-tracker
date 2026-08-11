@@ -6,9 +6,7 @@ test.describe("SEO public HOVREN", () => {
   }) => {
     await page.goto("/");
 
-    await expect(page).toHaveTitle(
-      "HOVREN — Carnet outdoor pour sorties, sommets et progression",
-    );
+    await expect(page).toHaveTitle("HOVREN — Le carnet des sommets");
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
       /carnet d’exploration outdoor/i,
@@ -30,9 +28,7 @@ test.describe("SEO public HOVREN", () => {
       "summary_large_image",
     );
     await expect(page.locator("h1")).toHaveCount(1);
-    await expect(page.locator("h1")).toHaveText(
-      /Tes sorties deviennent\s*ton carnet outdoor\./,
-    );
+    await expect(page.locator("h1")).toHaveText(/TES SOMMETS\. TON HISTOIRE\./);
   });
 
   test("les routes privees et d'authentification restent hors index", async ({

@@ -189,7 +189,7 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
       <aside className={refugeShell.sidebar}>
         <div className={refugeShell.sidebarScroll}>
           <section className={refugeShell.navSection}>
-            <p className={refugeShell.navLabel}>Principal</p>
+            <p className={refugeShell.navLabel}>Aventure</p>
             <nav
               className={refugeShell.navList}
               aria-label="Navigation principale"
@@ -199,7 +199,7 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
           </section>
 
           <section className={refugeShell.navSection}>
-            <p className={refugeShell.navLabel}>Secondaire</p>
+            <p className={refugeShell.navLabel}>Progression</p>
             <nav
               className={refugeShell.navList}
               aria-label="Navigation secondaire"
@@ -328,7 +328,7 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
       <div className="app-sidebar-scroll relative flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6">
         {/* MAIN NAV */}
         <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-          Principal
+          Aventure
         </div>
 
         <nav className="space-y-1">
@@ -382,7 +382,7 @@ export function Sidebar({ variant = "default" }: SidebarProps) {
         {/* SECONDARY */}
         <div className="mt-8 border-t border-white/[0.05] pt-6">
           <div className="mb-4 px-4 text-xs font-medium tracking-[0.22em] text-zinc-600 uppercase">
-            Secondaire
+            Progression
           </div>
 
           <nav className="space-y-1">

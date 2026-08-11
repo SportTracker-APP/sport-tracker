@@ -105,7 +105,7 @@ export function LegalPage({
               <span>
                 HOVREN<em>.fr</em>
               </span>
-              <small>Carnet outdoor intelligent</small>
+              <small>Le carnet des sommets</small>
             </span>
           </Link>
 

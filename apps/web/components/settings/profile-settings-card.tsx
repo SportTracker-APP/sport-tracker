@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 
+import styles from "./settings.module.css";
+
 export function ProfileSettingsCard() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
@@ -36,51 +38,48 @@ export function ProfileSettingsCard() {
   }
 
   return (
-    <div className="app-settings-card-content">
-      <header className="app-settings-card-header">
+    <div className={styles.cardContent}>
+      <header className={styles.cardHeader}>
         <h2>Profil</h2>
         <p>Modifie tes informations personnelles.</p>
       </header>
 
-      <AvatarUpload
-        firstName={firstName || "U"}
-        avatarUrl={user?.avatarUrl}
-      />
+      <AvatarUpload firstName={firstName || "U"} avatarUrl={user?.avatarUrl} />
 
-      <div className="app-settings-form-stack">
-        <div className="app-settings-field">
+      <div className={styles.formStack}>
+        <div className={styles.field}>
           <label htmlFor="profile-first-name">Prénom</label>
 
           <Input
             id="profile-first-name"
             value={firstName}
             onChange={(event) => setFirstName(event.target.value)}
-            className="h-12"
+            className={styles.input}
           />
         </div>
 
-        <div className="app-settings-field">
+        <div className={styles.field}>
           <label htmlFor="profile-email">Email</label>
 
           <Input
             id="profile-email"
             disabled
             value={user?.email || ""}
-            className="h-12"
+            className={styles.input}
           />
         </div>
 
-        <div className="app-settings-actions">
+        <div className={styles.actions}>
           <Button
             variant="ghost"
             type="button"
             onClick={handleSave}
             disabled={isSaving || !firstName.trim()}
-            className="app-settings-primary-action h-11 rounded-2xl px-6"
+            className={styles.primaryAction}
           >
             {isSaving ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className={styles.spinner} />
                 Sauvegarde...
               </>
             ) : (

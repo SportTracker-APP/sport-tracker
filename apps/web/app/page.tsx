@@ -9,15 +9,14 @@ import {
   SOCIAL_DESCRIPTION,
 } from "@/lib/seo";
 
-const siteTitle =
-  "HOVREN — Carnet outdoor pour sorties, sommets et progression";
+const siteTitle = "HOVREN — Le carnet des sommets";
 
 export const metadata: Metadata = {
   ...createPublicMetadata({
     path: "/",
     title: siteTitle,
     description: SEO_DESCRIPTION,
-    socialTitle: "HOVREN — Ton carnet outdoor",
+    socialTitle: siteTitle,
     socialDescription: SOCIAL_DESCRIPTION,
   }),
   applicationName: SITE_NAME,

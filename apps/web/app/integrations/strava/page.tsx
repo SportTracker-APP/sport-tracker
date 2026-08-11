@@ -9,6 +9,7 @@ import {
   Activity,
   ArrowRight,
   CheckCircle2,
+  CircleAlert,
   Flame,
   Heart,
   Link2,
@@ -23,6 +24,8 @@ import {
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 import { api } from "@/lib/api";
+
+import styles from "./strava.module.css";
 
 interface StravaStatus {
   connected: boolean;
@@ -139,10 +142,6 @@ function extractActivities(response: ActivitiesApiResponse) {
   }
 
   return response.activities || response.data || response.items || [];
-}
-
-function getActivityDate(activity: LastSyncedActivity) {
-  return activity.startedAt || activity.createdAt || activity.updatedAt || "";
 }
 
 function isCompletedActivity(activity: LastSyncedActivity) {
@@ -286,6 +285,8 @@ export default function StravaIntegrationPage() {
 
   useEffect(() => {
     if (callbackMessage) {
+      // Le message dépend du retour OAuth présent dans l’URL au montage.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMessage(callbackMessage);
     }
   }, [callbackMessage]);
@@ -450,224 +451,331 @@ export default function StravaIntegrationPage() {
   }
 
   return (
-    <DashboardLayout>
-      <div className="app-strava-page space-y-8">
-        <section className="app-strava-hero relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-[#11131A]/80 p-8 backdrop-blur-xl">
-          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#FC4C02]/15 blur-[120px]" />
-          <div className="absolute top-0 left-0 h-full w-full bg-[radial-gradient(circle_at_top_right,rgba(252,76,2,0.12),transparent_35%)]" />
-
-          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-2xl">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-2">
-                <Link2 className="h-4 w-4 text-orange-300" />
-
-                <span className="text-xs font-semibold tracking-wider text-orange-300 uppercase">
-                  Intégration officielle
-                </span>
-              </div>
-
-              <h1 className="text-4xl font-bold tracking-tight text-white">
-                Connecte ton compte Strava
-              </h1>
-
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
-                Importe automatiquement tes traces Strava pour révéler tes
-                sommets, tes souvenirs et ton historique outdoor dans HOVREN.
-              </p>
+    <DashboardLayout variant="refuge">
+      <main className={styles.page}>
+        <section className={styles.hero}>
+          <div className={styles.heroCopy}>
+            <div className={styles.eyebrow}>
+              <Link2 aria-hidden="true" />
+              <span>Intégration officielle</span>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <h1>Strava alimente ton carnet</h1>
+            <p>
+              Importe automatiquement tes activités pour retrouver tes traces,
+              révéler tes sommets et faire grandir ton histoire HOVREN.
+            </p>
+
+            <div className={styles.heroActions}>
               <button
                 type="button"
                 onClick={connectStrava}
                 disabled={isConnecting || isLoadingStatus}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#FC4C02] px-6 py-4 text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(252,76,2,0.4)] disabled:cursor-not-allowed disabled:opacity-60"
+                className={styles.primaryButton}
               >
                 {isConnecting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className={styles.spin} aria-hidden="true" />
                 ) : (
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight aria-hidden="true" />
                 )}
                 {status.connected || status.requiresReconnect
                   ? "Reconnecter Strava"
                   : "Connecter Strava"}
               </button>
 
-              {status.connected && (
+              {status.connected ? (
                 <button
                   type="button"
                   onClick={syncStrava}
                   disabled={isSyncing}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-6 py-4 text-sm font-semibold text-white transition-all duration-300 hover:border-orange-500/30 hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  className={styles.secondaryButton}
                 >
                   <RefreshCw
-                    className={`h-4 w-4 ${isSyncing ? "animate-spin" : ""}`}
+                    className={isSyncing ? styles.spin : undefined}
+                    aria-hidden="true"
                   />
                   Synchroniser
                 </button>
-              )}
+              ) : null}
+            </div>
+          </div>
+
+          <div className={styles.heroStatus}>
+            <span className={styles.heroStatusLabel}>État de la connexion</span>
+            <div
+              className={`${styles.connectionBadge} ${
+                status.connected
+                  ? styles.connectionBadgeConnected
+                  : status.requiresReconnect
+                    ? styles.connectionBadgeWarning
+                    : styles.connectionBadgeNeutral
+              }`}
+            >
+              <span />
+              {isLoadingStatus
+                ? "Vérification…"
+                : status.connected
+                  ? "Compte connecté"
+                  : status.requiresReconnect
+                    ? "Connexion à renouveler"
+                    : "Aucun compte connecté"}
+            </div>
+            <p>
+              {status.connected
+                ? "Tes nouvelles sorties peuvent rejoindre HOVREN à tout moment."
+                : status.requiresReconnect
+                  ? "Ton historique reste conservé pendant le renouvellement."
+                  : "Une autorisation OAuth suffit pour commencer l’import."}
+            </p>
+            <div className={styles.heroMark} aria-hidden="true">
+              <svg viewBox="0 0 240 96" fill="none">
+                <path d="M4 78C38 66 48 34 83 41c29 6 33 34 64 24 28-9 38-47 89-55" />
+                <circle cx="147" cy="65" r="4" />
+                <circle cx="236" cy="10" r="4" />
+              </svg>
             </div>
           </div>
         </section>
 
-        {message && (
+        {message ? (
           <div
-            className={`app-strava-message app-strava-message-${message.variant} flex items-center gap-3 rounded-2xl border px-5 py-4 text-sm font-medium ${
+            className={`${styles.feedback} ${
               message.variant === "success"
-                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-200"
+                ? styles.feedbackSuccess
                 : message.variant === "warning"
-                  ? "border-amber-500/20 bg-amber-500/10 text-amber-200"
+                  ? styles.feedbackWarning
                   : message.variant === "error"
-                    ? "border-red-500/20 bg-red-500/10 text-red-200"
-                    : "border-white/[0.08] bg-white/[0.04] text-zinc-300"
+                    ? styles.feedbackError
+                    : styles.feedbackNeutral
             }`}
+            role={message.variant === "error" ? "alert" : "status"}
           >
-            {message.variant === "success" && (
-              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-300" />
+            {message.variant === "success" ? (
+              <CheckCircle2 aria-hidden="true" />
+            ) : (
+              <CircleAlert aria-hidden="true" />
             )}
             <span>{message.text}</span>
           </div>
-        )}
+        ) : null}
 
-        <section className="app-strava-feature-grid grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {importedData.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={item.title}
-                className="app-strava-feature-card rounded-[28px] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur-xl"
-              >
-                <div className="app-strava-feature-icon mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10">
-                  <Icon className="h-5 w-5 text-orange-300" />
-                </div>
-
-                <h3 className="font-semibold text-white">{item.title}</h3>
-
-                <p className="mt-2 text-sm text-zinc-400">{item.description}</p>
+        <div className={styles.overviewGrid}>
+          <section className={styles.activityCard}>
+            <div className={styles.sectionHeading}>
+              <div>
+                <span className={styles.sectionEyebrow}>Dernier import</span>
+                <h2>Dernière sortie synchronisée</h2>
               </div>
-            );
-          })}
-        </section>
-
-        <section className="app-strava-info-section rounded-[32px] border border-white/[0.06] bg-[#11131A]/70 p-8">
-          <h2 className="text-xl font-semibold text-white">
-            Comment fonctionne la synchronisation ?
-          </h2>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-4">
-            {workflowSteps.map((step, index) => (
-              <div
-                key={step}
-                className="app-strava-workflow-card rounded-2xl border border-white/[0.05] bg-white/[0.03] p-5"
-              >
-                <div className="mb-3 text-2xl font-bold text-orange-300">
-                  0{index + 1}
-                </div>
-
-                <p className="text-sm font-medium text-white">{step}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="app-strava-info-section rounded-[32px] border border-white/[0.06] bg-[#11131A]/70 p-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-white">
-                Statut de synchronisation
-              </h2>
-
-              {lastSyncedActivity ? (
-                <div className="mt-3 space-y-1">
-                  <p className="text-sm font-semibold text-zinc-300">
-                    Dernière trace synchronisée :
-                  </p>
-
-                  <p className="text-base font-semibold text-white">
-                    {getActivityTitle(lastSyncedActivity)}
-                  </p>
-
-                  <p className="text-sm text-zinc-400">
-                    {[
-                      formatActivityDate(lastSyncedActivity.startedAt),
-                      lastSyncedActivity.sport,
-                      formatDistance(lastSyncedActivity.distance),
-                      formatDuration(lastSyncedActivity.duration),
-                      formatElevation(lastSyncedActivity.elevationGain),
-                    ]
-                      .filter(Boolean)
-                      .join(" • ")}
-                  </p>
-                </div>
-              ) : syncResult ? (
-                <p className="mt-2 text-sm text-zinc-400">
-                  Synchronisation terminée. Aucune nouvelle trace à afficher.
-                </p>
-              ) : (
-                <p className="mt-2 text-sm text-zinc-400">
-                  Synchronise Strava pour faire apparaître ta dernière trace.
-                </p>
-              )}
+              {lastSyncedActivity?.sport ? (
+                <span className={styles.sportBadge}>
+                  {lastSyncedActivity.sport}
+                </span>
+              ) : null}
             </div>
 
-            {status.connected && (
-              <button
-                type="button"
-                onClick={disconnectStrava}
-                disabled={isDisconnecting}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isDisconnecting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Unlink className="h-4 w-4" />
-                )}
-                Déconnecter
-              </button>
-            )}
-          </div>
+            {lastSyncedActivity ? (
+              <div className={styles.activityContent}>
+                <div className={styles.activityVisual} aria-hidden="true">
+                  <span className={styles.activityVisualIcon}>
+                    <Activity />
+                  </span>
+                  <svg viewBox="0 0 360 176" fill="none">
+                    <path
+                      className={styles.topographicLine}
+                      d="M-8 132c48-57 92-66 132-28 35 33 64 38 98 8 40-35 79-31 146 10"
+                    />
+                    <path
+                      className={styles.routeLine}
+                      d="M15 143c30-17 50-43 82-38 27 4 34 25 62 22 35-4 41-56 80-60 34-4 43 28 96 7"
+                    />
+                    <circle cx="15" cy="143" r="5" />
+                    <circle cx="335" cy="74" r="6" />
+                  </svg>
+                </div>
 
-          <div className="app-strava-status-card mt-6 flex flex-col gap-4 rounded-2xl border border-white/[0.05] bg-white/[0.03] p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-medium text-white">
+                <div className={styles.activityDetails}>
+                  <span className={styles.activityDate}>
+                    {formatActivityDate(lastSyncedActivity.startedAt) ||
+                      "Date non renseignée"}
+                  </span>
+                  <h3>{getActivityTitle(lastSyncedActivity)}</h3>
+                  <p>
+                    Une nouvelle trace ajoutée à ton carnet et prête à nourrir
+                    tes statistiques, sommets et souvenirs.
+                  </p>
+
+                  <dl className={styles.activityMetrics}>
+                    <div>
+                      <dt>Distance</dt>
+                      <dd>
+                        {formatDistance(lastSyncedActivity.distance) || "—"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Temps</dt>
+                      <dd>
+                        {formatDuration(lastSyncedActivity.duration) || "—"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Dénivelé</dt>
+                      <dd>
+                        {formatElevation(lastSyncedActivity.elevationGain) ||
+                          "—"}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.activityEmpty}>
+                <span>
+                  <Activity aria-hidden="true" />
+                </span>
+                <div>
+                  <h3>Aucune trace synchronisée</h3>
+                  <p>
+                    {syncResult
+                      ? "La synchronisation est terminée, sans nouvelle activité à afficher."
+                      : "Synchronise Strava pour faire apparaître ici ta dernière sortie."}
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section className={styles.statusCard}>
+            <div className={styles.sectionHeading}>
+              <div>
+                <span className={styles.sectionEyebrow}>Connexion</span>
+                <h2>Statut de synchronisation</h2>
+              </div>
+              <span
+                className={`${styles.statusIcon} ${
+                  status.connected
+                    ? styles.statusIconConnected
+                    : status.requiresReconnect
+                      ? styles.statusIconWarning
+                      : styles.statusIconNeutral
+                }`}
+              >
+                {status.connected ? (
+                  <CheckCircle2 aria-hidden="true" />
+                ) : (
+                  <Link2 aria-hidden="true" />
+                )}
+              </span>
+            </div>
+
+            <div className={styles.statusBody}>
+              <span
+                className={`${styles.statusPill} ${
+                  status.connected
+                    ? styles.statusPillConnected
+                    : status.requiresReconnect
+                      ? styles.statusPillWarning
+                      : styles.statusPillNeutral
+                }`}
+              >
+                {status.connected
+                  ? "Connecté"
+                  : status.requiresReconnect
+                    ? "À reconnecter"
+                    : "Non connecté"}
+              </span>
+
+              <h3>
                 {isLoadingStatus
-                  ? "Vérification..."
+                  ? "Vérification en cours…"
                   : status.connected
                     ? "Compte Strava connecté"
                     : status.requiresReconnect
                       ? "Connexion Strava à renouveler"
                       : "Aucun compte connecté"}
-              </p>
-
-              <p className="mt-1 text-sm text-zinc-400">
+              </h3>
+              <p>
                 {status.connected
-                  ? `Athlète Strava ${status.athleteId}`
+                  ? `Athlète Strava ${status.athleteId || "identifié"}`
                   : status.requiresReconnect
                     ? "Reconnecte Strava pour reprendre les synchronisations. Ton historique HOVREN est conservé."
-                    : "Connecte Strava pour importer tes traces."}
+                    : "Connecte Strava pour importer tes traces dans ton carnet."}
               </p>
+
+              {status.lastUpdatedAt ? (
+                <div className={styles.statusMeta}>
+                  <RefreshCw aria-hidden="true" />
+                  Dernière mise à jour le{" "}
+                  {formatActivityDate(status.lastUpdatedAt)}
+                </div>
+              ) : null}
             </div>
 
-            <div
-              className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-xs ${
-                status.connected
-                  ? "bg-emerald-500/10 text-emerald-300"
-                  : status.requiresReconnect
-                    ? "bg-amber-500/10 text-amber-300"
-                    : "bg-zinc-800 text-zinc-400"
-              }`}
-            >
-              {status.connected && <CheckCircle2 className="h-3.5 w-3.5" />}
-              {status.connected
-                ? "Connecté"
-                : status.requiresReconnect
-                  ? "À reconnecter"
-                  : "Non connecté"}
-            </div>
+            {status.connected ? (
+              <button
+                type="button"
+                onClick={disconnectStrava}
+                disabled={isDisconnecting}
+                className={styles.disconnectButton}
+              >
+                {isDisconnecting ? (
+                  <Loader2 className={styles.spin} aria-hidden="true" />
+                ) : (
+                  <Unlink aria-hidden="true" />
+                )}
+                Déconnecter
+              </button>
+            ) : null}
+          </section>
+        </div>
+
+        <section className={styles.dataSection}>
+          <div className={styles.sectionIntro}>
+            <span className={styles.sectionEyebrow}>Ce qui rejoint HOVREN</span>
+            <h2>Les données utiles, sans ressaisie</h2>
+            <p>
+              Chaque import enrichit ton carnet avec les repères essentiels de
+              ta sortie.
+            </p>
+          </div>
+
+          <div className={styles.dataGrid}>
+            {importedData.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <article key={item.title} className={styles.dataItem}>
+                  <span className={styles.dataIcon}>
+                    <Icon aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
-      </div>
+
+        <section className={styles.workflowSection}>
+          <div className={styles.sectionIntro}>
+            <span className={styles.sectionEyebrow}>En quatre étapes</span>
+            <h2>De Strava à ton carnet</h2>
+            <p>
+              Une connexion simple, sécurisée et toujours sous ton contrôle.
+            </p>
+          </div>
+
+          <ol className={styles.workflowList}>
+            {workflowSteps.map((step, index) => (
+              <li key={step}>
+                <span>0{index + 1}</span>
+                <strong>{step}</strong>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </main>
     </DashboardLayout>
   );
 }

@@ -19,14 +19,14 @@ export function LoginHero() {
             <span>
               HOVREN<span className={styles.domain}>.fr</span>
             </span>
-            <small>Carnet outdoor intelligent</small>
+            <small>Le carnet des sommets</small>
           </span>
         </Link>
 
         <div className={styles.heroCopy}>
           <span className={styles.eyebrow}>
             <span className={styles.waymark} />
-            Carnet outdoor intelligent
+            Le carnet des sommets
           </span>
           <h1>Retrouve ton carnet outdoor</h1>
           <p>Tes sorties, tes sommets et tes souvenirs t&apos;attendent.</p>

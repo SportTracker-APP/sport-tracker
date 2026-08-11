@@ -15,7 +15,7 @@ export function LandingFooter() {
           <div>
             <p className="text-lg font-semibold text-slate-950">HOVREN</p>
             <p className="text-sm text-slate-600">
-              Carnet outdoor intelligent pour sorties, sommets et progression.
+              Le carnet des sommets pour tes sorties, traces et progression.
             </p>
           </div>
         </div>
@@ -23,29 +23,29 @@ export function LandingFooter() {
         <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-600">
           <a
             href="mailto:contact@hovren.fr"
-            className="transition hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             contact@hovren.fr
           </a>
           <Link
             href="/conditions"
-            className="transition hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             Conditions
           </Link>
           <Link
             href="/confidentialite"
-            className="transition hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             Confidentialité
           </Link>
           <Link
             href="/login"
-            className="transition hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             Connexion
           </Link>
-          <XSocialLink className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-900/10 bg-white/70 text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-700/20 hover:bg-white hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700" />
+          <XSocialLink className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-900/10 bg-white/70 text-slate-600 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-700/20 hover:bg-white hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none" />
         </div>
       </div>
     </footer>

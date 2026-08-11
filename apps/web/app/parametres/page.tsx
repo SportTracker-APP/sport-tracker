@@ -3,51 +3,42 @@ import { Leaf, ShieldCheck, UserRound } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { PasswordSettingsCard } from "@/components/settings/password-settings-card";
 import { ProfileSettingsCard } from "@/components/settings/profile-settings-card";
+import styles from "@/components/settings/settings.module.css";
 import { FadeIn } from "@/components/ui/fade-in";
 
 export default function SettingsPage() {
   return (
-    <DashboardLayout>
-      <div className="app-settings-page">
+    <DashboardLayout variant="refuge">
+      <main className={styles.page}>
         <FadeIn delay={0.08}>
-          <section className="app-settings-hero">
-            <div className="app-settings-hero-decoration" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </div>
-
-            <div className="app-settings-hero-content">
-              <div className="app-settings-kicker">
+          <header className={styles.hero}>
+            <div className={styles.heroCopy}>
+              <div className={styles.kicker}>
                 <Leaf aria-hidden="true" />
                 Espace personnel
               </div>
 
-              <div className="app-settings-heading">
-                <div>
-                  <h1>Paramètres</h1>
-                  <p>
-                    Gère ton profil, ton identité HOVREN et la sécurité de
-                    ton compte.
-                  </p>
-                </div>
-
-                <div className="app-settings-status" aria-label="Compte sécurisé">
-                  <ShieldCheck aria-hidden="true" />
-                  <span>
-                    <strong>Compte protégé</strong>
-                    <small>Tes données restent privées</small>
-                  </span>
-                </div>
-              </div>
+              <h1>Paramètres</h1>
+              <p>
+                Gère ton profil, ton identité HOVREN et la sécurité de ton
+                compte.
+              </p>
             </div>
-          </section>
+
+            <div className={styles.accountStatus} aria-label="Compte sécurisé">
+              <ShieldCheck aria-hidden="true" />
+              <span>
+                <strong>Compte protégé</strong>
+                <small>Tes données restent privées</small>
+              </span>
+            </div>
+          </header>
         </FadeIn>
 
-        <div className="app-settings-grid">
+        <div className={styles.grid}>
           <FadeIn delay={0.16}>
-            <section className="app-settings-panel app-settings-profile-panel">
-              <div className="app-settings-panel-accent" aria-hidden="true">
+            <section className={styles.panel}>
+              <div className={styles.panelAccent} aria-hidden="true">
                 <UserRound />
               </div>
 
@@ -56,8 +47,8 @@ export default function SettingsPage() {
           </FadeIn>
 
           <FadeIn delay={0.24}>
-            <section className="app-settings-panel app-settings-security-panel">
-              <div className="app-settings-panel-accent" aria-hidden="true">
+            <section className={`${styles.panel} ${styles.securityPanel}`}>
+              <div className={styles.panelAccent} aria-hidden="true">
                 <ShieldCheck />
               </div>
 
@@ -65,7 +56,7 @@ export default function SettingsPage() {
             </section>
           </FadeIn>
         </div>
-      </div>
+      </main>
     </DashboardLayout>
   );
 }

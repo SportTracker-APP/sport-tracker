@@ -24,7 +24,7 @@ export function LandingHeader() {
       >
         <Link
           href="/"
-          className="group flex items-center gap-3 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+          className="group flex items-center gap-3 rounded-2xl focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
           aria-label="Accueil HOVREN"
         >
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-100/14 bg-emerald-300/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition group-hover:border-emerald-200/28">
@@ -35,7 +35,7 @@ export function LandingHeader() {
               HOVREN
             </span>
             <span className="block text-xs text-slate-400">
-              Carnet outdoor
+              Le carnet des sommets
             </span>
           </span>
         </Link>
@@ -45,7 +45,7 @@ export function LandingHeader() {
             <a
               key={link.href}
               href={link.href}
-              className="rounded-lg text-sm font-medium text-slate-300 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+              className="rounded-lg text-sm font-medium text-slate-300 transition hover:text-white focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
             >
               {link.label}
             </a>
@@ -55,13 +55,13 @@ export function LandingHeader() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/login"
-            className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-emerald-100/12 bg-white/[0.035] px-5 text-sm font-semibold text-slate-100 transition hover:border-emerald-100/22 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+            className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-emerald-100/12 bg-white/[0.035] px-5 text-sm font-semibold text-slate-100 transition hover:border-emerald-100/22 hover:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
           >
             Connexion
           </Link>
           <Link
             href="/register"
-            className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#2f7a63] px-5 text-sm font-bold text-white shadow-[0_16px_42px_rgba(47,122,99,0.28)] transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+            className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-[#2f7a63] px-5 text-sm font-bold text-white shadow-[0_16px_42px_rgba(47,122,99,0.28)] transition hover:bg-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
           >
             Créer mon carnet
           </Link>
@@ -69,7 +69,7 @@ export function LandingHeader() {
 
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-100/12 bg-white/[0.045] text-slate-100 transition hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100 lg:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-100/12 bg-white/[0.045] text-slate-100 transition hover:bg-white/[0.08] focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none lg:hidden"
           aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((current) => !current)}
@@ -89,7 +89,7 @@ export function LandingHeader() {
               <a
                 key={link.href}
                 href={link.href}
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
@@ -98,14 +98,14 @@ export function LandingHeader() {
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               <Link
                 href="/login"
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-emerald-100/12 bg-white/[0.045] px-5 text-sm font-semibold text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+                className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-emerald-100/12 bg-white/[0.045] px-5 text-sm font-semibold text-slate-100 focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
                 onClick={() => setIsOpen(false)}
               >
                 Connexion
               </Link>
               <Link
                 href="/register"
-                className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#2f7a63] px-5 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-100"
+                className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-[#2f7a63] px-5 text-sm font-bold text-white focus-visible:ring-2 focus-visible:ring-emerald-100 focus-visible:outline-none"
                 onClick={() => setIsOpen(false)}
               >
                 Créer mon carnet

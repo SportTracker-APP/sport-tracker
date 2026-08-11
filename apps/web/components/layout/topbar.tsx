@@ -5,18 +5,16 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import {
-  Check,
   ChevronDown,
-  Leaf,
+  LayoutDashboard,
   LogOut,
+  Mountain,
   Settings,
-  Sparkles,
 } from "lucide-react";
 
 import { MobileSidebar } from "./mobile-sidebar";
 import { NotificationCenter } from "./notification-center";
 
-import { type AppTheme, useAppTheme } from "@/components/theme/theme-switcher";
 import { logoutSession } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
 import refugeShell from "./refuge-shell.module.css";
@@ -28,7 +26,6 @@ type TopbarProps = {
 export function Topbar({ variant = "default" }: TopbarProps) {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-  const { theme, setTheme } = useAppTheme();
 
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
@@ -66,15 +63,6 @@ export function Topbar({ variant = "default" }: TopbarProps) {
     };
   }, [isAccountMenuOpen]);
 
-  const handleThemeChange = (nextTheme: AppTheme) => {
-    setTheme(nextTheme);
-    setIsAccountMenuOpen(false);
-
-    requestAnimationFrame(() => {
-      accountButtonRef.current?.focus();
-    });
-  };
-
   const handleLogout = async () => {
     setIsAccountMenuOpen(false);
 
@@ -103,7 +91,7 @@ export function Topbar({ variant = "default" }: TopbarProps) {
               <strong>
                 HOVREN<em>.fr</em>
               </strong>
-              <small>Carnet outdoor intelligent</small>
+              <small>Le carnet des sommets</small>
             </span>
           </Link>
           <span className={refugeShell.topbarLabel}>Carnet d’exploration</span>
@@ -157,61 +145,48 @@ export function Topbar({ variant = "default" }: TopbarProps) {
                 className={refugeShell.accountMenu}
               >
                 <div className={refugeShell.accountIdentity}>
-                  <p className="truncate text-sm font-semibold">
-                    {user?.firstName || "Utilisateur HOVREN"}
-                  </p>
-                  <p className="mt-0.5 truncate text-xs">
-                    {user?.email || "Compte connecté"}
-                  </p>
+                  <span className={refugeShell.accountIdentityAvatar}>
+                    {user?.avatarUrl ? (
+                      <Image
+                        src={user.avatarUrl}
+                        alt=""
+                        fill
+                        sizes="36px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      user?.firstName?.charAt(0).toUpperCase() || "H"
+                    )}
+                  </span>
+                  <span className={refugeShell.accountIdentityCopy}>
+                    <p className="truncate text-sm font-semibold">
+                      {user?.firstName || "Utilisateur HOVREN"}
+                    </p>
+                    <p className="mt-0.5 truncate text-xs">
+                      {user?.email || "Compte connecté"}
+                    </p>
+                  </span>
                 </div>
 
-                <p className={refugeShell.menuHeading}>Apparence</p>
-                <div
-                  role="radiogroup"
-                  aria-label="Choisir le thème de l’application"
-                  className={refugeShell.themeGrid}
+                <p className={refugeShell.menuHeading}>Mon espace</p>
+                <Link
+                  href="/refuge"
+                  role="menuitem"
+                  onClick={() => setIsAccountMenuOpen(false)}
+                  className={refugeShell.menuItem}
                 >
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked={theme === "nature"}
-                    onClick={() => handleThemeChange("nature")}
-                    className={`${refugeShell.themeOption} ${
-                      theme === "nature" ? refugeShell.themeOptionActive : ""
-                    }`}
-                  >
-                    <span className="flex w-full items-center justify-between">
-                      <Leaf className="h-4 w-4" />
-                      {theme === "nature" ? (
-                        <Check className="h-4 w-4" />
-                      ) : null}
-                    </span>
-                    <span>
-                      <strong className="block text-sm">Nature</strong>
-                      <small>Forêt & menthe</small>
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked={theme === "violet"}
-                    onClick={() => handleThemeChange("violet")}
-                    className={`${refugeShell.themeOption} ${
-                      theme === "violet" ? refugeShell.themeOptionActive : ""
-                    }`}
-                  >
-                    <span className="flex w-full items-center justify-between">
-                      <Sparkles className="h-4 w-4" />
-                      {theme === "violet" ? (
-                        <Check className="h-4 w-4" />
-                      ) : null}
-                    </span>
-                    <span>
-                      <strong className="block text-sm">Violet</strong>
-                      <small>Style original</small>
-                    </span>
-                  </button>
-                </div>
+                  <LayoutDashboard className="h-4 w-4" />
+                  Mon Refuge
+                </Link>
+                <Link
+                  href="/sommets"
+                  role="menuitem"
+                  onClick={() => setIsAccountMenuOpen(false)}
+                  className={refugeShell.menuItem}
+                >
+                  <Mountain className="h-4 w-4" />
+                  Mes sommets
+                </Link>
 
                 <div className={refugeShell.menuDivider} />
                 <Link
@@ -306,82 +281,59 @@ export function Topbar({ variant = "default" }: TopbarProps) {
             <div
               role="menu"
               aria-label="Menu du compte"
-              className="app-account-menu absolute top-[calc(100%+12px)] right-0 z-[200] w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#15161e]/96 p-2 text-zinc-100 shadow-[0_28px_80px_rgba(0,0,0,0.34)] backdrop-blur-2xl"
+              className={refugeShell.accountMenu}
             >
-              <div className="app-account-identity rounded-[18px] border border-white/[0.06] bg-white/[0.035] px-4 py-3">
-                <p className="truncate text-sm font-semibold text-white">
-                  {user?.firstName || "Utilisateur HOVREN"}
-                </p>
-                <p className="mt-0.5 truncate text-xs text-zinc-500">
-                  {user?.email || "Compte connecté"}
-                </p>
+              <div className={refugeShell.accountIdentity}>
+                <span className={refugeShell.accountIdentityAvatar}>
+                  {user?.avatarUrl ? (
+                    <Image
+                      src={user.avatarUrl}
+                      alt=""
+                      fill
+                      sizes="36px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    user?.firstName?.charAt(0).toUpperCase() || "H"
+                  )}
+                </span>
+                <span className={refugeShell.accountIdentityCopy}>
+                  <p className="truncate text-sm font-semibold">
+                    {user?.firstName || "Utilisateur HOVREN"}
+                  </p>
+                  <p className="mt-0.5 truncate text-xs">
+                    {user?.email || "Compte connecté"}
+                  </p>
+                </span>
               </div>
 
-              <div className="px-2 pt-4 pb-2">
-                <p className="text-[0.67rem] font-semibold tracking-[0.2em] text-zinc-500 uppercase">
-                  Apparence
-                </p>
-              </div>
-
-              <div
-                role="radiogroup"
-                aria-label="Choisir le thème de l’application"
-                className="grid grid-cols-2 gap-2"
+              <p className={refugeShell.menuHeading}>Mon espace</p>
+              <Link
+                href="/refuge"
+                role="menuitem"
+                onClick={() => setIsAccountMenuOpen(false)}
+                className={refugeShell.menuItem}
               >
-                <button
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={theme === "nature"}
-                  onClick={() => handleThemeChange("nature")}
-                  className={`app-account-theme-option relative flex min-h-20 flex-col items-start justify-between rounded-[18px] border p-3 text-left transition ${
-                    theme === "nature"
-                      ? "border-emerald-400/35 bg-emerald-500/12 text-emerald-50"
-                      : "border-white/[0.06] bg-white/[0.025] text-zinc-300 hover:bg-white/[0.05]"
-                  }`}
-                >
-                  <span className="flex w-full items-center justify-between">
-                    <Leaf className="h-4 w-4" />
-                    {theme === "nature" && <Check className="h-4 w-4" />}
-                  </span>
-                  <span>
-                    <span className="block text-sm font-semibold">Nature</span>
-                    <span className="mt-0.5 block text-[0.68rem] opacity-65">
-                      Forêt & menthe
-                    </span>
-                  </span>
-                </button>
+                <LayoutDashboard className="h-4 w-4" />
+                Mon Refuge
+              </Link>
+              <Link
+                href="/sommets"
+                role="menuitem"
+                onClick={() => setIsAccountMenuOpen(false)}
+                className={refugeShell.menuItem}
+              >
+                <Mountain className="h-4 w-4" />
+                Mes sommets
+              </Link>
 
-                <button
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={theme === "violet"}
-                  onClick={() => handleThemeChange("violet")}
-                  className={`app-account-theme-option relative flex min-h-20 flex-col items-start justify-between rounded-[18px] border p-3 text-left transition ${
-                    theme === "violet"
-                      ? "border-violet-400/35 bg-violet-500/12 text-violet-50"
-                      : "border-white/[0.06] bg-white/[0.025] text-zinc-300 hover:bg-white/[0.05]"
-                  }`}
-                >
-                  <span className="flex w-full items-center justify-between">
-                    <Sparkles className="h-4 w-4" />
-                    {theme === "violet" && <Check className="h-4 w-4" />}
-                  </span>
-                  <span>
-                    <span className="block text-sm font-semibold">Violet</span>
-                    <span className="mt-0.5 block text-[0.68rem] opacity-65">
-                      Style original
-                    </span>
-                  </span>
-                </button>
-              </div>
-
-              <div className="my-2 h-px bg-white/[0.07]" />
+              <div className={refugeShell.menuDivider} />
 
               <Link
                 href="/parametres"
                 role="menuitem"
                 onClick={() => setIsAccountMenuOpen(false)}
-                className="app-account-menu-item flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm text-zinc-300 transition hover:bg-white/[0.05] hover:text-white"
+                className={refugeShell.menuItem}
               >
                 <Settings className="h-4 w-4" />
                 Paramètres du compte
@@ -391,7 +343,7 @@ export function Topbar({ variant = "default" }: TopbarProps) {
                 type="button"
                 role="menuitem"
                 onClick={handleLogout}
-                className="app-account-menu-item app-account-logout mt-1.5 flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-500/10 hover:text-rose-200"
+                className={`${refugeShell.menuItem} ${refugeShell.logout}`}
               >
                 <LogOut className="h-4 w-4" />
                 Déconnexion
