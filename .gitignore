@@ -1,9 +1,25 @@
 node_modules/
 .pnpm-store/
+
+# Local configuration and credentials
 .env
 .env.*
 **/.env
 **/.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+**/id_rsa
+**/id_ed25519
+**/credentials.json
+**/service-account*.json
+**/secrets/
+*.sqlite
+*.sqlite3
+
 dist/
 build/
 .DS_Store

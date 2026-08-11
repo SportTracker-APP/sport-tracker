@@ -2,6 +2,9 @@
   "name": "sport-tracker-workspace",
   "private": true,
   "scripts": {
+    "security:install-hooks": "git config core.hooksPath .githooks",
+    "security:secrets": "bash scripts/check-secrets.sh --tracked",
+    "security:secrets:staged": "bash scripts/check-secrets.sh --staged",
     "dev:backend": "npm --prefix backend run start:dev",
     "dev:web": "npm --prefix apps/web run dev",
     "check": "npm --prefix backend run build && npm --prefix apps/web run typecheck",

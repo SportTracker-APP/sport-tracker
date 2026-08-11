@@ -28,7 +28,7 @@ export function LoginHero() {
             <span className={styles.waymark} />
             Le carnet des sommets
           </span>
-          <h1>Retrouve ton carnet outdoor</h1>
+          <h1>Retrouve ton carnet de sommets</h1>
           <p>Tes sorties, tes sommets et tes souvenirs t&apos;attendent.</p>
         </div>
 

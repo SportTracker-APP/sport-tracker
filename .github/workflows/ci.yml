@@ -43,6 +43,9 @@ jobs:
       FRONTEND_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
+      - name: Check tracked files for exposed secrets
+        working-directory: .
+        run: bash scripts/check-secrets.sh --tracked
       - uses: pnpm/action-setup@v4
         with:
           version: 11.7.0
@@ -82,6 +85,9 @@ jobs:
       NEXT_PUBLIC_API_URL: http://localhost:4000
     steps:
       - uses: actions/checkout@v4
+      - name: Check tracked files for exposed secrets
+        working-directory: .
+        run: bash scripts/check-secrets.sh --tracked
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
