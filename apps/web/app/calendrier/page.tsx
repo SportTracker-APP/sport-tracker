@@ -2,19 +2,19 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-
 import {
   Activity as ActivityIcon,
   Bike,
   CalendarDays,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  CheckCircle2,
   Clock3,
   Dumbbell,
   Footprints,
   Mountain,
   Plus,
+  RefreshCw,
   Route,
   RotateCcw,
   Sparkles,
@@ -33,6 +33,8 @@ import {
   useMarkPlannedWorkoutCompleted,
 } from "@/hooks/use-activities";
 import type { Activity } from "@/lib/activities";
+
+import styles from "./planning-page.module.css";
 
 const dayFormatter = new Intl.DateTimeFormat("fr-FR", {
   weekday: "short",
@@ -101,6 +103,10 @@ function formatDateInput(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
+function getPlanningHref(date: Date) {
+  return `/activites/nouvelle?date=${formatDateInput(date)}`;
+}
+
 function formatDuration(minutes: number) {
   if (minutes <= 0) {
     return "0 min";
@@ -145,20 +151,20 @@ function formatWeekTitle(weekStart: Date, weekEnd: Date) {
   )} – ${weekEnd.getDate()} ${monthFormatter.format(weekEnd)} ${weekEnd.getFullYear()}`;
 }
 
-function getSportIcon(sport: string): LucideIcon {
+function SportGlyph({ sport }: { sport: string }) {
   if (["ROAD_CYCLING", "GRAVEL", "MTB"].includes(sport)) {
-    return Bike;
+    return <Bike aria-hidden="true" />;
   }
 
   if (["HIKING", "WALKING"].includes(sport)) {
-    return Footprints;
+    return <Footprints aria-hidden="true" />;
   }
 
   if (["GYM", "FITNESS"].includes(sport)) {
-    return Dumbbell;
+    return <Dumbbell aria-hidden="true" />;
   }
 
-  return ActivityIcon;
+  return <ActivityIcon aria-hidden="true" />;
 }
 
 function getActivityDate(activity: Activity) {
@@ -186,7 +192,7 @@ export default function CalendarPage() {
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null,
   );
-  const { data: activities = [], isLoading, error } = useActivities();
+  const { data: activities = [], isLoading, error, refetch } = useActivities();
   const deleteActivityMutation = useDeleteActivity();
 
   const today = useMemo(() => new Date(), []);
@@ -258,13 +264,15 @@ export default function CalendarPage() {
     () =>
       activities
         .filter((activity) => activity.status === "PLANNED")
-        .filter((activity) => getActivityDate(activity).getTime() >= Date.now())
+        .filter(
+          (activity) => getActivityDate(activity).getTime() >= today.getTime(),
+        )
         .sort(
           (firstActivity, secondActivity) =>
             getActivityDate(firstActivity).getTime() -
             getActivityDate(secondActivity).getTime(),
         )[0] ?? null,
-    [activities],
+    [activities, today],
   );
 
   function goToPreviousWeek() {
@@ -289,32 +297,68 @@ export default function CalendarPage() {
   }
 
   return (
-    <DashboardLayout>
-      <main className="app-calendar-page-v2 space-y-5 pb-10">
-        <FadeIn>
-          <section className="app-calendar-hero-v2 relative isolate overflow-hidden rounded-[32px] border border-white/15 px-6 py-7 text-white shadow-[0_28px_80px_rgba(6,78,59,0.22)] sm:px-8 sm:py-8 lg:px-10">
-            <div className="app-calendar-hero-photo-v2 absolute inset-0 -z-30" />
-            <div className="app-calendar-hero-overlay-v2 absolute inset-0 -z-20" />
-            <div className="app-calendar-hero-grid-v2 absolute inset-0 -z-10" />
+    <DashboardLayout variant="refuge">
+      <main className={styles.page}>
+        {isLoading ? (
+          <PlanningSkeleton />
+        ) : (
+          <>
+            <FadeIn>
+              <header className={styles.hero}>
+                <div className={styles.heroPhoto} aria-hidden="true" />
+                <div className={styles.heroOverlay} aria-hidden="true" />
 
-            <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_330px] lg:items-end">
-              <div className="min-w-0">
-                <div className="app-calendar-hero-kicker-v2 inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-semibold">
-                  <CalendarDays className="h-3.5 w-3.5" />
-                  Planning de la semaine
+                <div className={styles.heroContent}>
+                  <div className={styles.heroMain}>
+                    <div className={styles.heroKicker}>
+                      <CalendarDays aria-hidden="true" />
+                      Planning hebdomadaire
+                    </div>
+
+                    <h1>Ta semaine, du premier pas au prochain sommet.</h1>
+                    <p className={styles.heroDescription}>
+                      Retrouve tes sorties, tes séances prévues et l’espace qui
+                      reste pour improviser une aventure.
+                    </p>
+                  </div>
+
+                  <div className={styles.nextWorkout}>
+                    <div className={styles.nextWorkoutHeader}>
+                      <div>
+                        <span>Prochaine séance</span>
+                        <h2>{nextActivity ? "À venir" : "À imaginer"}</h2>
+                      </div>
+                      <span className={styles.nextWorkoutIcon}>
+                        <Mountain aria-hidden="true" />
+                      </span>
+                    </div>
+
+                    {nextActivity ? (
+                      <div className={styles.nextWorkoutBody}>
+                        <strong>
+                          {nextActivity.title ?? "Séance planifiée"}
+                        </strong>
+                        <p>
+                          {longDayFormatter.format(
+                            getActivityDate(nextActivity),
+                          )}
+                          <span aria-hidden="true"> · </span>
+                          {timeFormatter.format(getActivityDate(nextActivity))}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className={styles.nextWorkoutBody}>
+                        <strong>Aucune séance programmée.</strong>
+                        <p>Ton prochain créneau est encore libre.</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <h1 className="app-calendar-hero-title-v2 mt-5 max-w-3xl text-4xl font-bold tracking-[-0.04em] sm:text-5xl lg:text-[3.2rem] lg:leading-[1.04]">
-                  Une semaine claire. Une prochaine sortie qui donne envie.
-                </h1>
-
-                <p className="app-calendar-hero-copy-v2 mt-4 max-w-2xl text-sm leading-7 sm:text-base">
-                  Regroupe tes activités terminées, tes séances prévues et tes
-                  journées libres sans transformer ton calendrier en tableau de
-                  bord surchargé.
-                </p>
-
-                <div className="mt-6 flex flex-wrap gap-2.5">
+                <div
+                  className={styles.metrics}
+                  aria-label="Résumé de la semaine"
+                >
                   <HeroMetric
                     icon={Route}
                     label="Distance"
@@ -336,129 +380,120 @@ export default function CalendarPage() {
                     value={`${activeDays}/7`}
                   />
                 </div>
-              </div>
+              </header>
+            </FadeIn>
 
-              <div className="app-calendar-next-card-v2 rounded-[26px] border p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[0.68rem] font-bold tracking-[0.28em] text-emerald-100/65 uppercase">
-                      Semaine affichée
-                    </p>
-                    <p className="mt-2 text-xl font-bold text-white">
-                      {formatWeekTitle(weekStart, weekEnd)}
+            <FadeIn delay={0.04}>
+              <div
+                className={styles.toolbar}
+                aria-label="Navigation du planning"
+              >
+                <div className={styles.toolbarLabel}>
+                  <span>Chapitre en cours</span>
+                  <strong>Choisir la semaine</strong>
+                </div>
+
+                <div className={styles.weekNavigation}>
+                  <button
+                    type="button"
+                    onClick={goToPreviousWeek}
+                    className={styles.iconButton}
+                    aria-label="Afficher la semaine précédente"
+                  >
+                    <ChevronLeft aria-hidden="true" />
+                  </button>
+
+                  <div className={styles.weekLabel} aria-live="polite">
+                    <span>Semaine affichée</span>
+                    <strong>{formatWeekTitle(weekStart, weekEnd)}</strong>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={goToNextWeek}
+                    className={styles.iconButton}
+                    aria-label="Afficher la semaine suivante"
+                  >
+                    <ChevronRight aria-hidden="true" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={goToCurrentWeek}
+                    className={styles.todayButton}
+                  >
+                    Aujourd’hui
+                  </button>
+                </div>
+
+                <Link
+                  href={getPlanningHref(today)}
+                  className={styles.primaryButton}
+                >
+                  <Plus aria-hidden="true" />
+                  Planifier une séance
+                </Link>
+              </div>
+            </FadeIn>
+
+            {error ? (
+              <div className={styles.errorState} role="alert">
+                <XCircle aria-hidden="true" />
+                <div>
+                  <strong>Le planning n’a pas pu rejoindre ton carnet.</strong>
+                  <p>
+                    Tes activités sont intactes. Réessaie simplement de charger
+                    cette semaine.
+                  </p>
+                </div>
+                <button type="button" onClick={() => void refetch()}>
+                  <RefreshCw aria-hidden="true" />
+                  Réessayer
+                </button>
+              </div>
+            ) : (
+              <FadeIn delay={0.08}>
+                <section
+                  className={styles.weekSection}
+                  aria-labelledby="week-heading"
+                >
+                  <div className={styles.calendarHeading}>
+                    <div>
+                      <span className={styles.sectionEyebrow}>
+                        <CalendarDays aria-hidden="true" />
+                        Vue semaine
+                      </span>
+                      <h2 id="week-heading">
+                        Sept jours pour trouver ton rythme.
+                      </h2>
+                    </div>
+                    <p>
+                      {weekActivities.length} séance
+                      {weekActivities.length > 1 ? "s" : ""} cette semaine.
+                      Chaque fiche garde sa place, même quand le terrain reste
+                      ouvert.
                     </p>
                   </div>
-                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-emerald-100">
-                    <Mountain className="h-5 w-5" />
-                  </span>
-                </div>
 
-                <div className="mt-5 border-t border-white/12 pt-4">
-                  <p className="text-[0.68rem] font-bold tracking-[0.25em] text-emerald-100/60 uppercase">
-                    Prochaine séance
-                  </p>
-                  {nextActivity ? (
-                    <div className="mt-3 min-w-0">
-                      <p className="line-clamp-2 leading-6 font-semibold text-white">
-                        {nextActivity.title ?? "Séance planifiée"}
-                      </p>
-                      <p className="mt-2 text-sm text-emerald-50/72">
-                        {longDayFormatter.format(getActivityDate(nextActivity))}
-                        {" · "}
-                        {timeFormatter.format(getActivityDate(nextActivity))}
-                      </p>
+                  <div className={styles.calendarViewport}>
+                    <div className={styles.weekGrid}>
+                      {activitiesByDay.map(
+                        ({ day, activities: dayActivities }) => (
+                          <DayColumn
+                            key={day.toISOString()}
+                            day={day}
+                            today={today}
+                            activities={dayActivities}
+                            onDeletePlannedActivity={setActivityToDelete}
+                          />
+                        ),
+                      )}
                     </div>
-                  ) : (
-                    <p className="mt-3 text-sm leading-6 text-emerald-50/72">
-                      Aucune séance à venir. Ta prochaine aventure peut
-                      commencer ici.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-        </FadeIn>
-
-        <FadeIn delay={0.04}>
-          <section className="app-calendar-toolbar-v2 flex flex-col gap-4 rounded-[26px] border p-3.5 shadow-[0_16px_48px_rgba(15,118,110,0.08)] sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <button
-                type="button"
-                onClick={goToPreviousWeek}
-                className="app-calendar-icon-button-v2 inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition hover:-translate-y-0.5"
-                aria-label="Afficher la semaine précédente"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-
-              <div className="app-calendar-week-label-v2 min-w-[190px] rounded-2xl border border-emerald-950/10 bg-white/75 px-4 py-2.5">
-                <p className="text-[0.65rem] font-bold tracking-[0.25em] text-slate-500 uppercase">
-                  Semaine
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-slate-950">
-                  {formatWeekTitle(weekStart, weekEnd)}
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={goToNextWeek}
-                className="app-calendar-icon-button-v2 inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition hover:-translate-y-0.5"
-                aria-label="Afficher la semaine suivante"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-
-              <button
-                type="button"
-                onClick={goToCurrentWeek}
-                className="app-calendar-today-button-v2 inline-flex h-11 items-center justify-center rounded-2xl border px-4 text-sm font-semibold transition hover:-translate-y-0.5"
-              >
-                Aujourd’hui
-              </button>
-            </div>
-
-            <Link
-              href={`/activites/nouvelle?date=${formatDateInput(today)}`}
-              className="app-calendar-primary-button-v2 inline-flex h-11 items-center justify-center rounded-2xl border px-5 text-sm font-bold transition hover:-translate-y-0.5"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Planifier une séance
-            </Link>
-          </section>
-        </FadeIn>
-
-        {isLoading && (
-          <section className="rounded-[26px] border border-emerald-950/10 bg-white/75 p-10 text-center text-slate-500">
-            Chargement du planning…
-          </section>
-        )}
-
-        {error && (
-          <section className="rounded-[26px] border border-red-500/20 bg-red-50 p-10 text-center text-red-700">
-            Impossible de charger les activités du calendrier.
-          </section>
-        )}
-
-        {!isLoading && !error && (
-          <FadeIn delay={0.08}>
-            <section className="app-calendar-week-shell-v2 overflow-hidden rounded-[30px] border p-3 shadow-[0_24px_70px_rgba(15,118,110,0.1)]">
-              <div className="app-calendar-week-scroll-v2 overflow-x-auto pt-1 pb-1 max-lg:overflow-visible max-lg:pt-0 max-lg:pb-0">
-                <div className="app-calendar-week-grid-v2 grid min-w-[1120px] grid-cols-7 gap-3 max-lg:min-w-0 max-lg:grid-cols-1 max-lg:gap-3">
-                  {activitiesByDay.map(({ day, activities: dayActivities }) => (
-                    <DayColumn
-                      key={day.toISOString()}
-                      day={day}
-                      today={today}
-                      activities={dayActivities}
-                      onDeletePlannedActivity={setActivityToDelete}
-                    />
-                  ))}
-                </div>
-              </div>
-            </section>
-          </FadeIn>
+                  </div>
+                </section>
+              </FadeIn>
+            )}
+          </>
         )}
 
         <ConfirmationDialog
@@ -486,93 +521,124 @@ export default function CalendarPage() {
   );
 }
 
-type HeroMetricProps = {
+function HeroMetric({
+  icon: Icon,
+  label,
+  value,
+}: {
   icon: LucideIcon;
   label: string;
   value: string;
-};
-
-function HeroMetric({ icon: Icon, label, value }: HeroMetricProps) {
+}) {
   return (
-    <div className="app-calendar-hero-metric-v2 inline-flex min-w-[150px] items-center gap-3 rounded-2xl border px-3.5 py-3">
-      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/10 text-emerald-100">
-        <Icon className="h-4 w-4" />
+    <div className={styles.metric}>
+      <span className={styles.metricIcon}>
+        <Icon aria-hidden="true" />
       </span>
-      <span className="min-w-0">
-        <span className="block text-[0.62rem] font-bold tracking-[0.18em] text-emerald-50/58 uppercase">
-          {label}
-        </span>
-        <span className="mt-0.5 block truncate text-sm font-bold text-white">
-          {value}
-        </span>
+      <span>
+        <small>{label}</small>
+        <strong>{value}</strong>
       </span>
     </div>
   );
 }
 
-type DayColumnProps = {
-  day: Date;
-  today: Date;
-  activities: Activity[];
-  onDeletePlannedActivity: (activity: Activity) => void;
-};
+function PlanningSkeleton() {
+  return (
+    <div className={styles.skeletonPage} role="status">
+      <span className={styles.srOnly}>Chargement du planning…</span>
+
+      <div className={styles.skeletonHero}>
+        <span />
+        <span />
+        <span />
+        <div>
+          <span />
+          <span />
+        </div>
+      </div>
+
+      <div className={styles.skeletonToolbar}>
+        <span />
+        <span />
+        <span />
+      </div>
+
+      <div className={styles.skeletonHeading}>
+        <span />
+        <span />
+      </div>
+
+      <div className={styles.skeletonWeek}>
+        {Array.from({ length: 7 }, (_, index) => (
+          <div key={index}>
+            <span />
+            <span />
+            <span />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function DayColumn({
   day,
   today,
   activities,
   onDeletePlannedActivity,
-}: DayColumnProps) {
+}: {
+  day: Date;
+  today: Date;
+  activities: Activity[];
+  onDeletePlannedActivity: (activity: Activity) => void;
+}) {
   const isToday = isSameDay(day, today);
   const plannedCount = activities.filter(
     (activity) => activity.status === "PLANNED",
   ).length;
 
   return (
-    <article
-      className={`app-calendar-day-v2 flex min-h-[340px] min-w-0 flex-col rounded-[24px] border p-3.5 transition duration-200 hover:-translate-y-0.5 max-lg:w-full max-lg:min-w-0 ${
-        isToday ? "app-calendar-day-today-v2" : ""
-      }`}
+    <div
+      className={`${styles.dayCard} ${activities.length === 0 ? styles.emptyDayCard : ""} ${isToday ? styles.todayCard : ""}`}
+      data-day={formatDateInput(day)}
+      aria-current={isToday ? "date" : undefined}
+      aria-label={`${longDayFormatter.format(day)}${isToday ? ", aujourd’hui" : ""}`}
     >
-      <header className="flex items-start justify-between gap-2 border-b border-emerald-950/8 pb-3">
-        <div className="min-w-0">
-          <div className="flex min-w-0 items-center gap-2">
-            {isToday ? (
-              <span className="rounded-full bg-emerald-100 px-2 py-1 text-[0.58rem] font-bold tracking-[0.12em] text-emerald-700 uppercase">
-                Aujourd’hui
-              </span>
-            ) : (
-              <p className="truncate text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">
-                {dayFormatter.format(day).replace(".", "")}
-              </p>
-            )}
-          </div>
-          <p className="mt-1 text-3xl font-black tracking-[-0.04em] text-slate-950">
-            {day.getDate()}
-          </p>
+      <div className={styles.dayHeader}>
+        <div className={styles.dayIdentity}>
+          <span className={styles.dayName}>
+            {dayFormatter.format(day).replace(".", "")}
+          </span>
+          <strong>{day.getDate()}</strong>
         </div>
 
         <Link
-          href={`/activites/nouvelle?date=${formatDateInput(day)}`}
-          className="app-calendar-day-add-v2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition hover:scale-105"
+          href={getPlanningHref(day)}
+          className={styles.dayAddButton}
           aria-label={`Planifier une séance le ${longDayFormatter.format(day)}`}
         >
-          <Plus className="h-4 w-4" />
+          <Plus aria-hidden="true" />
         </Link>
-      </header>
+      </div>
 
-      <div className="app-calendar-day-summary-v2 mt-3 flex items-center justify-between gap-2 text-[0.68rem] font-semibold text-slate-500">
-        <span>
+      <div className={styles.daySummary}>
+        {isToday ? (
+          <span className={styles.todayBadge}>Aujourd’hui</span>
+        ) : null}
+        <span className={styles.dayCount}>
           {activities.length === 0
             ? "Journée libre"
             : `${activities.length} séance${activities.length > 1 ? "s" : ""}`}
         </span>
-        {plannedCount > 0 && (
-          <span className="text-emerald-700">{plannedCount} prévue</span>
-        )}
+        {plannedCount > 0 ? (
+          <span className={styles.plannedCount}>
+            {plannedCount} prévue{plannedCount > 1 ? "s" : ""}
+          </span>
+        ) : null}
       </div>
 
-      <div className="mt-3 flex flex-1 flex-col gap-2.5">
+      <div className={styles.dayContent}>
         {activities.length === 0 ? (
           <EmptyDay day={day} />
         ) : (
@@ -585,27 +651,22 @@ function DayColumn({
           ))
         )}
       </div>
-    </article>
+    </div>
   );
 }
 
 function EmptyDay({ day }: { day: Date }) {
   return (
-    <div className="app-calendar-empty-day-v2 flex flex-1 flex-col justify-between rounded-[18px] border border-dashed border-emerald-900/12 bg-white/38 p-3.5">
+    <div className={styles.emptyDay}>
+      <span className={styles.emptyDayIcon}>
+        <Mountain aria-hidden="true" />
+      </span>
       <div>
-        <p className="text-sm font-semibold text-slate-700">
-          Repos ou liberté.
-        </p>
-        <p className="mt-1 text-xs leading-5 text-slate-500">
-          Garde la journée légère ou pose une nouvelle sortie.
-        </p>
+        <strong>Journée libre</strong>
+        <p>Aucune séance prévue. Le terrain reste ouvert.</p>
       </div>
-
-      <Link
-        href={`/activites/nouvelle?date=${formatDateInput(day)}`}
-        className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-emerald-700 transition hover:text-emerald-900"
-      >
-        <Plus className="h-3.5 w-3.5" />
+      <Link href={getPlanningHref(day)}>
+        <Plus aria-hidden="true" />
         Ajouter une séance
       </Link>
     </div>
@@ -620,7 +681,6 @@ function CalendarActivity({
   onDeletePlannedActivity: (activity: Activity) => void;
 }) {
   const activityDate = getActivityDate(activity);
-  const SportIcon = getSportIcon(activity.sport);
   const status = getActivityStatus(activity);
   const StatusIcon = status.icon;
   const hasDistance = Boolean(activity.distance && activity.distance > 0);
@@ -640,110 +700,103 @@ function CalendarActivity({
     distance: String(activity.distance ?? 0),
     returnTo: "/calendrier",
   }).toString()}`;
+  const toneClass = {
+    planned: styles.activityPlanned,
+    completed: styles.activityCompleted,
+    missed: styles.activityMissed,
+    canceled: styles.activityCanceled,
+  }[status.tone];
 
   return (
-    <article
-      className={`app-calendar-activity-v2 group block w-full min-w-0 rounded-[18px] border p-3 transition hover:-translate-y-0.5 ${
-        status.tone === "planned" ? "app-calendar-activity-planned-v2" : ""
-      } ${
-        status.tone === "completed" ? "app-calendar-activity-completed-v2" : ""
-      } ${status.tone === "missed" ? "app-calendar-activity-muted-v2" : ""} ${
-        status.tone === "canceled" ? "app-calendar-activity-canceled-v2" : ""
-      }`}
-    >
-      <div className="flex items-center gap-2.5">
-        <span className="app-calendar-activity-icon-v2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border">
-          <SportIcon className="h-4 w-4" />
+    <div className={`${styles.activityCard} ${toneClass}`}>
+      <div className={styles.activityTopline}>
+        <span className={styles.activityIcon}>
+          <SportGlyph sport={activity.sport} />
         </span>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 flex-wrap items-center justify-between gap-1.5">
-            <p className="min-w-0 text-[0.66rem] font-semibold break-words text-slate-500">
-              {timeFormatter.format(activityDate)} ·{" "}
-              {sportLabels[activity.sport] ?? activity.sport}
-            </p>
-            <span className="app-calendar-status-badge-v2 inline-flex min-w-0 shrink items-center gap-1 rounded-full bg-emerald-100 px-1.5 py-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald-700 uppercase">
-              <StatusIcon className="h-3 w-3" aria-hidden="true" />
-              {status.label}
-            </span>
-          </div>
+        <div>
+          <span>{timeFormatter.format(activityDate)}</span>
+          <strong>{sportLabels[activity.sport] ?? activity.sport}</strong>
         </div>
+        <span className={styles.statusBadge}>
+          <StatusIcon aria-hidden="true" />
+          {status.label}
+        </span>
       </div>
 
       <Link
         href={activityHref}
-        className="app-calendar-activity-title-v2 mx-auto mt-3 line-clamp-2 block max-w-full text-center text-[0.92rem] leading-6 font-bold text-slate-950 transition group-hover:text-emerald-800"
+        className={styles.activityTitle}
         title={activity.title ?? "Séance sans titre"}
       >
         {activity.title ?? "Séance sans titre"}
       </Link>
 
       {plannedNote ? (
-        <p className="app-calendar-activity-note-v2 mx-auto mt-1.5 line-clamp-2 max-w-full text-center text-[0.68rem] leading-5 text-slate-500">
-          {plannedNote}
-        </p>
+        <p className={styles.activityNote}>{plannedNote}</p>
       ) : null}
 
-      {(hasDistance || hasDuration) && (
-        <div className="app-calendar-activity-metrics-v2 mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.68rem] font-semibold text-slate-500">
-          {hasDistance && <span>{formatDistance(activity.distance)}</span>}
-          {hasDuration && <span>{formatDuration(activity.duration)}</span>}
+      {hasDistance || hasDuration ? (
+        <div className={styles.activityMetrics}>
+          {hasDistance ? (
+            <span>
+              <Route aria-hidden="true" />
+              {formatDistance(activity.distance)}
+            </span>
+          ) : null}
+          {hasDuration ? (
+            <span>
+              <Clock3 aria-hidden="true" />
+              {formatDuration(activity.duration)}
+            </span>
+          ) : null}
         </div>
-      )}
+      ) : null}
 
       {activity.status === "COMPLETED" && activity.completedActivityId ? (
-        <Link
-          href={activityHref}
-          className="app-calendar-action-view-v2 mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100"
-        >
+        <Link href={activityHref} className={styles.viewAction}>
           Voir l’activité
+          <ChevronRight aria-hidden="true" />
         </Link>
       ) : null}
 
       {activity.status === "MISSED" ? (
-        <Link
-          href={replanHref}
-          className="app-calendar-action-replan-v2 mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
-        >
+        <Link href={replanHref} className={styles.secondaryAction}>
+          <RotateCcw aria-hidden="true" />
           Replanifier
         </Link>
       ) : null}
 
       {activity.status === "PLANNED" ? (
-        <div className="mt-3 grid gap-1.5">
+        <div className={styles.plannedActions}>
           <button
             type="button"
-            className="app-calendar-action-record-v2 inline-flex min-h-9 min-w-0 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-2 text-[0.72rem] leading-tight font-bold text-emerald-800 transition hover:bg-emerald-100"
+            className={styles.completeAction}
             aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée`}
             disabled={completePlannedWorkoutMutation.isPending}
             onClick={() => completePlannedWorkoutMutation.mutate(activity.id)}
           >
-            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-            <span className="min-w-0 text-center whitespace-normal">
-              {completePlannedWorkoutMutation.isPending
-                ? "Validation…"
-                : "Sortie faite"}
-            </span>
+            <CheckCircle2 aria-hidden="true" />
+            {completePlannedWorkoutMutation.isPending
+              ? "Validation…"
+              : "Sortie faite"}
           </button>
-          {completePlannedWorkoutMutation.isError ? (
-            <p className="px-1 text-center text-[0.65rem] font-semibold text-red-600">
-              Impossible de valider la sortie.
-            </p>
-          ) : null}
           <button
             type="button"
-            className="app-calendar-action-delete-v2 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-red-100 bg-red-50/70 px-2 text-[0.68rem] font-bold text-red-700 transition hover:bg-red-100"
+            className={styles.deleteAction}
             onClick={() => onDeletePlannedActivity(activity)}
             aria-label={`Supprimer la séance prévue ${activity.title ?? "sans titre"} du planning`}
             title="Supprimer du planning"
           >
-            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="min-w-0 text-center whitespace-normal">
-              Supprimer
-            </span>
+            <Trash2 aria-hidden="true" />
+            Supprimer
           </button>
+          {completePlannedWorkoutMutation.isError ? (
+            <p className={styles.mutationError}>
+              Impossible de valider la sortie.
+            </p>
+          ) : null}
         </div>
       ) : null}
-    </article>
+    </div>
   );
 }

@@ -20,15 +20,23 @@
 
 .hero {
   background:
-    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.72), transparent 26%),
-    radial-gradient(circle at 78% 20%, rgba(200, 91, 47, 0.09), transparent 25%),
+    radial-gradient(
+      circle at 14% 16%,
+      rgba(255, 255, 255, 0.72),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 78% 20%,
+      rgba(200, 91, 47, 0.09),
+      transparent 25%
+    ),
     linear-gradient(120deg, #f8f3e7 0%, #f2ecde 56%, #e8e8d9 100%);
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 22px 58px rgba(54, 65, 49, 0.1);
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(390px, 0.98fr);
-  min-height: 500px;
+  min-height: 420px;
   overflow: hidden;
   position: relative;
 }
@@ -59,7 +67,7 @@
 
 .heroCopy {
   align-self: center;
-  padding: 52px 58px 132px 58px;
+  padding: 38px 48px 104px;
   position: relative;
   z-index: 2;
 }
@@ -85,19 +93,19 @@
 .hero h1 {
   color: #294b3a;
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: clamp(3.9rem, 4.45vw, 4.85rem);
+  font-size: clamp(3.45rem, 3.95vw, 4.3rem);
   font-weight: 500;
   letter-spacing: 0;
   line-height: 0.96;
-  margin: 22px 0 22px;
+  margin: 16px 0;
   max-width: 590px;
 }
 
 .heroCopy > p {
   color: #687166;
   font-size: 1.02rem;
-  line-height: 1.68;
-  margin: 0 0 27px;
+  line-height: 1.58;
+  margin: 0 0 20px;
   max-width: 515px;
 }
 
@@ -167,8 +175,8 @@
   box-shadow: 0 20px 38px rgba(32, 55, 43, 0.13);
   display: flex;
   justify-content: center;
-  margin: 28px 28px 136px 0;
-  min-height: 332px;
+  margin: 22px 22px 104px 0;
+  min-height: 270px;
   overflow: hidden;
   position: relative;
   z-index: 2;
@@ -191,11 +199,11 @@
 
 .heroStory .activityVisual {
   height: 100%;
-  min-height: 334px;
+  min-height: 272px;
 }
 
 .activityVisual[data-placement="hero"] .activityVisualCopy {
-  bottom: 30px;
+  bottom: 24px;
 }
 
 .heroPeriodSummary {
@@ -208,10 +216,10 @@
   flex-direction: column;
   gap: 3px;
   max-width: 248px;
-  padding: 14px 18px 15px;
+  padding: 12px 15px 13px;
   position: absolute;
-  right: 18px;
-  top: 18px;
+  right: 14px;
+  top: 14px;
   z-index: 4;
 }
 
@@ -226,7 +234,7 @@
 
 .heroPeriodSummary strong {
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: 1.65rem;
+  font-size: 1.45rem;
   font-weight: 500;
   line-height: 1;
 }
@@ -265,7 +273,12 @@
 
 .activityVisualVeil {
   background:
-    linear-gradient(180deg, rgba(24, 43, 34, 0.12) 10%, rgba(24, 43, 34, 0.05) 42%, rgba(18, 34, 27, 0.9) 100%),
+    linear-gradient(
+      180deg,
+      rgba(24, 43, 34, 0.12) 10%,
+      rgba(24, 43, 34, 0.05) 42%,
+      rgba(18, 34, 27, 0.9) 100%
+    ),
     linear-gradient(90deg, rgba(18, 34, 27, 0.24), transparent 64%);
 }
 
@@ -384,7 +397,7 @@
   gap: 2px 10px;
   justify-content: center;
   max-width: 570px;
-  padding: 0 46px 70px;
+  padding: 0 40px 55px;
   position: relative;
   text-align: center;
   z-index: 2;
@@ -393,7 +406,7 @@
 .heroStatement strong {
   color: var(--terracotta);
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: 3.1rem;
+  font-size: 2.65rem;
   font-weight: 600;
   line-height: 1;
 }
@@ -411,7 +424,7 @@
   grid-column: 1 / -1;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   left: 0;
-  min-height: 112px;
+  min-height: 90px;
   position: absolute;
   right: 0;
   z-index: 3;
@@ -420,9 +433,9 @@
 .heroMetrics > div {
   align-items: center;
   display: flex;
-  gap: 16px;
+  gap: 13px;
   min-width: 0;
-  padding: 21px 28px;
+  padding: 15px 24px;
   position: relative;
 }
 
@@ -433,15 +446,15 @@
 .heroMetrics svg {
   color: #6e7c70;
   flex: 0 0 auto;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
 }
 
 .heroMetrics span {
   color: var(--moss);
   display: flex;
   flex-direction: column;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
   gap: 2px;
   letter-spacing: 0.05em;
@@ -452,7 +465,7 @@
 .heroMetrics strong {
   color: #2c4c3c;
   font-family: var(--font-refuge-display), sans-serif;
-  font-size: 1.72rem;
+  font-size: 1.55rem;
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.05;
@@ -594,7 +607,11 @@
 }
 
 .insightMiniBars i {
-  background: linear-gradient(180deg, var(--terracotta), var(--terracotta-soft));
+  background: linear-gradient(
+    180deg,
+    var(--terracotta),
+    var(--terracotta-soft)
+  );
   flex: 1;
   min-height: 5px;
   opacity: 0.74;
@@ -1637,8 +1654,8 @@
   border-radius: 6px;
   display: grid;
   gap: 18px;
-  min-height: 480px;
-  padding: 70px;
+  min-height: 400px;
+  padding: 50px;
 }
 
 .loadingHero span {
@@ -1684,20 +1701,20 @@
   }
 
   .heroCopy {
-    padding-left: 42px;
-    padding-right: 36px;
+    padding-left: 36px;
+    padding-right: 32px;
   }
 
   .hero h1 {
-    font-size: clamp(3.7rem, 5.6vw, 4.35rem);
+    font-size: clamp(3.3rem, 4.8vw, 3.8rem);
   }
 
   .heroMetrics > div {
-    padding-inline: 18px;
+    padding-inline: 16px;
   }
 
   .heroMetrics strong {
-    font-size: 1.5rem;
+    font-size: 1.38rem;
   }
 
   .insightGrid {
@@ -1743,42 +1760,42 @@
   }
 
   .heroCopy {
-    padding: 42px 34px 28px;
+    padding: 32px 30px 24px;
   }
 
   .heroStory {
     border: 1px solid rgba(47, 93, 70, 0.17);
-    margin: 0 34px 24px;
-    min-height: 280px;
+    margin: 0 30px 22px;
+    min-height: 250px;
   }
 
   .heroStory .activityVisual {
-    min-height: 280px;
+    min-height: 250px;
   }
 
   .activityVisual[data-placement="hero"] .activityVisualCopy {
-    bottom: 25px;
+    bottom: 22px;
   }
 
   .heroPeriodSummary {
-    right: 20px;
-    top: 20px;
+    right: 16px;
+    top: 16px;
   }
 
   .heroStatement {
-    padding: 20px 34px 30px;
+    padding: 18px 30px 24px;
   }
 
   .heroMetrics {
     grid-template-columns: 1fr 1fr;
     left: auto;
-    min-height: 176px;
+    min-height: 160px;
     position: relative;
     right: auto;
   }
 
   .heroMetrics > div {
-    min-height: 88px;
+    min-height: 80px;
   }
 
   .heroMetrics > div:nth-child(3) {

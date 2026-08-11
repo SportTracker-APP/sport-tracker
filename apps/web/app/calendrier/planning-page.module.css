@@ -1,0 +1,1715 @@
+.page {
+  --planning-canvas: #f4f0e6;
+  --planning-paper: #f8f4ea;
+  --planning-paper-strong: #fbf8f0;
+  --planning-paper-deep: #e9e1d1;
+  --planning-forest: #2f5d46;
+  --planning-forest-deep: #20372b;
+  --planning-moss: #667468;
+  --planning-sage: #aab7a5;
+  --planning-terracotta: #c85b2f;
+  --planning-terracotta-soft: #e9b49d;
+  --planning-terracotta-deep: #a94325;
+  --planning-line: #d9d1c1;
+  --planning-line-soft: rgba(103, 116, 104, 0.18);
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 1440px);
+  min-width: 0;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 28px 0 64px;
+  background-color: var(--planning-canvas);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(35, 76, 57, 0.052) 1px,
+    transparent 0
+  );
+  background-size: 18px 18px;
+  box-shadow: 0 0 0 100vmax var(--planning-canvas);
+  clip-path: inset(0 -100vmax);
+  color: var(--planning-forest-deep);
+  font-family: var(--font-refuge-body, "Work Sans"), sans-serif;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+.page button,
+.page input,
+.page select {
+  font: inherit;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 370px;
+  overflow: hidden;
+  border: 1px solid var(--planning-line);
+  border-radius: 5px;
+  background: var(--planning-paper);
+  box-shadow: 0 20px 50px rgba(35, 55, 44, 0.08);
+}
+
+.heroPhoto,
+.heroOverlay {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 58%;
+  pointer-events: none;
+}
+
+.heroPhoto {
+  z-index: -3;
+  background-image: url("/summits/la-tournette.webp");
+  background-position: center 62%;
+  background-size: cover;
+  filter: saturate(0.82) contrast(0.94);
+}
+
+.heroOverlay {
+  z-index: -2;
+  width: 100%;
+  background:
+    linear-gradient(
+      90deg,
+      var(--planning-paper) 0 38%,
+      rgba(248, 244, 234, 0.92) 52%,
+      rgba(248, 244, 234, 0.2) 79%
+    ),
+    linear-gradient(0deg, rgba(32, 55, 43, 0.17), rgba(32, 55, 43, 0.02) 58%);
+}
+
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 11px;
+  border: 1px solid rgba(47, 93, 70, 0.055);
+  content: "";
+  pointer-events: none;
+}
+
+.hero::after {
+  position: absolute;
+  z-index: -1;
+  right: 2.5%;
+  bottom: 30px;
+  width: 43%;
+  height: 220px;
+  border: 1px solid rgba(245, 240, 228, 0.42);
+  border-radius: 50%;
+  content: "";
+  opacity: 0.65;
+  pointer-events: none;
+  transform: rotate(-7deg);
+}
+
+.heroContent {
+  display: grid;
+  min-height: 370px;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
+  align-items: center;
+  gap: 42px;
+  padding: 34px 44px 104px;
+}
+
+.heroMain {
+  z-index: 1;
+  min-width: 0;
+  max-width: 700px;
+}
+
+.heroKicker,
+.sectionEyebrow,
+.toolbarLabel > span,
+.nextWorkoutHeader span,
+.dayName,
+.statusBadge {
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.heroKicker,
+.sectionEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--planning-forest);
+  font-size: 0.83rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.heroKicker {
+  margin-bottom: 16px;
+}
+
+.heroKicker svg,
+.sectionEyebrow svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.8;
+}
+
+.hero h1 {
+  max-width: 650px;
+  margin: 0;
+  color: #294b3a;
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: clamp(3.45rem, 3.95vw, 4.3rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.heroDescription {
+  max-width: 610px;
+  margin: 16px 0 0;
+  color: var(--planning-moss);
+  font-size: 1.02rem;
+  line-height: 1.58;
+}
+
+.nextWorkout {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid rgba(237, 244, 237, 0.18);
+  border-radius: 5px;
+  background: var(--planning-forest);
+  color: #f8f3e8;
+  box-shadow: 0 22px 44px rgba(12, 37, 29, 0.24);
+}
+
+.nextWorkout::before,
+.nextWorkout::after {
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid rgba(185, 205, 190, 0.15);
+  border-radius: 50%;
+  content: "";
+}
+
+.nextWorkout::before {
+  top: -55px;
+  right: -30px;
+  width: 190px;
+  height: 130px;
+  transform: rotate(18deg);
+}
+
+.nextWorkout::after {
+  right: 52px;
+  bottom: -70px;
+  width: 260px;
+  height: 150px;
+  transform: rotate(-12deg);
+}
+
+.nextWorkoutHeader,
+.nextWorkoutBody {
+  position: relative;
+  z-index: 1;
+}
+
+.nextWorkoutHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.nextWorkoutHeader span:not(.nextWorkoutIcon) {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(238, 244, 238, 0.64);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.nextWorkoutHeader h2 {
+  margin: 0;
+  color: #fffaf0;
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.nextWorkoutIcon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border: 1px solid rgba(240, 246, 240, 0.2);
+  border-radius: 50%;
+  color: #d9c99e;
+}
+
+.nextWorkoutIcon svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 1.7;
+}
+
+.nextWorkoutBody {
+  margin-top: 24px;
+  padding-top: 17px;
+  border-top: 1px solid rgba(238, 244, 238, 0.16);
+}
+
+.nextWorkoutBody strong {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #fffaf0;
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.18;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.nextWorkoutBody p {
+  margin: 8px 0 0;
+  color: rgba(246, 242, 231, 0.74);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.metrics {
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  min-height: 90px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--planning-line);
+  background: rgba(250, 247, 238, 0.9);
+}
+
+.metric {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 13px;
+  padding: 15px 24px;
+}
+
+.metric + .metric {
+  border-left: 1px solid var(--planning-line);
+}
+
+.metricIcon {
+  display: contents;
+}
+
+.metricIcon svg {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  color: #6e7c70;
+  stroke-width: 1.7;
+}
+
+.metric > span:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+
+.metric small {
+  color: var(--planning-moss);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.metric strong {
+  overflow: hidden;
+  color: #2c4c3c;
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1.55rem;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric:nth-child(3) strong,
+.metric:nth-child(4) strong {
+  color: var(--planning-terracotta);
+}
+
+.toolbar {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  margin-top: 32px;
+  padding: 16px 0;
+  border-top: 1px solid var(--planning-line);
+  border-bottom: 1px solid var(--planning-line);
+}
+
+.toolbarLabel {
+  display: grid;
+  gap: 5px;
+}
+
+.toolbarLabel > span,
+.weekLabel span {
+  color: var(--planning-moss);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.toolbarLabel > strong {
+  color: var(--planning-forest);
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1.12rem;
+  font-weight: 500;
+}
+
+.weekNavigation {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-self: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--planning-line);
+  border-radius: 4px;
+  background: rgba(250, 247, 238, 0.62);
+}
+
+.iconButton,
+.todayButton,
+.primaryButton,
+.dayAddButton,
+.completeAction,
+.deleteAction,
+.secondaryAction,
+.viewAction,
+.errorState button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.iconButton {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  cursor: pointer;
+  place-items: center;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--planning-forest);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.iconButton:hover {
+  background: rgba(47, 93, 70, 0.07);
+}
+
+.weekLabel {
+  display: grid;
+  min-width: 226px;
+  min-height: 40px;
+  align-content: center;
+  gap: 2px;
+  padding: 0 15px;
+  border-right: 1px solid var(--planning-line);
+  border-left: 1px solid var(--planning-line);
+  text-align: center;
+}
+
+.weekLabel span {
+  font-size: 0.58rem;
+}
+
+.weekLabel strong {
+  overflow: hidden;
+  color: var(--planning-forest-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.todayButton {
+  min-height: 40px;
+  padding: 0 13px;
+  cursor: pointer;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--planning-forest);
+  font-size: 0.78rem;
+  font-weight: 800;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.todayButton:hover {
+  background: rgba(47, 93, 70, 0.07);
+}
+
+.primaryButton {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 20px;
+  border: 1px solid var(--planning-terracotta);
+  border-radius: 4px;
+  background: var(--planning-terracotta);
+  color: #fffaf2;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(177, 67, 34, 0.18);
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.primaryButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.primaryButton:hover {
+  border-color: var(--planning-terracotta-deep);
+  background: var(--planning-terracotta-deep);
+  box-shadow: 0 13px 28px rgba(169, 67, 37, 0.22);
+  transform: translateY(-2px);
+}
+
+.weekSection {
+  min-width: 0;
+  margin-top: 42px;
+}
+
+.calendarHeading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.46fr);
+  margin-bottom: 22px;
+}
+
+.calendarHeading > div {
+  display: grid;
+  grid-column: 1;
+}
+
+.calendarHeading > p {
+  align-self: end;
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  padding-left: 24px;
+  border-left: 2px solid var(--planning-terracotta-soft);
+  color: var(--planning-moss);
+  line-height: 1.65;
+}
+
+.sectionEyebrow {
+  width: fit-content;
+}
+
+.calendarHeading h2 {
+  margin: 16px 0 0;
+  color: var(--planning-forest-deep);
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 3.35rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.calendarViewport {
+  min-width: 0;
+}
+
+.weekGrid {
+  display: grid;
+  min-width: 0;
+  align-items: start;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dayCard {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 430px;
+  flex-direction: column;
+  padding: 16px 14px 14px;
+  overflow: hidden;
+  border: 1px solid var(--planning-line);
+  border-radius: 4px;
+  background: rgba(250, 247, 238, 0.8);
+  box-shadow: 0 9px 24px rgba(43, 61, 51, 0.045);
+  scroll-snap-align: start;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.emptyDayCard {
+  min-height: 378px;
+}
+
+.dayCard::after {
+  position: absolute;
+  right: -44px;
+  bottom: -40px;
+  width: 150px;
+  height: 90px;
+  border: 1px solid rgba(47, 93, 70, 0.07);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  transform: rotate(-12deg);
+}
+
+.dayCard:hover {
+  border-color: rgba(47, 99, 82, 0.3);
+  box-shadow: 0 14px 30px rgba(43, 61, 51, 0.08);
+  transform: translateY(-2px);
+}
+
+.todayCard {
+  padding-top: 13px;
+  border-top: 4px solid var(--planning-terracotta);
+  background: rgba(251, 248, 240, 0.94);
+}
+
+.dayHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 56px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--planning-line);
+}
+
+.dayIdentity {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.dayName {
+  color: var(--planning-moss);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.dayIdentity strong {
+  color: var(--planning-forest);
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 2.35rem;
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.todayCard .dayIdentity strong {
+  color: var(--planning-terracotta);
+}
+
+.dayAddButton {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid var(--planning-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--planning-forest);
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.dayAddButton:hover {
+  border-color: rgba(47, 99, 82, 0.4);
+  background: rgba(47, 99, 82, 0.06);
+  transform: translateY(-1px);
+}
+
+.dayAddButton svg {
+  width: 15px;
+  height: 15px;
+}
+
+.daySummary {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 0 5px;
+}
+
+.todayBadge,
+.plannedCount {
+  display: inline-flex;
+  min-height: 23px;
+  align-items: center;
+  padding: 0 7px;
+  border: 1px solid rgba(204, 88, 47, 0.28);
+  border-radius: 999px;
+  background: rgba(204, 88, 47, 0.08);
+  color: var(--planning-terracotta-deep);
+  font-size: 0.56rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dayCount {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--planning-moss);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plannedCount {
+  margin-left: auto;
+  border-color: rgba(47, 99, 82, 0.2);
+  background: rgba(47, 99, 82, 0.07);
+  color: var(--planning-forest);
+}
+
+.dayContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  max-height: 430px;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: 7px;
+  scrollbar-color: rgba(47, 93, 70, 0.2) transparent;
+  scrollbar-width: thin;
+}
+
+.emptyDay {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 10px 2px 3px;
+  overflow: hidden;
+}
+
+.emptyDay::after {
+  position: absolute;
+  top: 10px;
+  right: -42px;
+  width: 156px;
+  height: 112px;
+  background:
+    radial-gradient(
+      ellipse 72% 46% at 67% 32%,
+      transparent 58%,
+      rgba(47, 93, 70, 0.09) 59%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 83% 57% at 64% 40%,
+      transparent 64%,
+      rgba(47, 93, 70, 0.075) 65%,
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 94% 70% at 58% 48%,
+      transparent 70%,
+      rgba(47, 93, 70, 0.065) 71%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 106% 82% at 54% 56%,
+      transparent 76%,
+      rgba(47, 93, 70, 0.05) 77%,
+      transparent 78%
+    );
+  content: "";
+  pointer-events: none;
+  transform: rotate(-12deg);
+}
+
+.emptyDayIcon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: auto;
+  place-items: center;
+  border: 1px solid rgba(47, 99, 82, 0.2);
+  border-radius: 50%;
+  color: var(--planning-forest);
+}
+
+.emptyDayIcon svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.7;
+}
+
+.emptyDay strong {
+  color: var(--planning-forest);
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.emptyDay p {
+  margin: 7px 0 0;
+  color: var(--planning-moss);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.emptyDay a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  color: var(--planning-terracotta-deep);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.emptyDay a:hover {
+  color: var(--planning-forest);
+}
+
+.emptyDay a svg {
+  width: 14px;
+  height: 14px;
+}
+
+.activityCard {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--planning-line);
+  border-left: 3px solid var(--planning-sage);
+  border-radius: 3px;
+  background: rgba(255, 252, 245, 0.68);
+}
+
+.activityPlanned {
+  border-left-color: var(--planning-terracotta);
+}
+
+.activityCompleted {
+  border-left-color: var(--planning-forest);
+}
+
+.activityMissed {
+  border-left-color: var(--planning-sage);
+  background: rgba(238, 233, 220, 0.46);
+  opacity: 0.8;
+}
+
+.activityCanceled {
+  border-left-color: #a94325;
+  background: rgba(200, 91, 47, 0.045);
+  opacity: 0.76;
+}
+
+.activityTopline {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.activityIcon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(47, 99, 82, 0.2);
+  border-radius: 50%;
+  color: var(--planning-forest);
+}
+
+.activityIcon svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.8;
+}
+
+.activityTopline > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.activityTopline > div span {
+  color: var(--planning-moss);
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.activityTopline > div strong {
+  overflow: hidden;
+  color: var(--planning-forest);
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusBadge {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  width: fit-content;
+  min-height: 23px;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  padding: 0 7px;
+  border: 1px solid rgba(47, 99, 82, 0.18);
+  border-radius: 999px;
+  background: rgba(47, 99, 82, 0.06);
+  color: var(--planning-forest);
+  font-size: 0.55rem;
+  font-weight: 600;
+}
+
+.activityPlanned .statusBadge {
+  border-color: rgba(204, 88, 47, 0.26);
+  background: rgba(204, 88, 47, 0.07);
+  color: var(--planning-terracotta-deep);
+}
+
+.statusBadge svg {
+  width: 11px;
+  height: 11px;
+}
+
+.activityTitle {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 10px;
+  color: var(--planning-forest-deep);
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.26;
+  letter-spacing: 0;
+  text-decoration: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.activityTitle:hover {
+  color: var(--planning-terracotta-deep);
+}
+
+.activityNote {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 7px 0 0;
+  color: var(--planning-moss);
+  font-size: 0.65rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.activityMetrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--planning-line-soft);
+  color: var(--planning-moss);
+}
+
+.activityMetrics span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.activityMetrics svg {
+  width: 12px;
+  height: 12px;
+  color: var(--planning-terracotta);
+}
+
+.viewAction,
+.secondaryAction,
+.completeAction,
+.deleteAction {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 9px;
+  cursor: pointer;
+  border: 1px solid var(--planning-line);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--planning-forest);
+  font-size: 0.64rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.viewAction,
+.secondaryAction {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.viewAction svg,
+.secondaryAction svg,
+.completeAction svg,
+.deleteAction svg {
+  width: 13px;
+  height: 13px;
+}
+
+.plannedActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.completeAction,
+.deleteAction {
+  width: 100%;
+}
+
+.completeAction {
+  border-color: var(--planning-terracotta);
+  background: var(--planning-terracotta);
+  color: #fffaf2;
+}
+
+.completeAction:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.deleteAction {
+  border-color: rgba(169, 67, 37, 0.24);
+  color: var(--planning-terracotta-deep);
+}
+
+.viewAction:hover,
+.secondaryAction:hover {
+  border-color: rgba(47, 99, 82, 0.4);
+  background: rgba(47, 99, 82, 0.06);
+}
+
+.completeAction:hover {
+  border-color: var(--planning-terracotta-deep);
+  background: var(--planning-terracotta-deep);
+}
+
+.deleteAction:hover {
+  background: rgba(204, 88, 47, 0.07);
+}
+
+.mutationError {
+  margin: 0;
+  color: #963a2b;
+  font-size: 0.6rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.errorState {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 38px;
+  padding: 25px 28px;
+  border: 1px solid rgba(172, 63, 43, 0.26);
+  border-radius: 4px;
+  background: rgba(250, 247, 238, 0.78);
+  color: var(--planning-forest-deep);
+}
+
+.errorState > svg {
+  width: 30px;
+  height: 30px;
+  color: var(--planning-terracotta);
+}
+
+.errorState strong {
+  color: var(--planning-forest);
+  font-family: var(--font-refuge-display, "Oswald"), sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.errorState p {
+  margin: 6px 0 0;
+  color: var(--planning-moss);
+  line-height: 1.5;
+}
+
+.errorState button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  cursor: pointer;
+  border: 1px solid var(--planning-line);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--planning-forest);
+  font-weight: 800;
+}
+
+.errorState button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.skeletonPage {
+  display: grid;
+  gap: 38px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skeletonHero,
+.skeletonToolbar,
+.skeletonWeek > div {
+  border: 1px solid var(--planning-line);
+  border-radius: 5px;
+  background: var(--planning-paper);
+}
+
+.skeletonHero {
+  display: grid;
+  min-height: 370px;
+  align-content: center;
+  gap: 18px;
+  padding: 34px 44px 104px;
+}
+
+.skeletonHero > span,
+.skeletonToolbar > span,
+.skeletonHeading > span,
+.skeletonWeek span,
+.skeletonHero > div span {
+  display: block;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(217, 209, 193, 0.46),
+    rgba(251, 248, 240, 0.92),
+    rgba(217, 209, 193, 0.46)
+  );
+  background-size: 220% 100%;
+  animation: planningShimmer 1.4s ease-in-out infinite;
+}
+
+.skeletonHero > span:nth-child(1) {
+  width: 170px;
+  height: 16px;
+}
+
+.skeletonHero > span:nth-child(2) {
+  width: min(560px, 78%);
+  height: 66px;
+}
+
+.skeletonHero > span:nth-child(3) {
+  width: min(470px, 68%);
+  height: 20px;
+}
+
+.skeletonHero > div {
+  position: absolute;
+  right: 44px;
+  bottom: 108px;
+  display: grid;
+  width: min(360px, 34%);
+  gap: 14px;
+  padding: 24px;
+  border-radius: 5px;
+  background: #d8ded5;
+}
+
+.skeletonHero > div span:first-child {
+  width: 55%;
+  height: 24px;
+}
+
+.skeletonHero > div span:last-child {
+  width: 88%;
+  height: 52px;
+}
+
+.skeletonToolbar {
+  display: grid;
+  min-height: 84px;
+  grid-template-columns: 180px minmax(260px, 420px) 190px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 18px;
+}
+
+.skeletonToolbar span {
+  height: 42px;
+}
+
+.skeletonHeading {
+  display: grid;
+  gap: 12px;
+}
+
+.skeletonHeading span:first-child {
+  width: 150px;
+  height: 16px;
+}
+
+.skeletonHeading span:last-child {
+  width: min(520px, 80%);
+  height: 48px;
+}
+
+.skeletonWeek {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.skeletonWeek > div {
+  display: grid;
+  min-height: 390px;
+  align-content: start;
+  gap: 18px;
+  padding: 16px;
+}
+
+.skeletonWeek span:nth-child(1) {
+  width: 64%;
+  height: 42px;
+}
+
+.skeletonWeek span:nth-child(2) {
+  width: 86%;
+  height: 16px;
+}
+
+.skeletonWeek span:nth-child(3) {
+  height: 170px;
+}
+
+.primaryButton:focus-visible,
+.iconButton:focus-visible,
+.todayButton:focus-visible,
+.dayAddButton:focus-visible,
+.emptyDay a:focus-visible,
+.activityTitle:focus-visible,
+.viewAction:focus-visible,
+.secondaryAction:focus-visible,
+.completeAction:focus-visible,
+.deleteAction:focus-visible,
+.errorState button:focus-visible {
+  outline: 3px solid rgba(204, 88, 47, 0.34);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1320px) {
+  .heroContent {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 30px;
+    padding: 30px 34px 104px;
+  }
+
+  .hero h1 {
+    font-size: 3.65rem;
+  }
+
+  .metric {
+    gap: 10px;
+    padding: 14px 18px;
+  }
+
+  .metricIcon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .metric strong {
+    font-size: 1.4rem;
+  }
+
+  .metric small {
+    font-size: 0.62rem;
+  }
+}
+
+@media (max-width: 1199px) {
+  .toolbar {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .weekNavigation {
+    justify-self: end;
+  }
+
+  .primaryButton {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+
+  .calendarViewport {
+    margin-right: -2px;
+    overflow-x: auto;
+    padding: 2px 2px 14px;
+    scroll-padding-inline: 2px;
+    scroll-snap-type: x proximity;
+    scrollbar-color: rgba(47, 93, 70, 0.24) transparent;
+    scrollbar-width: thin;
+  }
+
+  .weekGrid {
+    grid-auto-columns: minmax(245px, calc((100% - 16px) / 3));
+    grid-auto-flow: column;
+    grid-template-columns: none;
+  }
+
+  .skeletonWeek {
+    overflow: hidden;
+    grid-template-columns: repeat(3, minmax(245px, 1fr));
+  }
+}
+
+@media (max-width: 920px) {
+  .heroPhoto,
+  .heroOverlay {
+    width: 100%;
+  }
+
+  .heroPhoto {
+    background-position: center;
+  }
+
+  .heroOverlay {
+    background: linear-gradient(
+      180deg,
+      rgba(250, 247, 238, 0.97) 0 46%,
+      rgba(250, 247, 238, 0.86) 69%,
+      rgba(23, 61, 49, 0.24)
+    );
+  }
+
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 30px 30px 138px;
+  }
+
+  .hero h1 {
+    max-width: 590px;
+    font-size: 3.2rem;
+  }
+
+  .nextWorkout {
+    max-width: 540px;
+  }
+
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric:nth-child(3) {
+    border-left: 0;
+  }
+
+  .metric:nth-child(n + 3) {
+    border-top: 1px solid var(--planning-line);
+  }
+
+  .hero,
+  .heroContent {
+    min-height: 560px;
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .weekNavigation {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .weekLabel {
+    flex: 1 1 auto;
+  }
+
+  .primaryButton {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .calendarHeading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .calendarHeading > p {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .skeletonToolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .skeletonHero > div {
+    right: 34px;
+    width: 42%;
+  }
+}
+
+@media (max-width: 620px) {
+  .page {
+    padding: 12px 0 48px;
+  }
+
+  .hero {
+    min-height: auto;
+    border-radius: 4px;
+  }
+
+  .hero::after {
+    display: none;
+  }
+
+  .heroContent {
+    min-height: auto;
+    gap: 24px;
+    padding: 25px 20px 22px;
+  }
+
+  .heroKicker {
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-size: 2.65rem;
+    line-height: 0.98;
+  }
+
+  .heroDescription {
+    margin-top: 19px;
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .nextWorkout {
+    padding: 22px;
+  }
+
+  .nextWorkoutHeader h2 {
+    font-size: 1.35rem;
+  }
+
+  .nextWorkoutIcon {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+  .nextWorkoutBody {
+    margin-top: 23px;
+  }
+
+  .metrics {
+    position: static;
+  }
+
+  .metric {
+    min-height: 88px;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .metricIcon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .metric strong {
+    font-size: 1.28rem;
+  }
+
+  .metric small {
+    font-size: 0.58rem;
+  }
+
+  .toolbar {
+    gap: 14px;
+    margin-top: 26px;
+    padding: 15px 0;
+  }
+
+  .weekNavigation {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+  }
+
+  .weekLabel {
+    min-width: 0;
+  }
+
+  .todayButton {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--planning-line);
+  }
+
+  .weekSection {
+    margin-top: 34px;
+  }
+
+  .calendarHeading h2 {
+    font-size: 2.45rem;
+  }
+
+  .calendarHeading > p {
+    padding-left: 18px;
+  }
+
+  .calendarViewport {
+    margin: 0;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .weekGrid {
+    grid-auto-columns: auto;
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .dayCard {
+    min-height: 300px;
+    padding: 18px;
+  }
+
+  .dayContent {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .activityCard {
+    padding: 14px;
+  }
+
+  .activityTopline {
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+  }
+
+  .activityIcon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .statusBadge {
+    grid-column: auto;
+    margin: 0;
+  }
+
+  .plannedActions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mutationError {
+    grid-column: 1 / -1;
+  }
+
+  .errorState {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 24px 20px;
+  }
+
+  .errorState button {
+    grid-column: 2;
+    width: fit-content;
+  }
+
+  .skeletonHero {
+    min-height: 520px;
+    padding: 28px 20px;
+  }
+
+  .skeletonHero > span:nth-child(2),
+  .skeletonHero > span:nth-child(3) {
+    width: 100%;
+  }
+
+  .skeletonHero > div {
+    position: static;
+    width: 100%;
+    margin-top: 30px;
+  }
+
+  .skeletonWeek {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero h1 {
+    font-size: 2.35rem;
+  }
+
+  .metric {
+    padding-inline: 10px;
+  }
+
+  .metricIcon svg {
+    display: none;
+  }
+
+  .activityTopline {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .statusBadge {
+    grid-column: 1 / -1;
+  }
+
+  .plannedActions {
+    grid-template-columns: 1fr;
+  }
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page h1,
+:global(html.sport-theme-nature) :global(.app-shell) main .page h2,
+:global(html.sport-theme-nature) :global(.app-shell) main .page h3 {
+  color: var(--planning-forest-deep) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .hero h1 {
+  color: #294b3a !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .nextWorkout h2,
+:global(html.sport-theme-nature)
+  :global(.app-shell)
+  main
+  .page
+  .nextWorkoutBody
+  strong {
+  color: #fffaf0 !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .page .nextWorkout p {
+  color: rgba(246, 242, 231, 0.74) !important;
+}
+
+:global(html.sport-theme-nature) :global(.app-shell) main .weekSection {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes planningShimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}

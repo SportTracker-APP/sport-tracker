@@ -1,0 +1,46 @@
+{
+    "_id" : "de702126c257e67ad242aa1ee53ec5e1ebfeee63",
+    "name" : "Université Catholique de l'Ouest - UCO",
+    "description" : "Université Catholique de l'Ouest - UCO",
+    "locale" : {
+        "lang" : "fr",
+        "timezone" : "Europe/Paris"
+    },
+    "old_prod_id" : "4c7de4cc07b97e2b43495878054b3eb6",
+    "imported" : true,
+    "auth_providers" : [
+        {
+            "method" : "cas",
+            "service" : "anasim",
+            "authorized_bundle_ids" : [
+                "461a65b2337c479cc81b77ebebddaadc6b511a2c"
+            ],
+            "options" : {
+                "cas_version" : "3.0",
+                "host" : "ucocas.uco.fr",
+                "port" : NumberInt(443),
+                "uri" : "cas",
+                "attribute_map" : {
+                    "firstname" : "givenName",
+                    "lastname" : "sn",
+                    "email" : "mail",
+                    "role" : "description"
+                },
+                "check" : [
+                    {
+                        "field" : "role",
+                        "condition" : "in",
+                        "values" : [
+                            "employe"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "visibility_mode" : "user",
+    "creation_date" : ISODate("2016-07-08T13:46:02.000+0000"),
+    "last_update_date" : ISODate("2024-07-07T12:29:48.040+0000"),
+    "customer_advisor_id" : "6b491183f61772ee0b39a9d18781e8545f1d28fb",
+    "follow_up_agent_id" : "d3f95d13205b953a7bd543e1970d8c493f34b14e"
+}

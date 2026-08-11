@@ -205,6 +205,29 @@ async function mockStatistics(page: Page) {
     });
   });
 
+  await page.route("**/strava/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ connected: false }),
+    });
+  });
+
+  await page.route("**/summits**", async (route) => {
+    if (
+      /\.(?:avif|jpe?g|png|webp)$/.test(new URL(route.request().url()).pathname)
+    ) {
+      await route.fallback();
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "[]",
+    });
+  });
+
   await page.route("**/activities", async (route) => {
     await route.fulfill({
       status: 200,
@@ -226,7 +249,9 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 test.describe.configure({ mode: "serial" });
 
-test("le bilan reste fonctionnel et éditorial sur desktop", async ({ page }) => {
+test("le bilan reste fonctionnel et éditorial sur desktop", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await mockStatistics(page);
   await page.goto("/statistiques", { waitUntil: "domcontentloaded" });
@@ -237,15 +262,12 @@ test("le bilan reste fonctionnel et éditorial sur desktop", async ({ page }) =>
   await expect(page.getByText("Bilan d’exploration").first()).toBeVisible();
   await expect(page.getByText("Mix outdoor")).toBeVisible();
   await expect(page.getByText("Rythme d’exploration")).toBeVisible();
+  await page.screenshot({ path: "/tmp/hovren-statistics-hero-1440.png" });
   const calendarMonth = page.getByTestId("statistics-calendar-month");
   const currentMonthLabel = await calendarMonth.textContent();
-  await page
-    .getByRole("button", { name: "Voir le mois précédent" })
-    .click();
+  await page.getByRole("button", { name: "Voir le mois précédent" }).click();
   await expect(calendarMonth).not.toHaveText(currentMonthLabel ?? "");
-  await page
-    .getByRole("button", { name: "Voir le mois suivant" })
-    .click();
+  await page.getByRole("button", { name: "Voir le mois suivant" }).click();
   await expect(calendarMonth).toHaveText(currentMonthLabel ?? "");
   await expect(page.getByRole("list", { name: /\d{4}/ })).toBeVisible();
   const calendarDayCount = await page
@@ -279,9 +301,7 @@ test("le bilan reste fonctionnel et éditorial sur desktop", async ({ page }) =>
   await expect(periodSelect).toHaveValue("1y");
   await expect(page.getByText("12 derniers mois").first()).toBeVisible();
 
-  await page
-    .getByRole("button", { name: "Dénivelé", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Dénivelé", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Dénivelé", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
@@ -321,9 +341,7 @@ test("le bilan reste compact et sans débordement sur mobile", async ({
   await mobileCalendarMonth.scrollIntoViewIfNeeded();
   await expect(mobileCalendarMonth).toContainText("semaines");
   const mobileCurrentMonth = await mobileCalendarMonth.textContent();
-  await page
-    .getByRole("button", { name: "Voir le mois précédent" })
-    .click();
+  await page.getByRole("button", { name: "Voir le mois précédent" }).click();
   await expect(mobileCalendarMonth).not.toHaveText(mobileCurrentMonth ?? "");
   await expectNoHorizontalOverflow(page);
   await page.screenshot({
@@ -332,9 +350,14 @@ test("le bilan reste compact et sans débordement sur mobile", async ({
 });
 
 for (const viewport of [
-  { width: 430, height: 932 },
-  { width: 1280, height: 800 },
-  { width: 1728, height: 1117 },
+  { width: 1920, height: 1080 },
+  { width: 1512, height: 982 },
+  { width: 1440, height: 900 },
+  { width: 1366, height: 768 },
+  { width: 1024, height: 768 },
+  { width: 768, height: 1024 },
+  { width: 390, height: 844 },
+  { width: 375, height: 812 },
 ]) {
   test(`le bilan ne déborde pas en ${viewport.width} x ${viewport.height}`, async ({
     page,
