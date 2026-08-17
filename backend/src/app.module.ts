@@ -23,6 +23,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { GoalsModule } from './modules/goals/goals.module';
 
 import { SummitsModule } from './modules/summits/summits.module';
+import { GeographyModule } from './modules/geography/geography.module';
 import { ObservabilityModule } from './observability/observability.module';
 
 @Module({
@@ -60,6 +61,8 @@ import { ObservabilityModule } from './observability/observability.module';
     GoalsModule,
 
     SummitsModule,
+
+    GeographyModule,
 
     ObservabilityModule,
   ],

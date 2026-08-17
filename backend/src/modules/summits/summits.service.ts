@@ -9,9 +9,12 @@ import { ActivityStatus, Prisma, SummitDiscoveryStatus } from '@prisma/client';
 
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { GeoAreasService } from '../geography/geo-areas.service';
+import { seedNationalGeoCatalog } from '../geography/geo-area-seed';
 import { BADGE_CATALOG } from './badge-catalog';
 import { evaluateBadgeCatalog, getBadgeProgress } from './badge-engine';
 import { UpdateSummitDiscoveryDto } from './dto/update-summit-discovery.dto';
+import { ListSummitsDto } from './dto/list-summits.dto';
 import { SUMMIT_CATALOG } from './summit-catalog';
 import { detectSummits } from './summit-detection';
 
@@ -28,6 +31,7 @@ export class SummitsService implements OnModuleInit {
     private readonly prisma: PrismaService,
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
+    private readonly geoAreasService: GeoAreasService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -116,14 +120,36 @@ export class SummitsService implements OnModuleInit {
         }),
       ),
     ]);
+
+    await seedNationalGeoCatalog(this.prisma, {
+      summitIds: SUMMIT_CATALOG.map((summit) => summit.id),
+    });
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string, query: ListSummitsDto = {}) {
     await this.ensureHistoricalBackfill(userId);
 
+    const geoAreaIds = query.geoAreaId
+      ? await this.geoAreasService.getPublishedAreaIds(
+          query.geoAreaId,
+          query.includeDescendants ?? true,
+        )
+      : null;
+
     const summits = await this.prisma.summit.findMany({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        ...(geoAreaIds
+          ? {
+              geoAreas: {
+                some: { geoAreaId: { in: geoAreaIds } },
+              },
+            }
+          : {}),
+      },
       include: {
+        primaryMassif: true,
+        geoAreas: { include: { geoArea: true } },
         discoveries: {
           where: {
             userId,
@@ -171,7 +197,9 @@ export class SummitsService implements OnModuleInit {
         name: summit.name,
         aliases: summit.aliases,
         altitude: summit.altitude,
-        massif: summit.massif,
+        massif: summit.primaryMassif?.name ?? summit.massif,
+        primaryMassif: summit.primaryMassif,
+        geoAreas: summit.geoAreas.map(({ geoArea }) => geoArea),
         difficulty: summit.difficulty,
         type: summit.type,
         coordinates: [summit.longitude, summit.latitude] as const,

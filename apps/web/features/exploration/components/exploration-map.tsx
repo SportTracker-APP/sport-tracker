@@ -26,6 +26,7 @@ import {
   formatDate,
   formatDistance,
   formatInteger,
+  getRecentMapAreaRoutes,
   routesToGeoJson,
 } from "../exploration-utils";
 import styles from "../exploration.module.css";
@@ -35,6 +36,8 @@ const MAPBOX_SCRIPT_ID = "mapbox-gl-js";
 const MAPBOX_STYLE_ID = "mapbox-gl-css";
 const MAPBOX_VERSION = "v3.10.0";
 const INITIAL_MAP_READING = { lat: 45.9, lng: 6.13, zoom: 9.4 };
+const DISCOVERED_SUMMIT_LABEL_MIN_ZOOM = 9.2;
+const UNDISCOVERED_SUMMIT_LABEL_MIN_ZOOM = 11.2;
 
 function loadMapbox() {
   return new Promise<MapboxLike>((resolve, reject) => {
@@ -256,7 +259,8 @@ function fitRoutes(
   routes: ExplorationRoute[],
   selected: boolean,
 ) {
-  const points = routes.flatMap((route) => route.points);
+  const routesToFrame = selected ? routes : getRecentMapAreaRoutes(routes);
+  const points = routesToFrame.flatMap((route) => route.points);
   const firstPoint = points[0];
   if (!firstPoint) return;
 
@@ -282,7 +286,7 @@ function fitRoutes(
         viewportWidth >= 768
           ? { top: 58, right: 58, bottom: 58, left: 58 }
           : { top: 44, right: 44, bottom: 44, left: 44 },
-      maxZoom: routes.length <= 4 ? 13.2 : 11.2,
+      maxZoom: routesToFrame.length <= 4 ? 13.2 : 11.2,
       duration: 0,
       pitch: 46,
       bearing: -18,
@@ -545,6 +549,8 @@ export function ExplorationMap({
               id: "sport-summit-labels",
               type: "symbol",
               source: "sport-summits",
+              minzoom: DISCOVERED_SUMMIT_LABEL_MIN_ZOOM,
+              filter: ["!=", ["get", "status"], "UNDISCOVERED"],
               layout: {
                 "text-anchor": "top",
                 "text-field": ["get", "label"],
@@ -566,6 +572,33 @@ export function ExplorationMap({
                   10.7,
                   0.86,
                 ],
+              },
+            },
+            labelLayer,
+          );
+          map.addLayer(
+            {
+              id: "sport-summit-undiscovered-labels",
+              type: "symbol",
+              source: "sport-summits",
+              minzoom: UNDISCOVERED_SUMMIT_LABEL_MIN_ZOOM,
+              filter: ["==", ["get", "status"], "UNDISCOVERED"],
+              layout: {
+                "text-anchor": "top",
+                "text-field": ["get", "label"],
+                "text-font": [
+                  "DIN Pro Medium",
+                  "Arial Unicode MS Regular",
+                ],
+                "text-offset": [0, 1.05],
+                "text-optional": true,
+                "text-size": 10,
+              },
+              paint: {
+                "text-color": "#526b5d",
+                "text-halo-color": "rgba(244,239,227,.92)",
+                "text-halo-width": 1.6,
+                "text-opacity": 0.78,
               },
             },
             labelLayer,

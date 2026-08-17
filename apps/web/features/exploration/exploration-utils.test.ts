@@ -7,6 +7,7 @@ import {
   decodePolyline,
   formatDuration,
   getNotableRoutes,
+  getRecentMapAreaRoutes,
   mapActivitiesToRoutes,
   matchesFilter,
   routesToGeoJson,
@@ -141,14 +142,18 @@ describe("exploration utilities", () => {
     ]);
   });
 
-  it("conserve la trace sélectionnée dans la fenêtre cartographique récente", () => {
-    const activities = Array.from({ length: 22 }, (_, index) =>
+  it("affiche Mandalaz et toutes les traces éligibles sans plafond", () => {
+    const activities = Array.from({ length: 24 }, (_, index) =>
       createActivity({
-        id: `route-${index}`,
-        startedAt: new Date(Date.UTC(2026, 6, 23 - index)).toISOString(),
+        id: index === 23 ? "mandalaz" : `route-${index}`,
+        title:
+          index === 23
+            ? "EP27 - Trail Tête de Mandalaz"
+            : `Trace route-${index}`,
+        startedAt: new Date(Date.UTC(2026, 5, 24 - index)).toISOString(),
       }),
     );
-    const selectedRouteId = "route-21";
+    const selectedRouteId = "mandalaz";
     const viewModel = createExplorationViewModel({
       activities,
       filter: "ALL",
@@ -156,8 +161,65 @@ describe("exploration utilities", () => {
       territory: null,
     });
 
-    expect(viewModel.visibleMapRoutes).toHaveLength(18);
-    expect(viewModel.visibleMapRoutes[0]?.id).toBe(selectedRouteId);
+    expect(viewModel.visibleMapRoutes).toHaveLength(24);
+    expect(viewModel.visibleMapRoutes.map(({ id }) => id)).toContain(
+      selectedRouteId,
+    );
+  });
+
+  it("cadre la zone principale des dix dernières sorties sans privilégier l’ancien foyer", () => {
+    const createRoute = (
+      id: string,
+      lat: number,
+      lng: number,
+      startedAt: string,
+    ): ReturnType<typeof mapActivitiesToRoutes>[number] => ({
+      id,
+      title: id,
+      sport: "TRAIL",
+      points: [
+        { lat, lng },
+        { lat: lat + 0.01, lng: lng + 0.01 },
+      ],
+      distance: 10,
+      duration: 60,
+      elevationGain: 500,
+      maxAltitude: 1500,
+      startedAt,
+      city: null,
+      country: "France",
+      coverImageUrl: null,
+    });
+    const formerHomeRoutes = Array.from({ length: 12 }, (_, index) =>
+      createRoute(
+        `ancien-${index}`,
+        48.86 + index * 0.001,
+        2.35 + index * 0.001,
+        new Date(Date.UTC(2025, 2, index + 1)).toISOString(),
+      ),
+    );
+    const isolatedRecentRoutes = [
+      createRoute("bordeaux", 44.84, -0.58, "2026-01-01T08:00:00.000Z"),
+      createRoute("marseille", 43.3, 5.37, "2026-02-01T08:00:00.000Z"),
+      createRoute("lille", 50.63, 3.06, "2026-03-01T08:00:00.000Z"),
+      createRoute("brest", 48.39, -4.49, "2026-04-01T08:00:00.000Z"),
+      createRoute("toulouse", 43.6, 1.44, "2026-05-01T08:00:00.000Z"),
+      createRoute("strasbourg", 48.58, 7.75, "2026-05-15T08:00:00.000Z"),
+      createRoute("nice", 43.71, 7.26, "2026-06-01T08:00:00.000Z"),
+      createRoute("clermont", 45.78, 3.08, "2026-06-15T08:00:00.000Z"),
+    ];
+    const routes = [
+      ...formerHomeRoutes,
+      ...isolatedRecentRoutes,
+      createRoute("annecy-1", 45.9, 6.13, "2026-07-06T08:00:00.000Z"),
+      createRoute("annecy-2", 45.93, 6.08, "2026-07-07T08:00:00.000Z"),
+    ];
+
+    expect(getRecentMapAreaRoutes(routes).map(({ id }) => id)).toEqual([
+      "annecy-1",
+      "annecy-2",
+    ]);
+    expect(routes).toHaveLength(22);
   });
 
   it("ne répète pas une même trace dans les distinctions", () => {

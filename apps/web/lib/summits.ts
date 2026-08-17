@@ -2,6 +2,23 @@ export type SummitDifficulty = "Facile" | "Modérée" | "Difficile" | "Expert";
 
 export type SummitType = "Crête" | "Sommet" | "Belvédère" | "Arête";
 
+export type SummitGeoArea = {
+  id: string;
+  name: string;
+  slug: string;
+  type:
+    | "COUNTRY"
+    | "ADMIN_REGION"
+    | "DEPARTMENT"
+    | "MOUNTAIN_CHAIN"
+    | "MASSIF"
+    | "SUBMASSIF"
+    | "SECTOR"
+    | "NATURAL_PARK";
+  parentId: string | null;
+  isPublished: boolean;
+};
+
 export type Summit = {
   id: string;
   name: string;
@@ -14,6 +31,8 @@ export type Summit = {
   imageUrl?: string;
   imageCredit?: string;
   sourceUrl?: string;
+  primaryMassif?: SummitGeoArea | null;
+  geoAreas?: SummitGeoArea[];
 };
 
 export function getDistanceMeters(

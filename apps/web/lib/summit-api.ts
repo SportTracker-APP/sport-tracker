@@ -25,8 +25,13 @@ export type SummitBadge = {
   unlockedAt: string | null;
 };
 
-export async function getSummits(): Promise<SummitView[]> {
-  const { data } = await api.get<SummitView[]>("/summits");
+export type SummitQuery = {
+  geoAreaId?: string;
+  includeDescendants?: boolean;
+};
+
+export async function getSummits(query: SummitQuery = {}): Promise<SummitView[]> {
+  const { data } = await api.get<SummitView[]>("/summits", { params: query });
 
   return data;
 }

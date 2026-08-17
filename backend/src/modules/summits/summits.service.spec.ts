@@ -4,12 +4,14 @@ import { SummitDiscoveryStatus } from '@prisma/client';
 
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { GeoAreasService } from '../geography/geo-areas.service';
 import { SummitsService } from './summits.service';
 
 type PrismaMock = {
   activity: { findFirst: jest.Mock; findMany: jest.Mock };
   summit: { findMany: jest.Mock };
   summitDiscovery: {
+    count: jest.Mock;
     findFirst: jest.Mock;
     findMany: jest.Mock;
     update: jest.Mock;
@@ -30,6 +32,7 @@ function makePrisma(): PrismaMock {
     },
     summit: { findMany: jest.fn().mockResolvedValue([]) },
     summitDiscovery: {
+      count: jest.fn().mockResolvedValue(1),
       findFirst: jest.fn(),
       findMany: jest.fn().mockResolvedValue([]),
       update: jest.fn(),
@@ -43,15 +46,47 @@ function makePrisma(): PrismaMock {
   };
 }
 
-function makeService(prisma: PrismaMock) {
+function makeService(
+  prisma: PrismaMock,
+  geoAreasService: Pick<GeoAreasService, 'getPublishedAreaIds'> = {
+    getPublishedAreaIds: jest.fn(),
+  },
+) {
   return new SummitsService(
     prisma as unknown as PrismaService,
     {} as MailService,
     {} as ConfigService,
+    geoAreasService as GeoAreasService,
   );
 }
 
 describe('SummitsService', () => {
+  it('filters published summits through a parent territory without N+1', async () => {
+    const prisma = makePrisma();
+    const getPublishedAreaIds = jest
+      .fn()
+      .mockResolvedValue(['geo-alpes', 'geo-aravis']);
+
+    await makeService(prisma, { getPublishedAreaIds }).findAll('user-1', {
+      geoAreaId: 'geo-alpes',
+      includeDescendants: true,
+    });
+
+    expect(getPublishedAreaIds).toHaveBeenCalledWith('geo-alpes', true);
+    expect(prisma.summit.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          isActive: true,
+          geoAreas: {
+            some: {
+              geoAreaId: { in: ['geo-alpes', 'geo-aravis'] },
+            },
+          },
+        },
+      }),
+    );
+  });
+
   it('processes a repeated activity identifier only once', async () => {
     const prisma = makePrisma();
 

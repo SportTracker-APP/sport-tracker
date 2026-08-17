@@ -59,6 +59,8 @@ model User {
 
   badges UserBadge[]
 
+  geoAreaPreferences UserGeoAreaPreference[]
+
   impersonationSessionsStarted AdminImpersonationSession[] @relation("AdminImpersonationAdmin")
 
   impersonationSessionsReceived AdminImpersonationSession[] @relation("AdminImpersonationTarget")
@@ -371,15 +373,91 @@ model Summit {
 
   isActive Boolean @default(true)
 
+  primaryMassifId String?
+
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
 
   discoveries SummitDiscovery[]
 
+  primaryMassif GeoArea? @relation("SummitPrimaryMassif", fields: [primaryMassifId], references: [id], onDelete: SetNull)
+
+  geoAreas SummitGeoArea[]
+
   @@index([massif])
   @@index([altitude])
   @@index([isActive])
+  @@index([primaryMassifId])
+}
+
+model GeoArea {
+  id String @id @default(cuid())
+
+  name String
+
+  slug String @unique
+
+  type GeoAreaType
+
+  parentId String?
+
+  isPublished Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  parent GeoArea? @relation("GeoAreaHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+
+  children GeoArea[] @relation("GeoAreaHierarchy")
+
+  summitLinks SummitGeoArea[]
+
+  primarySummits Summit[] @relation("SummitPrimaryMassif")
+
+  userPreferences UserGeoAreaPreference[]
+
+  @@index([type])
+  @@index([parentId])
+  @@index([isPublished])
+}
+
+model SummitGeoArea {
+  summitId String
+
+  geoAreaId String
+
+  createdAt DateTime @default(now())
+
+  summit Summit @relation(fields: [summitId], references: [id], onDelete: Cascade)
+
+  geoArea GeoArea @relation(fields: [geoAreaId], references: [id], onDelete: Cascade)
+
+  @@id([summitId, geoAreaId])
+  @@index([geoAreaId])
+}
+
+model UserGeoAreaPreference {
+  id String @id @default(cuid())
+
+  userId String
+
+  geoAreaId String
+
+  type UserGeoAreaPreferenceType
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  geoArea GeoArea @relation(fields: [geoAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, geoAreaId, type])
+  @@index([userId, type])
+  @@index([geoAreaId])
 }
 
 model SummitDiscovery {
@@ -557,6 +635,23 @@ enum SummitDiscoveryStatus {
   PENDING
   CONFIRMED
   DISMISSED
+}
+
+enum GeoAreaType {
+  COUNTRY
+  ADMIN_REGION
+  DEPARTMENT
+  MOUNTAIN_CHAIN
+  MASSIF
+  SUBMASSIF
+  SECTOR
+  NATURAL_PARK
+}
+
+enum UserGeoAreaPreferenceType {
+  HOME_AREA
+  FAVORITE
+  DISCOVERY
 }
 
 model StravaConnection {

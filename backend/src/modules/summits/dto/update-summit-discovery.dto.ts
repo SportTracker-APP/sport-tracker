@@ -1,11 +1,7 @@
 import { IsEnum } from 'class-validator';
-
-export enum SummitDiscoveryDecision {
-  CONFIRMED = 'CONFIRMED',
-  DISMISSED = 'DISMISSED',
-}
+import { SummitDiscoveryStatus } from '@prisma/client';
 
 export class UpdateSummitDiscoveryDto {
-  @IsEnum(SummitDiscoveryDecision)
-  status!: SummitDiscoveryDecision;
+  @IsEnum(SummitDiscoveryStatus)
+  status!: SummitDiscoveryStatus;
 }

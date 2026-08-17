@@ -16,6 +16,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "db:migrate": "prisma migrate deploy",
+    "db:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -24,6 +25,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "mail:smoke": "ts-node src/mail/scripts/smoke-test-mail.ts",
     "summits:recalculate": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/recalculate-summits.ts"
+  },
+  "prisma": {
+    "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -10,8 +10,6 @@ import type {
 } from "./exploration-types";
 import { getEditorialActivityImage } from "@/lib/mountain-visuals";
 
-export const MAP_ROUTE_LIMIT = 18;
-
 export const OUTDOOR_SPORTS = new Set([
   "RUNNING",
   "TRAIL",
@@ -137,6 +135,74 @@ export function simplifyRoutePoints(points: ExplorationPoint[]) {
   return simplified;
 }
 
+const PRIMARY_MAP_AREA_RADIUS_KM = 65;
+const RECENT_MAP_ROUTE_LIMIT = 10;
+
+function getDistanceInKilometers(
+  first: ExplorationPoint,
+  second: ExplorationPoint,
+) {
+  const earthRadiusKm = 6371;
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const latitudeDelta = toRadians(second.lat - first.lat);
+  const longitudeDelta = toRadians(second.lng - first.lng);
+  const firstLatitude = toRadians(first.lat);
+  const secondLatitude = toRadians(second.lat);
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(firstLatitude) *
+      Math.cos(secondLatitude) *
+      Math.sin(longitudeDelta / 2) ** 2;
+
+  return (
+    earthRadiusKm *
+    2 *
+    Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
+  );
+}
+
+/**
+ * Finds the main geographic area within the user's ten latest outings without
+ * removing any route from the map. The returned subset only frames the camera.
+ */
+export function getRecentMapAreaRoutes(routes: ExplorationRoute[]) {
+  if (routes.length <= 1) return routes;
+
+  const recentRoutesWithDeparture = routes
+    .flatMap((route) => {
+      const departure = route.points[0];
+      return departure ? [{ departure, route }] : [];
+    })
+    .sort(
+      (first, second) =>
+        new Date(second.route.startedAt).getTime() -
+        new Date(first.route.startedAt).getTime(),
+    )
+    .slice(0, RECENT_MAP_ROUTE_LIMIT);
+  if (recentRoutesWithDeparture.length <= 1) {
+    return recentRoutesWithDeparture.map(({ route }) => route);
+  }
+
+  let mainRecentArea = recentRoutesWithDeparture.slice(0, 1);
+
+  for (const { departure } of recentRoutesWithDeparture) {
+    const cluster = recentRoutesWithDeparture.filter(
+      (candidate) =>
+        getDistanceInKilometers(departure, candidate.departure) <=
+        PRIMARY_MAP_AREA_RADIUS_KM,
+    );
+
+    if (cluster.length > mainRecentArea.length) {
+      mainRecentArea = cluster;
+    }
+  }
+
+  const recentAreaRouteIds = new Set(
+    mainRecentArea.map(({ route }) => route.id),
+  );
+  return routes.filter((route) => recentAreaRouteIds.has(route.id));
+}
+
 export function routesToGeoJson(
   routes: ExplorationRoute[],
 ): GeoJsonFeatureCollection {
@@ -259,16 +325,7 @@ export function createExplorationViewModel({
   );
   const selectedRoute =
     filteredRoutes.find((route) => route.id === selectedRouteId) ?? null;
-  const recentRoutes = filteredRoutes.slice(0, MAP_ROUTE_LIMIT);
-  const visibleMapRoutes =
-    selectedRoute && !recentRoutes.some((route) => route.id === selectedRoute.id)
-      ? [
-          selectedRoute,
-          ...filteredRoutes
-            .filter((route) => route.id !== selectedRoute.id)
-            .slice(0, MAP_ROUTE_LIMIT - 1),
-        ]
-      : recentRoutes;
+  const visibleMapRoutes = filteredRoutes;
 
   return {
     allRoutes,

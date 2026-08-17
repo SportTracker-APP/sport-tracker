@@ -5,12 +5,14 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateSummitDiscoveryDto } from './dto/update-summit-discovery.dto';
+import { ListSummitsDto } from './dto/list-summits.dto';
 import { SummitsService } from './summits.service';
 
 @Controller('summits')
@@ -19,8 +21,8 @@ export class SummitsController {
   constructor(private readonly summitsService: SummitsService) {}
 
   @Get()
-  findAll(@CurrentUser('id') userId: string) {
-    return this.summitsService.findAll(userId);
+  findAll(@CurrentUser('id') userId: string, @Query() query: ListSummitsDto) {
+    return this.summitsService.findAll(userId, query);
   }
 
   @Get('badges')

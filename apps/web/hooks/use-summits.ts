@@ -12,7 +12,7 @@ import {
 export function useSummits() {
   return useQuery({
     queryKey: ['summits'],
-    queryFn: getSummits,
+    queryFn: () => getSummits(),
   });
 }
 
