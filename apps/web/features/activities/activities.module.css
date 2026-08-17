@@ -1227,6 +1227,12 @@
 }
 
 @media (max-width: 680px) {
+  .pagination button,
+  .pagination span {
+    min-width: 44px;
+    height: 44px;
+  }
+
   .header {
     padding: 25px 3px 24px;
   }

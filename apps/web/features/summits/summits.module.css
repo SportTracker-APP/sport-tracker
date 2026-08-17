@@ -3798,6 +3798,25 @@
 }
 
 @media (max-width: 760px) {
+  .filterBar select,
+  .searchField input,
+  .advancedFilters select {
+    font-size: 1rem;
+  }
+
+  .searchField button,
+  .viewSwitch button,
+  .listActions button,
+  .listActions a {
+    width: 44px;
+    height: 44px;
+  }
+
+  .statusTabs button,
+  .cardFooter a {
+    min-height: 44px;
+  }
+
   .summitCard {
     height: auto;
   }

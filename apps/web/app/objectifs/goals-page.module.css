@@ -1395,6 +1395,12 @@
 }
 
 @media (max-width: 620px) {
+  .field input,
+  .field select,
+  .inputWithUnit input {
+    font-size: 1rem;
+  }
+
   .page {
     padding: 12px 12px 48px;
   }

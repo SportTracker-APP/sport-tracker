@@ -507,6 +507,10 @@
 }
 
 @media (max-width: 760px) {
+  .input {
+    font-size: 1rem;
+  }
+
   .hero {
     min-height: 0;
     grid-template-columns: 1fr;

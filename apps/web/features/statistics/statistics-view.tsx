@@ -347,7 +347,7 @@ export function StatisticsView() {
               <div className={styles.heroStory}>
                 {periodHighlight ? (
                   <Link
-                    href={`/activities/${periodHighlight.id}`}
+                    href={`/activites/${periodHighlight.id}`}
                     className={styles.heroStoryLink}
                     aria-label={`Ouvrir la trace marquante ${getActivityTitle(periodHighlight)}`}
                   >
@@ -603,7 +603,7 @@ export function StatisticsView() {
                   <Link
                     href={
                       longestActivity
-                        ? `/activities/${longestActivity.id}`
+                        ? `/activites/${longestActivity.id}`
                         : "/activites"
                     }
                   >
@@ -625,7 +625,7 @@ export function StatisticsView() {
                   <Link
                     href={
                       climbingActivity
-                        ? `/activities/${climbingActivity.id}`
+                        ? `/activites/${climbingActivity.id}`
                         : "/activites"
                     }
                   >
@@ -647,7 +647,7 @@ export function StatisticsView() {
                   <Link
                     href={
                       altitudeActivity
-                        ? `/activities/${altitudeActivity.id}`
+                        ? `/activites/${altitudeActivity.id}`
                         : "/activites"
                     }
                   >
@@ -711,7 +711,7 @@ export function StatisticsView() {
                     {formatDuration(latestActivity.duration)} ·{" "}
                     {formatElevation(latestActivity.elevationGain)} de dénivelé
                   </p>
-                  <Link href={`/activities/${latestActivity.id}`}>
+                  <Link href={`/activites/${latestActivity.id}`}>
                     Ouvrir cette page
                     <ArrowRight aria-hidden="true" />
                   </Link>
