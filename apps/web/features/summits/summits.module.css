@@ -5,16 +5,16 @@
   --canvas: var(--refuge-canvas, #f4f0e6);
   --forest: var(--refuge-forest, #2f5d46);
   --forest-deep: var(--refuge-forest-deep, #20372b);
-  --moss: var(--refuge-moss, #667468);
+  --moss: var(--refuge-moss, #657266);
   --sage: var(--refuge-sage, #aab7a5);
-  --terracotta: var(--refuge-terracotta, #c85b2f);
+  --terracotta: var(--refuge-terracotta, #b84d27);
   --terracotta-deep: var(--refuge-terracotta-hover, #aa4325);
   --border: var(--refuge-border, #d9d1c2);
   --border-strong: var(--refuge-border-strong, #c6bcaa);
   --shadow: var(--refuge-shadow, 0 18px 42px -34px rgba(76, 57, 35, 0.48));
   display: grid;
   min-width: 0;
-  gap: 24px;
+  gap: var(--refuge-flow-gap, 24px);
   color: var(--forest-deep);
   font-family: var(--font-refuge-body), "Work Sans", sans-serif;
 }

@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { BookOpen, Map, Mountain, TrendingUp, Trophy } from "lucide-react";
 
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
-import { AuthThemeToggle } from "@/components/theme/auth-theme-toggle";
 import { XSocialLink } from "@/features/landing/components/x-social-link";
 
 export default function ResetPasswordPage() {
@@ -19,10 +18,6 @@ export default function ResetPasswordPage() {
       </div>
 
       <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
-        <div className="absolute top-6 right-6 z-20 hidden lg:block lg:top-10 lg:right-10">
-          <AuthThemeToggle />
-        </div>
-
         <div className="app-auth-left relative hidden flex-col justify-center overflow-hidden border-r border-white/5 px-16 py-12 lg:flex">
           <div className="app-auth-brand-row absolute top-12 left-16 flex items-center gap-4">
             <div className="app-auth-logo app-brand-logo flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-violet-500/10 backdrop-blur-xl">
@@ -107,7 +102,6 @@ export default function ResetPasswordPage() {
                   HOVREN
                 </span>
               </div>
-              <AuthThemeToggle />
             </div>
 
             <Suspense fallback={null}>

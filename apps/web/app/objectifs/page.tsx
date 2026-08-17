@@ -15,6 +15,7 @@ import {
   MoreHorizontal,
   PauseCircle,
   Plus,
+  RefreshCw,
   Sparkles,
   Star,
   Target,
@@ -549,7 +550,7 @@ function GoalCard({
 }
 
 export default function GoalsPage() {
-  const { data: goals = [], isLoading, isError, error } = useGoals();
+  const { data: goals = [], isLoading, isError, error, refetch } = useGoals();
   const { data: activities = [] } = useActivities();
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();
@@ -940,27 +941,38 @@ export default function GoalsPage() {
             </div>
 
             {isError && (
-              <div className={styles.errorState}>
-                Impossible de charger tes objectifs : {getErrorMessage(error)}
+              <div className={styles.errorState} role="alert">
+                <span>
+                  Impossible de charger tes objectifs : {getErrorMessage(error)}
+                </span>
+                <button type="button" onClick={() => void refetch()}>
+                  <RefreshCw aria-hidden="true" />
+                  Réessayer
+                </button>
               </div>
             )}
 
             {mutationError && (
-              <div className={styles.errorState}>
+              <div className={styles.errorState} role="alert">
                 Impossible d’enregistrer l’objectif :{" "}
                 {getErrorMessage(mutationError)}
               </div>
             )}
 
             {isLoading && (
-              <div className={styles.loadingState}>
+              <div
+                className={styles.loadingState}
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+              >
                 <span />
                 Chargement de tes objectifs…
               </div>
             )}
 
-            {!isLoading && goals.length === 0 && (
-              <div className={styles.emptyState}>
+            {!isLoading && !isError && goals.length === 0 && (
+              <div className={styles.emptyState} role="status">
                 <div className={styles.emptyIcon}>
                   <CheckCircle2 aria-hidden="true" />
                 </div>
@@ -983,6 +995,7 @@ export default function GoalsPage() {
             )}
 
             {!isLoading &&
+              !isError &&
               goals.length > 0 &&
               (filter === "COMPLETED"
                 ? completedGoalSnapshots.length === 0
@@ -992,9 +1005,10 @@ export default function GoalsPage() {
                 </div>
               )}
 
-            <div className={styles.goalsList}>
-              {filter === "COMPLETED"
-                ? completedGoalSnapshots.map(({ goal, snapshot }, index) => (
+            {!isLoading && !isError ? (
+              <div className={styles.goalsList}>
+                {filter === "COMPLETED"
+                  ? completedGoalSnapshots.map(({ goal, snapshot }, index) => (
                     <FadeIn
                       key={`${goal.id}-${snapshot.startDate.toISOString()}`}
                       delay={0.05 * index}
@@ -1010,8 +1024,8 @@ export default function GoalsPage() {
                         isBusy={isBusy}
                       />
                     </FadeIn>
-                  ))
-                : visibleGoals.map((goal, index) => (
+                    ))
+                  : visibleGoals.map((goal, index) => (
                     <FadeIn key={goal.id} delay={0.05 * index}>
                       <GoalCard
                         goal={goal}
@@ -1023,8 +1037,9 @@ export default function GoalsPage() {
                         isBusy={isBusy}
                       />
                     </FadeIn>
-                  ))}
-            </div>
+                    ))}
+              </div>
+            ) : null}
           </section>
 
           <aside className={styles.sidebarColumn}>

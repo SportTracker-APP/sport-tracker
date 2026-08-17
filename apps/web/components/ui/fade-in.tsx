@@ -1,55 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 type FadeInProps = {
   children: React.ReactNode;
   delay?: number;
 };
 
-function getIsNatureTheme() {
-  if (typeof document === "undefined") {
-    return false;
-  }
-
-  return document.documentElement.classList.contains("sport-theme-nature");
-}
-
 export function FadeIn({ children, delay = 0 }: FadeInProps) {
-  const [isNatureTheme, setIsNatureTheme] = useState(getIsNatureTheme);
-
-  useEffect(() => {
-    function updateThemeState() {
-      setIsNatureTheme(getIsNatureTheme());
-    }
-
-    updateThemeState();
-
-    const observer = new MutationObserver(updateThemeState);
-
-    observer.observe(document.documentElement, {
-      attributeFilter: ["class"],
-      attributes: true,
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        y: isNatureTheme ? 4 : 20,
-      }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
       animate={{
         opacity: 1,
         y: 0,
       }}
       transition={{
-        duration: isNatureTheme ? 0.18 : 0.5,
-        delay: isNatureTheme ? Math.min(delay, 0.08) : delay,
+        duration: shouldReduceMotion ? 0 : 0.18,
+        delay: shouldReduceMotion ? 0 : Math.min(delay, 0.08),
         ease: "easeOut",
       }}
     >

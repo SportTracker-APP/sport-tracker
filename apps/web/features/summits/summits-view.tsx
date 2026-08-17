@@ -176,18 +176,6 @@ export function SummitsView() {
   return (
     <DashboardLayout variant="refuge">
       <div className={styles.page}>
-        <SummitsHeader
-          summary={summary}
-          onExplore={() => {
-            setFilters((currentFilters) => ({
-              ...currentFilters,
-              status: summary.missingCount > 0 ? "MISSING" : "DISCOVERED",
-            }));
-            window.requestAnimationFrame(scrollToCatalog);
-          }}
-          onReviewPending={() => selectStatus("PENDING")}
-        />
-
         {summitsQuery.isLoading ? <SummitsSkeleton /> : null}
 
         {summitsQuery.isError ? (
@@ -196,6 +184,19 @@ export function SummitsView() {
 
         {!summitsQuery.isLoading && !summitsQuery.isError ? (
           <>
+            <SummitsHeader
+              summary={summary}
+              onExplore={() => {
+                setFilters((currentFilters) => ({
+                  ...currentFilters,
+                  status:
+                    summary.missingCount > 0 ? "MISSING" : "DISCOVERED",
+                }));
+                window.requestAnimationFrame(scrollToCatalog);
+              }}
+              onReviewPending={() => selectStatus("PENDING")}
+            />
+
             <LatestSummitDiscovery
               summit={latestSummit}
               fallbackSummit={recommendedSummit}

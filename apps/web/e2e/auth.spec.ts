@@ -73,7 +73,7 @@ test("la validation email utilise le carnet HOVREN actuel", async ({
     page.getByRole("link", { name: "Retour à la connexion" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Retrouve ton carnet outdoor" }),
+    page.getByRole("heading", { name: "Retrouve ton carnet de sommets" }),
   ).toBeVisible();
 });
 

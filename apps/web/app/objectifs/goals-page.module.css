@@ -5,9 +5,9 @@
   --goals-paper-deep: #e9e1d1;
   --goals-forest: #2f5d46;
   --goals-forest-soft: #2f5d46;
-  --goals-moss: #667468;
+  --goals-moss: #657266;
   --goals-sage: #aab7a5;
-  --goals-terracotta: #c85b2f;
+  --goals-terracotta: #b84d27;
   --goals-terracotta-soft: #e9b49d;
   --goals-terracotta-deep: #a94325;
   --goals-ink: #20372b;
@@ -16,7 +16,7 @@
   width: min(100%, 1540px);
   min-width: 0;
   margin: 0 auto;
-  padding: 28px 30px 72px;
+  padding: 0 0 24px;
   color: var(--goals-ink);
   font-family: var(--font-refuge-body), sans-serif;
 }
@@ -411,7 +411,7 @@
   grid-template-columns: minmax(0, 1fr) 390px;
   align-items: start;
   gap: 30px;
-  margin-top: 38px;
+  margin-top: var(--refuge-section-gap, 32px);
 }
 
 .goalsPanel,
@@ -1167,10 +1167,32 @@
 }
 
 .errorState {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   padding: 14px 16px;
   border-color: rgba(172, 63, 43, 0.26);
   background: rgba(190, 66, 43, 0.07);
   color: #963a2b;
+}
+
+.errorState button {
+  display: inline-flex;
+  min-height: 38px;
+  flex: none;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(172, 63, 43, 0.26);
+  border-radius: 4px;
+  padding: 0 12px;
+  background: rgba(255, 250, 240, 0.72);
+  color: inherit;
+  cursor: pointer;
+}
+
+.errorState button svg {
+  width: 15px;
 }
 
 .filterEmptyState {

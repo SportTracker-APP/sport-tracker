@@ -5,9 +5,9 @@
   --badges-paper-muted: #eee7da;
   --badges-forest: #2f5d46;
   --badges-forest-deep: #20372b;
-  --badges-moss: #667468;
+  --badges-moss: #657266;
   --badges-sage: #aab7a5;
-  --badges-terracotta: #c85b2f;
+  --badges-terracotta: #b84d27;
   --badges-line: #d9d1c2;
   --badges-line-strong: #c6bcaa;
   width: 100%;
@@ -204,7 +204,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 24px;
-  margin: 18px 0;
+  margin: var(--refuge-flow-gap, 24px) 0;
   border: 1px solid var(--badges-line);
   border-radius: 8px;
   padding: 14px 16px;

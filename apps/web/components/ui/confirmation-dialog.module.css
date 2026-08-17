@@ -1,20 +1,22 @@
 .overlay {
-  --confirm-overlay: rgba(3, 5, 12, 0.72);
+  --confirm-overlay: rgba(3, 31, 23, 0.58);
   --confirm-panel: linear-gradient(
-    155deg,
-    rgba(28, 29, 42, 0.98),
-    rgba(15, 17, 27, 0.98)
+    150deg,
+    rgba(250, 247, 238, 0.99),
+    rgba(241, 235, 222, 0.98)
   );
-  --confirm-border: rgba(255, 255, 255, 0.1);
-  --confirm-text: #f8fafc;
-  --confirm-muted: rgba(203, 213, 225, 0.7);
-  --confirm-soft: rgba(255, 255, 255, 0.055);
-  --confirm-soft-hover: rgba(255, 255, 255, 0.09);
-  --confirm-icon-bg: rgba(139, 92, 246, 0.14);
-  --confirm-icon-border: rgba(196, 181, 253, 0.2);
-  --confirm-icon-text: #c4b5fd;
-  --confirm-focus: rgba(139, 92, 246, 0.32);
-  --confirm-shadow: 0 36px 110px rgba(0, 0, 0, 0.46);
+  --confirm-border: rgba(47, 93, 70, 0.18);
+  --confirm-text: #20372b;
+  --confirm-muted: #657266;
+  --confirm-soft: rgba(238, 231, 218, 0.82);
+  --confirm-soft-hover: rgba(228, 219, 202, 0.94);
+  --confirm-icon-bg: rgba(47, 93, 70, 0.08);
+  --confirm-icon-border: rgba(47, 93, 70, 0.18);
+  --confirm-icon-text: #2f5d46;
+  --confirm-focus: rgba(184, 77, 39, 0.3);
+  --confirm-shadow:
+    0 34px 90px rgba(55, 43, 27, 0.24),
+    inset 0 1px 0 rgba(255, 252, 244, 0.9);
 
   position: fixed;
   inset: 0;
@@ -25,27 +27,6 @@
   background: var(--confirm-overlay);
   backdrop-filter: blur(14px) saturate(0.86);
   animation: confirm-overlay-in 160ms ease-out both;
-}
-
-:global(html.sport-theme-nature) .overlay {
-  --confirm-overlay: rgba(3, 31, 23, 0.58);
-  --confirm-panel: linear-gradient(
-    150deg,
-    rgba(250, 253, 251, 0.98),
-    rgba(238, 248, 243, 0.97)
-  );
-  --confirm-border: rgba(6, 95, 70, 0.16);
-  --confirm-text: #102033;
-  --confirm-muted: #61756d;
-  --confirm-soft: rgba(231, 244, 237, 0.82);
-  --confirm-soft-hover: rgba(216, 238, 227, 0.94);
-  --confirm-icon-bg: rgba(6, 95, 70, 0.1);
-  --confirm-icon-border: rgba(6, 95, 70, 0.18);
-  --confirm-icon-text: #065f46;
-  --confirm-focus: rgba(16, 185, 129, 0.2);
-  --confirm-shadow:
-    0 38px 100px rgba(3, 47, 35, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
 }
 
 .dialog {
@@ -157,15 +138,10 @@
   border: 1px solid rgba(248, 113, 113, 0.22);
   border-radius: 13px;
   padding: 0.75rem 0.85rem;
-  background: rgba(127, 29, 29, 0.14);
-  color: #fca5a5;
+  background: rgba(254, 226, 226, 0.86);
+  color: #991b1b;
   font-size: 0.76rem;
   line-height: 1.5;
-}
-
-:global(html.sport-theme-nature) .errorMessage {
-  background: rgba(254, 226, 226, 0.86);
-  color: #b91c1c;
 }
 
 .actions {
@@ -224,12 +200,6 @@
 }
 
 .dialog[data-tone="danger"] .icon {
-  border-color: rgba(248, 113, 113, 0.24);
-  background: rgba(239, 68, 68, 0.12);
-  color: #fca5a5;
-}
-
-:global(html.sport-theme-nature) .dialog[data-tone="danger"] .icon {
   border-color: rgba(185, 28, 28, 0.18);
   background: rgba(254, 226, 226, 0.86);
   color: #b91c1c;
@@ -248,9 +218,9 @@
 }
 
 .dialog[data-tone="default"] .confirmButton {
-  border-color: rgba(196, 181, 253, 0.22);
-  background: linear-gradient(135deg, #6d28d9, #8b5cf6 62%, #a855f7);
-  box-shadow: 0 16px 34px rgba(109, 40, 217, 0.24);
+  border-color: rgba(47, 93, 70, 0.26);
+  background: linear-gradient(135deg, #20372b, #2f5d46 62%, #3f7559);
+  box-shadow: 0 16px 34px rgba(32, 55, 43, 0.2);
 }
 
 .dialog[data-tone="success"] .confirmButton {
@@ -262,33 +232,9 @@
 }
 
 .dialog[data-tone="success"] .icon {
-  border-color: rgba(16, 185, 129, 0.24);
-  background: rgba(16, 185, 129, 0.12);
-  color: #6ee7b7;
-}
-
-:global(html.sport-theme-nature)
-  .dialog[data-tone="default"]
-  .confirmButton {
-  border-color: rgba(167, 243, 208, 0.26);
-  background: linear-gradient(135deg, #064e3b, #047857 58%, #0f766e);
-  box-shadow: 0 16px 34px rgba(6, 78, 59, 0.24);
-}
-
-:global(html.sport-theme-nature)
-  .dialog[data-tone="success"]
-  .confirmButton {
-  border-color: rgba(167, 243, 208, 0.3);
-  background: linear-gradient(135deg, #064e3b, #047857 58%, #0f766e);
-  box-shadow: 0 16px 34px rgba(6, 78, 59, 0.24);
-}
-
-:global(html.sport-theme-nature)
-  .dialog[data-tone="success"]
-  .icon {
-  border-color: rgba(6, 95, 70, 0.18);
+  border-color: rgba(47, 93, 70, 0.18);
   background: rgba(220, 252, 231, 0.86);
-  color: #047857;
+  color: #2f5d46;
 }
 
 .cancelButton:focus-visible,

@@ -254,7 +254,7 @@ export default function RefugeView() {
         </header>
 
         {hasError ? (
-          <div className={styles.error} role="status">
+          <div className={styles.error} role="alert">
             <span>
               Une partie de ton carnet n’a pas pu être chargée. Les autres
               données restent disponibles.

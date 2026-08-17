@@ -545,7 +545,12 @@ function HeroMetric({
 
 function PlanningSkeleton() {
   return (
-    <div className={styles.skeletonPage} role="status">
+    <div
+      className={styles.skeletonPage}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
       <span className={styles.srOnly}>Chargement du planning…</span>
 
       <div className={styles.skeletonHero}>

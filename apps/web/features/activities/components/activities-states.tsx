@@ -5,7 +5,13 @@ import styles from "../activities.module.css";
 
 export function ActivitiesSkeleton() {
   return (
-    <div className={styles.skeleton} aria-label="Chargement des sorties">
+    <div
+      className={styles.skeleton}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label="Chargement des sorties"
+    >
       <span />
       <span />
       <span />
@@ -15,7 +21,7 @@ export function ActivitiesSkeleton() {
 
 export function ActivitiesError({ onRetry }: { onRetry: () => void }) {
   return (
-    <section className={styles.state}>
+    <section className={styles.state} role="alert">
       <AlertTriangle aria-hidden="true" />
       <h2>Le carnet ne s’ouvre pas pour le moment.</h2>
       <p>Réessaie dans un instant pour retrouver tes sorties.</p>
@@ -29,7 +35,7 @@ export function ActivitiesError({ onRetry }: { onRetry: () => void }) {
 
 export function ActivitiesEmpty() {
   return (
-    <section className={styles.state}>
+    <section className={styles.state} role="status">
       <Route aria-hidden="true" />
       <h2>Ta première page reste à écrire.</h2>
       <p>
@@ -52,7 +58,7 @@ export function ActivitiesFilterEmpty({
   onReset: () => void;
 }) {
   return (
-    <section className={styles.state}>
+    <section className={styles.state} role="status">
       <Route aria-hidden="true" />
       <h2>Aucune sortie de {filter.toLocaleLowerCase("fr-FR")}.</h2>
       <p>Le reste de ton carnet garde peut-être la trace que tu cherches.</p>

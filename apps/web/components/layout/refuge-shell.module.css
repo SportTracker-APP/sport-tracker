@@ -5,15 +5,17 @@
   --refuge-paper-muted: #eee7da;
   --refuge-forest: #2f5d46;
   --refuge-forest-deep: #20372b;
-  --refuge-moss: #667468;
+  --refuge-moss: #657266;
   --refuge-sage: #aab7a5;
-  --refuge-terracotta: #c85b2f;
+  --refuge-terracotta: #b84d27;
   --refuge-terracotta-hover: #aa4325;
   --refuge-ink: #20372b;
-  --refuge-muted: #667468;
+  --refuge-muted: #657266;
   --refuge-border: #d9d1c2;
   --refuge-border-strong: #c6bcaa;
   --refuge-shadow: 0 16px 36px -30px rgba(76, 57, 35, 0.34);
+  --refuge-flow-gap: 24px;
+  --refuge-section-gap: 32px;
   position: relative;
   display: grid;
   height: 100dvh;
@@ -77,7 +79,7 @@
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 30px 34px 110px;
+  padding: 30px 34px 72px;
 }
 
 .sidebar {
@@ -509,12 +511,12 @@
 }
 
 .accountIdentity p:last-child {
-  color: var(--refuge-muted, #667468);
+  color: var(--refuge-muted, #657266);
 }
 
 .menuHeading {
   padding: 14px 10px 7px;
-  color: var(--refuge-moss, #667468);
+  color: var(--refuge-moss, #657266);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -534,7 +536,7 @@
   gap: 10px;
   padding: 10px 12px;
   border-radius: 11px;
-  color: var(--refuge-moss, #667468);
+  color: var(--refuge-moss, #657266);
   font-size: 0.82rem;
   transition:
     background-color 160ms ease,
@@ -552,7 +554,7 @@
 }
 
 .logout {
-  color: var(--refuge-terracotta, #c85b2f);
+  color: var(--refuge-terracotta, #b84d27);
 }
 
 .logout:hover {
@@ -618,8 +620,8 @@
   --mobile-paper-muted: #eee7da;
   --mobile-forest: #2f5d46;
   --mobile-forest-deep: #20372b;
-  --mobile-moss: #667468;
-  --mobile-terracotta: #c85b2f;
+  --mobile-moss: #657266;
+  --mobile-terracotta: #b84d27;
   --mobile-border: #d9d1c2;
   --mobile-border-strong: #c6bcaa;
   position: fixed !important;
@@ -948,7 +950,7 @@
   }
 
   .content {
-    padding: 34px 42px 54px;
+    padding: 32px 42px 64px;
   }
 }
 

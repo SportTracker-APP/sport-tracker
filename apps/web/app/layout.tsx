@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { Analytics } from "@vercel/analytics/next";
@@ -73,29 +72,11 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr" className="sport-theme-nature" suppressHydrationWarning>
       <body className={inter.className}>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                localStorage.removeItem("sport-tracker-theme");
-                localStorage.removeItem("sport-tracker-theme-v2");
-
-                if (localStorage.getItem("sport-tracker-theme-v3") === "violet") {
-                  document.documentElement.classList.remove("sport-theme-nature");
-                } else {
-                  document.documentElement.classList.add("sport-theme-nature");
-                }
-              } catch {}
-            `,
-          }}
-        />
-        <ThemeProvider>
-          <QueryProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
         <TawkToWidget />
         <Toaster richColors position="top-right" />
         <Analytics />

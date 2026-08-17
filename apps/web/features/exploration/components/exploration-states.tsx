@@ -43,7 +43,7 @@ export function ExplorationError({
 
 export function ExplorationEmpty() {
   return (
-    <section className={styles.emptyState}>
+    <section className={styles.emptyState} role="status">
       <div className={styles.emptyIllustration}>
         <svg viewBox="0 0 560 260" aria-hidden="true">
           <path d="M-10 251 98 159l61 53 95-140 75 105 60-72 181 146H-10Z" />

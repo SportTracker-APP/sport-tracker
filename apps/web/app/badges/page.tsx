@@ -52,8 +52,13 @@ function formatProgressValue(value: number, unit: string): string {
 
 function BadgesSkeleton() {
   return (
-    <div className={styles.skeleton} aria-busy="true">
-      <span className={styles.srOnly} role="status">
+    <div
+      className={styles.skeleton}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span className={styles.srOnly}>
         Chargement de la collection de badges…
       </span>
 
@@ -242,6 +247,7 @@ export default function BadgesPage() {
             {error ? (
               <section
                 className={styles.state}
+                role="alert"
                 aria-labelledby="badges-error-title"
               >
                 <span className={styles.stateIcon} aria-hidden="true">
@@ -263,6 +269,7 @@ export default function BadgesPage() {
             {!error && badges.length === 0 ? (
               <section
                 className={styles.state}
+                role="status"
                 aria-labelledby="badges-empty-title"
               >
                 <span className={styles.stateIcon} aria-hidden="true">
@@ -399,6 +406,7 @@ export default function BadgesPage() {
             {!error && badges.length > 0 && visibleBadges.length === 0 ? (
               <section
                 className={styles.state}
+                role="status"
                 aria-labelledby="badges-filter-empty-title"
               >
                 <span className={styles.stateIcon} aria-hidden="true">

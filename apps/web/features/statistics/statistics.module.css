@@ -4,18 +4,18 @@
   --paper-strong: #f8f4ea;
   --forest: #2f5d46;
   --forest-deep: #20372b;
-  --moss: #667468;
+  --moss: #657266;
   --sage: #aab7a5;
-  --terracotta: #c85b2f;
+  --terracotta: #b84d27;
   --terracotta-soft: #e9b49d;
   --line: #d9d1c2;
   --line-soft: rgba(103, 116, 104, 0.18);
   color: var(--forest-deep);
   display: flex;
   flex-direction: column;
-  gap: 52px;
+  gap: var(--refuge-section-gap, 32px);
   min-width: 0;
-  padding: 28px 0 64px;
+  padding: 0 0 24px;
 }
 
 .hero {

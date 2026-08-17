@@ -5,9 +5,9 @@
   --settings-paper-muted: #eee7da;
   --settings-forest: #2f5d46;
   --settings-forest-deep: #20372b;
-  --settings-moss: #667468;
+  --settings-moss: #657266;
   --settings-sage: #aab7a5;
-  --settings-terracotta: #c85b2f;
+  --settings-terracotta: #b84d27;
   --settings-line: #d9d1c2;
   width: 100%;
   min-width: 0;
@@ -159,7 +159,7 @@
   grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
   align-items: stretch;
   gap: 18px;
-  margin-top: 18px;
+  margin-top: var(--refuge-flow-gap, 24px);
 }
 
 .grid > * {

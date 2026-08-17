@@ -1,15 +1,15 @@
 .page {
-  --strava-paper: #f7f1e5;
-  --strava-paper-soft: #ece3d4;
-  --strava-forest: #234c39;
-  --strava-forest-deep: #183126;
-  --strava-moss: #667468;
-  --strava-border: #d6cabb;
-  --strava-border-strong: #c3b39f;
-  --strava-terracotta: #c85b2f;
-  --strava-terracotta-deep: #aa4325;
+  --strava-paper: var(--refuge-paper, #f8f4ea);
+  --strava-paper-soft: var(--refuge-paper-muted, #eee7da);
+  --strava-forest: var(--refuge-forest, #2f5d46);
+  --strava-forest-deep: var(--refuge-forest-deep, #20372b);
+  --strava-moss: var(--refuge-moss, #657266);
+  --strava-border: var(--refuge-border, #d9d1c2);
+  --strava-border-strong: var(--refuge-border-strong, #c6bcaa);
+  --strava-terracotta: var(--refuge-terracotta, #b84d27);
+  --strava-terracotta-deep: var(--refuge-terracotta-hover, #aa4325);
   display: grid;
-  gap: 22px;
+  gap: var(--refuge-flow-gap, 24px);
   color: var(--strava-forest-deep);
   font-family: var(--font-refuge-body), "Work Sans", sans-serif;
 }

@@ -23,25 +23,25 @@ export function LandingFooter() {
         <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-600">
           <a
             href="mailto:contact@hovren.fr"
-            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
+            className="inline-flex min-h-11 items-center transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             contact@hovren.fr
           </a>
           <Link
             href="/conditions"
-            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
+            className="inline-flex min-h-11 items-center transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             Conditions
           </Link>
           <Link
             href="/confidentialite"
-            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
+            className="inline-flex min-h-11 items-center transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             Confidentialité
           </Link>
           <Link
             href="/login"
-            className="transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
+            className="inline-flex min-h-11 items-center transition hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-none"
           >
             Connexion
           </Link>

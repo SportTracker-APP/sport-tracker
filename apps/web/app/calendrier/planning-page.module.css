@@ -5,9 +5,9 @@
   --planning-paper-deep: #e9e1d1;
   --planning-forest: #2f5d46;
   --planning-forest-deep: #20372b;
-  --planning-moss: #667468;
+  --planning-moss: #657266;
   --planning-sage: #aab7a5;
-  --planning-terracotta: #c85b2f;
+  --planning-terracotta: #b84d27;
   --planning-terracotta-soft: #e9b49d;
   --planning-terracotta-deep: #a94325;
   --planning-line: #d9d1c1;
@@ -18,7 +18,7 @@
   min-width: 0;
   min-height: 100%;
   margin: 0 auto;
-  padding: 28px 0 64px;
+  padding: 0 0 24px;
   background-color: var(--planning-canvas);
   background-image: radial-gradient(
     circle at 1px 1px,
@@ -519,7 +519,7 @@
 
 .weekSection {
   min-width: 0;
-  margin-top: 42px;
+  margin-top: var(--refuge-section-gap, 32px);
 }
 
 .calendarHeading {

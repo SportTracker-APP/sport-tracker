@@ -339,7 +339,13 @@ export function SummitResults({
 
 export function SummitsSkeleton() {
   return (
-    <div className={styles.skeletonPage} aria-label="Chargement des sommets">
+    <div
+      className={styles.skeletonPage}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label="Chargement des sommets"
+    >
       <div className={styles.skeletonHero} />
       <div className={styles.skeletonStrip} />
       <div className={styles.skeletonAtlas}>
@@ -383,7 +389,7 @@ export function SummitsEmpty({
   onReset: () => void;
 }) {
   return (
-    <section className={styles.pageState}>
+    <section className={styles.pageState} role="status">
       <span className={styles.stateIcon}>
         {filtered ? (
           <SearchX aria-hidden="true" />

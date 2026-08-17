@@ -4,15 +4,15 @@
   --atlas-paper-muted: #eee7da;
   --atlas-ink: var(--refuge-ink, #20372b);
   --atlas-forest: var(--refuge-forest, #2f5d46);
-  --atlas-moss: var(--refuge-moss, #667468);
+  --atlas-moss: var(--refuge-moss, #657266);
   --atlas-sage: var(--refuge-sage, #aab7a5);
-  --atlas-clay: var(--refuge-terracotta, #c85b2f);
+  --atlas-clay: var(--refuge-terracotta, #b84d27);
   --atlas-border: var(--refuge-border, #d9d1c2);
   --atlas-border-strong: var(--refuge-border-strong, #c6bcaa);
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 27px;
+  gap: var(--refuge-flow-gap, 24px);
   color: var(--atlas-ink);
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 
 import { Loader2 } from "lucide-react";
@@ -19,19 +20,38 @@ export function ProfileSettingsCard() {
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [isSaving, setIsSaving] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    tone: "success" | "error";
+    message: string;
+  } | null>(null);
 
   async function handleSave() {
     try {
       setIsSaving(true);
+      setFeedback(null);
 
       const response = await api.patch("/users/profile", {
         firstName: firstName.trim(),
       });
 
       setUser(response.data);
+      setFeedback({
+        tone: "success",
+        message: "Tes informations ont bien été mises à jour.",
+      });
     } catch (error: unknown) {
       console.error(error);
-      window.alert("Erreur lors de la sauvegarde.");
+      const backendMessage = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : null;
+
+      setFeedback({
+        tone: "error",
+        message:
+          typeof backendMessage === "string"
+            ? backendMessage
+            : "Impossible de mettre à jour ton profil pour le moment.",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -87,6 +107,20 @@ export function ProfileSettingsCard() {
             )}
           </Button>
         </div>
+
+        {feedback ? (
+          <p
+            className={`${styles.feedback} ${
+              feedback.tone === "success"
+                ? styles.feedbackSuccess
+                : styles.feedbackError
+            }`}
+            role={feedback.tone === "error" ? "alert" : undefined}
+            aria-live={feedback.tone === "success" ? "polite" : undefined}
+          >
+            {feedback.message}
+          </p>
+        ) : null}
       </div>
     </div>
   );
