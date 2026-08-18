@@ -8,8 +8,13 @@ import {
   runSummitImport,
 } from '../import/summit-import-runner';
 
+const PRODUCTION_CONFIRMATION = 'HAUTE-SAVOIE-CORE-2026-06-15';
+
+const LOCAL_DATABASE_HOSTS = new Set(['127.0.0.1', 'localhost', '::1']);
+
 function getArgument(name: string) {
   const prefix = `--${name}=`;
+
   return process.argv
     .find((argument) => argument.startsWith(prefix))
     ?.slice(prefix.length);
@@ -17,20 +22,87 @@ function getArgument(name: string) {
 
 function requiredArgument(name: string) {
   const value = getArgument(name);
-  if (!value) throw new Error(`Argument --${name}=... requis`);
+
+  if (!value) {
+    throw new Error(`Argument --${name}=... requis`);
+  }
+
   return value;
 }
 
-function assertLocalTestDatabase() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) throw new Error('DATABASE_URL est requis');
+function getDatabaseUrl() {
+  const value = process.env.DATABASE_URL;
 
-  const hostname = new URL(databaseUrl).hostname;
-  if (!['127.0.0.1', 'localhost', '::1'].includes(hostname)) {
+  if (!value) {
+    throw new Error('DATABASE_URL est requis');
+  }
+
+  try {
+    return new URL(value);
+  } catch {
+    throw new Error('DATABASE_URL est invalide');
+  }
+}
+
+function getDatabaseName(databaseUrl: URL) {
+  const databaseName = decodeURIComponent(
+    databaseUrl.pathname.replace(/^\/+/, ''),
+  );
+
+  if (!databaseName) {
     throw new Error(
-      `Écriture refusée sur l’hôte ${hostname}. Utilisez une base locale/test isolée.`,
+      'Impossible de déterminer le nom de la base depuis DATABASE_URL',
     );
   }
+
+  return databaseName;
+}
+
+function assertImportDatabaseSafety() {
+  const databaseUrl = getDatabaseUrl();
+  const hostname = databaseUrl.hostname;
+  const databaseName = getDatabaseName(databaseUrl);
+
+  const isLocalDatabase = LOCAL_DATABASE_HOSTS.has(hostname);
+
+  if (isLocalDatabase) {
+    if (!process.argv.includes('--confirm-local-test')) {
+      throw new Error('Une base locale/test exige --confirm-local-test.');
+    }
+
+    return;
+  }
+
+  const productionConfirmation = getArgument('confirm-production');
+  const expectedDatabaseHost = getArgument('expected-db-host');
+  const expectedDatabaseName = getArgument('expected-db-name');
+
+  if (productionConfirmation !== PRODUCTION_CONFIRMATION) {
+    throw new Error(
+      `Base distante détectée (${hostname}). ` +
+        `Confirmez explicitement la release avec ` +
+        `--confirm-production=${PRODUCTION_CONFIRMATION}`,
+    );
+  }
+
+  if (!expectedDatabaseHost || expectedDatabaseHost !== hostname) {
+    throw new Error(
+      `Hôte distant refusé. Hôte réel : ${hostname}. ` +
+        `Utilisez --expected-db-host=${hostname} après vérification.`,
+    );
+  }
+
+  if (!expectedDatabaseName || expectedDatabaseName !== databaseName) {
+    throw new Error(
+      `Base distante refusée. Base réelle : ${databaseName}. ` +
+        `Utilisez --expected-db-name=${databaseName} après vérification.`,
+    );
+  }
+
+  console.warn(
+    `IMPORT DISTANT EXPLICITEMENT AUTORISÉ ` +
+      `SUR host=${hostname} database=${databaseName}`,
+  );
 }
 
 async function main() {
@@ -42,19 +114,15 @@ async function main() {
 
   if ([dryRun, prepare, previewApply, apply].filter(Boolean).length !== 1) {
     throw new Error(
-      'Choisissez exactement un mode : --dry-run, --prepare, --preview-apply ou --apply',
+      'Choisissez exactement un mode : ' +
+        '--dry-run, --prepare, --preview-apply ou --apply',
     );
   }
 
-  if (
-    (prepare || previewApply || apply) &&
-    !process.argv.includes('--confirm-local-test')
-  ) {
-    throw new Error(
-      'Les modes prepare/preview/apply exigent --confirm-local-test avant le STOP GATE',
-    );
+  if (prepare || previewApply || apply) {
+    assertImportDatabaseSafety();
   }
-  if (prepare || previewApply || apply) assertLocalTestDatabase();
+
   if (apply && !process.argv.includes('--confirm-core-release')) {
     throw new Error(
       'Relancez après lecture du preview avec --confirm-core-release',
@@ -62,40 +130,52 @@ async function main() {
   }
 
   const prisma = new PrismaClient();
+
   if (previewApply) {
     try {
       const result = await previewPreparedSummitImport(
         prisma,
         requiredArgument('import-run'),
       );
+
       console.log(JSON.stringify(result, null, 2));
     } finally {
       await prisma.$disconnect();
     }
+
     return;
   }
+
   if (apply) {
     try {
       const result = await applyPreparedSummitImport(
         prisma,
         requiredArgument('import-run'),
       );
+
       console.log(JSON.stringify(result, null, 2));
     } finally {
       await prisma.$disconnect();
     }
+
     return;
   }
 
   const snapshotDirectory = path.resolve(requiredArgument('snapshot-dir'));
+
   const osmSnapshotPath = path.resolve(requiredArgument('osm-snapshot'));
+
   const sourceVersion = requiredArgument('source-version');
+
   const cacheDirectory = path.resolve(
     getArgument('cache-dir') ??
       path.join(snapshotDirectory, '.hovren-import-cache'),
   );
+
   const reportArgument = getArgument('report');
+
   const reportPath = reportArgument ? path.resolve(reportArgument) : undefined;
+
   const catalogMode =
     getArgument('catalog') === 'bootstrap' ? 'bootstrap' : 'database';
 
@@ -114,6 +194,7 @@ async function main() {
       mode: prepare ? 'prepare' : 'dry-run',
       catalogMode,
     });
+
     console.log(JSON.stringify(report, null, 2));
   } finally {
     await prisma.$disconnect();
