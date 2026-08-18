@@ -216,8 +216,14 @@ export function filterSummits(
   return sortSummits(
     summits.filter((summit) => {
       const status = getSummitStatus(summit);
+      const searchedSecondary =
+        Boolean(normalizedSearch) && summit.catalogTier === "SECONDARY";
 
-      if (filters.status !== "ALL" && status !== filters.status) {
+      if (
+        !searchedSecondary &&
+        filters.status !== "ALL" &&
+        status !== filters.status
+      ) {
         return false;
       }
 
@@ -331,16 +337,6 @@ function getEditorialFallbackVisual(summit: SummitView): SummitVisualSource {
   };
 }
 
-function getFallbackVisual(summit: SummitView): SummitVisualSource {
-  return {
-    kind: "fallback",
-    src: null,
-    alt: `Illustration de relief pour ${summit.name}`,
-    credit: "Illustration HOVREN",
-    creditUrl: null,
-  };
-}
-
 export function getSummitVisualSource(summit: SummitView): SummitVisualSource {
   return getVerifiedSummitVisual(summit) ?? getEditorialFallbackVisual(summit);
 }
@@ -447,6 +443,13 @@ function getSummitSecondaryInfo(
   summit: SummitView,
   massifProgress: MassifProgress[],
 ): SummitCardSecondaryInfo {
+  if (summit.catalogTier === "SECONDARY") {
+    return {
+      kind: "distance",
+      label: "Sommet secondaire · repère informatif",
+    };
+  }
+
   const status = getSummitStatus(summit);
   const discoveryActivity = summit.firstActivity ?? summit.latestActivity;
   const pendingActivity = summit.pendingDiscoveries[0]?.activity;
@@ -524,11 +527,13 @@ export function getSummitCardViewModels(
       type: summit.type,
       status,
       statusLabel:
-        status === "DISCOVERED"
-          ? "Découvert"
-          : status === "PENDING"
-            ? "À confirmer"
-            : "À découvrir",
+        summit.catalogTier === "SECONDARY"
+          ? "Point remarquable"
+          : status === "DISCOVERED"
+            ? "Découvert"
+            : status === "PENDING"
+              ? "À confirmer"
+              : "À découvrir",
       isNew:
         status === "DISCOVERED" &&
         isRecentSummitDiscovery(
@@ -539,13 +544,15 @@ export function getSummitCardViewModels(
           ? null
           : `${status === "PENDING" ? "Sortie du" : "Découvert le"} ${formatSummitDate(date)}`,
       passageLabel:
-        status === "DISCOVERED"
-          ? `${summit.activityCount} passage${summit.activityCount > 1 ? "s" : ""}`
-          : status === "PENDING"
-            ? "Détection proche"
-            : massif
-              ? `${massif.discovered}/${massif.total} dans ${summit.massif}`
-              : "À explorer",
+        summit.catalogTier === "SECONDARY"
+          ? "Hors progression principale"
+          : status === "DISCOVERED"
+            ? `${summit.activityCount} passage${summit.activityCount > 1 ? "s" : ""}`
+            : status === "PENDING"
+              ? "Détection proche"
+              : massif
+                ? `${massif.discovered}/${massif.total} dans ${summit.massif}`
+                : "À explorer",
       secondaryInfo: getSummitSecondaryInfo(summit, massifProgress),
       visual: visualSources[summit.id] ?? getEditorialFallbackVisual(summit),
       href: linkedActivity
@@ -553,9 +560,11 @@ export function getSummitCardViewModels(
         : getSummitHref(summit),
       ctaLabel: linkedActivity
         ? "Voir la trace"
-        : status === "DISCOVERED"
-          ? "Voir dans le carnet"
-          : "Voir le sommet",
+        : summit.catalogTier === "SECONDARY"
+          ? "Voir le repère"
+          : status === "DISCOVERED"
+            ? "Voir dans le carnet"
+            : "Voir le sommet",
       pendingDiscoveryId: pending?.id ?? null,
     };
   });

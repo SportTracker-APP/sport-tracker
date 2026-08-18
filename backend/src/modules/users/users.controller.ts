@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../auth/authenticated-request.type';
@@ -8,10 +16,26 @@ import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdateDiscoveryGeoPreferencesDto } from './dto/update-discovery-geo-preferences.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me/geo-preferences')
+  getGeoPreferences(@Req() req: AuthenticatedRequest) {
+    return this.usersService.getGeoPreferences(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('me/geo-preferences/discovery')
+  updateDiscoveryGeoPreferences(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: UpdateDiscoveryGeoPreferencesDto,
+  ) {
+    return this.usersService.updateDiscoveryGeoPreferences(req.user.id, dto);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')

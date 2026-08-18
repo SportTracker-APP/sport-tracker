@@ -19,6 +19,8 @@ export interface AuthUser {
 
   avatarUrl?: string | null;
 
+  needsDiscoveryOnboarding?: boolean;
+
   impersonation?: AdminImpersonationContext | null;
 }
 

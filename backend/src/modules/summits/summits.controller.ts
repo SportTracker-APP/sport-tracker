@@ -30,6 +30,14 @@ export class SummitsController {
     return this.summitsService.findBadges(userId);
   }
 
+  @Get('map')
+  findMapSummits(
+    @CurrentUser('id') userId: string,
+    @Query() query: ListSummitsDto,
+  ) {
+    return this.summitsService.findMapSummits(userId, query);
+  }
+
   @Patch('discoveries/:id')
   updateDiscovery(
     @CurrentUser('id') userId: string,

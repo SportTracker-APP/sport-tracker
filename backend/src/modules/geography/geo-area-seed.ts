@@ -15,7 +15,7 @@ function getLegacyAreaIdentity(name: string) {
 
 export async function seedNationalGeoCatalog(
   prisma: PrismaClient,
-  options: { summitIds?: string[] } = {},
+  options: { summitIds?: string[]; administrativeAreaSlug?: string } = {},
 ) {
   return prisma.$transaction(async (transaction) => {
     const areasBySlug = new Map<
@@ -92,18 +92,35 @@ export async function seedNationalGeoCatalog(
     }
 
     const allAreas = await transaction.geoArea.findMany({
-      select: { id: true, parentId: true },
+      select: { id: true, name: true, parentId: true },
     });
+    const areaById = new Map(allAreas.map((area) => [area.id, area]));
     const parentByAreaId = new Map(
       allAreas.map((area) => [area.id, area.parentId]),
     );
     const summits = await transaction.summit.findMany({
       where: options.summitIds ? { id: { in: options.summitIds } } : undefined,
-      select: { id: true, massif: true },
+      select: { id: true, massif: true, primaryMassifId: true },
     });
+    const administrativeArea = options.administrativeAreaSlug
+      ? await transaction.geoArea.findUnique({
+          where: { slug: options.administrativeAreaSlug },
+          select: { id: true },
+        })
+      : null;
+
+    if (options.administrativeAreaSlug && !administrativeArea) {
+      throw new Error(
+        `Administrative GeoArea missing for ${options.administrativeAreaSlug}`,
+      );
+    }
 
     for (const summit of summits) {
-      const primaryMassif = massifsByName.get(summit.massif);
+      const administeredPrimaryMassif = summit.primaryMassifId
+        ? areaById.get(summit.primaryMassifId)
+        : undefined;
+      const primaryMassif =
+        administeredPrimaryMassif ?? massifsByName.get(summit.massif);
       if (!primaryMassif) {
         throw new Error(`GeoArea missing for legacy massif ${summit.massif}`);
       }
@@ -116,6 +133,14 @@ export async function seedNationalGeoCatalog(
         currentAreaId = parentByAreaId.get(currentAreaId) ?? null;
       }
 
+      if (administrativeArea) {
+        currentAreaId = administrativeArea.id;
+        while (currentAreaId) {
+          geoAreaIds.push(currentAreaId);
+          currentAreaId = parentByAreaId.get(currentAreaId) ?? null;
+        }
+      }
+
       await transaction.summitGeoArea.createMany({
         data: geoAreaIds.map((geoAreaId) => ({
           summitId: summit.id,
@@ -123,10 +148,12 @@ export async function seedNationalGeoCatalog(
         })),
         skipDuplicates: true,
       });
-      await transaction.summit.update({
-        where: { id: summit.id },
-        data: { primaryMassifId: primaryMassif.id },
-      });
+      if (!administeredPrimaryMassif) {
+        await transaction.summit.update({
+          where: { id: summit.id },
+          data: { primaryMassifId: primaryMassif.id },
+        });
+      }
     }
 
     return {

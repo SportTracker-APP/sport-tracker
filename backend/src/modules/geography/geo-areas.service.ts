@@ -3,9 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { GeoAreaType } from '@prisma/client';
+import { GeoAreaType, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { PUBLIC_SUMMIT_WHERE } from '../summits/summit-publication';
 import { ListGeoAreasDto } from './dto/list-geo-areas.dto';
 
 @Injectable()
@@ -20,7 +21,11 @@ export class GeoAreasService {
         isPublished: query.published ?? true,
       },
       include: {
-        _count: { select: { summitLinks: true } },
+        _count: {
+          select: {
+            summitLinks: { where: { summit: PUBLIC_SUMMIT_WHERE } },
+          },
+        },
       },
       orderBy: [{ type: 'asc' }, { name: 'asc' }],
     });
@@ -35,7 +40,11 @@ export class GeoAreasService {
           where: { isPublished: true },
           orderBy: { name: 'asc' },
         },
-        _count: { select: { summitLinks: true } },
+        _count: {
+          select: {
+            summitLinks: { where: { summit: PUBLIC_SUMMIT_WHERE } },
+          },
+        },
       },
     });
 
@@ -47,17 +56,26 @@ export class GeoAreasService {
   }
 
   async getPublishedAreaIds(geoAreaId: string, includeDescendants: boolean) {
+    return this.getPublishedAreaIdsForMany([geoAreaId], includeDescendants);
+  }
+
+  async getPublishedAreaIdsForMany(
+    geoAreaIds: string[],
+    includeDescendants: boolean,
+  ) {
+    const uniqueGeoAreaIds = [...new Set(geoAreaIds)];
     const areas = await this.prisma.geoArea.findMany({
       where: { isPublished: true },
       select: { id: true, parentId: true },
     });
 
-    if (!areas.some((area) => area.id === geoAreaId)) {
-      throw new NotFoundException('Territoire publié introuvable');
+    const availableIds = new Set(areas.map((area) => area.id));
+    if (uniqueGeoAreaIds.some((areaId) => !availableIds.has(areaId))) {
+      throw new NotFoundException('Un territoire publié est introuvable');
     }
 
     if (!includeDescendants) {
-      return [geoAreaId];
+      return uniqueGeoAreaIds;
     }
 
     const childrenByParentId = new Map<string, string[]>();
@@ -69,8 +87,8 @@ export class GeoAreasService {
       childrenByParentId.set(area.parentId, children);
     }
 
-    const includedIds = new Set([geoAreaId]);
-    const pendingAreaIds = [geoAreaId];
+    const includedIds = new Set(uniqueGeoAreaIds);
+    const pendingAreaIds = [...uniqueGeoAreaIds];
 
     for (let index = 0; index < pendingAreaIds.length; index += 1) {
       const parentId = pendingAreaIds[index];
@@ -85,60 +103,135 @@ export class GeoAreasService {
     return [...includedIds];
   }
 
+  async findDiscoveryOptions() {
+    const departments = await this.prisma.geoArea.findMany({
+      where: {
+        type: GeoAreaType.DEPARTMENT,
+        isPublished: true,
+        summitLinks: { some: { summit: PUBLIC_SUMMIT_WHERE } },
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        type: true,
+        parentId: true,
+        _count: {
+          select: {
+            summitLinks: { where: { summit: PUBLIC_SUMMIT_WHERE } },
+          },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return Promise.all(
+      departments.map(async (department) => {
+        const massifs = await this.prisma.geoArea.findMany({
+          where: {
+            type: GeoAreaType.MASSIF,
+            isPublished: true,
+            summitLinks: {
+              some: {
+                summit: {
+                  ...PUBLIC_SUMMIT_WHERE,
+                  geoAreas: { some: { geoAreaId: department.id } },
+                },
+              },
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            type: true,
+            _count: {
+              select: {
+                summitLinks: {
+                  where: {
+                    summit: {
+                      ...PUBLIC_SUMMIT_WHERE,
+                      geoAreas: { some: { geoAreaId: department.id } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { name: 'asc' },
+        });
+
+        return { ...department, massifs };
+      }),
+    );
+  }
+
   async setSummitPrimaryMassif(summitId: string, geoAreaId: string) {
-    return this.prisma.$transaction(async (transaction) => {
-      const [summit, massif, areas] = await Promise.all([
-        transaction.summit.findUnique({ where: { id: summitId } }),
-        transaction.geoArea.findUnique({ where: { id: geoAreaId } }),
-        transaction.geoArea.findMany({
-          select: { id: true, parentId: true },
-        }),
-      ]);
+    return this.prisma.$transaction((transaction) =>
+      this.setSummitPrimaryMassifInTransaction(
+        transaction,
+        summitId,
+        geoAreaId,
+      ),
+    );
+  }
 
-      if (!summit) {
-        throw new NotFoundException('Sommet introuvable');
-      }
+  async setSummitPrimaryMassifInTransaction(
+    transaction: Prisma.TransactionClient,
+    summitId: string,
+    geoAreaId: string,
+  ) {
+    const [summit, massif, areas] = await Promise.all([
+      transaction.summit.findUnique({ where: { id: summitId } }),
+      transaction.geoArea.findUnique({ where: { id: geoAreaId } }),
+      transaction.geoArea.findMany({
+        select: { id: true, parentId: true },
+      }),
+    ]);
 
-      if (!massif) {
-        throw new NotFoundException('Territoire introuvable');
-      }
+    if (!summit) {
+      throw new NotFoundException('Sommet introuvable');
+    }
 
-      if (massif.type !== GeoAreaType.MASSIF) {
-        throw new BadRequestException(
-          'Le massif principal doit être un territoire de type MASSIF',
-        );
-      }
+    if (!massif) {
+      throw new NotFoundException('Territoire introuvable');
+    }
 
-      const parentByAreaId = new Map(
-        areas.map((area) => [area.id, area.parentId]),
+    if (massif.type !== GeoAreaType.MASSIF) {
+      throw new BadRequestException(
+        'Le massif principal doit être un territoire de type MASSIF',
       );
-      const geoAreaIds: string[] = [];
-      let currentAreaId: string | null = massif.id;
+    }
 
-      while (currentAreaId) {
-        geoAreaIds.push(currentAreaId);
-        currentAreaId = parentByAreaId.get(currentAreaId) ?? null;
-      }
+    const parentByAreaId = new Map(
+      areas.map((area) => [area.id, area.parentId]),
+    );
+    const geoAreaIds: string[] = [];
+    let currentAreaId: string | null = massif.id;
 
-      await transaction.summitGeoArea.createMany({
-        data: geoAreaIds.map((areaId) => ({
-          summitId,
-          geoAreaId: areaId,
-        })),
-        skipDuplicates: true,
-      });
+    while (currentAreaId) {
+      geoAreaIds.push(currentAreaId);
+      currentAreaId = parentByAreaId.get(currentAreaId) ?? null;
+    }
 
-      return transaction.summit.update({
-        where: { id: summitId },
-        data: {
-          massif: massif.name,
-          primaryMassifId: massif.id,
-        },
-        include: {
-          primaryMassif: true,
-          geoAreas: { include: { geoArea: true } },
-        },
-      });
+    await transaction.summitGeoArea.createMany({
+      data: geoAreaIds.map((areaId) => ({
+        summitId,
+        geoAreaId: areaId,
+      })),
+      skipDuplicates: true,
+    });
+
+    return transaction.summit.update({
+      where: { id: summitId },
+      data: {
+        massif: massif.name,
+        primaryMassifId: massif.id,
+      },
+      include: {
+        primaryMassif: true,
+        geoAreas: { include: { geoArea: true } },
+      },
     });
   }
 }

@@ -61,6 +61,18 @@ model User {
 
   geoAreaPreferences UserGeoAreaPreference[]
 
+  onboardingStates UserOnboardingState[]
+
+  summitImportRunsApplied SummitImportRun[] @relation("SummitImportRunAppliedBy")
+
+  summitImportRunsPublished SummitImportRun[] @relation("SummitImportRunPublishedBy")
+
+  summitImportCandidatesResolved SummitImportCandidate[] @relation("SummitImportCandidateResolvedBy")
+
+  summitTiersUpdated Summit[] @relation("SummitTierUpdatedBy")
+
+  summitAdminAuditLogs SummitAdminAuditLog[]
+
   impersonationSessionsStarted AdminImpersonationSession[] @relation("AdminImpersonationAdmin")
 
   impersonationSessionsReceived AdminImpersonationSession[] @relation("AdminImpersonationTarget")
@@ -371,7 +383,19 @@ model Summit {
 
   sourceUrl String?
 
-  isActive Boolean @default(true)
+  isActive Boolean @default(false)
+
+  catalogStatus SummitCatalogStatus @default(DRAFT)
+
+  catalogTier SummitCatalogTier @default(CORE)
+
+  suggestedTier SummitCatalogTier?
+
+  tierReason String?
+
+  tierUpdatedAt DateTime?
+
+  tierUpdatedByUserId String?
 
   primaryMassifId String?
 
@@ -383,12 +407,46 @@ model Summit {
 
   primaryMassif GeoArea? @relation("SummitPrimaryMassif", fields: [primaryMassifId], references: [id], onDelete: SetNull)
 
+  tierUpdatedBy User? @relation("SummitTierUpdatedBy", fields: [tierUpdatedByUserId], references: [id], onDelete: SetNull)
+
   geoAreas SummitGeoArea[]
+
+  adminAuditLogs SummitAdminAuditLog[]
+
+  externalReferences SummitExternalReference[]
+
+  importCandidates SummitImportCandidate[]
 
   @@index([massif])
   @@index([altitude])
   @@index([isActive])
+  @@index([catalogStatus])
+  @@index([catalogTier])
   @@index([primaryMassifId])
+}
+
+model SummitAdminAuditLog {
+  id String @id @default(cuid())
+
+  summitId String
+
+  adminUserId String?
+
+  action SummitAdminAuditAction
+
+  before Json?
+
+  after Json?
+
+  createdAt DateTime @default(now())
+
+  summit Summit @relation(fields: [summitId], references: [id], onDelete: Cascade)
+
+  adminUser User? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([summitId, createdAt])
+  @@index([adminUserId, createdAt])
+  @@index([action])
 }
 
 model GeoArea {
@@ -458,6 +516,178 @@ model UserGeoAreaPreference {
   @@unique([userId, geoAreaId, type])
   @@index([userId, type])
   @@index([geoAreaId])
+}
+
+model UserOnboardingState {
+  id String @id @default(cuid())
+
+  userId String
+
+  key String
+
+  version Int
+
+  completedAt DateTime
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@index([key, version])
+}
+
+model SummitExternalReference {
+  id String @id @default(cuid())
+
+  summitId String
+
+  provider SummitExternalProvider
+
+  externalId String
+
+  sourceVersion String
+
+  sourceName String
+
+  firstSeenAt DateTime @default(now())
+
+  lastSeenAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  summit Summit @relation(fields: [summitId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, externalId])
+  @@index([summitId])
+}
+
+model SummitImportRun {
+  id String @id @default(cuid())
+
+  provider SummitExternalProvider
+
+  scope String
+
+  sourceVersion String
+
+  sourceName String
+
+  sourceChecksum String?
+
+  status SummitImportRunStatus @default(PREVIEWED)
+
+  startedAt DateTime @default(now())
+
+  completedAt DateTime?
+
+  sourceCount Int @default(0)
+
+  candidateCount Int @default(0)
+
+  createdCount Int @default(0)
+
+  matchedCount Int @default(0)
+
+  conflictCount Int @default(0)
+
+  rejectedCount Int @default(0)
+
+  errorCount Int @default(0)
+
+  appliedAt DateTime?
+
+  appliedByUserId String?
+
+  publishedAt DateTime?
+
+  publishedByUserId String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  appliedBy User? @relation("SummitImportRunAppliedBy", fields: [appliedByUserId], references: [id], onDelete: SetNull)
+
+  publishedBy User? @relation("SummitImportRunPublishedBy", fields: [publishedByUserId], references: [id], onDelete: SetNull)
+
+  candidates SummitImportCandidate[]
+
+  @@unique([provider, sourceVersion, scope])
+  @@index([provider, scope, startedAt])
+  @@index([status])
+}
+
+model SummitImportCandidate {
+  id String @id @default(cuid())
+
+  importRunId String
+
+  externalId String
+
+  name String
+
+  normalizedName String
+
+  latitude Float
+
+  longitude Float
+
+  elevation Int?
+
+  sourceNature String
+
+  sourceProperties Json
+
+  status SummitImportCandidateStatus
+
+  suggestedTier SummitCatalogTier
+
+  catalogTier SummitCatalogTier
+
+  tierReason String
+
+  classificationSignals Json
+
+  isLegacyMatch Boolean @default(false)
+
+  homonymGroupSize Int @default(1)
+
+  resolutionAction SummitImportResolutionAction?
+
+  matchedSummitId String?
+
+  resolutionReason String?
+
+  resolvedAt DateTime?
+
+  resolvedByUserId String?
+
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  importRun SummitImportRun @relation(fields: [importRunId], references: [id], onDelete: Cascade)
+
+  matchedSummit Summit? @relation(fields: [matchedSummitId], references: [id], onDelete: SetNull)
+
+  resolvedBy User? @relation("SummitImportCandidateResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([importRunId, externalId])
+  @@index([status])
+  @@index([suggestedTier])
+  @@index([catalogTier])
+  @@index([importRunId, status])
+  @@index([importRunId, catalogTier])
+  @@index([importRunId, homonymGroupSize])
+  @@index([resolutionAction])
+  @@index([matchedSummitId])
 }
 
 model SummitDiscovery {
@@ -637,6 +867,30 @@ enum SummitDiscoveryStatus {
   DISMISSED
 }
 
+enum SummitCatalogStatus {
+  DRAFT
+  REVIEW
+  READY
+  ARCHIVED
+}
+
+enum SummitCatalogTier {
+  CORE
+  SECONDARY
+  REFERENCE
+}
+
+enum SummitAdminAuditAction {
+  SUMMIT_UPDATED
+  STATUS_CHANGED
+  PUBLICATION_CHANGED
+  PRIMARY_MASSIF_CHANGED
+  GEO_AREA_ADDED
+  GEO_AREA_REMOVED
+  IMPORT_BATCH_PUBLISHED
+  TIER_CHANGED
+}
+
 enum GeoAreaType {
   COUNTRY
   ADMIN_REGION
@@ -652,6 +906,35 @@ enum UserGeoAreaPreferenceType {
   HOME_AREA
   FAVORITE
   DISCOVERY
+}
+
+enum SummitExternalProvider {
+  IGN_BD_TOPO
+}
+
+enum SummitImportRunStatus {
+  PREVIEWED
+  PREPARED
+  APPLIED
+  PUBLISHED
+  FAILED
+}
+
+enum SummitImportCandidateStatus {
+  NEW
+  MATCHED
+  CONFLICT
+  REJECTED
+  READY
+  IMPORTED
+  SKIPPED
+}
+
+enum SummitImportResolutionAction {
+  MATCH_EXISTING
+  CREATE_NEW
+  IGNORE
+  KEEP_FOR_REVIEW
 }
 
 model StravaConnection {

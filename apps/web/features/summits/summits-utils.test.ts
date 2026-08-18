@@ -118,6 +118,38 @@ describe("summits utilities", () => {
     ).toEqual(["sous-dine"]);
   });
 
+  it("rend un sommet secondaire accessible uniquement par une recherche explicite", () => {
+    const secondary = createSummit({
+      id: "pointe-secondaire",
+      name: "Pointe secondaire",
+      catalogTier: "SECONDARY",
+    });
+    const filters = {
+      status: "DISCOVERED" as const,
+      viewMode: "CARDS" as const,
+      searchQuery: "pointe secondaire",
+      massif: "ALL",
+      difficulty: "ALL" as const,
+      altitude: "ALL" as const,
+      sort: "NAME" as const,
+    };
+
+    expect(filterSummits([discovered, secondary], filters)).toEqual([
+      secondary,
+    ]);
+
+    expect(
+      getSummitCardViewModels([secondary], [discovered], [])[0],
+    ).toMatchObject({
+      statusLabel: "Point remarquable",
+      passageLabel: "Hors progression principale",
+      ctaLabel: "Voir le repère",
+      secondaryInfo: {
+        label: "Sommet secondaire · repère informatif",
+      },
+    });
+  });
+
   it("recommande un sommet réellement manquant dans un massif en cours", () => {
     expect(getRecommendedSummit([discovered, pending, missing])?.id).toBe(
       "sous-dine",

@@ -71,6 +71,7 @@ export type SummitGeoJsonFeatureCollection = {
       bookIndex: string;
       label: string;
       name: string;
+      tier: "CORE" | "SECONDARY";
       status: "DISCOVERED" | "LATEST" | "UNDISCOVERED";
     };
     geometry: {
@@ -132,6 +133,7 @@ export type MapboxMapLike = {
   setFilter: (layerId: string, filter: unknown[]) => void;
   setFog?: (fog: Record<string, unknown>) => void;
   setPaintProperty: (layerId: string, name: string, value: unknown) => void;
+  setLayoutProperty: (layerId: string, name: string, value: unknown) => void;
   setTerrain?: (terrain: Record<string, unknown>) => void;
   zoomIn: (options?: Record<string, unknown>) => void;
   zoomOut: (options?: Record<string, unknown>) => void;

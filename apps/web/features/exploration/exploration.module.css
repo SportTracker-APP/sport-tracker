@@ -312,6 +312,95 @@
   color: #fffaf2;
 }
 
+.filterMeta {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 13px;
+}
+
+.summitToggle {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--atlas-border-strong);
+  border-radius: 6px;
+  background: rgba(242, 238, 226, 0.72);
+  color: var(--atlas-moss);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.summitToggle:hover {
+  border-color: rgba(47, 93, 70, 0.44);
+  background: rgba(47, 93, 70, 0.08);
+  color: var(--atlas-forest);
+}
+
+.summitToggleActive {
+  border-color: var(--atlas-forest);
+  background: var(--atlas-forest);
+  color: #fffaf2;
+}
+
+.summitToggleActive:hover {
+  border-color: var(--atlas-ink);
+  background: var(--atlas-ink);
+  color: #fffaf2;
+}
+
+.summitToggle svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.9;
+}
+
+.summitToggle[aria-busy="true"] svg {
+  opacity: 0.55;
+}
+
+.summitToggle:focus-visible,
+.summitLayerNotice button:focus-visible {
+  outline: 3px solid rgba(200, 91, 47, 0.32);
+  outline-offset: 2px;
+}
+
+.summitLayerNotice {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 7px 12px;
+  border: 1px solid var(--atlas-border);
+  border-top: 0;
+  background: rgba(242, 238, 226, 0.76);
+  color: var(--atlas-moss);
+  font-size: 0.74rem;
+}
+
+.summitLayerNotice button {
+  min-height: 30px;
+  flex: 0 0 auto;
+  padding: 0 9px;
+  border: 1px solid var(--atlas-border-strong);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--atlas-forest);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
 .visibleCount {
   display: flex;
   flex: 0 0 auto;
@@ -1941,15 +2030,36 @@
   }
 
   .filterScroller button {
-    min-height: 39px;
+    min-height: 44px;
     padding: 0 11px;
   }
 
-  .visibleCount {
+  .filterMeta {
     justify-content: space-between;
     margin-top: 8px;
-    padding: 7px 3px 0;
+    padding: 8px 3px 0;
     border-top: 1px solid var(--atlas-border);
+  }
+
+  .summitToggle {
+    min-height: 44px;
+  }
+
+  .visibleCount {
+    justify-content: flex-end;
+    margin-top: 0;
+    padding: 0;
+    border-top: 0;
+  }
+
+  .summitLayerNotice {
+    align-items: flex-start;
+    padding: 9px 12px;
+    line-height: 1.45;
+  }
+
+  .summitLayerNotice button {
+    min-height: 44px;
   }
 
   .statsStrip {

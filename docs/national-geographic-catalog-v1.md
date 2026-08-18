@@ -97,10 +97,12 @@ nom n’apparaît qu’au zoom rapproché, avec la gestion native des collisions
 Toutes les traces GPS éligibles sont affichées ; chaque polyligne est
 simplifiée avant son ajout à la source pour protéger les performances.
 
-Un futur import national devra alimenter `GeoArea`, `Summit` et
-`SummitGeoArea` après normalisation et déduplication. Il ne devra pas ajouter
-de branche métier dédiée à une chaîne ou une ville : ajouter les Pyrénées doit
-rester principalement un ajout de données.
+Le pipeline territorial reproductible alimente `GeoArea`, `Summit` et
+`SummitGeoArea` après staging, normalisation et déduplication. Sa première
+implémentation est documentée dans
+[`haute-savoie-catalog-import-v1.md`](./haute-savoie-catalog-import-v1.md).
+Il n’ajoute pas de branche métier dédiée à une chaîne ou une ville : ajouter
+les Pyrénées doit rester principalement un ajout de données et de snapshot.
 
 ## Contrôle avant le back-office
 

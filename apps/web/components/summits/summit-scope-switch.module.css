@@ -1,0 +1,47 @@
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #d8cfbd;
+  border-radius: 6px;
+  padding: 3px;
+  background: #eee8dc;
+}
+
+.switch button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 13px;
+  background: transparent;
+  color: #68756a;
+  font-size: 0.75rem;
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.switch button[aria-pressed="true"] {
+  background: #faf6ec;
+  color: #294c39;
+  box-shadow: 0 1px 0 rgb(41 76 57 / 8%);
+}
+
+.switch button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.switch button:focus-visible {
+  outline: 2px solid rgb(194 87 50 / 48%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .switch {
+    width: 100%;
+  }
+
+  .switch button {
+    flex: 1;
+  }
+}

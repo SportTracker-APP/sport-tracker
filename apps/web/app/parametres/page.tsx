@@ -3,6 +3,7 @@ import { Leaf, ShieldCheck, UserRound } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { PasswordSettingsCard } from "@/components/settings/password-settings-card";
 import { ProfileSettingsCard } from "@/components/settings/profile-settings-card";
+import { AdventureTerritoriesCard } from "@/components/settings/adventure-territories-card";
 import styles from "@/components/settings/settings.module.css";
 import { FadeIn } from "@/components/ui/fade-in";
 
@@ -56,6 +57,12 @@ export default function SettingsPage() {
             </section>
           </FadeIn>
         </div>
+
+        <FadeIn delay={0.28}>
+          <section className={`${styles.panel} ${styles.territoryPanel}`}>
+            <AdventureTerritoriesCard />
+          </section>
+        </FadeIn>
       </main>
     </DashboardLayout>
   );

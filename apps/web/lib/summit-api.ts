@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { SummitView } from "./summit-discovery";
+import type { ExplorationSummit, SummitView } from "./summit-discovery";
 
 export type SummitBadge = {
   id: string;
@@ -27,11 +27,25 @@ export type SummitBadge = {
 
 export type SummitQuery = {
   geoAreaId?: string;
+  geoAreaIds?: string;
   includeDescendants?: boolean;
+  includeSecondary?: boolean;
 };
 
-export async function getSummits(query: SummitQuery = {}): Promise<SummitView[]> {
+export async function getSummits(
+  query: SummitQuery = {},
+): Promise<SummitView[]> {
   const { data } = await api.get<SummitView[]>("/summits", { params: query });
+
+  return data;
+}
+
+export async function getExplorationSummits(
+  query: SummitQuery = {},
+): Promise<ExplorationSummit[]> {
+  const { data } = await api.get<ExplorationSummit[]>("/summits/map", {
+    params: query,
+  });
 
   return data;
 }

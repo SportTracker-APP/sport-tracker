@@ -15,6 +15,7 @@ import {
   Link2,
   LogIn,
   LockKeyhole,
+  Mountain,
   Trash2,
   Search,
   Sparkles,
@@ -494,6 +495,14 @@ export default function AdminPage() {
                 >
                   <Sparkles size={17} aria-hidden="true" />
                   Actualiser les données
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push("/admin/sommets")}
+                  className={styles.secondaryButton}
+                >
+                  <Mountain size={17} aria-hidden="true" />
+                  Catalogue sommets
                 </button>
               </div>
             </div>

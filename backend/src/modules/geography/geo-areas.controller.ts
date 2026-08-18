@@ -14,6 +14,11 @@ export class GeoAreasController {
     return this.geoAreasService.findAll(query);
   }
 
+  @Get('discovery-options')
+  findDiscoveryOptions() {
+    return this.geoAreasService.findDiscoveryOptions();
+  }
+
   @Get(':slug')
   findBySlug(@Param('slug') slug: string) {
     return this.geoAreasService.findBySlug(slug);

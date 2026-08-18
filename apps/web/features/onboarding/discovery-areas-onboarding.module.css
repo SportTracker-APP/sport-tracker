@@ -1,0 +1,373 @@
+.page {
+  --paper: #f8f4e9;
+  --paper-strong: #fffaf0;
+  --forest: #294c39;
+  --forest-deep: #1f3529;
+  --moss: #6b786c;
+  --line: #d9d0bf;
+  --terracotta: #c25732;
+  min-height: calc(100vh - 112px);
+  padding: clamp(18px, 4vw, 52px) 0;
+  color: var(--forest-deep);
+}
+
+.sheet {
+  position: relative;
+  width: min(900px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 86% 3%, rgb(194 87 50 / 7%), transparent 28%),
+    linear-gradient(145deg, var(--paper-strong), var(--paper));
+  box-shadow: 0 22px 50px -44px rgb(36 53 41 / 50%);
+}
+
+.sheet::before {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgb(41 76 57 / 5%);
+  border-radius: 6px;
+  pointer-events: none;
+  content: "";
+}
+
+.header {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  padding: clamp(34px, 6vw, 64px) clamp(24px, 7vw, 72px) 32px;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--forest);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.kicker svg {
+  width: 17px;
+  color: var(--terracotta);
+}
+
+.header h1 {
+  margin: 15px 0 0;
+  color: var(--forest-deep);
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: clamp(2.7rem, 7vw, 4.8rem);
+  font-weight: 510;
+  line-height: 0.98;
+}
+
+.header > p:last-child {
+  max-width: 610px;
+  margin: 18px 0 0;
+  color: var(--moss);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.content {
+  position: relative;
+  padding: clamp(24px, 5vw, 48px) clamp(24px, 7vw, 72px);
+}
+
+.departmentGroup + .departmentGroup {
+  margin-top: 30px;
+  border-top: 1px solid rgb(107 120 108 / 18%);
+  padding-top: 30px;
+}
+
+.departmentCard {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 112px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  background: rgb(255 250 240 / 72%);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.departmentCard:hover,
+.departmentCard[data-selected="true"] {
+  border-color: rgb(41 76 57 / 45%);
+  background: #f3efe2;
+}
+
+.departmentIcon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(41 76 57 / 9%);
+  color: var(--forest);
+}
+
+.departmentIcon svg {
+  width: 23px;
+}
+
+.departmentCard > span:nth-child(2) {
+  display: grid;
+  gap: 3px;
+}
+
+.departmentCard small,
+.departmentCard em {
+  color: var(--moss);
+  font-size: 0.72rem;
+  font-style: normal;
+}
+
+.departmentCard strong {
+  font-family: var(--font-refuge-display), "Oswald", sans-serif;
+  font-size: 1.65rem;
+  font-weight: 520;
+}
+
+.choiceMark,
+.massifMark {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border: 1px solid rgb(41 76 57 / 30%);
+  border-radius: 50%;
+  color: var(--paper-strong);
+}
+
+[data-selected="true"] > .choiceMark,
+[data-selected="true"] > .massifMark {
+  border-color: var(--forest);
+  background: var(--forest);
+}
+
+.choiceMark svg,
+.massifMark svg {
+  width: 14px;
+}
+
+.refineHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 24px;
+  border-top: 1px solid rgb(107 120 108 / 18%);
+  padding-top: 22px;
+}
+
+.refineHeading > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.refineHeading svg {
+  width: 20px;
+  color: var(--terracotta);
+}
+
+.refineHeading span {
+  display: grid;
+  gap: 2px;
+}
+
+.refineHeading strong {
+  font-size: 0.86rem;
+}
+
+.refineHeading small {
+  color: var(--moss);
+  font-size: 0.7rem;
+}
+
+.refineHeading button,
+.skip {
+  min-height: 44px;
+  border: 0;
+  padding: 0 8px;
+  background: transparent;
+  color: var(--forest);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.massifGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.massifGrid > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 12px 14px;
+  background: rgb(255 250 240 / 55%);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.massifGrid > button[data-selected="true"] {
+  border-color: rgb(41 76 57 / 42%);
+  background: #f0ecdf;
+}
+
+.massifGrid > button > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.massifGrid strong {
+  font-size: 0.82rem;
+}
+
+.massifGrid small {
+  color: var(--moss);
+  font-size: 0.68rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 30px;
+  border-top: 1px solid rgb(107 120 108 / 18%);
+  padding-top: 24px;
+}
+
+.primary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--forest-deep);
+  border-radius: 5px;
+  padding: 0 20px;
+  background: var(--forest-deep);
+  color: #fffaf0;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.primary svg {
+  width: 17px;
+}
+
+.primary:disabled,
+.skip:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.state {
+  display: flex;
+  min-height: 210px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: var(--moss);
+  text-align: center;
+}
+
+.state span {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgb(41 76 57 / 20%);
+  border-top-color: var(--forest);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.state button {
+  min-height: 44px;
+}
+
+.error {
+  margin: 14px 0 0;
+  color: #a2452c;
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.departmentCard:focus-visible,
+.refineHeading button:focus-visible,
+.massifGrid button:focus-visible,
+.skip:focus-visible,
+.primary:focus-visible {
+  outline: 2px solid rgb(194 87 50 / 55%);
+  outline-offset: 3px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 10px 0 28px;
+  }
+
+  .sheet {
+    border-radius: 7px;
+  }
+
+  .departmentCard {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .choiceMark {
+    position: absolute;
+    right: 38px;
+  }
+
+  .massifGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .primary,
+  .skip {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .departmentCard,
+  .state span {
+    transition: none;
+    animation: none;
+  }
+}

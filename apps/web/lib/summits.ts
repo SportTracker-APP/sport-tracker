@@ -31,6 +31,7 @@ export type Summit = {
   imageUrl?: string;
   imageCredit?: string;
   sourceUrl?: string;
+  catalogTier?: "CORE" | "SECONDARY";
   primaryMassif?: SummitGeoArea | null;
   geoAreas?: SummitGeoArea[];
 };

@@ -4,8 +4,10 @@ import { useMemo, useRef, useState } from "react";
 
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useActivities } from "@/hooks/use-activities";
-import { useSummits } from "@/hooks/use-summits";
-import type { SummitView } from "@/lib/summit-discovery";
+import { useGeoPreferences } from "@/hooks/use-geo-preferences";
+import { useExplorationSummits } from "@/hooks/use-summits";
+import type { SummitCatalogScope } from "@/components/summits/summit-scope-switch";
+import type { ExplorationSummit } from "@/lib/summit-discovery";
 
 import { ExplorationHeader } from "./components/exploration-header";
 import { ExplorationMap } from "./components/exploration-map";
@@ -29,7 +31,16 @@ import styles from "./exploration.module.css";
 
 export function ExplorationView() {
   const activitiesQuery = useActivities();
-  const summitsQuery = useSummits();
+  const preferencesQuery = useGeoPreferences();
+  const [summitScope, setSummitScope] = useState<SummitCatalogScope>("MINE");
+  const preferredGeoAreaIds =
+    preferencesQuery.data?.discovery.map(({ id }) => id) ?? [];
+  const hasPreferredGeoAreas = preferredGeoAreaIds.length > 0;
+  const effectiveSummitScope = hasPreferredGeoAreas ? summitScope : "ALL";
+  const summitsQuery = useExplorationSummits(
+    effectiveSummitScope === "MINE" ? preferredGeoAreaIds : [],
+    !preferencesQuery.isLoading,
+  );
 
   return (
     <DashboardLayout variant="refuge">
@@ -45,6 +56,15 @@ export function ExplorationView() {
         <ExplorationExperience
           activities={activitiesQuery.data ?? []}
           summits={summitsQuery.data ?? []}
+          summitsLoading={preferencesQuery.isLoading || summitsQuery.isLoading}
+          summitsError={preferencesQuery.isError || summitsQuery.isError}
+          onRetrySummits={() => {
+            void preferencesQuery.refetch();
+            void summitsQuery.refetch();
+          }}
+          summitScope={effectiveSummitScope}
+          hasPreferredGeoAreas={hasPreferredGeoAreas}
+          onSummitScopeChange={setSummitScope}
         />
       )}
     </DashboardLayout>
@@ -54,13 +74,26 @@ export function ExplorationView() {
 export function ExplorationExperience({
   activities,
   summits,
+  summitsLoading = false,
+  summitsError = false,
+  onRetrySummits,
+  summitScope = "ALL",
+  hasPreferredGeoAreas = false,
+  onSummitScopeChange,
 }: {
   activities: ExplorationSourceActivity[];
-  summits: SummitView[];
+  summits: ExplorationSummit[];
+  summitsLoading?: boolean;
+  summitsError?: boolean;
+  onRetrySummits?: () => void;
+  summitScope?: SummitCatalogScope;
+  hasPreferredGeoAreas?: boolean;
+  onSummitScopeChange?: (scope: SummitCatalogScope) => void;
 }) {
   const [activeFilter, setActiveFilter] = useState<ExplorationFilter>("ALL");
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [activeTerritory, setActiveTerritory] = useState<string | null>(null);
+  const [summitsVisible, setSummitsVisible] = useState(true);
   const mapSectionRef = useRef<HTMLElement>(null);
 
   const viewModel = useMemo(
@@ -139,6 +172,15 @@ export function ExplorationExperience({
                 setActiveTerritory(null);
                 setSelectedRouteId(null);
               }}
+              summitsVisible={summitsVisible}
+              summitsLoading={summitsLoading}
+              summitsError={summitsError}
+              summitCount={summits.length}
+              onToggleSummits={() => setSummitsVisible((visible) => !visible)}
+              onRetrySummits={onRetrySummits}
+              summitScope={summitScope}
+              hasPreferredGeoAreas={hasPreferredGeoAreas}
+              onSummitScopeChange={onSummitScopeChange}
             />
 
             <TerritoryStatsStrip
@@ -154,6 +196,7 @@ export function ExplorationExperience({
                 <ExplorationMap
                   routes={viewModel.visibleMapRoutes}
                   summits={summits}
+                  summitsVisible={summitsVisible}
                   selectedRouteId={viewModel.selectedRoute?.id ?? null}
                   onSelectRoute={setSelectedRouteId}
                   onClearSelection={() => setSelectedRouteId(null)}

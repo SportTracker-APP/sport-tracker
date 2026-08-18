@@ -5,7 +5,14 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ActivityStatus, Prisma, SummitDiscoveryStatus } from '@prisma/client';
+import {
+  ActivityStatus,
+  GeoAreaType,
+  Prisma,
+  SummitCatalogStatus,
+  SummitCatalogTier,
+  SummitDiscoveryStatus,
+} from '@prisma/client';
 
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -17,6 +24,10 @@ import { UpdateSummitDiscoveryDto } from './dto/update-summit-discovery.dto';
 import { ListSummitsDto } from './dto/list-summits.dto';
 import { SUMMIT_CATALOG } from './summit-catalog';
 import { detectSummits } from './summit-detection';
+import {
+  PUBLIC_MAP_SUMMIT_WHERE,
+  PUBLIC_SUMMIT_WHERE,
+} from './summit-publication';
 
 type ProcessOptions = {
   sendNotifications?: boolean;
@@ -79,20 +90,19 @@ export class SummitsService implements OnModuleInit {
             imageUrl: summit.imageUrl,
             imageCredit: summit.imageCredit,
             sourceUrl: summit.sourceUrl,
+            catalogTier: SummitCatalogTier.CORE,
+            suggestedTier: SummitCatalogTier.CORE,
+            tierReason: 'Legacy HOVREN',
+            catalogStatus: SummitCatalogStatus.READY,
+            isActive: true,
           },
           update: {
-            name: summit.name,
-            aliases: [...(summit.aliases ?? [])],
-            altitude: summit.altitude,
-            massif: summit.massif,
-            difficulty: summit.difficulty,
-            type: summit.type,
-            longitude: summit.coordinates[0],
-            latitude: summit.coordinates[1],
+            // Identity and geography are now catalogue-managed through the
+            // admin back-office. Only read-only media metadata still follows
+            // the bundled bootstrap catalogue for existing summits.
             imageUrl: summit.imageUrl,
             imageCredit: summit.imageCredit,
             sourceUrl: summit.sourceUrl,
-            isActive: true,
           },
         }),
       ),
@@ -123,22 +133,30 @@ export class SummitsService implements OnModuleInit {
 
     await seedNationalGeoCatalog(this.prisma, {
       summitIds: SUMMIT_CATALOG.map((summit) => summit.id),
+      administrativeAreaSlug: 'haute-savoie',
     });
   }
 
   async findAll(userId: string, query: ListSummitsDto = {}) {
     await this.ensureHistoricalBackfill(userId);
 
-    const geoAreaIds = query.geoAreaId
-      ? await this.geoAreasService.getPublishedAreaIds(
-          query.geoAreaId,
+    const requestedGeoAreaIds = query.geoAreaIds?.length
+      ? query.geoAreaIds
+      : query.geoAreaId
+        ? [query.geoAreaId]
+        : [];
+    const geoAreaIds = requestedGeoAreaIds.length
+      ? await this.geoAreasService.getPublishedAreaIdsForMany(
+          requestedGeoAreaIds,
           query.includeDescendants ?? true,
         )
       : null;
 
     const summits = await this.prisma.summit.findMany({
       where: {
-        isActive: true,
+        ...(query.includeSecondary
+          ? PUBLIC_MAP_SUMMIT_WHERE
+          : PUBLIC_SUMMIT_WHERE),
         ...(geoAreaIds
           ? {
               geoAreas: {
@@ -175,12 +193,17 @@ export class SummitsService implements OnModuleInit {
     });
 
     return summits.map((summit) => {
-      const confirmedDiscoveries = summit.discoveries.filter(
-        (discovery) => discovery.status === SummitDiscoveryStatus.CONFIRMED,
-      );
-      const pendingDiscoveries = summit.discoveries.filter(
-        (discovery) => discovery.status === SummitDiscoveryStatus.PENDING,
-      );
+      const isCollectible = summit.catalogTier === SummitCatalogTier.CORE;
+      const confirmedDiscoveries = isCollectible
+        ? summit.discoveries.filter(
+            (discovery) => discovery.status === SummitDiscoveryStatus.CONFIRMED,
+          )
+        : [];
+      const pendingDiscoveries = isCollectible
+        ? summit.discoveries.filter(
+            (discovery) => discovery.status === SummitDiscoveryStatus.PENDING,
+          )
+        : [];
       const firstDiscovery = confirmedDiscoveries[0] ?? null;
       const latestDiscovery =
         confirmedDiscoveries[confirmedDiscoveries.length - 1] ?? null;
@@ -191,13 +214,21 @@ export class SummitsService implements OnModuleInit {
             : Math.min(closest, discovery.closestDistance),
         null,
       );
+      const department = summit.geoAreas.find(
+        ({ geoArea }) => geoArea.type === GeoAreaType.DEPARTMENT,
+      )?.geoArea;
+      const publicTerritory = summit.primaryMassif
+        ? [summit.primaryMassif.name, department?.name]
+            .filter(Boolean)
+            .join(' · ')
+        : (department?.name ?? summit.massif);
 
       return {
         id: summit.id,
         name: summit.name,
         aliases: summit.aliases,
         altitude: summit.altitude,
-        massif: summit.primaryMassif?.name ?? summit.massif,
+        massif: publicTerritory,
         primaryMassif: summit.primaryMassif,
         geoAreas: summit.geoAreas.map(({ geoArea }) => geoArea),
         difficulty: summit.difficulty,
@@ -206,8 +237,9 @@ export class SummitsService implements OnModuleInit {
         imageUrl: summit.imageUrl,
         imageCredit: summit.imageCredit,
         sourceUrl: summit.sourceUrl,
-        discovered: confirmedDiscoveries.length > 0,
-        closestDistance,
+        catalogTier: summit.catalogTier,
+        discovered: isCollectible && confirmedDiscoveries.length > 0,
+        closestDistance: isCollectible ? closestDistance : null,
         activityCount: confirmedDiscoveries.length,
         firstActivity: firstDiscovery?.activity ?? null,
         latestActivity: latestDiscovery?.activity ?? null,
@@ -223,12 +255,77 @@ export class SummitsService implements OnModuleInit {
     });
   }
 
+  async findMapSummits(userId: string, query: ListSummitsDto = {}) {
+    await this.ensureHistoricalBackfill(userId);
+
+    const requestedGeoAreaIds = query.geoAreaIds?.length
+      ? query.geoAreaIds
+      : query.geoAreaId
+        ? [query.geoAreaId]
+        : [];
+    const geoAreaIds = requestedGeoAreaIds.length
+      ? await this.geoAreasService.getPublishedAreaIdsForMany(
+          requestedGeoAreaIds,
+          query.includeDescendants ?? true,
+        )
+      : null;
+
+    const summits = await this.prisma.summit.findMany({
+      where: {
+        ...PUBLIC_MAP_SUMMIT_WHERE,
+        ...(geoAreaIds
+          ? { geoAreas: { some: { geoAreaId: { in: geoAreaIds } } } }
+          : {}),
+      },
+      select: {
+        id: true,
+        name: true,
+        altitude: true,
+        longitude: true,
+        latitude: true,
+        catalogTier: true,
+        discoveries: {
+          where: {
+            userId,
+            status: SummitDiscoveryStatus.CONFIRMED,
+          },
+          select: { confirmedAt: true },
+          orderBy: { confirmedAt: 'asc' },
+        },
+      },
+      orderBy: [{ altitude: 'desc' }, { name: 'asc' }],
+    });
+
+    return summits.map((summit) => ({
+      id: summit.id,
+      name: summit.name,
+      altitude: summit.altitude,
+      catalogTier: summit.catalogTier,
+      coordinates: [summit.longitude, summit.latitude] as const,
+      discovered:
+        summit.catalogTier === SummitCatalogTier.CORE &&
+        summit.discoveries.length > 0,
+      firstDiscoveredAt:
+        summit.catalogTier === SummitCatalogTier.CORE
+          ? (summit.discoveries[0]?.confirmedAt ?? null)
+          : null,
+      latestDiscoveredAt:
+        summit.catalogTier === SummitCatalogTier.CORE
+          ? (summit.discoveries.at(-1)?.confirmedAt ?? null)
+          : null,
+    }));
+  }
+
   async findBadges(userId: string) {
     await this.reconcileBadges(userId, false);
 
     const [discoveries, activities] = await Promise.all([
       this.prisma.summitDiscovery.findMany({
-        where: { userId, status: SummitDiscoveryStatus.CONFIRMED },
+        where: {
+          userId,
+          status: SummitDiscoveryStatus.CONFIRMED,
+          summit: { catalogTier: SummitCatalogTier.CORE },
+        },
         include: { activity: true },
         orderBy: { activity: { startedAt: 'asc' } },
       }),
@@ -406,7 +503,11 @@ export class SummitsService implements OnModuleInit {
     dto: UpdateSummitDiscoveryDto,
   ) {
     const discovery = await this.prisma.summitDiscovery.findFirst({
-      where: { id: discoveryId, userId },
+      where: {
+        id: discoveryId,
+        userId,
+        summit: { catalogTier: SummitCatalogTier.CORE },
+      },
     });
 
     if (!discovery) {
@@ -467,7 +568,7 @@ export class SummitsService implements OnModuleInit {
     }
 
     const summits = await this.prisma.summit.findMany({
-      where: { isActive: true },
+      where: PUBLIC_SUMMIT_WHERE,
       select: {
         id: true,
         name: true,
@@ -543,7 +644,11 @@ export class SummitsService implements OnModuleInit {
 
   private async reconcileBadges(userId: string, sendNotifications: boolean) {
     const discoveries = await this.prisma.summitDiscovery.findMany({
-      where: { userId, status: SummitDiscoveryStatus.CONFIRMED },
+      where: {
+        userId,
+        status: SummitDiscoveryStatus.CONFIRMED,
+        summit: { catalogTier: SummitCatalogTier.CORE },
+      },
       include: { summit: true, activity: true },
       orderBy: { activity: { startedAt: 'asc' } },
     });

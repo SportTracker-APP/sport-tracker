@@ -28,6 +28,18 @@ export type SummitView = Summit & {
   }>;
 };
 
+export type ExplorationSummit = Pick<
+  SummitView,
+  | "id"
+  | "name"
+  | "altitude"
+  | "catalogTier"
+  | "coordinates"
+  | "discovered"
+  | "firstDiscoveredAt"
+  | "latestDiscoveredAt"
+>;
+
 export type MassifProgress = {
   massif: string;
   total: number;

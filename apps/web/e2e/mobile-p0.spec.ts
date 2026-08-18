@@ -8,6 +8,7 @@ const mockUser = {
   email: "camille@example.test",
   role: "USER",
   avatarUrl: null,
+  needsDiscoveryOnboarding: false,
 };
 
 const activity = {
@@ -97,6 +98,12 @@ async function mockAuthenticatedApp(
     route.abort(),
   );
   await page.route("**/users/me", (route) => fulfillJson(route, mockUser));
+  await page.route("**/users/me/geo-preferences", (route) =>
+    fulfillJson(route, { discovery: [], onboardingCompleted: true }),
+  );
+  await page.route("**/geo-areas/discovery-options", (route) =>
+    fulfillJson(route, []),
+  );
   await page.route("**/auth/refresh", (route) =>
     fulfillJson(route, {
       accessToken: "e2e-mobile-p0-token",
@@ -170,9 +177,7 @@ async function expectComfortableBottomNavigation(page: Page) {
 }
 
 async function expectMobileFormControls(page: Page) {
-  const controls = page.locator(
-    'input:not([type="hidden"]), select, textarea',
-  );
+  const controls = page.locator('input:not([type="hidden"]), select, textarea');
   const fontSizes = await controls.evaluateAll((elements) =>
     elements
       .filter((element) => {
@@ -194,7 +199,9 @@ test.beforeEach(async ({ page }) => {
 
 test.describe("recette iPhone des parcours publics", () => {
   for (const route of ["/login", "/register", "/forgot-password"]) {
-    test(`${route} reste utilisable avec le clavier mobile`, async ({ page }) => {
+    test(`${route} reste utilisable avec le clavier mobile`, async ({
+      page,
+    }) => {
       await page.route(/^https:\/\/(?:[^/]+\.)?tawk\.to\//, (request) =>
         request.abort(),
       );
@@ -206,10 +213,14 @@ test.describe("recette iPhone des parcours publics", () => {
   }
 });
 
-test("la navigation au doigt relie les quatre pages phares", async ({ page }) => {
+test("la navigation au doigt relie les quatre pages phares", async ({
+  page,
+}) => {
   await mockAuthenticatedApp(page, "empty");
   await page.goto("/refuge", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", { level: 1, name: "Refuge" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Refuge" }),
+  ).toBeVisible();
   await expectComfortableBottomNavigation(page);
 
   for (const destination of [
@@ -237,14 +248,22 @@ const authenticatedRoutes = [
   { path: "/carte", heading: "Ton territoire prend forme." },
   { path: "/sommets", heading: "Ton carnet des sommets" },
   { path: "/activites", heading: "Tes sorties racontent ton chemin." },
-  { path: "/activites/nouvelle?status=COMPLETED", heading: "Ajoute une sortie déjà réalisée." },
-  { path: "/calendrier", heading: "Ta semaine, du premier pas au prochain sommet." },
+  {
+    path: "/activites/nouvelle?status=COMPLETED",
+    heading: "Ajoute une sortie déjà réalisée.",
+  },
+  {
+    path: "/calendrier",
+    heading: "Ta semaine, du premier pas au prochain sommet.",
+  },
   { path: "/statistiques", heading: "Ton bilan prend du relief." },
   { path: "/parametres", heading: "Paramètres" },
 ] as const;
 
 for (const route of authenticatedRoutes) {
-  test(`${route.path} reste contenue et défilable sur iPhone`, async ({ page }) => {
+  test(`${route.path} reste contenue et défilable sur iPhone`, async ({
+    page,
+  }) => {
     await mockAuthenticatedApp(page);
     await page.goto(route.path, { waitUntil: "domcontentloaded" });
     await expect(
@@ -270,13 +289,13 @@ for (const route of authenticatedRoutes) {
   });
 }
 
-test("le sommet découvert ouvre une fiche de sortie mobile", async ({ page }) => {
+test("le sommet découvert ouvre une fiche de sortie mobile", async ({
+  page,
+}) => {
   await mockAuthenticatedApp(page);
   await page.goto("/sommets", { waitUntil: "domcontentloaded" });
 
-  await page
-    .getByLabel(`Actions pour ${summit.name}`)
-    .click();
+  await page.getByLabel(`Actions pour ${summit.name}`).click();
   await page
     .getByRole("button", { name: `Retirer ${summit.name} de mes découvertes` })
     .click();
@@ -305,31 +324,41 @@ test("le sommet découvert ouvre une fiche de sortie mobile", async ({ page }) =
   await expectComfortableBottomNavigation(page);
 });
 
-test("les raccourcis statistiques ouvrent la bonne route française", async ({ page }) => {
+test("les raccourcis statistiques ouvrent la bonne route française", async ({
+  page,
+}) => {
   await mockAuthenticatedApp(page);
   await page.goto("/statistiques", { waitUntil: "domcontentloaded" });
   const traceLink = page.locator(`a[href="/activites/${activity.id}"]`).first();
   await expect(traceLink).toBeAttached();
 });
 
-test("la liste des sorties expose son chargement sur iPhone", async ({ page }) => {
+test("la liste des sorties expose son chargement sur iPhone", async ({
+  page,
+}) => {
   await mockAuthenticatedApp(page, "loading");
   await page.goto("/activites", { waitUntil: "domcontentloaded" });
   await expect(page.getByLabel("Chargement des sorties")).toBeVisible();
   await expectNoHorizontalOverflow(page);
-  await expect(page.getByRole("heading", { name: activity.title })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: activity.title }),
+  ).toBeVisible();
 });
 
 test("l’exploration expose son erreur sur iPhone", async ({ page }) => {
   await mockAuthenticatedApp(page, "error");
   await page.goto("/carte", { waitUntil: "domcontentloaded" });
   await expect(
-    page.getByRole("alert").filter({ hasText: "L’atlas n’a pas reçu tes traces." }),
+    page
+      .getByRole("alert")
+      .filter({ hasText: "L’atlas n’a pas reçu tes traces." }),
   ).toBeVisible({ timeout: 15_000 });
   await expectNoHorizontalOverflow(page);
 });
 
-test("la liste des sorties expose son état vide sur iPhone", async ({ page }) => {
+test("la liste des sorties expose son état vide sur iPhone", async ({
+  page,
+}) => {
   await mockAuthenticatedApp(page, "empty");
   await page.goto("/activites", { waitUntil: "domcontentloaded" });
   await expect(
@@ -338,7 +367,9 @@ test("la liste des sorties expose son état vide sur iPhone", async ({ page }) =
   await expectNoHorizontalOverflow(page);
 });
 
-test("le menu mobile plein écran reste contenu et défilable", async ({ page }) => {
+test("le menu mobile plein écran reste contenu et défilable", async ({
+  page,
+}) => {
   await mockAuthenticatedApp(page, "empty");
   await page.goto("/refuge", { waitUntil: "domcontentloaded" });
   await page
@@ -353,6 +384,8 @@ test("le menu mobile plein écran reste contenu et défilable", async ({ page })
   expect(box!.y).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(iphone13.viewport.width);
   expect(box!.y + box!.height).toBeLessThanOrEqual(iphone13.viewport.height);
-  await expect(page.getByRole("button", { name: "Fermer le menu" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Fermer le menu" }),
+  ).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });

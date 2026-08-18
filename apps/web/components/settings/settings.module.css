@@ -189,6 +189,148 @@
     var(--settings-paper);
 }
 
+.territoryPanel {
+  margin-top: var(--refuge-flow-gap, 24px);
+}
+
+.territoryContent {
+  padding: 29px 30px 30px;
+}
+
+.territoryState {
+  min-height: 180px;
+  padding: 54px 30px;
+  color: var(--settings-moss);
+  text-align: center;
+}
+
+.territoryChoices {
+  display: grid;
+  gap: 18px;
+}
+
+.territoryGroup {
+  display: grid;
+  gap: 13px;
+}
+
+.territoryGroup > button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 70px;
+  border: 1px solid var(--settings-line);
+  border-radius: 7px;
+  padding: 12px 15px;
+  background: #f3eee3;
+  color: var(--settings-forest-deep);
+  text-align: left;
+  cursor: pointer;
+}
+
+.territoryGroup > button[data-selected="true"] {
+  border-color: rgba(47, 93, 70, 0.42);
+  background: #ece9dc;
+}
+
+.territoryGroup > button > svg {
+  width: 20px;
+  color: var(--settings-forest);
+}
+
+.territoryGroup > button > span {
+  display: grid;
+  gap: 2px;
+}
+
+.territoryGroup small {
+  color: var(--settings-moss);
+  font-size: 0.68rem;
+}
+
+.territoryGroup > p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--settings-moss);
+  font-size: 0.72rem;
+}
+
+.territoryGroup > p svg {
+  width: 15px;
+  color: var(--settings-terracotta);
+}
+
+.territoryMassifs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.territoryMassifs button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--settings-line);
+  border-radius: 5px;
+  padding: 0 12px;
+  background: #f8f4ea;
+  color: var(--settings-forest-deep);
+  cursor: pointer;
+}
+
+.territoryMassifs button[data-selected="true"] {
+  border-color: rgba(47, 93, 70, 0.4);
+  background: rgba(47, 93, 70, 0.08);
+}
+
+.territoryMassifs button > span {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border: 1px solid rgba(47, 93, 70, 0.25);
+  border-radius: 50%;
+}
+
+.territoryMassifs button > span svg {
+  width: 11px;
+}
+
+.territoryActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+  border-top: 1px solid rgba(103, 116, 104, 0.16);
+  padding-top: 20px;
+}
+
+.territoryActions button {
+  min-height: 44px;
+  border: 1px solid var(--settings-line);
+  border-radius: 5px;
+  padding: 0 16px;
+  background: transparent;
+  color: var(--settings-forest);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.territoryActions button:last-child {
+  border-color: var(--settings-forest-deep);
+  background: var(--settings-forest-deep);
+  color: #fffaf2;
+}
+
+.territoryActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .panel::before {
   position: absolute;
   top: 0;

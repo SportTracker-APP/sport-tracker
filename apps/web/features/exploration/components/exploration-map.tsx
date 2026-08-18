@@ -13,7 +13,7 @@ import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import mapboxStyle from "@/app/json_mapbox.json";
-import type { SummitView } from "@/lib/summit-discovery";
+import type { ExplorationSummit } from "@/lib/summit-discovery";
 
 import type {
   ExplorationRoute,
@@ -36,8 +36,32 @@ const MAPBOX_SCRIPT_ID = "mapbox-gl-js";
 const MAPBOX_STYLE_ID = "mapbox-gl-css";
 const MAPBOX_VERSION = "v3.10.0";
 const INITIAL_MAP_READING = { lat: 45.9, lng: 6.13, zoom: 9.4 };
-const DISCOVERED_SUMMIT_LABEL_MIN_ZOOM = 9.2;
-const UNDISCOVERED_SUMMIT_LABEL_MIN_ZOOM = 11.2;
+export const DISCOVERED_SUMMIT_MARKER_MIN_ZOOM = 7.4;
+export const UNDISCOVERED_SUMMIT_MARKER_MIN_ZOOM = 8.8;
+export const DISCOVERED_SUMMIT_LABEL_MIN_ZOOM = 9.2;
+export const UNDISCOVERED_SUMMIT_LABEL_MIN_ZOOM = 11.2;
+export const SECONDARY_SUMMIT_ZOOM_OFFSET = 1.8;
+export const SECONDARY_SUMMIT_MARKER_MIN_ZOOM = Number(
+  (UNDISCOVERED_SUMMIT_MARKER_MIN_ZOOM + SECONDARY_SUMMIT_ZOOM_OFFSET).toFixed(
+    1,
+  ),
+);
+export const SECONDARY_SUMMIT_LABEL_MIN_ZOOM = Number(
+  (UNDISCOVERED_SUMMIT_LABEL_MIN_ZOOM + SECONDARY_SUMMIT_ZOOM_OFFSET).toFixed(
+    1,
+  ),
+);
+export const SUMMIT_LAYER_IDS = [
+  "sport-summits-undiscovered",
+  "sport-summits-discovered",
+  "sport-summits-latest-ring",
+  "sport-summits-latest",
+  "sport-summit-book-indexes",
+  "sport-summit-labels",
+  "sport-summit-undiscovered-labels",
+  "sport-summits-secondary",
+  "sport-summit-secondary-labels",
+] as const;
 
 function loadMapbox() {
   return new Promise<MapboxLike>((resolve, reject) => {
@@ -112,7 +136,7 @@ function getMapboxStyle() {
   return style;
 }
 
-function getDiscoveryTimestamp(summit: SummitView) {
+function getDiscoveryTimestamp(summit: ExplorationSummit) {
   const value = summit.firstDiscoveredAt ?? summit.latestDiscoveredAt;
   if (!value) return Number.POSITIVE_INFINITY;
 
@@ -120,7 +144,7 @@ function getDiscoveryTimestamp(summit: SummitView) {
   return Number.isNaN(timestamp) ? Number.POSITIVE_INFINITY : timestamp;
 }
 
-function getLatestDiscoveryId(summits: SummitView[]) {
+function getLatestDiscoveryId(summits: ExplorationSummit[]) {
   return summits
     .filter((summit) => summit.discovered)
     .map((summit) => ({
@@ -134,13 +158,16 @@ function getLatestDiscoveryId(summits: SummitView[]) {
     )[0]?.summit.id;
 }
 
-function getSummitsGeoJson(
-  summits: SummitView[],
+export function getSummitsGeoJson(
+  summits: ExplorationSummit[],
 ): SummitGeoJsonFeatureCollection {
   const latestDiscoveryId = getLatestDiscoveryId(summits);
   const bookIndexes = new Map(
     summits
-      .filter((summit) => summit.discovered)
+      .filter(
+        (summit) =>
+          summit.discovered && (summit.catalogTier ?? "CORE") === "CORE",
+      )
       .sort((firstSummit, secondSummit) => {
         const dateDifference =
           getDiscoveryTimestamp(firstSummit) -
@@ -159,9 +186,10 @@ function getSummitsGeoJson(
       type: "Feature",
       properties: {
         name: summit.name,
+        tier: summit.catalogTier ?? "CORE",
         altitude: summit.altitude,
         bookIndex: bookIndexes.get(summit.id)?.toString() ?? "",
-        label: `${summit.name} · ${summit.altitude} m`,
+        label: summit.name,
         status:
           summit.id === latestDiscoveryId
             ? "LATEST"
@@ -175,6 +203,21 @@ function getSummitsGeoJson(
       },
     })),
   };
+}
+
+export function setSummitLayersVisibility(
+  map: MapboxMapLike,
+  visible: boolean,
+) {
+  for (const layerId of SUMMIT_LAYER_IDS) {
+    if (map.getLayer(layerId)) {
+      map.setLayoutProperty(
+        layerId,
+        "visibility",
+        visible ? "visible" : "none",
+      );
+    }
+  }
 }
 
 function getRouteMarkersGeoJson(
@@ -311,7 +354,8 @@ function fitRoutes(
 
 type ExplorationMapProps = {
   routes: ExplorationRoute[];
-  summits: SummitView[];
+  summits: ExplorationSummit[];
+  summitsVisible: boolean;
   selectedRouteId: string | null;
   onSelectRoute: (routeId: string) => void;
   onClearSelection: () => void;
@@ -321,6 +365,7 @@ type ExplorationMapProps = {
 export function ExplorationMap({
   routes,
   summits,
+  summitsVisible,
   selectedRouteId,
   onSelectRoute,
   onClearSelection,
@@ -332,6 +377,7 @@ export function ExplorationMap({
   const mapboxRef = useRef<MapboxLike | null>(null);
   const routesRef = useRef(routes);
   const summitsRef = useRef(summits);
+  const summitsVisibleRef = useRef(summitsVisible);
   const onSelectRouteRef = useRef(onSelectRoute);
   const selectedRevealFrameRef = useRef<number | null>(null);
   const [status, setStatus] = useState<
@@ -350,6 +396,10 @@ export function ExplorationMap({
   useEffect(() => {
     summitsRef.current = summits;
   }, [summits]);
+
+  useEffect(() => {
+    summitsVisibleRef.current = summitsVisible;
+  }, [summitsVisible]);
 
   useEffect(() => {
     onSelectRouteRef.current = onSelectRoute;
@@ -425,7 +475,12 @@ export function ExplorationMap({
               id: "sport-summits-undiscovered",
               type: "circle",
               source: "sport-summits",
-              filter: ["==", ["get", "status"], "UNDISCOVERED"],
+              minzoom: UNDISCOVERED_SUMMIT_MARKER_MIN_ZOOM,
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["==", ["get", "status"], "UNDISCOVERED"],
+              ],
               paint: {
                 "circle-color": "rgba(244,239,227,.18)",
                 "circle-radius": [
@@ -449,7 +504,12 @@ export function ExplorationMap({
               id: "sport-summits-discovered",
               type: "circle",
               source: "sport-summits",
-              filter: ["==", ["get", "status"], "DISCOVERED"],
+              minzoom: DISCOVERED_SUMMIT_MARKER_MIN_ZOOM,
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["==", ["get", "status"], "DISCOVERED"],
+              ],
               paint: {
                 "circle-color": "#315f49",
                 "circle-radius": [
@@ -473,7 +533,12 @@ export function ExplorationMap({
               id: "sport-summits-latest-ring",
               type: "circle",
               source: "sport-summits",
-              filter: ["==", ["get", "status"], "LATEST"],
+              minzoom: DISCOVERED_SUMMIT_MARKER_MIN_ZOOM,
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["==", ["get", "status"], "LATEST"],
+              ],
               paint: {
                 "circle-color": "rgba(200,91,47,0)",
                 "circle-radius": [
@@ -497,7 +562,12 @@ export function ExplorationMap({
               id: "sport-summits-latest",
               type: "circle",
               source: "sport-summits",
-              filter: ["==", ["get", "status"], "LATEST"],
+              minzoom: DISCOVERED_SUMMIT_MARKER_MIN_ZOOM,
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["==", ["get", "status"], "LATEST"],
+              ],
               paint: {
                 "circle-color": "#c85b2f",
                 "circle-radius": [
@@ -521,7 +591,11 @@ export function ExplorationMap({
               id: "sport-summit-book-indexes",
               type: "symbol",
               source: "sport-summits",
-              filter: ["!=", ["get", "status"], "UNDISCOVERED"],
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["!=", ["get", "status"], "UNDISCOVERED"],
+              ],
               layout: {
                 "text-field": ["get", "bookIndex"],
                 "text-font": ["DIN Pro Bold", "Arial Unicode MS Bold"],
@@ -550,13 +624,19 @@ export function ExplorationMap({
               type: "symbol",
               source: "sport-summits",
               minzoom: DISCOVERED_SUMMIT_LABEL_MIN_ZOOM,
-              filter: ["!=", ["get", "status"], "UNDISCOVERED"],
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["!=", ["get", "status"], "UNDISCOVERED"],
+              ],
               layout: {
                 "text-anchor": "top",
                 "text-field": ["get", "label"],
                 "text-font": ["DIN Pro Medium", "Arial Unicode MS Regular"],
                 "text-offset": [0, 1.15],
                 "text-optional": true,
+                "text-allow-overlap": false,
+                "text-ignore-placement": false,
                 "text-size": 10.5,
               },
               paint: {
@@ -582,16 +662,19 @@ export function ExplorationMap({
               type: "symbol",
               source: "sport-summits",
               minzoom: UNDISCOVERED_SUMMIT_LABEL_MIN_ZOOM,
-              filter: ["==", ["get", "status"], "UNDISCOVERED"],
+              filter: [
+                "all",
+                ["==", ["get", "tier"], "CORE"],
+                ["==", ["get", "status"], "UNDISCOVERED"],
+              ],
               layout: {
                 "text-anchor": "top",
                 "text-field": ["get", "label"],
-                "text-font": [
-                  "DIN Pro Medium",
-                  "Arial Unicode MS Regular",
-                ],
+                "text-font": ["DIN Pro Medium", "Arial Unicode MS Regular"],
                 "text-offset": [0, 1.05],
                 "text-optional": true,
+                "text-allow-overlap": false,
+                "text-ignore-placement": false,
                 "text-size": 10,
               },
               paint: {
@@ -603,6 +686,54 @@ export function ExplorationMap({
             },
             labelLayer,
           );
+          map.addLayer(
+            {
+              id: "sport-summits-secondary",
+              type: "circle",
+              source: "sport-summits",
+              minzoom: SECONDARY_SUMMIT_MARKER_MIN_ZOOM,
+              filter: ["==", ["get", "tier"], "SECONDARY"],
+              paint: {
+                "circle-color": "rgba(244,239,227,.35)",
+                "circle-radius": 3.5,
+                "circle-stroke-color": "#8b887b",
+                "circle-stroke-width": 1,
+                "circle-opacity": 0.68,
+              },
+            },
+            labelLayer,
+          );
+          map.addLayer(
+            {
+              id: "sport-summit-secondary-labels",
+              type: "symbol",
+              source: "sport-summits",
+              minzoom: SECONDARY_SUMMIT_LABEL_MIN_ZOOM,
+              filter: ["==", ["get", "tier"], "SECONDARY"],
+              layout: {
+                "text-anchor": "top",
+                "text-field": [
+                  "concat",
+                  ["get", "label"],
+                  " · point remarquable",
+                ],
+                "text-font": ["DIN Pro Medium", "Arial Unicode MS Regular"],
+                "text-offset": [0, 0.95],
+                "text-optional": true,
+                "text-allow-overlap": false,
+                "text-ignore-placement": false,
+                "text-size": 9.5,
+              },
+              paint: {
+                "text-color": "#686d65",
+                "text-halo-color": "rgba(244,239,227,.92)",
+                "text-halo-width": 1.4,
+                "text-opacity": 0.72,
+              },
+            },
+            labelLayer,
+          );
+          setSummitLayersVisibility(map, summitsVisibleRef.current);
 
           map.addSource("sport-traces", {
             type: "geojson",
@@ -899,6 +1030,13 @@ export function ExplorationMap({
     const source = mapRef.current?.getSource("sport-summits");
     source?.setData?.(getSummitsGeoJson(summits));
   }, [summits]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    setSummitLayersVisibility(map, summitsVisible);
+  }, [summitsVisible]);
 
   useEffect(() => {
     const map = mapRef.current;

@@ -137,7 +137,37 @@ async function mockSummitsPage(page: Page) {
         firstName: "Camille",
         email: "camille@example.test",
         role: "USER",
+        needsDiscoveryOnboarding: false,
       }),
+    });
+  });
+  await page.route("**/users/me/geo-preferences", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ discovery: [], onboardingCompleted: true }),
+    });
+  });
+  await page.route("**/auth/refresh", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        accessToken: "e2e-access-token",
+        user: {
+          id: "user-summits",
+          firstName: "Camille",
+          email: "camille@example.test",
+          role: "USER",
+        },
+      }),
+    });
+  });
+  await page.route("**/strava/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ connected: false }),
     });
   });
 
@@ -358,6 +388,28 @@ test("les états de chargement et d’erreur restent explicites", async ({
         email: "camille@example.test",
         role: "USER",
       }),
+    });
+  });
+  await page.route("**/auth/refresh", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        accessToken: "e2e-access-token",
+        user: {
+          id: "user-summits",
+          firstName: "Camille",
+          email: "camille@example.test",
+          role: "USER",
+        },
+      }),
+    });
+  });
+  await page.route("**/strava/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ connected: false }),
     });
   });
   await page.route("**/summits**", async (route) => {

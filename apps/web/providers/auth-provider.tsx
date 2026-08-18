@@ -120,7 +120,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
           currentUser,
         );
 
-        // SI connecté et page de connexion/inscription
         if (authEntryRoutes.includes(pathname)) {
           router.replace("/refuge");
         }
@@ -138,7 +137,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     };
 
     void initializeAuth();
-  }, [pathname, shouldBypassAuthGate, hydrateAuth, logout, router]);
+  }, [
+    pathname,
+    shouldBypassAuthGate,
+    isPublicRoute,
+    hydrateAuth,
+    logout,
+    router,
+  ]);
 
   if (isLoading && !shouldBypassAuthGate) {
     return (

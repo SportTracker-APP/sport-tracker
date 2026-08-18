@@ -1,10 +1,44 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access -- Jest mock call arguments are exposed as `any`. */
 import { BadRequestException } from '@nestjs/common';
-import { GeoAreaType } from '@prisma/client';
+import {
+  GeoAreaType,
+  SummitCatalogStatus,
+  SummitCatalogTier,
+} from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { GeoAreasService } from './geo-areas.service';
 
 describe('GeoAreasService', () => {
+  it('never counts masked summits in public territory responses', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const service = new GeoAreasService({
+      geoArea: { findMany },
+    } as unknown as PrismaService);
+
+    await service.findAll({});
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        include: {
+          _count: {
+            select: {
+              summitLinks: {
+                where: {
+                  summit: {
+                    isActive: true,
+                    catalogStatus: SummitCatalogStatus.READY,
+                    catalogTier: SummitCatalogTier.CORE,
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+    );
+  });
+
   it('resolves a parent territory and all descendants with one hierarchy read', async () => {
     const findMany = jest.fn().mockResolvedValue([
       { id: 'alpes', parentId: 'france' },
@@ -37,6 +71,74 @@ describe('GeoAreasService', () => {
     await expect(service.getPublishedAreaIds('alpes', false)).resolves.toEqual([
       'alpes',
     ]);
+  });
+
+  it('unions several territories and their descendants without duplicates', async () => {
+    const service = new GeoAreasService({
+      geoArea: {
+        findMany: jest.fn().mockResolvedValue([
+          { id: 'haute-savoie', parentId: 'aura' },
+          { id: 'aravis', parentId: 'haute-savoie' },
+          { id: 'mont-blanc', parentId: 'haute-savoie' },
+          { id: 'bauges', parentId: 'haute-savoie' },
+        ]),
+      },
+    } as unknown as PrismaService);
+
+    await expect(
+      service.getPublishedAreaIdsForMany(
+        ['aravis', 'mont-blanc', 'aravis'],
+        true,
+      ),
+    ).resolves.toEqual(['aravis', 'mont-blanc']);
+  });
+
+  it('derives onboarding options only from published areas with public summits', async () => {
+    const findMany = jest
+      .fn()
+      .mockResolvedValueOnce([
+        {
+          id: 'haute-savoie',
+          name: 'Haute-Savoie',
+          slug: 'haute-savoie',
+          type: GeoAreaType.DEPARTMENT,
+          parentId: 'aura',
+          _count: { summitLinks: 846 },
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          id: 'aravis',
+          name: 'Aravis',
+          slug: 'aravis',
+          type: GeoAreaType.MASSIF,
+          _count: { summitLinks: 42 },
+        },
+      ]);
+    const service = new GeoAreasService({
+      geoArea: { findMany },
+    } as unknown as PrismaService);
+
+    await expect(service.findDiscoveryOptions()).resolves.toEqual([
+      expect.objectContaining({
+        id: 'haute-savoie',
+        massifs: [expect.objectContaining({ id: 'aravis' })],
+      }),
+    ]);
+    const departmentQuery = findMany.mock.calls[0]?.[0] as {
+      where: Record<string, unknown>;
+    };
+    const massifQuery = findMany.mock.calls[1]?.[0] as {
+      where: Record<string, unknown>;
+    };
+    expect(departmentQuery.where).toMatchObject({
+      type: GeoAreaType.DEPARTMENT,
+      isPublished: true,
+    });
+    expect(massifQuery.where).toMatchObject({
+      type: GeoAreaType.MASSIF,
+      isPublished: true,
+    });
   });
 
   it('sets a MASSIF as primary and guarantees all ancestor associations', async () => {

@@ -1,5 +1,11 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 function optionalBoolean({ value }: { value: unknown }) {
   if (value === undefined) return undefined;
@@ -8,13 +14,34 @@ function optionalBoolean({ value }: { value: unknown }) {
   return value;
 }
 
+function optionalStringArray({ value }: { value: unknown }) {
+  return typeof value === 'string'
+    ? value
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    : value;
+}
+
 export class ListSummitsDto {
   @IsOptional()
   @IsString()
   geoAreaId?: string;
 
   @IsOptional()
+  @Transform(optionalStringArray)
+  @IsArray()
+  @ArrayMaxSize(12)
+  @IsString({ each: true })
+  geoAreaIds?: string[];
+
+  @IsOptional()
   @Transform(optionalBoolean)
   @IsBoolean()
   includeDescendants?: boolean;
+
+  @IsOptional()
+  @Transform(optionalBoolean)
+  @IsBoolean()
+  includeSecondary?: boolean;
 }

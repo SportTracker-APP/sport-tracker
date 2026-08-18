@@ -50,6 +50,22 @@ export const GEO_AREA_CATALOG: GeoAreaCatalogEntry[] = [
     isPublished: true,
   },
   {
+    id: 'geo-auvergne-rhone-alpes',
+    name: 'Auvergne-Rhône-Alpes',
+    slug: 'auvergne-rhone-alpes',
+    type: GeoAreaType.ADMIN_REGION,
+    parentSlug: 'france',
+    isPublished: true,
+  },
+  {
+    id: 'geo-haute-savoie',
+    name: 'Haute-Savoie',
+    slug: 'haute-savoie',
+    type: GeoAreaType.DEPARTMENT,
+    parentSlug: 'auvergne-rhone-alpes',
+    isPublished: true,
+  },
+  {
     id: 'geo-alpes',
     name: 'Alpes',
     slug: 'alpes',
