@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 
 import {
+  GeoAreaType,
   Prisma,
   SummitAdminAuditAction,
   SummitCatalogStatus,
@@ -17,8 +18,10 @@ import {
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { GeoAreasService } from '../geography/geo-areas.service';
+import { HAUTE_SAVOIE_GEO_AREA_SLUG } from '../summits/import/summit-import.constants';
 import { isSummitPublic } from '../summits/summit-publication';
 import { ListAdminGeoAreasDto } from './dto/list-admin-geo-areas.dto';
+import { CreateAdminSummitDto } from './dto/create-admin-summit.dto';
 import {
   AdminImportCandidateView,
   ListAdminImportCandidatesDto,
@@ -49,6 +52,53 @@ const EDITABLE_IDENTITY_FIELDS = [
 ] as const;
 
 type SummitIdentityField = (typeof EDITABLE_IDENTITY_FIELDS)[number];
+
+const COMPLEMENTARY_RESOLUTION_ACTIONS = [
+  SummitImportResolutionAction.MATCH_EXISTING,
+  SummitImportResolutionAction.CREATE_NEW,
+  SummitImportResolutionAction.IGNORE,
+] as const;
+
+function importedSummitId(externalId: string) {
+  return `ign-bd-topo-${externalId.toLocaleLowerCase('fr-FR')}`;
+}
+
+function manualSummitId(name: string) {
+  const slug = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('fr-FR')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 120);
+  if (!slug) throw new BadRequestException('Nom de sommet invalide');
+  return slug;
+}
+
+function coordinateSuffix(latitude: number, longitude: number) {
+  const part = (value: number, positive: string, negative: string) =>
+    `${value >= 0 ? positive : negative}${Math.round(Math.abs(value) * 10_000)}`;
+  return `${part(latitude, 'n', 's')}-${part(longitude, 'e', 'w')}`;
+}
+
+function distanceMeters(
+  first: { latitude: number; longitude: number },
+  second: { latitude: number; longitude: number },
+) {
+  const radians = (value: number) => (value * Math.PI) / 180;
+  const latitudeDelta = radians(second.latitude - first.latitude);
+  const longitudeDelta = radians(second.longitude - first.longitude);
+  const firstLatitude = radians(first.latitude);
+  const secondLatitude = radians(second.latitude);
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(firstLatitude) *
+      Math.cos(secondLatitude) *
+      Math.sin(longitudeDelta / 2) ** 2;
+  return (
+    6_371_000 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
+  );
+}
 
 @Injectable()
 export class AdminSummitsService {
@@ -184,6 +234,7 @@ export class AdminSummitsService {
             status: true,
             suggestedTier: true,
             resolutionAction: true,
+            appliedAt: true,
             isLegacyMatch: true,
             homonymGroupSize: true,
             matchedSummit: {
@@ -222,6 +273,14 @@ export class AdminSummitsService {
           resolutionAction !== null &&
           resolutionAction !== SummitImportResolutionAction.KEEP_FOR_REVIEW,
       ).length,
+      complementaryPublishableCount: candidates.filter(
+        ({ status, resolutionAction, appliedAt }) =>
+          status === SummitImportCandidateStatus.CONFLICT &&
+          appliedAt === null &&
+          COMPLEMENTARY_RESOLUTION_ACTIONS.some(
+            (action) => action === resolutionAction,
+          ),
+      ).length,
       unresolvedConflictCount: candidates.filter(
         ({ status, resolutionAction }) =>
           status === SummitImportCandidateStatus.CONFLICT &&
@@ -246,6 +305,203 @@ export class AdminSummitsService {
           !matchedSummit.isActive,
       ).length,
     }));
+  }
+
+  async create(adminUserId: string, dto: CreateAdminSummitDto) {
+    const baseSummitId = manualSummitId(dto.name.trim());
+    let summitId = baseSummitId;
+    try {
+      await this.prisma.$transaction(
+        async (transaction) => {
+          const [existingId, nearbySummits, areas] = await Promise.all([
+            transaction.summit.findUnique({
+              where: { id: baseSummitId },
+              select: { id: true, name: true },
+            }),
+            transaction.summit.findMany({
+              where: {
+                latitude: {
+                  gte: dto.latitude - 0.002,
+                  lte: dto.latitude + 0.002,
+                },
+                longitude: {
+                  gte: dto.longitude - 0.003,
+                  lte: dto.longitude + 0.003,
+                },
+              },
+              select: {
+                id: true,
+                name: true,
+                latitude: true,
+                longitude: true,
+              },
+            }),
+            transaction.geoArea.findMany({
+              select: {
+                id: true,
+                name: true,
+                type: true,
+                parentId: true,
+                isPublished: true,
+              },
+            }),
+          ]);
+
+          const nearbyDuplicate = nearbySummits.find(
+            (summit) => distanceMeters(summit, dto) <= 75,
+          );
+          if (nearbyDuplicate) {
+            throw new ConflictException(
+              `Un sommet très proche existe déjà : ${nearbyDuplicate.name} (${nearbyDuplicate.id})`,
+            );
+          }
+          if (existingId) {
+            summitId = `${baseSummitId}-${coordinateSuffix(
+              dto.latitude,
+              dto.longitude,
+            )}`;
+          }
+
+          const areaById = new Map(areas.map((area) => [area.id, area]));
+          const primaryMassif = areaById.get(dto.primaryMassifId);
+          if (!primaryMassif) {
+            throw new NotFoundException('Massif principal introuvable');
+          }
+          if (primaryMassif.type !== GeoAreaType.MASSIF) {
+            throw new BadRequestException(
+              'Le massif principal doit être un territoire de type MASSIF',
+            );
+          }
+          if (dto.isActive && !primaryMassif.isPublished) {
+            throw new BadRequestException(
+              'Le massif principal doit être publié avant le sommet',
+            );
+          }
+          if (dto.isActive && dto.catalogStatus !== SummitCatalogStatus.READY) {
+            throw new BadRequestException(
+              'Un sommet doit être au statut READY avant publication',
+            );
+          }
+          if (dto.isActive && dto.catalogTier === SummitCatalogTier.REFERENCE) {
+            throw new BadRequestException(
+              'Un sommet REFERENCE ne peut pas être publié',
+            );
+          }
+
+          const selectedAreaIds = new Set(dto.geoAreaIds ?? []);
+          selectedAreaIds.add(primaryMassif.id);
+          let ancestorId = primaryMassif.parentId;
+          while (ancestorId) {
+            selectedAreaIds.add(ancestorId);
+            ancestorId = areaById.get(ancestorId)?.parentId ?? null;
+          }
+          const unknownAreaId = [...selectedAreaIds].find(
+            (areaId) => !areaById.has(areaId),
+          );
+          if (unknownAreaId) {
+            throw new NotFoundException(
+              `Territoire introuvable : ${unknownAreaId}`,
+            );
+          }
+
+          if (dto.externalReference) {
+            const existingReference =
+              await transaction.summitExternalReference.findUnique({
+                where: {
+                  provider_externalId: {
+                    provider: dto.externalReference.provider,
+                    externalId: dto.externalReference.externalId.trim(),
+                  },
+                },
+                select: { summitId: true },
+              });
+            if (existingReference) {
+              throw new ConflictException(
+                `Cette référence externe est déjà liée au sommet ${existingReference.summitId}`,
+              );
+            }
+          }
+
+          const now = new Date();
+          await transaction.summit.create({
+            data: {
+              id: summitId,
+              name: dto.name.trim(),
+              aliases: [],
+              altitude: dto.altitude,
+              latitude: dto.latitude,
+              longitude: dto.longitude,
+              massif: primaryMassif.name,
+              difficulty: 'À définir',
+              type: dto.type.trim(),
+              sourceUrl: dto.sourceUrl?.trim() || null,
+              catalogTier: dto.catalogTier,
+              suggestedTier: dto.catalogTier,
+              tierReason: 'Création manuelle admin',
+              tierUpdatedAt: now,
+              tierUpdatedByUserId: adminUserId,
+              catalogStatus: dto.catalogStatus,
+              isActive: dto.isActive,
+              primaryMassifId: primaryMassif.id,
+              geoAreas: {
+                create: [...selectedAreaIds].map((geoAreaId) => ({
+                  geoAreaId,
+                })),
+              },
+              ...(dto.externalReference && {
+                externalReferences: {
+                  create: {
+                    provider: dto.externalReference.provider,
+                    externalId: dto.externalReference.externalId.trim(),
+                    sourceName: dto.externalReference.sourceName.trim(),
+                    sourceVersion:
+                      dto.externalReference.sourceVersion?.trim() || 'manual',
+                    firstSeenAt: now,
+                    lastSeenAt: now,
+                  },
+                },
+              }),
+            },
+          });
+          await this.createAuditLog(transaction, {
+            summitId,
+            adminUserId,
+            action: SummitAdminAuditAction.MANUAL_SUMMIT_CREATED,
+            before: null,
+            after: {
+              name: dto.name.trim(),
+              altitude: dto.altitude,
+              latitude: dto.latitude,
+              longitude: dto.longitude,
+              primaryMassifId: primaryMassif.id,
+              geoAreaIds: [...selectedAreaIds],
+              catalogTier: dto.catalogTier,
+              catalogStatus: dto.catalogStatus,
+              isActive: dto.isActive,
+              ...(dto.externalReference && {
+                externalReference: {
+                  provider: dto.externalReference.provider,
+                  externalId: dto.externalReference.externalId.trim(),
+                },
+              }),
+            },
+          });
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'Un sommet ou une référence identique existe déjà',
+        );
+      }
+      throw error;
+    }
+
+    return this.findOne(summitId);
   }
 
   async findImportRun(
@@ -332,6 +588,12 @@ export class AdminSummitsService {
     if (!candidate) throw new NotFoundException('Candidat introuvable');
     if (Object.keys(dto).length === 0) {
       throw new BadRequestException('Aucune décision transmise');
+    }
+
+    if (candidate.appliedAt) {
+      throw new BadRequestException(
+        'Une résolution déjà appliquée ne peut plus être modifiée',
+      );
     }
 
     if (dto.resolutionAction && candidate.status !== 'CONFLICT') {
@@ -454,6 +716,291 @@ export class AdminSummitsService {
     return { importRunId, publishedCount: summitIds.length };
   }
 
+  async publishComplementaryResolutions(
+    adminUserId: string,
+    importRunId: string,
+  ) {
+    const run = await this.prisma.summitImportRun.findUnique({
+      where: { id: importRunId },
+      include: {
+        candidates: {
+          where: {
+            status: SummitImportCandidateStatus.CONFLICT,
+            appliedAt: null,
+            resolutionAction: { in: [...COMPLEMENTARY_RESOLUTION_ACTIONS] },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+
+    if (!run) throw new NotFoundException('Import introuvable');
+    if (run.status !== SummitImportRunStatus.PUBLISHED) {
+      throw new BadRequestException(
+        'La publication complémentaire exige un import déjà publié',
+      );
+    }
+
+    if (run.candidates.length === 0) {
+      return {
+        importRunId,
+        appliedCount: 0,
+        createdCount: 0,
+        matchedCount: 0,
+        ignoredCount: 0,
+      };
+    }
+
+    const now = new Date();
+    let createdCount = 0;
+    let matchedCount = 0;
+    let ignoredCount = 0;
+
+    await this.prisma.$transaction(
+      async (transaction) => {
+        const requiresCreation = run.candidates.some(
+          ({ resolutionAction }) =>
+            resolutionAction === SummitImportResolutionAction.CREATE_NEW,
+        );
+        const geoAreaIds = requiresCreation
+          ? await this.getGeoAreaAndAncestorIds(
+              transaction,
+              HAUTE_SAVOIE_GEO_AREA_SLUG,
+            )
+          : [];
+
+        for (const candidate of run.candidates) {
+          const claimed = await transaction.summitImportCandidate.updateMany({
+            where: {
+              id: candidate.id,
+              status: SummitImportCandidateStatus.CONFLICT,
+              appliedAt: null,
+              updatedAt: candidate.updatedAt,
+              resolutionAction: candidate.resolutionAction,
+            },
+            data: { appliedAt: now, appliedByUserId: adminUserId },
+          });
+
+          if (claimed.count === 0) continue;
+
+          if (
+            candidate.resolutionAction === SummitImportResolutionAction.IGNORE
+          ) {
+            await transaction.summitImportCandidate.update({
+              where: { id: candidate.id },
+              data: { status: SummitImportCandidateStatus.SKIPPED },
+            });
+            ignoredCount += 1;
+            continue;
+          }
+
+          const externalReference =
+            await transaction.summitExternalReference.findUnique({
+              where: {
+                provider_externalId: {
+                  provider: run.provider,
+                  externalId: candidate.externalId,
+                },
+              },
+            });
+          const publishableTier =
+            candidate.catalogTier !== SummitCatalogTier.REFERENCE;
+          let summitId: string;
+          let auditBefore: Prisma.InputJsonObject | null = null;
+
+          if (
+            candidate.resolutionAction ===
+            SummitImportResolutionAction.CREATE_NEW
+          ) {
+            if (candidate.elevation === null) {
+              throw new BadRequestException(
+                `Altitude absente pour ${candidate.name}`,
+              );
+            }
+
+            summitId =
+              externalReference?.summitId ??
+              importedSummitId(candidate.externalId);
+
+            if (externalReference) {
+              const existingSummit = await transaction.summit.findUnique({
+                where: { id: externalReference.summitId },
+                select: {
+                  id: true,
+                  catalogStatus: true,
+                  catalogTier: true,
+                  isActive: true,
+                },
+              });
+              if (!existingSummit) {
+                throw new NotFoundException(
+                  `Sommet référencé introuvable pour ${candidate.name}`,
+                );
+              }
+
+              auditBefore = {
+                catalogStatus: existingSummit.catalogStatus,
+                catalogTier: existingSummit.catalogTier,
+                isActive: existingSummit.isActive,
+              };
+              await transaction.summit.update({
+                where: { id: summitId },
+                data: {
+                  catalogStatus: SummitCatalogStatus.READY,
+                  catalogTier: candidate.catalogTier,
+                  suggestedTier: candidate.suggestedTier,
+                  tierReason: candidate.tierReason,
+                  tierUpdatedAt: now,
+                  tierUpdatedByUserId: adminUserId,
+                  isActive: publishableTier,
+                },
+              });
+              matchedCount += 1;
+            } else {
+              const existingSummit = await transaction.summit.findUnique({
+                where: { id: summitId },
+                select: { id: true },
+              });
+              if (existingSummit) {
+                throw new ConflictException(
+                  `L’identifiant ${summitId} existe déjà sans référence externe`,
+                );
+              }
+
+              await transaction.summit.create({
+                data: {
+                  id: summitId,
+                  name: candidate.name,
+                  aliases: [],
+                  altitude: candidate.elevation,
+                  massif: 'Massif à préciser',
+                  difficulty: 'À définir',
+                  type: candidate.sourceNature,
+                  longitude: candidate.longitude,
+                  latitude: candidate.latitude,
+                  catalogStatus: SummitCatalogStatus.READY,
+                  isActive: publishableTier,
+                  suggestedTier: candidate.suggestedTier,
+                  catalogTier: candidate.catalogTier,
+                  tierReason: candidate.tierReason,
+                  tierUpdatedAt: now,
+                  tierUpdatedByUserId: adminUserId,
+                  geoAreas: {
+                    create: geoAreaIds.map((geoAreaId) => ({ geoAreaId })),
+                  },
+                },
+              });
+              createdCount += 1;
+            }
+          } else {
+            if (!candidate.matchedSummitId) {
+              throw new BadRequestException(
+                `Sommet cible absent pour ${candidate.name}`,
+              );
+            }
+            if (
+              externalReference &&
+              externalReference.summitId !== candidate.matchedSummitId
+            ) {
+              throw new ConflictException(
+                `La référence ${candidate.externalId} cible déjà un autre sommet`,
+              );
+            }
+
+            const matchedSummit = await transaction.summit.findUnique({
+              where: { id: candidate.matchedSummitId },
+              select: {
+                id: true,
+                catalogStatus: true,
+                catalogTier: true,
+                isActive: true,
+              },
+            });
+            if (!matchedSummit) {
+              throw new NotFoundException(
+                `Sommet cible introuvable pour ${candidate.name}`,
+              );
+            }
+
+            summitId = matchedSummit.id;
+            auditBefore = {
+              catalogStatus: matchedSummit.catalogStatus,
+              catalogTier: matchedSummit.catalogTier,
+              isActive: matchedSummit.isActive,
+            };
+            await transaction.summit.update({
+              where: { id: summitId },
+              data: {
+                catalogStatus: SummitCatalogStatus.READY,
+                catalogTier: candidate.catalogTier,
+                suggestedTier: candidate.suggestedTier,
+                tierReason: candidate.tierReason,
+                tierUpdatedAt: now,
+                tierUpdatedByUserId: adminUserId,
+                isActive: publishableTier,
+              },
+            });
+            matchedCount += 1;
+          }
+
+          await transaction.summitExternalReference.upsert({
+            where: {
+              provider_externalId: {
+                provider: run.provider,
+                externalId: candidate.externalId,
+              },
+            },
+            create: {
+              summitId,
+              provider: run.provider,
+              externalId: candidate.externalId,
+              sourceVersion: run.sourceVersion,
+              sourceName: run.sourceName,
+              firstSeenAt: now,
+              lastSeenAt: now,
+            },
+            update: {
+              summitId,
+              sourceVersion: run.sourceVersion,
+              sourceName: run.sourceName,
+              lastSeenAt: now,
+            },
+          });
+          await transaction.summitImportCandidate.update({
+            where: { id: candidate.id },
+            data: {
+              status: SummitImportCandidateStatus.IMPORTED,
+              matchedSummitId: summitId,
+            },
+          });
+          await this.createAuditLog(transaction, {
+            summitId,
+            adminUserId,
+            action: SummitAdminAuditAction.IMPORT_COMPLEMENTARY_APPLIED,
+            before: auditBefore,
+            after: {
+              importRunId,
+              candidateId: candidate.id,
+              resolutionAction: candidate.resolutionAction!,
+              catalogTier: candidate.catalogTier,
+              catalogStatus: SummitCatalogStatus.READY,
+              isActive: publishableTier,
+            },
+          });
+        }
+      },
+      { timeout: 120_000 },
+    );
+
+    return {
+      importRunId,
+      appliedCount: createdCount + matchedCount + ignoredCount,
+      createdCount,
+      matchedCount,
+      ignoredCount,
+    };
+  }
+
   async findOne(summitId: string) {
     const [summit, allAreas] = await Promise.all([
       this.prisma.summit.findUnique({
@@ -500,6 +1047,16 @@ export class AdminSummitsService {
 
     return {
       ...summit,
+      automaticImageUrl: summit.imageUrl,
+      automaticImageCredit: summit.imageCredit,
+      automaticSourceUrl: summit.sourceUrl,
+      imageUrl: summit.editorialImageUrl ?? summit.imageUrl,
+      imageCredit: summit.editorialImageUrl
+        ? summit.editorialImageCredit
+        : summit.imageCredit,
+      sourceUrl: summit.editorialImageUrl
+        ? summit.editorialSourceUrl
+        : summit.sourceUrl,
       geoAreas: summit.geoAreas
         .map(({ geoArea }) => ({
           ...geoArea,
@@ -799,6 +1356,33 @@ export class AdminSummitsService {
         `Transition de statut interdite : ${current} → ${target}`,
       );
     }
+  }
+
+  private async getGeoAreaAndAncestorIds(
+    transaction: Prisma.TransactionClient,
+    slug: string,
+  ) {
+    const areas = await transaction.geoArea.findMany({
+      select: { id: true, slug: true, parentId: true, isPublished: true },
+    });
+    const area = areas.find((candidate) => candidate.slug === slug);
+
+    if (!area?.isPublished) {
+      throw new BadRequestException('Territoire fiable absent pour cet import');
+    }
+
+    const parentById = new Map(
+      areas.map((candidate) => [candidate.id, candidate.parentId]),
+    );
+    const ids: string[] = [];
+    let currentId: string | null = area.id;
+
+    while (currentId) {
+      ids.push(currentId);
+      currentId = parentById.get(currentId) ?? null;
+    }
+
+    return ids;
   }
 
   private valuesEqual(first: unknown, second: unknown) {

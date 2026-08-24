@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   Database,
+  Plus,
   RefreshCw,
   Search,
   ShieldCheck,
@@ -23,6 +24,7 @@ import { SummitAdminTable } from "./components/summit-admin-table";
 import styles from "./admin-summits.module.css";
 import { useDebouncedValue } from "./use-debounced-value";
 import { SummitImportRunPanel } from "./components/summit-import-run-panel";
+import { SummitCreateDialog } from "./components/summit-create-dialog";
 
 export function AdminSummitsView() {
   const router = useRouter();
@@ -30,12 +32,11 @@ export function AdminSummitsView() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<SummitCatalogStatus | "">("");
   const [published, setPublished] = useState<"" | "true" | "false">("");
-  const [massifMissing, setMassifMissing] = useState<
-    "" | "true" | "false"
-  >("");
+  const [massifMissing, setMassifMissing] = useState<"" | "true" | "false">("");
   const [tier, setTier] = useState<SummitCatalogTier | "">("");
   const [page, setPage] = useState(1);
   const [selectedSummitId, setSelectedSummitId] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
   const debouncedSearch = useDebouncedValue(search);
   const isAdmin = user?.role === "ADMIN";
   const params = useMemo(
@@ -75,6 +76,13 @@ export function AdminSummitsView() {
               Recherche, qualité des données, territoires et publication du
               catalogue HOVREN.
             </p>
+            <button
+              type="button"
+              className={styles.heroCreateButton}
+              onClick={() => setCreateOpen(true)}
+            >
+              <Plus /> Créer un sommet
+            </button>
           </div>
           <div className={styles.heroStamp} aria-hidden="true">
             <Database />
@@ -157,9 +165,7 @@ export function AdminSummitsView() {
             <select
               value={massifMissing}
               onChange={(event) => {
-                setMassifMissing(
-                  event.target.value as "" | "true" | "false",
-                );
+                setMassifMissing(event.target.value as "" | "true" | "false");
                 setPage(1);
                 setSelectedSummitId(null);
               }}
@@ -251,6 +257,17 @@ export function AdminSummitsView() {
           </section>
         ) : null}
       </main>
+      {createOpen ? (
+        <SummitCreateDialog
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+          onCreated={(summit) => {
+            setSelectedSummitId(summit.id);
+            setSearch(summit.name);
+            setPage(1);
+          }}
+        />
+      ) : null}
     </DashboardLayout>
   );
 }

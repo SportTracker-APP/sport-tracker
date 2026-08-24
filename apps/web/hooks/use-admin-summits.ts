@@ -4,16 +4,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   addAdminSummitGeoArea,
+  createAdminSummit,
   getAdminGeoAreaOptions,
   getAdminSummit,
   getAdminSummitImportRun,
   getAdminSummits,
   removeAdminSummitGeoArea,
+  removeAdminSummitImage,
   updateAdminSummit,
+  updateAdminSummitImageMetadata,
   updateAdminSummitPrimaryMassif,
   getAdminSummitImportRuns,
   publishAdminSummitImportRun,
+  publishAdminSummitImportResolutions,
   updateAdminSummitImportCandidate,
+  uploadAdminSummitImage,
   type AdminImportCandidateView,
   type SummitCatalogTier,
   type AdminSummitListParams,
@@ -41,6 +46,17 @@ export function useAdminSummitImportRuns(enabled = true) {
     queryKey: adminSummitKeys.importRuns,
     queryFn: getAdminSummitImportRuns,
     enabled,
+  });
+}
+
+export function useCreateAdminSummit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createAdminSummit,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminSummitKeys.all });
+      void queryClient.invalidateQueries({ queryKey: ["summits"] });
+    },
   });
 }
 
@@ -77,6 +93,17 @@ export function usePublishAdminSummitImportRun() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: publishAdminSummitImportRun,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: adminSummitKeys.all });
+      void queryClient.invalidateQueries({ queryKey: ["summits"] });
+    },
+  });
+}
+
+export function usePublishAdminSummitImportResolutions() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: publishAdminSummitImportResolutions,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: adminSummitKeys.all });
       void queryClient.invalidateQueries({ queryKey: ["summits"] });
@@ -132,6 +159,37 @@ export function useUpdateAdminSummit(summitId: string) {
   return useMutation({
     mutationFn: (input: UpdateAdminSummitInput) =>
       updateAdminSummit(summitId, input),
+    onSuccess: invalidate,
+  });
+}
+
+export function useUploadAdminSummitImage(summitId: string) {
+  const invalidate = useInvalidateAdminSummits(summitId);
+  return useMutation({
+    mutationFn: ({
+      file,
+      input,
+    }: {
+      file: File;
+      input: { imageCredit?: string; sourceUrl?: string };
+    }) => uploadAdminSummitImage(summitId, file, input),
+    onSuccess: invalidate,
+  });
+}
+
+export function useUpdateAdminSummitImageMetadata(summitId: string) {
+  const invalidate = useInvalidateAdminSummits(summitId);
+  return useMutation({
+    mutationFn: (input: { imageCredit?: string; sourceUrl?: string }) =>
+      updateAdminSummitImageMetadata(summitId, input),
+    onSuccess: invalidate,
+  });
+}
+
+export function useRemoveAdminSummitImage(summitId: string) {
+  const invalidate = useInvalidateAdminSummits(summitId);
+  return useMutation({
+    mutationFn: () => removeAdminSummitImage(summitId),
     onSuccess: invalidate,
   });
 }

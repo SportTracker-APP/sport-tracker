@@ -57,8 +57,12 @@ export class ActivityMailWorkerService {
     @Inject(MAIL_CONFIG) private readonly config: MailConfig,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_HOUR)
   async processDueEmails(): Promise<void> {
+    if (!this.config.enabled) {
+      return;
+    }
+
     const now = new Date();
 
     await this.releaseStuckEmails(now);

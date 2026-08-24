@@ -18,6 +18,7 @@ import { SummitAuditHistory } from "./summit-audit-history";
 import { SummitDataQuality } from "./summit-data-quality";
 import { SummitGeoAreasSection } from "./summit-geo-areas-section";
 import { SummitIdentityForm } from "./summit-identity-form";
+import { SummitImageEditor } from "./summit-image-editor";
 
 const STATUS_OPTIONS = Object.entries(SUMMIT_STATUS_LABELS) as Array<
   [SummitCatalogStatus, string]
@@ -188,7 +189,8 @@ export function SummitAdminDetail({ summit, onClose }: SummitAdminDetailProps) {
             ))}
           </select>
           <small>
-            Suggéré : {summit.suggestedTier ?? "—"} · {summit.tierReason ?? "Raison non renseignée"}
+            Suggéré : {summit.suggestedTier ?? "—"} ·{" "}
+            {summit.tierReason ?? "Raison non renseignée"}
           </small>
         </label>
 
@@ -216,6 +218,8 @@ export function SummitAdminDetail({ summit, onClose }: SummitAdminDetailProps) {
       </section>
 
       <SummitDataQuality quality={summit.quality} />
+
+      <SummitImageEditor summit={summit} onFeedback={notify} />
 
       <section
         className={styles.detailSection}

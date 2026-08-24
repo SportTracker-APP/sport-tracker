@@ -17,6 +17,10 @@ vi.mock("./summit-geo-areas-section", () => ({
   SummitGeoAreasSection: () => <div>Gestion territoires</div>,
 }));
 
+vi.mock("./summit-image-editor", () => ({
+  SummitImageEditor: () => <div>Gestion photo</div>,
+}));
+
 vi.mock("./summit-audit-history", () => ({
   SummitAuditHistory: () => <div>Historique catalogue</div>,
 }));

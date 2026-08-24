@@ -45,6 +45,10 @@ export type SummitAdminAuditAction =
   | "GEO_AREA_ADDED"
   | "GEO_AREA_REMOVED"
   | "IMPORT_BATCH_PUBLISHED"
+  | "IMPORT_COMPLEMENTARY_APPLIED"
+  | "MANUAL_SUMMIT_CREATED"
+  | "EDITORIAL_IMAGE_UPDATED"
+  | "EDITORIAL_IMAGE_REMOVED"
   | "TIER_CHANGED";
 
 export type AdminSummitImportRun = {
@@ -64,6 +68,7 @@ export type AdminSummitImportRun = {
   rejectedCount: number;
   errorCount: number;
   publishableCount: number;
+  complementaryPublishableCount: number;
   candidateStatuses: Record<string, number>;
   suggestedTiers: Record<SummitCatalogTier, number>;
   resolvedConflictCount: number;
@@ -98,6 +103,7 @@ export type AdminSummitImportCandidate = {
     | "KEEP_FOR_REVIEW"
     | null;
   resolutionReason: string | null;
+  appliedAt: string | null;
   errorMessage: string | null;
   matchedSummit: {
     id: string;
@@ -109,6 +115,7 @@ export type AdminSummitImportCandidate = {
 export type AdminSummitImportRunDetail = Omit<
   AdminSummitImportRun,
   | "publishableCount"
+  | "complementaryPublishableCount"
   | "candidateStatuses"
   | "suggestedTiers"
   | "resolvedConflictCount"
@@ -146,6 +153,12 @@ export type AdminSummitDetail = AdminSummitListItem & {
   imageUrl: string | null;
   imageCredit: string | null;
   sourceUrl: string | null;
+  automaticImageUrl?: string | null;
+  automaticImageCredit?: string | null;
+  automaticSourceUrl?: string | null;
+  editorialImageUrl?: string | null;
+  editorialImageCredit?: string | null;
+  editorialSourceUrl?: string | null;
   createdAt: string;
   updatedAt: string;
   geoAreas: AdminGeoArea[];
@@ -185,6 +198,26 @@ export type UpdateAdminSummitInput = Partial<{
   isActive: boolean;
 }>;
 
+export type CreateAdminSummitInput = {
+  name: string;
+  altitude: number;
+  latitude: number;
+  longitude: number;
+  type: string;
+  primaryMassifId: string;
+  geoAreaIds?: string[];
+  catalogTier: SummitCatalogTier;
+  catalogStatus: SummitCatalogStatus;
+  isActive: boolean;
+  sourceUrl?: string;
+  externalReference?: {
+    provider: "IGN_BD_TOPO";
+    externalId: string;
+    sourceName: string;
+    sourceVersion?: string;
+  };
+};
+
 export async function getAdminSummits(params: AdminSummitListParams) {
   const { data } = await api.get<AdminSummitListResponse>("/admin/summits", {
     params: {
@@ -220,6 +253,46 @@ export async function updateAdminSummit(
   const { data } = await api.patch<AdminSummitDetail>(
     `/admin/summits/${summitId}`,
     input,
+  );
+  return data;
+}
+
+export async function createAdminSummit(input: CreateAdminSummitInput) {
+  const { data } = await api.post<AdminSummitDetail>("/admin/summits", input);
+  return data;
+}
+
+export async function uploadAdminSummitImage(
+  summitId: string,
+  file: File,
+  input: { imageCredit?: string; sourceUrl?: string },
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("imageCredit", input.imageCredit ?? "");
+  if (input.sourceUrl) formData.append("sourceUrl", input.sourceUrl);
+  const { data } = await api.post<AdminSummitDetail>(
+    `/admin/summits/${summitId}/image`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } },
+  );
+  return data;
+}
+
+export async function updateAdminSummitImageMetadata(
+  summitId: string,
+  input: { imageCredit?: string; sourceUrl?: string },
+) {
+  const { data } = await api.patch<AdminSummitDetail>(
+    `/admin/summits/${summitId}/image`,
+    input,
+  );
+  return data;
+}
+
+export async function removeAdminSummitImage(summitId: string) {
+  const { data } = await api.delete<AdminSummitDetail>(
+    `/admin/summits/${summitId}/image`,
   );
   return data;
 }
@@ -312,5 +385,16 @@ export async function publishAdminSummitImportRun(importRunId: string) {
     importRunId: string;
     publishedCount: number;
   }>(`/admin/summits/import-runs/${importRunId}/publish`);
+  return data;
+}
+
+export async function publishAdminSummitImportResolutions(importRunId: string) {
+  const { data } = await api.post<{
+    importRunId: string;
+    appliedCount: number;
+    createdCount: number;
+    matchedCount: number;
+    ignoredCount: number;
+  }>(`/admin/summits/import-runs/${importRunId}/publish-resolutions`);
   return data;
 }

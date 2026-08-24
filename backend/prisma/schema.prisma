@@ -69,6 +69,8 @@ model User {
 
   summitImportCandidatesResolved SummitImportCandidate[] @relation("SummitImportCandidateResolvedBy")
 
+  summitImportCandidatesApplied SummitImportCandidate[] @relation("SummitImportCandidateAppliedBy")
+
   summitTiersUpdated Summit[] @relation("SummitTierUpdatedBy")
 
   summitAdminAuditLogs SummitAdminAuditLog[]
@@ -383,6 +385,12 @@ model Summit {
 
   sourceUrl String?
 
+  editorialImageUrl String?
+
+  editorialImageCredit String?
+
+  editorialSourceUrl String?
+
   isActive Boolean @default(false)
 
   catalogStatus SummitCatalogStatus @default(DRAFT)
@@ -667,6 +675,10 @@ model SummitImportCandidate {
 
   resolvedByUserId String?
 
+  appliedAt DateTime?
+
+  appliedByUserId String?
+
   errorMessage String?
 
   createdAt DateTime @default(now())
@@ -679,6 +691,8 @@ model SummitImportCandidate {
 
   resolvedBy User? @relation("SummitImportCandidateResolvedBy", fields: [resolvedByUserId], references: [id], onDelete: SetNull)
 
+  appliedBy User? @relation("SummitImportCandidateAppliedBy", fields: [appliedByUserId], references: [id], onDelete: SetNull)
+
   @@unique([importRunId, externalId])
   @@index([status])
   @@index([suggestedTier])
@@ -687,6 +701,8 @@ model SummitImportCandidate {
   @@index([importRunId, catalogTier])
   @@index([importRunId, homonymGroupSize])
   @@index([resolutionAction])
+  @@index([appliedAt])
+  @@index([appliedByUserId])
   @@index([matchedSummitId])
 }
 
@@ -711,6 +727,8 @@ model SummitDiscovery {
 
   detectedAt DateTime @default(now())
 
+  discoveredAt DateTime
+
   confirmedAt DateTime?
 
   dismissedAt DateTime?
@@ -732,6 +750,7 @@ model SummitDiscovery {
   @@index([userId, summitId])
   @@index([activityId])
   @@index([detectedAt])
+  @@index([discoveredAt])
 }
 
 model Badge {
@@ -888,6 +907,10 @@ enum SummitAdminAuditAction {
   GEO_AREA_ADDED
   GEO_AREA_REMOVED
   IMPORT_BATCH_PUBLISHED
+  IMPORT_COMPLEMENTARY_APPLIED
+  MANUAL_SUMMIT_CREATED
+  EDITORIAL_IMAGE_UPDATED
+  EDITORIAL_IMAGE_REMOVED
   TIER_CHANGED
 }
 

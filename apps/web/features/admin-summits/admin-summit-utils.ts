@@ -18,6 +18,10 @@ export const AUDIT_ACTION_LABELS: Record<SummitAdminAuditAction, string> = {
   GEO_AREA_ADDED: "Territoire ajouté",
   GEO_AREA_REMOVED: "Territoire retiré",
   IMPORT_BATCH_PUBLISHED: "Publication d’un lot importé",
+  IMPORT_COMPLEMENTARY_APPLIED: "Résolution d’import appliquée",
+  MANUAL_SUMMIT_CREATED: "Sommet créé manuellement",
+  EDITORIAL_IMAGE_UPDATED: "Photo éditoriale modifiée",
+  EDITORIAL_IMAGE_REMOVED: "Photo éditoriale supprimée",
   TIER_CHANGED: "Tier produit modifié",
 };
 

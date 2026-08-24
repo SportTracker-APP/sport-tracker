@@ -186,7 +186,7 @@ export class SummitsService implements OnModuleInit {
               },
             },
           },
-          orderBy: { activity: { startedAt: 'asc' } },
+          orderBy: { discoveredAt: 'asc' },
         },
       },
       orderBy: [{ massif: 'asc' }, { altitude: 'asc' }],
@@ -234,17 +234,21 @@ export class SummitsService implements OnModuleInit {
         difficulty: summit.difficulty,
         type: summit.type,
         coordinates: [summit.longitude, summit.latitude] as const,
-        imageUrl: summit.imageUrl,
-        imageCredit: summit.imageCredit,
-        sourceUrl: summit.sourceUrl,
+        imageUrl: summit.editorialImageUrl ?? summit.imageUrl,
+        imageCredit: summit.editorialImageUrl
+          ? summit.editorialImageCredit
+          : summit.imageCredit,
+        sourceUrl: summit.editorialImageUrl
+          ? summit.editorialSourceUrl
+          : summit.sourceUrl,
         catalogTier: summit.catalogTier,
         discovered: isCollectible && confirmedDiscoveries.length > 0,
         closestDistance: isCollectible ? closestDistance : null,
         activityCount: confirmedDiscoveries.length,
         firstActivity: firstDiscovery?.activity ?? null,
         latestActivity: latestDiscovery?.activity ?? null,
-        firstDiscoveredAt: firstDiscovery?.confirmedAt ?? null,
-        latestDiscoveredAt: latestDiscovery?.confirmedAt ?? null,
+        firstDiscoveredAt: firstDiscovery?.discoveredAt ?? null,
+        latestDiscoveredAt: latestDiscovery?.discoveredAt ?? null,
         pendingDiscoveries: pendingDiscoveries.map((discovery) => ({
           id: discovery.id,
           confidence: discovery.confidence,
@@ -289,8 +293,8 @@ export class SummitsService implements OnModuleInit {
             userId,
             status: SummitDiscoveryStatus.CONFIRMED,
           },
-          select: { confirmedAt: true },
-          orderBy: { confirmedAt: 'asc' },
+          select: { discoveredAt: true },
+          orderBy: { discoveredAt: 'asc' },
         },
       },
       orderBy: [{ altitude: 'desc' }, { name: 'asc' }],
@@ -307,11 +311,11 @@ export class SummitsService implements OnModuleInit {
         summit.discoveries.length > 0,
       firstDiscoveredAt:
         summit.catalogTier === SummitCatalogTier.CORE
-          ? (summit.discoveries[0]?.confirmedAt ?? null)
+          ? (summit.discoveries[0]?.discoveredAt ?? null)
           : null,
       latestDiscoveredAt:
         summit.catalogTier === SummitCatalogTier.CORE
-          ? (summit.discoveries.at(-1)?.confirmedAt ?? null)
+          ? (summit.discoveries.at(-1)?.discoveredAt ?? null)
           : null,
     }));
   }
@@ -508,6 +512,7 @@ export class SummitsService implements OnModuleInit {
         userId,
         summit: { catalogTier: SummitCatalogTier.CORE },
       },
+      include: { activity: { select: { startedAt: true } } },
     });
 
     if (!discovery) {
@@ -519,6 +524,9 @@ export class SummitsService implements OnModuleInit {
       where: { id: discovery.id },
       data: {
         status: dto.status,
+        discoveredAt: confirmed
+          ? discovery.activity.startedAt
+          : discovery.discoveredAt,
         confirmedAt: confirmed ? (discovery.confirmedAt ?? new Date()) : null,
         dismissedAt: confirmed ? null : new Date(),
       },
@@ -617,6 +625,7 @@ export class SummitsService implements OnModuleInit {
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
           titleMatched: match.titleMatched,
+          discoveredAt: activity.startedAt,
           confirmedAt:
             status === SummitDiscoveryStatus.CONFIRMED ? new Date() : null,
         },
@@ -626,6 +635,7 @@ export class SummitsService implements OnModuleInit {
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
           titleMatched: match.titleMatched,
+          discoveredAt: activity.startedAt,
           confirmedAt:
             status === SummitDiscoveryStatus.CONFIRMED
               ? (existing?.confirmedAt ?? new Date())

@@ -147,12 +147,13 @@ function makeService(
   prisma: PrismaMock,
   mailService: MailServiceMock,
   timeService: TimeServiceMock = makeTimeServiceMock(),
+  mailConfig: MailConfig = config,
 ) {
   return new ActivityMailWorkerService(
     prisma as unknown as PrismaService,
     mailService as unknown as MailService,
     timeService as unknown as ActivityMailTimeService,
-    config,
+    mailConfig,
   );
 }
 
@@ -166,6 +167,19 @@ describe('ActivityMailWorkerService', () => {
   afterEach(() => {
     jest.useRealTimers();
     jest.restoreAllMocks();
+  });
+
+  it('does not wake PostgreSQL when mail delivery is disabled', async () => {
+    const prisma = makePrismaMock();
+    const mailService = makeMailServiceMock();
+
+    await makeService(prisma, mailService, makeTimeServiceMock(), {
+      ...config,
+      enabled: false,
+    }).processDueEmails();
+
+    expect(prisma.scheduledEmail.updateMany).not.toHaveBeenCalled();
+    expect(prisma.scheduledEmail.findMany).not.toHaveBeenCalled();
   });
 
   it('sends a due upcoming reminder and marks it as sent', async () => {

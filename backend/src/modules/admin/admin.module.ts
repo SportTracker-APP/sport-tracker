@@ -12,6 +12,7 @@ import { AdminSummitsController } from './admin-summits.controller';
 import { AdminService } from './admin.service';
 import { AdminImpersonationService } from './admin-impersonation.service';
 import { AdminSummitsService } from './admin-summits.service';
+import { AdminSummitMediaService } from './admin-summit-media.service';
 
 import { AdminGuard } from './guards/admin.guard';
 
@@ -26,6 +27,7 @@ import { AdminGuard } from './guards/admin.guard';
     AdminService,
     AdminImpersonationService,
     AdminSummitsService,
+    AdminSummitMediaService,
     AdminGuard,
   ],
 })

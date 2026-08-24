@@ -3,9 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   useAdminSummit,
+  useAdminGeoAreaOptions,
   useAdminSummitImportRun,
   useAdminSummitImportRuns,
   useAdminSummits,
+  useCreateAdminSummit,
+  usePublishAdminSummitImportResolutions,
   usePublishAdminSummitImportRun,
   useUpdateAdminSummitImportCandidate,
 } from "@/hooks/use-admin-summits";
@@ -27,7 +30,10 @@ vi.mock("@/hooks/use-admin-summits", () => ({
   useAdminSummit: vi.fn(),
   useAdminSummitImportRuns: vi.fn(),
   useAdminSummitImportRun: vi.fn(),
+  useAdminGeoAreaOptions: vi.fn(),
+  useCreateAdminSummit: vi.fn(),
   usePublishAdminSummitImportRun: vi.fn(),
+  usePublishAdminSummitImportResolutions: vi.fn(),
   useUpdateAdminSummitImportCandidate: vi.fn(),
 }));
 
@@ -42,11 +48,16 @@ vi.mock("./components/summit-admin-detail", () => ({
 }));
 
 const mockedUseAdminSummits = vi.mocked(useAdminSummits);
+const mockedUseAdminGeoAreaOptions = vi.mocked(useAdminGeoAreaOptions);
+const mockedUseCreateAdminSummit = vi.mocked(useCreateAdminSummit);
 const mockedUseAdminSummit = vi.mocked(useAdminSummit);
 const mockedUseAdminSummitImportRuns = vi.mocked(useAdminSummitImportRuns);
 const mockedUseAdminSummitImportRun = vi.mocked(useAdminSummitImportRun);
 const mockedUsePublishAdminSummitImportRun = vi.mocked(
   usePublishAdminSummitImportRun,
+);
+const mockedUsePublishAdminSummitImportResolutions = vi.mocked(
+  usePublishAdminSummitImportResolutions,
 );
 const mockedUseUpdateAdminSummitImportCandidate = vi.mocked(
   useUpdateAdminSummitImportCandidate,
@@ -92,6 +103,14 @@ describe("AdminSummitsView", () => {
       data: [],
       isLoading: false,
     } as unknown as ReturnType<typeof useAdminSummitImportRuns>);
+    mockedUseAdminGeoAreaOptions.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useAdminGeoAreaOptions>);
+    mockedUseCreateAdminSummit.mockReturnValue({
+      isPending: false,
+      mutateAsync: vi.fn(),
+    } as unknown as ReturnType<typeof useCreateAdminSummit>);
     mockedUseAdminSummitImportRun.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -102,6 +121,10 @@ describe("AdminSummitsView", () => {
       isPending: false,
       mutate: vi.fn(),
     } as unknown as ReturnType<typeof usePublishAdminSummitImportRun>);
+    mockedUsePublishAdminSummitImportResolutions.mockReturnValue({
+      isPending: false,
+      mutate: vi.fn(),
+    } as unknown as ReturnType<typeof usePublishAdminSummitImportResolutions>);
     mockedUseUpdateAdminSummitImportCandidate.mockReturnValue({
       isPending: false,
       mutate: vi.fn(),
@@ -158,6 +181,26 @@ describe("AdminSummitsView", () => {
     render(<AdminSummitsView />);
 
     expect(screen.getByText("Aucun sommet trouvé")).toBeVisible();
+  });
+
+  it("opens the manual summit creation workflow", () => {
+    mockedUseAdminSummits.mockReturnValue({
+      data: {
+        items: [],
+        pagination: { page: 1, pageSize: 20, total: 0, totalPages: 1 },
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      refetch,
+    } as unknown as ReturnType<typeof useAdminSummits>);
+
+    render(<AdminSummitsView />);
+    fireEvent.click(screen.getByRole("button", { name: "Créer un sommet" }));
+
+    expect(
+      screen.getByRole("dialog", { name: "Nouveau sommet" }),
+    ).toBeVisible();
   });
 
   it("debounces server-side search and opens the selected summit detail", () => {

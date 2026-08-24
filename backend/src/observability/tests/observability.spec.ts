@@ -6,6 +6,7 @@ import {
 import { firstValueFrom, of, throwError } from 'rxjs';
 
 import { AlertService } from '../alert.service';
+import { HealthController } from '../health.controller';
 import { HttpMetricsInterceptor } from '../http-metrics.interceptor';
 import { MetricsGuard } from '../metrics.guard';
 import { MetricsService } from '../metrics.service';
@@ -49,6 +50,23 @@ describe('observability configuration', () => {
     expect(() =>
       parseSentryConfig({ SENTRY_TRACES_SAMPLE_RATE: '2' }),
     ).toThrow();
+  });
+});
+
+describe('HealthController', () => {
+  it('does not query PostgreSQL for the root liveness endpoint', () => {
+    const health = { check: jest.fn() };
+    const database = { pingCheck: jest.fn() };
+    const controller = new HealthController(
+      health as never,
+      database as never,
+      {} as never,
+      baseConfig,
+    );
+
+    expect(controller.getLivenessRoot()).toMatchObject({ status: 'ok' });
+    expect(health.check).not.toHaveBeenCalled();
+    expect(database.pingCheck).not.toHaveBeenCalled();
   });
 });
 

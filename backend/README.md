@@ -61,6 +61,9 @@ $ pnpm run test:cov
 
 - `GET /health/live` verifies that the API process is running.
 - `GET /health/ready` verifies that the API and PostgreSQL are ready.
+- `GET /health` is a database-free liveness alias. Use `/health/live` as the
+  Render health-check path so monitoring does not keep a serverless database
+  awake.
 - `GET /metrics` exposes Prometheus metrics and requires `Authorization: Bearer <METRICS_TOKEN>`.
 - Sentry is enabled only when `SENTRY_DSN` is configured.
 - Sanitized HTTP 5xx alerts are sent when `ALERTS_ENABLED=true` and `ALERT_WEBHOOK_URL` is configured.

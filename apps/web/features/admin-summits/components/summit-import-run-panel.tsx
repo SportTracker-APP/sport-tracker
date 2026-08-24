@@ -14,6 +14,7 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import {
   useAdminSummitImportRun,
   useAdminSummitImportRuns,
+  usePublishAdminSummitImportResolutions,
   usePublishAdminSummitImportRun,
   useUpdateAdminSummitImportCandidate,
 } from "@/hooks/use-admin-summits";
@@ -27,7 +28,9 @@ import styles from "../admin-summits.module.css";
 export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
   const runsQuery = useAdminSummitImportRuns(enabled);
   const publishRun = usePublishAdminSummitImportRun();
+  const publishResolutions = usePublishAdminSummitImportResolutions();
   const [confirming, setConfirming] = useState(false);
+  const [confirmingResolutions, setConfirmingResolutions] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [tier, setTier] = useState<SummitCatalogTier | undefined>();
   const [view, setView] = useState<AdminImportCandidateView>("ALL");
@@ -98,14 +101,25 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
             <ChevronDown aria-hidden="true" />
             Administrer l’import
           </button>
-          <button
-            type="button"
-            disabled={latest.publishableCount === 0}
-            onClick={() => setConfirming(true)}
-          >
-            <Upload aria-hidden="true" />
-            Publier les {latest.publishableCount} prêts
-          </button>
+          {latest.status === "PUBLISHED" ? (
+            <button
+              type="button"
+              disabled={latest.complementaryPublishableCount === 0}
+              onClick={() => setConfirmingResolutions(true)}
+            >
+              <Upload aria-hidden="true" />
+              Appliquer les {latest.complementaryPublishableCount} résolutions
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={latest.publishableCount === 0}
+              onClick={() => setConfirming(true)}
+            >
+              <Upload aria-hidden="true" />
+              Publier les {latest.publishableCount} prêts
+            </button>
+          )}
         </div>
       </section>
 
@@ -182,9 +196,15 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
                         "à vérifier"}
                     </small>
                     <small>
-                      IGN {String(candidate.classificationSignals.ignImportance ?? "—")} ·
-                      OSM {candidate.classificationSignals.osmMatched ? "oui" : "non"} ·
-                      sommet supérieur{" "}
+                      IGN{" "}
+                      {String(
+                        candidate.classificationSignals.ignImportance ?? "—",
+                      )}{" "}
+                      · OSM{" "}
+                      {candidate.classificationSignals.osmMatched
+                        ? "oui"
+                        : "non"}{" "}
+                      · sommet supérieur{" "}
                       {String(
                         candidate.classificationSignals
                           .nearestHigherDistanceMeters ?? "—",
@@ -201,12 +221,15 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
                       <select
                         aria-label={`Tier final de ${candidate.name}`}
                         value={candidate.catalogTier}
-                        disabled={updateCandidate.isPending}
+                        disabled={
+                          updateCandidate.isPending || Boolean(candidate.appliedAt)
+                        }
                         onChange={(event) =>
                           updateCandidate.mutate({
                             candidateId: candidate.id,
                             input: {
-                              catalogTier: event.target.value as SummitCatalogTier,
+                              catalogTier: event.target
+                                .value as SummitCatalogTier,
                             },
                           })
                         }
@@ -226,7 +249,8 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
                                   candidateId: candidate.id,
                                   input: {
                                     resolutionAction: "MATCH_EXISTING",
-                                    matchedSummitId: candidate.matchedSummit!.id,
+                                    matchedSummitId:
+                                      candidate.matchedSummit!.id,
                                     resolutionReason:
                                       "Rapprochement confirmé par un administrateur",
                                   },
@@ -279,7 +303,8 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
                                 candidateId: candidate.id,
                                 input: {
                                   resolutionAction: "KEEP_FOR_REVIEW",
-                                  resolutionReason: "Revue complémentaire requise",
+                                  resolutionReason:
+                                    "Revue complémentaire requise",
                                 },
                               })
                             }
@@ -314,6 +339,32 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
               toast.success(`${publishedCount} sommets publiés.`);
             },
             onError: () => toast.error("Publication du lot impossible."),
+          });
+        }}
+      />
+      <ConfirmationDialog
+        open={confirmingResolutions}
+        title={`Appliquer ${latest.complementaryPublishableCount} résolutions ?`}
+        description="Les décisions prises après la publication seront appliquées sans rouvrir ni modifier les statistiques historiques du lot."
+        confirmLabel="Appliquer les résolutions"
+        cancelLabel="Annuler"
+        isLoading={publishResolutions.isPending}
+        onOpenChange={setConfirmingResolutions}
+        onConfirm={() => {
+          publishResolutions.mutate(latest.id, {
+            onSuccess: ({
+              appliedCount,
+              createdCount,
+              matchedCount,
+              ignoredCount,
+            }) => {
+              setConfirmingResolutions(false);
+              toast.success(
+                `${appliedCount} résolution(s) appliquée(s) : ${createdCount} création(s), ${matchedCount} association(s), ${ignoredCount} ignorée(s).`,
+              );
+            },
+            onError: () =>
+              toast.error("Publication complémentaire impossible."),
           });
         }}
       />

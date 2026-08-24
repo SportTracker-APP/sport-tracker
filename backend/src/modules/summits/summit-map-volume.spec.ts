@@ -17,7 +17,7 @@ describe.each([100, 1_000, 5_000])(
         latitude: 42.3 + (index % 120) * 0.045,
         discoveries:
           index % 11 === 0
-            ? [{ confirmedAt: new Date('2026-08-01T08:00:00Z') }]
+            ? [{ discoveredAt: new Date('2026-08-01T08:00:00Z') }]
             : [],
       }));
       const prisma = {

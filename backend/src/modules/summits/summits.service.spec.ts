@@ -179,7 +179,7 @@ describe('SummitsService', () => {
         longitude: 6.287,
         latitude: 45.827,
         catalogTier: SummitCatalogTier.CORE,
-        discoveries: [{ confirmedAt: new Date('2026-08-01T08:00:00Z') }],
+        discoveries: [{ discoveredAt: new Date('2026-08-01T08:00:00Z') }],
       },
     ]);
 
@@ -236,7 +236,9 @@ describe('SummitsService', () => {
     const discovery = {
       id: 'discovery-1',
       userId: 'user-1',
+      discoveredAt: new Date('2026-07-01T08:00:00Z'),
       confirmedAt: new Date(),
+      activity: { startedAt: new Date('2026-07-01T08:00:00Z') },
     };
     prisma.summitDiscovery.findFirst.mockResolvedValue(discovery);
     prisma.summitDiscovery.update.mockResolvedValue({
@@ -254,6 +256,7 @@ describe('SummitsService', () => {
         userId: 'user-1',
         summit: { catalogTier: SummitCatalogTier.CORE },
       },
+      include: { activity: { select: { startedAt: true } } },
     });
     expect(prisma.summitDiscovery.update).toHaveBeenCalledWith({
       where: { id: 'discovery-1' },
@@ -261,6 +264,32 @@ describe('SummitsService', () => {
         status: SummitDiscoveryStatus.DISMISSED,
         confirmedAt: null,
         dismissedAt: expect.any(Date),
+      }),
+    });
+  });
+
+  it('uses the activity date when a late historical discovery is confirmed', async () => {
+    const prisma = makePrisma();
+    const activityStartedAt = new Date('2022-06-18T06:30:00Z');
+    prisma.summitDiscovery.findFirst.mockResolvedValue({
+      id: 'historical-discovery',
+      discoveredAt: new Date('2026-08-24T08:00:00Z'),
+      confirmedAt: null,
+      activity: { startedAt: activityStartedAt },
+    });
+    prisma.summitDiscovery.update.mockResolvedValue({});
+
+    await makeService(prisma).updateDiscovery(
+      'user-1',
+      'historical-discovery',
+      { status: SummitDiscoveryStatus.CONFIRMED },
+    );
+
+    expect(prisma.summitDiscovery.update).toHaveBeenCalledWith({
+      where: { id: 'historical-discovery' },
+      data: expect.objectContaining({
+        discoveredAt: activityStartedAt,
+        confirmedAt: expect.any(Date),
       }),
     });
   });

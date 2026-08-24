@@ -23,18 +23,21 @@ export class HealthController {
 
   @Get('live')
   getLiveness() {
+    return this.getLivenessPayload();
+  }
+
+  @Get()
+  getLivenessRoot() {
+    return this.getLivenessPayload();
+  }
+
+  private getLivenessPayload() {
     return {
       status: 'ok',
       service: this.config.serviceName,
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),
     };
-  }
-
-  @Get()
-  @HealthCheck()
-  getReadinessRoot() {
-    return this.checkReadiness();
   }
 
   @Get('ready')
