@@ -39,7 +39,6 @@ const INDOOR_SPORTS = new Set([
 const APPROVED_SUMMIT_IMAGE_HOSTS = new Set([
   "commons.wikimedia.org",
   "upload.wikimedia.org",
-  "images.pexels.com",
 ]);
 
 function getStableIndex(value: string, length: number) {
@@ -77,7 +76,12 @@ export function isApprovedSummitImageUrl(value: string | undefined) {
   }
 
   try {
-    return APPROVED_SUMMIT_IMAGE_HOSTS.has(new URL(value).hostname);
+    const hostname = new URL(value).hostname.toLowerCase();
+
+    return (
+      APPROVED_SUMMIT_IMAGE_HOSTS.has(hostname) ||
+      hostname.endsWith(".supabase.co")
+    );
   } catch {
     return false;
   }

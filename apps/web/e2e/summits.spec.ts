@@ -316,6 +316,9 @@ test("la collection évite les photos répétées et conserve des actions utiles
   await page.getByRole("button", { name: /^Tous 4$/ }).click();
 
   const catalog = page.getByLabel("Catalogue des sommets");
+  await expect(catalog).not.toContainText("Modérée");
+  await expect(catalog).not.toContainText("Difficile");
+  await expect(catalog).not.toContainText("Expert");
   await expect(
     catalog.locator('img[alt^="Photo de la sortie liée à"]'),
   ).toHaveCount(0);
@@ -353,19 +356,12 @@ test("les filtres avancés restent lisibles, supprimables et synchronisés dans 
   const advancedFilters = page.getByLabel("Filtres avancés");
 
   await advancedFilters.getByLabel("Massif").selectOption("Bornes");
-  await advancedFilters.getByLabel("Difficulté").selectOption("Difficile");
   await advancedFilters.getByLabel("Altitude").selectOption("MID");
 
   await expect(page).toHaveURL(/massif=Bornes/);
-  await expect(page).toHaveURL(/difficulte=Difficile/);
   await expect(page).toHaveURL(/altitude=MID/);
   await expect(page.getByText("2 sommets affichés")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Filtres 3/ })).toBeVisible();
-
-  await page
-    .getByRole("button", { name: /Difficile Supprimer ce filtre/ })
-    .click();
-  await expect(page).not.toHaveURL(/difficulte=/);
+  await expect(page.getByRole("button", { name: /Filtres 2/ })).toBeVisible();
 
   await page.getByRole("button", { name: "Tout effacer" }).click();
   await expect(page).not.toHaveURL(/massif=/);

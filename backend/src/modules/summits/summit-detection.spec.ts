@@ -54,16 +54,75 @@ describe('summit detection', () => {
     expect(match.closestDistance).toBe(0);
   });
 
-  it('keeps a lower-confidence nearby trace pending', () => {
-    const [match] = detect(makeSummit({ latitude: 38.5035 }));
+  it('keeps a named but distant trace pending instead of confirming it', () => {
+    const [match] = detectSummits(
+      {
+        title: 'Sommet test au lever du jour',
+        maxAltitude: 1_050,
+        routePolyline: ROUTE,
+      },
+      [makeSummit({ latitude: 38.5035 })],
+    );
 
     expect(match.closestDistance).toBeGreaterThan(250);
     expect(match.closestDistance).toBeLessThanOrEqual(500);
     expect(match.autoConfirmed).toBe(false);
   });
 
+  it('does not detect an unnamed trace outside the physical summit radius', () => {
+    expect(detect(makeSummit({ latitude: 38.5035 }))).toEqual([]);
+  });
+
+  it('keeps an unnamed trace between 100 and 250 metres pending', () => {
+    const [match] = detect(makeSummit({ latitude: 38.5015 }));
+
+    expect(match.closestDistance).toBeGreaterThan(100);
+    expect(match.closestDistance).toBeLessThanOrEqual(250);
+    expect(match.autoConfirmed).toBe(false);
+  });
+
+  it('can confirm a named summit between 100 and 250 metres', () => {
+    const [match] = detectSummits(
+      {
+        title: 'Sommet test au lever du jour',
+        maxAltitude: 1_050,
+        routePolyline: ROUTE,
+      },
+      [makeSummit({ latitude: 38.5015 })],
+    );
+
+    expect(match.titleMatched).toBe(true);
+    expect(match.autoConfirmed).toBe(true);
+  });
+
   it('rejects a trace that did not reach the summit altitude', () => {
     expect(detect(makeSummit(), 800)).toEqual([]);
+  });
+
+  it('does not treat a route to the foot of a summit as a title match', () => {
+    expect(
+      detectSummits(
+        {
+          title: 'Trail au pied du Sommet test',
+          maxAltitude: 1_050,
+          routePolyline: ROUTE,
+        },
+        [makeSummit({ latitude: 38.5051 })],
+      ),
+    ).toEqual([]);
+  });
+
+  it('does not treat a refuge carrying the summit name as title evidence', () => {
+    expect(
+      detectSummits(
+        {
+          title: 'Trail au refuge du Sommet test',
+          maxAltitude: 1_050,
+          routePolyline: ROUTE,
+        },
+        [makeSummit({ latitude: 38.5051 })],
+      ),
+    ).toEqual([]);
   });
 
   it('requires very close proximity when altitude data is unavailable', () => {

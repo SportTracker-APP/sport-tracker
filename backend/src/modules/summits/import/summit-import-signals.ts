@@ -22,8 +22,11 @@ const osmElementSchema = z.object({
 const osmSnapshotSchema = z.object({ elements: z.array(osmElementSchema) });
 
 type OsmPeak = {
+  osmType: 'node' | 'way' | 'relation';
+  osmId: number;
   latitude: number;
   longitude: number;
+  elevation: number | null;
   normalizedName: string;
   tags: Record<string, string>;
 };
@@ -31,6 +34,11 @@ type OsmPeak = {
 export type CandidateClassificationSignals = SummitCatalogTierSignals & {
   nearestHigherName: string | null;
   osmName: string | null;
+  osmType: OsmPeak['osmType'] | null;
+  osmId: number | null;
+  osmLatitude: number | null;
+  osmLongitude: number | null;
+  osmElevation: number | null;
   osmWikidata: string | null;
   osmWikipedia: string | null;
 };
@@ -67,10 +75,14 @@ async function readOsmPeaks(snapshotPath: string): Promise<OsmPeak[]> {
     const latitude = element.lat ?? element.center?.lat;
     const longitude = element.lon ?? element.center?.lon;
     if (latitude === undefined || longitude === undefined) return [];
+    const elevation = Number.parseFloat(element.tags.ele ?? '');
     return [
       {
+        osmType: element.type,
+        osmId: element.id,
         latitude,
         longitude,
+        elevation: Number.isFinite(elevation) ? Math.round(elevation) : null,
         normalizedName: normalizeSummitNameForMatch(element.tags.name ?? ''),
         tags: element.tags,
       },
@@ -138,6 +150,11 @@ export async function calculateCandidateClassificationSignals(input: {
           : null,
         osmProminenceSource: osmMatch?.peak.tags['source:prominence'] ?? null,
         osmName: osmMatch?.peak.tags.name ?? null,
+        osmType: osmMatch?.peak.osmType ?? null,
+        osmId: osmMatch?.peak.osmId ?? null,
+        osmLatitude: osmMatch?.peak.latitude ?? null,
+        osmLongitude: osmMatch?.peak.longitude ?? null,
+        osmElevation: osmMatch?.peak.elevation ?? null,
         osmWikidata: osmMatch?.peak.tags.wikidata ?? null,
         osmWikipedia: osmMatch?.peak.tags.wikipedia ?? null,
         nearestHigherName: higher?.candidate.name ?? null,

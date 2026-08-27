@@ -434,6 +434,35 @@ describe('AdminSummitsService', () => {
     );
   });
 
+  it('prevents creating a duplicate when an import conflict already targets a summit', async () => {
+    const prisma = {
+      summitImportCandidate: {
+        findFirst: jest.fn().mockResolvedValue({
+          id: 'candidate-mont-baron',
+          importRunId: 'import-74',
+          status: SummitImportCandidateStatus.CONFLICT,
+          matchedSummitId: 'mont-baron',
+          appliedAt: null,
+        }),
+        update: jest.fn(),
+      },
+    };
+
+    await expect(
+      createService(prisma).updateImportCandidate(
+        'admin-1',
+        'import-74',
+        'candidate-mont-baron',
+        {
+          resolutionAction: SummitImportResolutionAction.CREATE_NEW,
+          resolutionReason: 'Créer un nouveau sommet',
+        },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+
+    expect(prisma.summitImportCandidate.update).not.toHaveBeenCalled();
+  });
+
   it('applies create and ignore decisions after publication without rewriting run statistics', async () => {
     const createCandidate = {
       id: 'candidate-create',

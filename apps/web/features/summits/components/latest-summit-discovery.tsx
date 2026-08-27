@@ -141,8 +141,8 @@ export function LatestSummitDiscovery({
             <dd>{summit.massif}</dd>
           </div>
           <div>
-            <dt>Difficulté</dt>
-            <dd>{summit.difficulty}</dd>
+            <dt>Type</dt>
+            <dd>{summit.type}</dd>
           </div>
           <div>
             <dt>Passages</dt>

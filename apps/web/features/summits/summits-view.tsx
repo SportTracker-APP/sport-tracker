@@ -39,12 +39,12 @@ import {
   filterSummits,
   getFeaturedMassif,
   getLatestDiscoveredSummit,
-  getMassifVisualSource,
   getNextSummitForMassif,
   getRecommendedSummit,
   getSummitCardViewModels,
   getSummitOptions,
   getSummitSummary,
+  getSummitVisualSource,
   getSummitVisualSources,
   hasActiveSummitFilters,
   parseSummitFilters,
@@ -106,8 +106,8 @@ export function SummitsView() {
     [filters, searchableSummits],
   );
   const summitCardViewModels = useMemo(
-    () => getSummitCardViewModels(visibleSummits, coreSummits, massifProgress),
-    [coreSummits, massifProgress, visibleSummits],
+    () => getSummitCardViewModels(visibleSummits, massifProgress),
+    [massifProgress, visibleSummits],
   );
   const renderedSummitCardViewModels = useMemo(() => {
     const focusedSummitId =
@@ -132,9 +132,9 @@ export function SummitsView() {
   const latestSummitVisual = useMemo(
     () =>
       latestSummit
-        ? getSummitVisualSources([latestSummit], coreSummits)[latestSummit.id]
+        ? getSummitVisualSources([latestSummit])[latestSummit.id]
         : undefined,
-    [coreSummits, latestSummit],
+    [latestSummit],
   );
   const recommendedSummit = useMemo(
     () => getRecommendedSummit(coreSummits, massifProgress),
@@ -150,10 +150,8 @@ export function SummitsView() {
   );
   const featuredMassifVisual = useMemo(
     () =>
-      featuredMassif
-        ? getMassifVisualSource(coreSummits, featuredMassif.massif)
-        : null,
-    [coreSummits, featuredMassif],
+      featuredMassifSummit ? getSummitVisualSource(featuredMassifSummit) : null,
+    [featuredMassifSummit],
   );
   const nextDiscoverySummit = featuredMassifSummit ?? recommendedSummit;
   const options = useMemo(() => getSummitOptions(coreSummits), [coreSummits]);
@@ -301,7 +299,6 @@ export function SummitsView() {
                 }}
                 resultCount={visibleSummits.length}
                 massifOptions={options.massifs}
-                difficultyOptions={options.difficulties}
                 hasActiveFilters={hasActiveFilters}
                 onChange={(nextFilters) => {
                   setVisibleResultLimit(SUMMIT_RESULT_BATCH_SIZE);

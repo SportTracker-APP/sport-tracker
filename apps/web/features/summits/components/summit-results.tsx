@@ -182,7 +182,6 @@ function SummitCard({
             <Mountain aria-hidden="true" />
             {viewModel.altitude}
           </span>
-          <span>{viewModel.difficulty}</span>
           <span>{viewModel.type}</span>
         </div>
 
@@ -239,7 +238,6 @@ function SummitListRow({
         </span>
       </div>
       <span className={styles.listMetric}>{viewModel.altitude}</span>
-      <span className={styles.listMetric}>{viewModel.difficulty}</span>
       <span className={styles.listDate}>
         {viewModel.dateLabel ?? "Pas encore découvert"}
       </span>
@@ -303,7 +301,6 @@ export function SummitResults({
         <div className={styles.listHeader} aria-hidden="true">
           <span>Sommet</span>
           <span>Altitude</span>
-          <span>Difficulté</span>
           <span>Date</span>
           <span>Passages</span>
           <span>Statut</span>

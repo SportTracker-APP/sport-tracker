@@ -623,6 +623,14 @@ export class AdminSummitsService {
     }
 
     const action = dto.resolutionAction;
+    if (
+      action === SummitImportResolutionAction.CREATE_NEW &&
+      candidate.matchedSummitId
+    ) {
+      throw new ConflictException(
+        'Un sommet HOVREN compatible existe déjà. Utilise MATCH_EXISTING ou conserve le candidat à vérifier.',
+      );
+    }
     const resolved =
       action !== undefined &&
       action !== SummitImportResolutionAction.KEEP_FOR_REVIEW;
@@ -636,9 +644,6 @@ export class AdminSummitsService {
         }),
         ...(action === SummitImportResolutionAction.MATCH_EXISTING && {
           matchedSummitId: dto.matchedSummitId,
-        }),
-        ...(action === SummitImportResolutionAction.CREATE_NEW && {
-          matchedSummitId: null,
         }),
         ...(action && {
           resolvedAt: resolved ? new Date() : null,

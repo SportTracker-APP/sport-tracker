@@ -113,4 +113,17 @@ describe("SummitAdminDetail", () => {
     expect(screen.getByText("Massif principal")).toBeVisible();
     expect(screen.getByRole("button", { name: "Publier" })).toBeDisabled();
   });
+
+  it("moves a doubtful position to review after confirmation", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<SummitAdminDetail summit={summit} onClose={vi.fn()} />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Position à vérifier" }),
+    );
+
+    await waitFor(() => {
+      expect(mutateAsync).toHaveBeenCalledWith({ catalogStatus: "REVIEW" });
+    });
+  });
 });

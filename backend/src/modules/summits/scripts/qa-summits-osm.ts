@@ -25,7 +25,19 @@ async function main() {
       : undefined,
   });
 
-  console.log(JSON.stringify(report.counts, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        counts: report.counts,
+        reviewRequired: report.matches.filter(
+          ({ positionReviewRequired, altitudeReviewRequired }) =>
+            positionReviewRequired || altitudeReviewRequired,
+        ),
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 void main().catch((error: unknown) => {

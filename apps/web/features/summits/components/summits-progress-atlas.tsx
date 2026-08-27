@@ -269,8 +269,7 @@ export function NextDiscovery({
         <span className={styles.sectionLabel}>Prochaine découverte</span>
         <h2>{summit.name}</h2>
         <p className={styles.nextDiscoveryMeta}>
-          {formatSummitAltitude(summit.altitude)} · {summit.massif} ·{" "}
-          {summit.difficulty}
+          {formatSummitAltitude(summit.altitude)} · {summit.massif}
         </p>
         <p>
           {reason} {summit.name} pourrait être ta prochaine page.

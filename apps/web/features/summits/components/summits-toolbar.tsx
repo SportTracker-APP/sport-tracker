@@ -24,7 +24,6 @@ type SummitsToolbarProps = {
   };
   resultCount: number;
   massifOptions: string[];
-  difficultyOptions: string[];
   hasActiveFilters: boolean;
   onChange: (nextFilters: SummitFilterState) => void;
   onReset: () => void;
@@ -54,7 +53,6 @@ export function SummitsToolbar({
   counts,
   resultCount,
   massifOptions,
-  difficultyOptions,
   hasActiveFilters,
   onChange,
   onReset,
@@ -67,7 +65,6 @@ export function SummitsToolbar({
   ) => onChange({ ...filters, [key]: value });
   const advancedFilterCount = [
     filters.massif !== "ALL",
-    filters.difficulty !== "ALL",
     filters.altitude !== "ALL",
   ].filter(Boolean).length;
   const activeChips = [
@@ -76,13 +73,6 @@ export function SummitsToolbar({
           key: "massif",
           label: filters.massif,
           clear: () => update("massif", "ALL"),
-        }
-      : null,
-    filters.difficulty !== "ALL"
-      ? {
-          key: "difficulty",
-          label: filters.difficulty,
-          clear: () => update("difficulty", "ALL"),
         }
       : null,
     filters.altitude !== "ALL"
@@ -234,21 +224,6 @@ export function SummitsToolbar({
               {massifOptions.map((massif) => (
                 <option key={massif} value={massif}>
                   {massif}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label>
-            <span>Difficulté</span>
-            <select
-              value={filters.difficulty}
-              onChange={(event) => update("difficulty", event.target.value)}
-            >
-              <option value="ALL">Toutes</option>
-              {difficultyOptions.map((difficulty) => (
-                <option key={difficulty} value={difficulty}>
-                  {difficulty}
                 </option>
               ))}
             </select>

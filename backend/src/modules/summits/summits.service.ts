@@ -11,6 +11,7 @@ import {
   Prisma,
   SummitCatalogStatus,
   SummitCatalogTier,
+  SummitDiscoveryConfirmationSource,
   SummitDiscoveryStatus,
 } from '@prisma/client';
 
@@ -524,6 +525,9 @@ export class SummitsService implements OnModuleInit {
       where: { id: discovery.id },
       data: {
         status: dto.status,
+        confirmationSource: confirmed
+          ? SummitDiscoveryConfirmationSource.USER
+          : null,
         discoveredAt: confirmed
           ? discovery.activity.startedAt
           : discovery.discoveredAt,
@@ -547,6 +551,7 @@ export class SummitsService implements OnModuleInit {
       },
       data: {
         status: SummitDiscoveryStatus.DISMISSED,
+        confirmationSource: null,
         confirmedAt: null,
         dismissedAt,
       },
@@ -596,7 +601,12 @@ export class SummitsService implements OnModuleInit {
     );
     const existingDiscoveries = await this.prisma.summitDiscovery.findMany({
       where: { activityId },
-      select: { summitId: true, status: true, confirmedAt: true },
+      select: {
+        summitId: true,
+        status: true,
+        confirmationSource: true,
+        confirmedAt: true,
+      },
     });
     const existingBySummit = new Map(
       existingDiscoveries.map((discovery) => [discovery.summitId, discovery]),
@@ -607,10 +617,21 @@ export class SummitsService implements OnModuleInit {
       const detectedStatus = match.autoConfirmed
         ? SummitDiscoveryStatus.CONFIRMED
         : SummitDiscoveryStatus.PENDING;
+      const manuallyConfirmed =
+        existing?.status === SummitDiscoveryStatus.CONFIRMED &&
+        existing.confirmationSource === SummitDiscoveryConfirmationSource.USER;
       const status =
         existing?.status === SummitDiscoveryStatus.DISMISSED
           ? SummitDiscoveryStatus.DISMISSED
-          : detectedStatus;
+          : manuallyConfirmed
+            ? SummitDiscoveryStatus.CONFIRMED
+            : detectedStatus;
+      const confirmationSource =
+        status === SummitDiscoveryStatus.CONFIRMED
+          ? manuallyConfirmed
+            ? SummitDiscoveryConfirmationSource.USER
+            : SummitDiscoveryConfirmationSource.AUTO
+          : null;
 
       await this.prisma.summitDiscovery.upsert({
         where: {
@@ -621,6 +642,7 @@ export class SummitsService implements OnModuleInit {
           summitId: match.summitId,
           activityId,
           status,
+          confirmationSource,
           confidence: match.confidence,
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
@@ -631,6 +653,7 @@ export class SummitsService implements OnModuleInit {
         },
         update: {
           status,
+          confirmationSource,
           confidence: match.confidence,
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
@@ -642,6 +665,30 @@ export class SummitsService implements OnModuleInit {
               : null,
           dismissedAt:
             status === SummitDiscoveryStatus.DISMISSED ? undefined : null,
+        },
+      });
+    }
+
+    const matchedSummitIds = new Set(matches.map(({ summitId }) => summitId));
+    const staleAutomaticSummitIds = existingDiscoveries.flatMap(
+      ({ summitId, status, confirmationSource }) =>
+        !matchedSummitIds.has(summitId) &&
+        (status === SummitDiscoveryStatus.PENDING ||
+          confirmationSource === SummitDiscoveryConfirmationSource.AUTO)
+          ? [summitId]
+          : [],
+    );
+    if (staleAutomaticSummitIds.length > 0) {
+      await this.prisma.summitDiscovery.updateMany({
+        where: {
+          activityId,
+          summitId: { in: staleAutomaticSummitIds },
+        },
+        data: {
+          status: SummitDiscoveryStatus.DISMISSED,
+          confirmationSource: null,
+          confirmedAt: null,
+          dismissedAt: new Date(),
         },
       });
     }

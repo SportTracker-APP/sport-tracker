@@ -828,6 +828,94 @@
   gap: 12px;
 }
 
+.coordinateReview,
+.positionReviewAction {
+  align-items: center;
+  background: rgba(238, 231, 218, 0.44);
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  padding: 12px 13px;
+}
+
+.positionReviewAction {
+  border-left: 3px solid rgba(184, 77, 39, 0.58);
+  border-right: 0;
+  margin: 0;
+  padding: 14px 18px;
+}
+
+.coordinateReview > div,
+.positionReviewAction > div {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+}
+
+.coordinateReview > div > svg,
+.positionReviewAction > div > svg {
+  color: var(--terracotta);
+  flex: 0 0 auto;
+  height: 18px;
+  margin-top: 2px;
+  width: 18px;
+}
+
+.coordinateReview p,
+.positionReviewAction p {
+  margin: 0;
+}
+
+.coordinateReview strong,
+.coordinateReview span,
+.positionReviewAction strong,
+.positionReviewAction span {
+  display: block;
+}
+
+.coordinateReview strong,
+.positionReviewAction strong {
+  color: var(--forest-deep);
+  font-size: 0.76rem;
+}
+
+.coordinateReview span,
+.positionReviewAction span {
+  color: var(--moss);
+  font-size: 0.68rem;
+  line-height: 1.45;
+  margin-top: 3px;
+}
+
+.coordinateReview nav {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+}
+
+.coordinateReview a {
+  align-items: center;
+  border-bottom: 1px solid rgba(47, 93, 70, 0.3);
+  color: var(--forest);
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 750;
+  gap: 5px;
+  min-height: 36px;
+  text-decoration: none;
+}
+
+.coordinateReview a svg {
+  height: 13px;
+  width: 13px;
+}
+
+.coordinateReview a[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
 .imageEditor {
   display: grid;
   gap: 12px;
@@ -1254,6 +1342,7 @@
 .fieldGroup :focus-visible,
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
+.coordinateReview a:focus-visible,
 .geoAreaList button:focus-visible {
   outline: 2px solid var(--terracotta);
   outline-offset: 2px;
@@ -1356,9 +1445,19 @@
   }
 
   .imageActions,
-  .createDialog footer {
+  .createDialog footer,
+  .coordinateReview,
+  .positionReviewAction {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .coordinateReview nav {
+    justify-content: space-between;
+  }
+
+  .positionReviewAction .secondaryButton {
+    width: 100%;
   }
 }
 

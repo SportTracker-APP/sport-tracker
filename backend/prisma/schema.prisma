@@ -717,6 +717,8 @@ model SummitDiscovery {
 
   status SummitDiscoveryStatus @default(PENDING)
 
+  confirmationSource SummitDiscoveryConfirmationSource?
+
   confidence Float
 
   closestDistance Int
@@ -747,6 +749,7 @@ model SummitDiscovery {
 
   @@unique([summitId, activityId])
   @@index([userId, status])
+  @@index([confirmationSource])
   @@index([userId, summitId])
   @@index([activityId])
   @@index([detectedAt])
@@ -884,6 +887,11 @@ enum SummitDiscoveryStatus {
   PENDING
   CONFIRMED
   DISMISSED
+}
+
+enum SummitDiscoveryConfirmationSource {
+  AUTO
+  USER
 }
 
 enum SummitCatalogStatus {

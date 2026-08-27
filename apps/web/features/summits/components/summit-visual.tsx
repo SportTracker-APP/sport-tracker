@@ -5,7 +5,6 @@ import { Mountain, Route } from "lucide-react";
 import { useState } from "react";
 
 import type { SummitView } from "@/lib/summit-discovery";
-import { getEditorialMountainImage } from "@/lib/mountain-visuals";
 
 import type { SummitVisualSource } from "../summits-types";
 import { getSummitVisualSource } from "../summits-utils";
@@ -30,23 +29,13 @@ export function SummitVisual({
 }: SummitVisualProps) {
   const visual = providedVisual ?? getSummitVisualSource(summit);
   const [failedSource, setFailedSource] = useState<string | null>(null);
-  const editorialFallbackSource = getEditorialMountainImage(
-    `runtime-fallback:${summit.id}`,
-  );
-  const useEditorialFallback =
-    visual.kind === "fallback" || failedSource === visual.src;
-  const imageSource = useEditorialFallback
-    ? editorialFallbackSource
-    : visual.src;
-  const useIllustratedFallback =
-    imageSource === null || failedSource === editorialFallbackSource;
   const fallbackVariant =
     [...summit.id].reduce(
       (total, character) => total + character.charCodeAt(0),
       0,
     ) % 3;
 
-  if (useIllustratedFallback) {
+  if (visual.kind === "fallback" || failedSource === visual.src) {
     return (
       <div
         className={`${styles.summitVisualFallback}${className ? ` ${className}` : ""}`}
@@ -74,20 +63,16 @@ export function SummitVisual({
   return (
     <>
       <Image
-        src={imageSource}
-        alt={
-          useEditorialFallback
-            ? `Paysage alpin sélectionné pour ${summit.name}`
-            : visual.alt
-        }
+        src={visual.src}
+        alt={visual.alt}
         fill
         sizes={sizes}
         priority={priority}
         className={`${styles.summitImage}${className ? ` ${className}` : ""}`}
-        onError={() => setFailedSource(imageSource)}
+        onError={() => setFailedSource(visual.src)}
       />
       {showCredit ? (
-        !useEditorialFallback && visual.creditUrl ? (
+        visual.creditUrl ? (
           <a
             href={visual.creditUrl}
             target="_blank"
@@ -98,9 +83,7 @@ export function SummitVisual({
             {visual.credit}
           </a>
         ) : (
-          <span className={styles.visualCredit}>
-            {useEditorialFallback ? "Sélection HOVREN" : visual.credit}
-          </span>
+          <span className={styles.visualCredit}>{visual.credit}</span>
         )
       ) : null}
     </>

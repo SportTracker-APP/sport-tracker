@@ -55,6 +55,19 @@ describe("Exploration summit map layer", () => {
     });
   });
 
+  it("projects the stored longitude and latitude without a visual offset", () => {
+    const feature = getSummitsGeoJson([
+      createSummit({
+        altitude: 3901,
+        coordinates: [7.020211, 45.959721],
+      }),
+    ]).features[0];
+
+    expect(feature?.geometry.coordinates).toEqual([7.020211, 45.959721]);
+    expect(feature?.geometry.coordinates).toHaveLength(2);
+    expect(feature?.properties.altitude).toBe(3901);
+  });
+
   it("hides only summit layers and leaves trace layers untouched", () => {
     const setLayoutProperty = vi.fn();
     const map = {

@@ -50,4 +50,17 @@ describe("SummitIdentityForm", () => {
       });
     });
   });
+
+  it("opens the current coordinates in the IGN and OSM review maps", () => {
+    render(<SummitIdentityForm summit={summit} onFeedback={vi.fn()} />);
+
+    expect(screen.getByRole("link", { name: /Carte IGN/ })).toHaveAttribute(
+      "href",
+      expect.stringContaining("c=6.287,45.827"),
+    );
+    expect(screen.getByRole("link", { name: /Carte OSM/ })).toHaveAttribute(
+      "href",
+      expect.stringContaining("mlat=45.827&mlon=6.287"),
+    );
+  });
 });

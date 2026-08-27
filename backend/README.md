@@ -70,6 +70,31 @@ $ pnpm run test:cov
 
 Request bodies, authentication headers, cookies, query strings and user details are excluded from observability payloads.
 
+## Curation des photos de sommets
+
+`pnpm summits:photos --report=/tmp/summit-photos.json` prépare un rapport sans
+modifier la base. Le premier niveau retient uniquement les images Wikimedia
+Commons reliées à une entité Wikidata cohérente en nom, coordonnées et
+altitude. Pour les sommets restants, une recherche exacte Commons exige à la
+fois le nom dans le fichier, une catégorie correspondant précisément au sommet
+et une prise de vue géolocalisée à moins de 75 km.
+
+Le rapport doit être relu visuellement avant application. Les fichiers qui
+respectent les métadonnées mais ne représentent pas clairement le sommet sont
+explicitement exclus de la curation.
+
+Pour figer exactement la sélection relue, l’application accepte
+`--approved-report=<rapport> --expected-candidates=<nombre>` avec `--apply`.
+Le fichier est revalidé (domaines Wikimedia, licence, crédit, unicité) avant la
+transaction afin que l’ordre variable des résultats Commons ne change pas la
+sélection approuvée.
+
+Le pipeline refuse les licences non commerciales ou sans dérivés, exige un
+auteur et conserve sur chaque sommet le crédit, la licence et la page source
+Commons. L’application est idempotente et ne remplace jamais une photo
+existante ou ajoutée manuellement dans le back-office. Une base distante exige
+les confirmations explicites affichées par la commande avant tout `--apply`.
+
 ## Strava token encryption
 
 Strava access and refresh tokens are encrypted at rest with AES-256-GCM. Configure one base64-encoded 32-byte key:

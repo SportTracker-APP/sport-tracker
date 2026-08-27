@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, Mountain, X } from "lucide-react";
+import { Eye, EyeOff, MapPinned, Mountain, X } from "lucide-react";
 import { useState } from "react";
 
 import { useUpdateAdminSummit } from "@/hooks/use-admin-summits";
@@ -103,6 +103,18 @@ export function SummitAdminDetail({ summit, onClose }: SummitAdminDetailProps) {
     } catch (error) {
       notify(getApiErrorMessage(error), "error");
     }
+  }
+
+  function flagPositionForReview() {
+    if (
+      !window.confirm(
+        `Marquer la position de « ${summit.name} » à vérifier ? Le sommet sera masqué du catalogue public jusqu’à validation.`,
+      )
+    ) {
+      return;
+    }
+
+    void changeStatus("REVIEW");
   }
 
   return (
@@ -218,6 +230,29 @@ export function SummitAdminDetail({ summit, onClose }: SummitAdminDetailProps) {
       </section>
 
       <SummitDataQuality quality={summit.quality} />
+
+      {summit.catalogStatus === "READY" && (
+          <div className={styles.positionReviewAction}>
+            <div>
+              <MapPinned aria-hidden="true" />
+              <p>
+                <strong>Un doute sur l’emplacement ?</strong>
+                <span>
+                  Masque le sommet pendant la vérification IGN / OSM afin de
+                  protéger aussi la validation GPS.
+                </span>
+              </p>
+            </div>
+            <button
+              type="button"
+              className={styles.secondaryButton}
+              disabled={updateMutation.isPending}
+              onClick={flagPositionForReview}
+            >
+              Position à vérifier
+            </button>
+          </div>
+        )}
 
       <SummitImageEditor summit={summit} onFeedback={notify} />
 

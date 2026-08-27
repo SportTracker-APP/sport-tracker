@@ -260,22 +260,24 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
                               <GitMerge /> Associer
                             </button>
                           ) : null}
-                          <button
-                            type="button"
-                            disabled={updateCandidate.isPending}
-                            onClick={() =>
-                              updateCandidate.mutate({
-                                candidateId: candidate.id,
-                                input: {
-                                  resolutionAction: "CREATE_NEW",
-                                  resolutionReason:
-                                    "Nouveau sommet confirmé par un administrateur",
-                                },
-                              })
-                            }
-                          >
-                            Créer séparément
-                          </button>
+                          {!candidate.matchedSummit ? (
+                            <button
+                              type="button"
+                              disabled={updateCandidate.isPending}
+                              onClick={() =>
+                                updateCandidate.mutate({
+                                  candidateId: candidate.id,
+                                  input: {
+                                    resolutionAction: "CREATE_NEW",
+                                    resolutionReason:
+                                      "Nouveau sommet confirmé par un administrateur",
+                                  },
+                                })
+                              }
+                            >
+                              Créer séparément
+                            </button>
+                          ) : null}
                           <button
                             type="button"
                             disabled={updateCandidate.isPending}

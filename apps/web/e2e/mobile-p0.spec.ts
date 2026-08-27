@@ -381,7 +381,10 @@ test("le menu mobile plein écran reste contenu et défilable", async ({
   const box = await dialog.boundingBox();
   expect(box).not.toBeNull();
   expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.x).toBeLessThanOrEqual(1);
   expect(box!.y).toBeGreaterThanOrEqual(0);
+  expect(box!.y).toBeLessThanOrEqual(1);
+  expect(box!.height).toBeGreaterThanOrEqual(iphone13.viewport.height - 1);
   expect(box!.x + box!.width).toBeLessThanOrEqual(iphone13.viewport.width);
   expect(box!.y + box!.height).toBeLessThanOrEqual(iphone13.viewport.height);
   await expect(

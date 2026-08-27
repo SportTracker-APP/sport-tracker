@@ -1397,6 +1397,12 @@
   gap: 4px;
 }
 
+.cardMeta span + span::before {
+  margin-right: 5px;
+  color: var(--border-strong);
+  content: "·";
+}
+
 .cardMeta svg {
   width: 13px;
   color: var(--forest);
@@ -3793,7 +3799,6 @@
   grid-template-columns:
     minmax(220px, 1.55fr)
     minmax(75px, 0.52fr)
-    minmax(88px, 0.62fr)
     minmax(132px, 0.92fr)
     minmax(108px, 0.72fr)
     minmax(108px, 0.74fr)
@@ -3843,11 +3848,6 @@
       minmax(100px, 0.72fr)
       minmax(104px, 0.74fr)
       82px;
-  }
-
-  .listHeader > span:nth-child(3),
-  .listRow > .listMetric:nth-child(3) {
-    display: none;
   }
 }
 

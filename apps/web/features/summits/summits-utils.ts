@@ -4,10 +4,7 @@ import {
   type MassifProgress,
   type SummitView,
 } from "@/lib/summit-discovery";
-import {
-  getEditorialMountainImage,
-  isApprovedSummitImageUrl,
-} from "@/lib/mountain-visuals";
+import { isApprovedSummitImageUrl } from "@/lib/mountain-visuals";
 import { normalizeSummitName } from "@/lib/summits";
 
 import type {
@@ -27,7 +24,6 @@ export const DEFAULT_SUMMIT_FILTERS: SummitFilterState = {
   viewMode: "CARDS",
   searchQuery: "",
   massif: "ALL",
-  difficulty: "ALL",
   altitude: "ALL",
   sort: "DISCOVERY",
 };
@@ -231,13 +227,6 @@ export function filterSummits(
         return false;
       }
 
-      if (
-        filters.difficulty !== "ALL" &&
-        summit.difficulty !== filters.difficulty
-      ) {
-        return false;
-      }
-
       if (!matchesAltitude(summit, filters.altitude)) {
         return false;
       }
@@ -308,10 +297,13 @@ function isGenericEditorialCredit(credit: string | undefined) {
 function getVerifiedSummitVisual(
   summit: SummitView,
 ): SummitVisualSource | null {
+  const isAdminPhoto = summit.imageUrl?.includes(".supabase.co/") ?? false;
+
   if (
     !summit.imageUrl ||
     !isApprovedSummitImageUrl(summit.imageUrl) ||
-    isGenericEditorialCredit(summit.imageCredit)
+    (!isAdminPhoto &&
+      (isGenericEditorialCredit(summit.imageCredit) || !summit.sourceUrl))
   ) {
     return null;
   }
@@ -320,19 +312,17 @@ function getVerifiedSummitVisual(
     kind: "editorial",
     src: summit.imageUrl,
     alt: `Vue de ${summit.name}`,
-    credit: summit.imageCredit ?? "Source éditoriale",
+    credit: summit.imageCredit ?? "Photo HOVREN",
     creditUrl: summit.sourceUrl ?? null,
   };
 }
 
 function getEditorialFallbackVisual(summit: SummitView): SummitVisualSource {
   return {
-    kind: "editorial",
-    src: getEditorialMountainImage(
-      `summit:${summit.id}:${summit.name}:${summit.massif}`,
-    ),
-    alt: `Paysage alpin sélectionné pour ${summit.name}`,
-    credit: "Sélection HOVREN",
+    kind: "fallback",
+    src: null,
+    alt: `Illustration de relief pour ${summit.name}`,
+    credit: "Illustration HOVREN",
     creditUrl: null,
   };
 }
@@ -341,47 +331,14 @@ export function getSummitVisualSource(summit: SummitView): SummitVisualSource {
   return getVerifiedSummitVisual(summit) ?? getEditorialFallbackVisual(summit);
 }
 
-function getMassifVisualCandidate(
-  summit: SummitView,
-  catalogSummits: SummitView[],
-) {
-  const sourceSummit = catalogSummits.find((candidate) => {
-    return (
-      candidate.id !== summit.id &&
-      candidate.massif === summit.massif &&
-      getVerifiedSummitVisual(candidate) !== null
-    );
-  });
-  const sourceVisual = sourceSummit
-    ? getVerifiedSummitVisual(sourceSummit)
-    : null;
-
-  if (!sourceVisual?.src) {
-    return null;
-  }
-
-  return {
-    kind: "massif",
-    src: sourceVisual.src,
-    alt: `Vue du massif ${summit.massif}`,
-    credit: sourceVisual.credit,
-    creditUrl: sourceVisual.creditUrl,
-  } satisfies SummitVisualSource;
-}
-
-export function getSummitVisualSources(
-  summits: SummitView[],
-  catalogSummits: SummitView[] = summits,
-) {
+export function getSummitVisualSources(summits: SummitView[]) {
   const usedSources = new Set<string>();
 
   return summits.reduce<Record<string, SummitVisualSource>>(
     (visuals, summit) => {
       const summitVisual = getVerifiedSummitVisual(summit);
-      const massifVisual = getMassifVisualCandidate(summit, catalogSummits);
       const candidates = [
         ...(summitVisual ? [summitVisual] : []),
-        ...(massifVisual ? [massifVisual] : []),
         getEditorialFallbackVisual(summit),
       ];
       const selectedVisual = candidates.find(
@@ -397,39 +354,6 @@ export function getSummitVisualSources(
     },
     {},
   );
-}
-
-export function getMassifVisualSource(
-  summits: SummitView[],
-  massif: string,
-): SummitVisualSource | null {
-  const massifSummits = summits
-    .filter((summit) => summit.massif === massif)
-    .sort(
-      (firstSummit, secondSummit) =>
-        Number(secondSummit.discovered) - Number(firstSummit.discovered),
-    );
-  const source = massifSummits
-    .map(getVerifiedSummitVisual)
-    .find((candidate) => candidate?.src);
-
-  if (!source?.src) {
-    return {
-      kind: "massif",
-      src: getEditorialMountainImage(`massif:${massif}`),
-      alt: `Paysage alpin sélectionné pour le massif ${massif}`,
-      credit: "Sélection HOVREN",
-      creditUrl: null,
-    };
-  }
-
-  return {
-    kind: "massif",
-    src: source.src,
-    alt: `Vue du massif ${massif}`,
-    credit: source.credit,
-    creditUrl: source.creditUrl,
-  };
 }
 
 function getMassifProgressForSummit(
@@ -498,10 +422,9 @@ function getSummitSecondaryInfo(
 
 export function getSummitCardViewModels(
   summits: SummitView[],
-  catalogSummits: SummitView[],
   massifProgress: MassifProgress[],
 ): SummitCardViewModel[] {
-  const visualSources = getSummitVisualSources(summits, catalogSummits);
+  const visualSources = getSummitVisualSources(summits);
 
   return summits.map((summit) => {
     const status = getSummitStatus(summit);
@@ -523,7 +446,6 @@ export function getSummitCardViewModels(
       name: summit.name,
       massif: summit.massif,
       altitude: formatSummitAltitude(summit.altitude),
-      difficulty: summit.difficulty,
       type: summit.type,
       status,
       statusLabel:
@@ -673,9 +595,6 @@ export function getNextSummitForMassif(
 export function getSummitOptions(summits: SummitView[]) {
   return {
     massifs: Array.from(new Set(summits.map((summit) => summit.massif))).sort(),
-    difficulties: Array.from(
-      new Set(summits.map((summit) => summit.difficulty)),
-    ).sort(),
   };
 }
 
@@ -702,7 +621,6 @@ export function parseSummitFilters(search: string): SummitFilterState {
           DEFAULT_SUMMIT_FILTERS.viewMode),
     searchQuery: params.get("recherche") ?? "",
     massif: params.get("massif") ?? "ALL",
-    difficulty: params.get("difficulte") ?? "ALL",
     altitude:
       altitude === "LOW" ||
       altitude === "MID" ||
@@ -746,7 +664,7 @@ export function serializeSummitFilters(
   );
   syncParam("recherche", filters.searchQuery.trim(), "");
   syncParam("massif", filters.massif, "ALL");
-  syncParam("difficulte", filters.difficulty, "ALL");
+  params.delete("difficulte");
   syncParam("altitude", filters.altitude, "ALL");
   syncParam("tri", filters.sort, "DISCOVERY");
 
@@ -758,7 +676,6 @@ export function hasActiveSummitFilters(filters: SummitFilterState) {
     filters.status !== DEFAULT_SUMMIT_FILTERS.status ||
     filters.searchQuery.trim() !== "" ||
     filters.massif !== DEFAULT_SUMMIT_FILTERS.massif ||
-    filters.difficulty !== DEFAULT_SUMMIT_FILTERS.difficulty ||
     filters.altitude !== DEFAULT_SUMMIT_FILTERS.altitude ||
     filters.sort !== DEFAULT_SUMMIT_FILTERS.sort
   );

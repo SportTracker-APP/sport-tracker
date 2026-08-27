@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
+import { ExternalLink, MapPin, Save } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -28,6 +28,7 @@ export function SummitIdentityForm({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isDirty },
   } = useForm<AdminSummitIdentityFormValue>({
     resolver: zodResolver(adminSummitIdentitySchema),
@@ -41,6 +42,16 @@ export function SummitIdentityForm({
       type: summit.type,
     },
   });
+  const latitude = watch("latitude");
+  const longitude = watch("longitude");
+  const hasValidCoordinates =
+    Number.isFinite(latitude) && Number.isFinite(longitude);
+  const ignMapUrl = hasValidCoordinates
+    ? `https://www.geoportail.gouv.fr/carte?c=${longitude},${latitude}&z=18&permalink=yes`
+    : undefined;
+  const osmMapUrl = hasValidCoordinates
+    ? `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=18/${latitude}/${longitude}`
+    : undefined;
 
   useEffect(() => {
     reset({
@@ -141,6 +152,37 @@ export function SummitIdentityForm({
           <input {...register("difficulty")} />
           {errors.difficulty && <small>{errors.difficulty.message}</small>}
         </label>
+      </div>
+
+      <div className={styles.coordinateReview}>
+        <div>
+          <MapPin aria-hidden="true" />
+          <p>
+            <strong>Contrôle du point culminant</strong>
+            <span>
+              Compare la position sur le relief avant de modifier les
+              coordonnées. Toute correction est historisée.
+            </span>
+          </p>
+        </div>
+        <nav aria-label="Comparer les coordonnées du sommet">
+          <a
+            href={ignMapUrl}
+            aria-disabled={!ignMapUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Carte IGN <ExternalLink aria-hidden="true" />
+          </a>
+          <a
+            href={osmMapUrl}
+            aria-disabled={!osmMapUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Carte OSM <ExternalLink aria-hidden="true" />
+          </a>
+        </nav>
       </div>
 
       <div className={styles.formActions}>

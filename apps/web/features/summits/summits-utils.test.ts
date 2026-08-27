@@ -6,7 +6,6 @@ import {
   filterSummits,
   getFeaturedMassif,
   getLatestDiscoveredSummit,
-  getMassifVisualSource,
   getNextSummitForMassif,
   getRecommendedSummit,
   getSummitCardViewModels,
@@ -111,7 +110,6 @@ describe("summits utilities", () => {
         viewMode: "CARDS",
         searchQuery: "sous dine",
         massif: "Bornes",
-        difficulty: "ALL",
         altitude: "MID",
         sort: "NAME",
       }).map((summit) => summit.id),
@@ -129,7 +127,6 @@ describe("summits utilities", () => {
       viewMode: "CARDS" as const,
       searchQuery: "pointe secondaire",
       massif: "ALL",
-      difficulty: "ALL" as const,
       altitude: "ALL" as const,
       sort: "NAME" as const,
     };
@@ -138,9 +135,7 @@ describe("summits utilities", () => {
       secondary,
     ]);
 
-    expect(
-      getSummitCardViewModels([secondary], [discovered], [])[0],
-    ).toMatchObject({
+    expect(getSummitCardViewModels([secondary], [])[0]).toMatchObject({
       statusLabel: "Point remarquable",
       passageLabel: "Hors progression principale",
       ctaLabel: "Voir le repère",
@@ -161,6 +156,7 @@ describe("summits utilities", () => {
       ...discovered,
       imageUrl: "https://commons.wikimedia.org/summit.jpg",
       imageCredit: "Wikimedia Commons",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Summit.jpg",
       firstActivity: {
         ...discovered.latestActivity!,
         id: "activity-first",
@@ -176,6 +172,14 @@ describe("summits utilities", () => {
       name: "Sommet éditorial",
       imageUrl: "https://commons.wikimedia.org/summit.jpg",
       imageCredit: "Wikimedia Commons",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Summit.jpg",
+    });
+    const withAdminEditorialPhoto = createSummit({
+      id: "admin-editorial",
+      name: "Sommet éditorial administré",
+      imageUrl:
+        "https://project-ref.supabase.co/storage/v1/object/public/summit-images/summit.webp?v=1",
+      imageCredit: "CC BY-SA 3.0",
     });
     const withGenericPhoto = createSummit({
       id: "generic",
@@ -200,19 +204,20 @@ describe("summits utilities", () => {
     expect(getSummitVisualSource(withVerifiedEditorialPhoto).kind).toBe(
       "editorial",
     );
-    expect(getSummitVisualSource(withGenericPhoto)).toMatchObject({
+    expect(getSummitVisualSource(withAdminEditorialPhoto)).toMatchObject({
       kind: "editorial",
-      credit: "Sélection HOVREN",
+      src: withAdminEditorialPhoto.imageUrl,
+      credit: "CC BY-SA 3.0",
     });
-    expect(getSummitVisualSource(withGenericPhoto).src).toMatch(
-      /^\/summits\/.+\.webp$/,
-    );
-    expect(getSummitVisualSource(withGenericPhoto).src).not.toBe(
-      "https://images.pexels.com/mountain.jpg",
-    );
+    expect(getSummitVisualSource(withGenericPhoto)).toMatchObject({
+      kind: "fallback",
+      src: null,
+      credit: "Illustration HOVREN",
+    });
     expect(getSummitVisualSource(withoutCatalogPhoto)).toMatchObject({
-      kind: "editorial",
-      credit: "Sélection HOVREN",
+      kind: "fallback",
+      src: null,
+      credit: "Illustration HOVREN",
     });
     expect(getSummitVisualSource(withoutCatalogPhoto).src).not.toBe(
       "https://dgtzuqphqg23d.cloudfront.net/strava-photo.jpg",
@@ -221,33 +226,34 @@ describe("summits utilities", () => {
 
   it("évite de répéter la même photo dans la grille visible", () => {
     const sharedPhoto =
-      "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg";
+      "https://commons.wikimedia.org/photos/sommet-partage.jpg";
     const firstSummit = createSummit({
       ...discovered,
       id: "first-photo",
       name: "Premier sommet",
       imageUrl: sharedPhoto,
-      imageCredit: "Image montagne",
+      imageCredit: "Auteur vérifié",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Sommet-partage.jpg",
     });
     const secondSummit = createSummit({
       ...pending,
       id: "second-photo",
       name: "Deuxième sommet",
       imageUrl: sharedPhoto,
-      imageCredit: "Image montagne",
+      imageCredit: "Auteur vérifié",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Sommet-partage.jpg",
     });
 
     const visuals = getSummitVisualSources([firstSummit, secondSummit]);
 
-    expect(visuals[firstSummit.id]?.src).not.toBe(sharedPhoto);
-    expect(visuals[secondSummit.id]?.kind).toBe("editorial");
-    expect(visuals[secondSummit.id]?.src).not.toBe(sharedPhoto);
-    expect(visuals[firstSummit.id]?.src).not.toBe(
-      visuals[secondSummit.id]?.src,
-    );
+    expect(visuals[firstSummit.id]?.src).toBe(sharedPhoto);
+    expect(visuals[secondSummit.id]).toMatchObject({
+      kind: "fallback",
+      src: null,
+    });
   });
 
-  it("utilise une vue vérifiée du même massif avant le fallback HOVREN", () => {
+  it("n’emprunte jamais la photo d’un autre sommet du même massif", () => {
     const summitWithoutPhoto = createSummit({
       id: "without-photo",
       name: "Sommet sans photo",
@@ -262,27 +268,18 @@ describe("summits utilities", () => {
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Aravis.jpg",
     });
 
-    const visuals = getSummitVisualSources(
-      [summitWithoutPhoto],
-      [summitWithoutPhoto, massifReference],
-    );
-    const massifVisual = getMassifVisualSource(
-      [summitWithoutPhoto, massifReference],
-      "Aravis",
-    );
+    const visuals = getSummitVisualSources([summitWithoutPhoto]);
 
     expect(visuals[summitWithoutPhoto.id]).toMatchObject({
-      kind: "massif",
-      src: "https://commons.wikimedia.org/aravis.jpg",
-      alt: "Vue du massif Aravis",
+      kind: "fallback",
+      src: null,
     });
-    expect(massifVisual).toMatchObject({
-      kind: "massif",
-      src: "https://commons.wikimedia.org/aravis.jpg",
-    });
+    expect(getSummitVisualSource(massifReference).src).toBe(
+      "https://commons.wikimedia.org/aravis.jpg",
+    );
   });
 
-  it("préfère une vraie vue du massif à une image catalogue générique", () => {
+  it("refuse une image générique même si une photo voisine est disponible", () => {
     const genericSummit = createSummit({
       id: "generic-summit",
       name: "Sommet générique",
@@ -297,22 +294,21 @@ describe("summits utilities", () => {
       massif: "Aravis",
       imageUrl: "https://commons.wikimedia.org/aravis.jpg",
       imageCredit: "Wikimedia Commons",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Aravis.jpg",
     });
 
     expect(
-      getSummitVisualSources([genericSummit], [genericSummit, massifReference])[
-        genericSummit.id
-      ],
+      getSummitVisualSources([genericSummit])[genericSummit.id],
     ).toMatchObject({
-      kind: "massif",
-      src: "https://commons.wikimedia.org/aravis.jpg",
+      kind: "fallback",
+      src: null,
     });
+    expect(getSummitVisualSource(massifReference).kind).toBe("editorial");
   });
 
   it("construit des cartes typées avec une information secondaire utile", () => {
     const massifs = getMassifProgress([discovered, pending, missing]);
     const viewModels = getSummitCardViewModels(
-      [discovered, pending, missing],
       [discovered, pending, missing],
       massifs,
     );

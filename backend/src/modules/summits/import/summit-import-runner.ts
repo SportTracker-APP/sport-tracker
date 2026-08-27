@@ -20,6 +20,11 @@ import { enrichCandidatesWithIgnAltitude } from './summit-import-altimetry';
 import { classifySummitCatalogTier } from './summit-catalog-tier';
 import { matchIgnCandidates } from './summit-import-matcher';
 import { calculateCandidateClassificationSignals } from './summit-import-signals';
+import {
+  osmNameMatchRequiresPositionReview,
+  selectCanonicalSummitLocation,
+  type OsmCanonicalLocationSignals,
+} from './summit-canonical-location';
 import { readIgnSummitSnapshot } from './summit-import-source';
 import type {
   ExistingSummitForMatch,
@@ -59,6 +64,7 @@ type CoreReleaseCandidate = {
   resolutionAction: SummitImportResolutionAction | null;
   matchedSummitId: string | null;
   matchedSummit: { primaryMassifId: string | null } | null;
+  classificationSignals?: Prisma.JsonValue;
 };
 
 export type CoreReleasePreview = {
@@ -285,8 +291,15 @@ async function classifyDecisions(input: {
       );
     }
     const tier = classifySummitCatalogTier(signals);
+    const positionReviewRequired =
+      decision.status !== 'REJECTED' &&
+      osmNameMatchRequiresPositionReview(signals);
     return {
       ...decision,
+      status: positionReviewRequired ? 'CONFLICT' : decision.status,
+      reason: positionReviewRequired
+        ? `Point IGN à ${signals.osmDistanceMeters} m du pic OSM homonyme : position à vérifier`
+        : decision.reason,
       suggestedTier: tier.tier,
       tierReason: tier.reason,
       classificationSignals: signals,
@@ -443,17 +456,25 @@ export async function applyPreparedSummitImport(
             throw new Error(`Altitude absente pour ${candidate.externalId}`);
           }
           summitId = newSummitId(candidate.externalId);
+          const canonicalLocation = selectCanonicalSummitLocation(
+            candidate,
+            (candidate.classificationSignals ?? {
+              osmMatched: false,
+              osmMatchMethod: null,
+              osmDistanceMeters: null,
+            }) as unknown as OsmCanonicalLocationSignals,
+          );
           await transaction.summit.create({
             data: {
               id: summitId,
               name: candidate.name,
               aliases: [],
-              altitude: candidate.elevation,
+              altitude: canonicalLocation.elevation ?? candidate.elevation,
               massif: 'Massif à préciser',
               difficulty: 'À définir',
               type: candidate.sourceNature,
-              longitude: candidate.longitude,
-              latitude: candidate.latitude,
+              longitude: canonicalLocation.longitude,
+              latitude: canonicalLocation.latitude,
               catalogStatus: SummitCatalogStatus.READY,
               isActive: true,
               suggestedTier: candidate.suggestedTier,

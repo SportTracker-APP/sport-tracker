@@ -18,7 +18,6 @@ export type SummitFilterState = {
   viewMode: SummitViewMode;
   searchQuery: string;
   massif: string;
-  difficulty: string;
   altitude: SummitAltitudeFilter;
   sort: SummitSortMode;
 };
@@ -36,13 +35,6 @@ export type SummitCollectionSummary = {
 };
 
 export type SummitVisualSource =
-  | {
-      kind: "massif";
-      src: string;
-      alt: string;
-      credit: string;
-      creditUrl: string | null;
-    }
   | {
       kind: "editorial";
       src: string;
@@ -84,7 +76,6 @@ export type SummitCardViewModel = {
   name: string;
   massif: string;
   altitude: string;
-  difficulty: string;
   type: string;
   status: SummitCardStatus;
   statusLabel: string;

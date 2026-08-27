@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   SummitCatalogStatus,
   SummitCatalogTier,
+  SummitDiscoveryConfirmationSource,
   SummitDiscoveryStatus,
 } from '@prisma/client';
 
@@ -21,6 +22,7 @@ type PrismaMock = {
     findMany: jest.Mock;
     update: jest.Mock;
     updateMany: jest.Mock;
+    upsert: jest.Mock;
   };
   userBadge: {
     createMany: jest.Mock;
@@ -42,6 +44,7 @@ function makePrisma(): PrismaMock {
       findMany: jest.fn().mockResolvedValue([]),
       update: jest.fn(),
       updateMany: jest.fn(),
+      upsert: jest.fn(),
     },
     userBadge: {
       createMany: jest.fn().mockResolvedValue({ count: 0 }),
@@ -231,6 +234,68 @@ describe('SummitsService', () => {
     expect(prisma.activity.findFirst).toHaveBeenCalledTimes(1);
   });
 
+  it('dismisses an automatic discovery that no longer reaches the corrected summit', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-1',
+      title: 'Pieds du sommet',
+      maxAltitude: 1600,
+      routePolyline: '??',
+      startedAt: new Date('2026-05-23T06:44:33Z'),
+    });
+    prisma.summitDiscovery.findMany
+      .mockResolvedValueOnce([
+        {
+          summitId: 'corrected-summit',
+          status: SummitDiscoveryStatus.CONFIRMED,
+          confirmationSource: SummitDiscoveryConfirmationSource.AUTO,
+          confirmedAt: new Date('2026-07-02T14:02:54Z'),
+        },
+      ])
+      .mockResolvedValueOnce([]);
+    prisma.summitDiscovery.updateMany.mockResolvedValue({ count: 1 });
+
+    await makeService(prisma).processActivities('user-1', ['activity-1']);
+
+    expect(prisma.summitDiscovery.updateMany).toHaveBeenCalledWith({
+      where: {
+        activityId: 'activity-1',
+        summitId: { in: ['corrected-summit'] },
+      },
+      data: {
+        status: SummitDiscoveryStatus.DISMISSED,
+        confirmationSource: null,
+        confirmedAt: null,
+        dismissedAt: expect.any(Date),
+      },
+    });
+  });
+
+  it('preserves a user-confirmed discovery during geographic recalculation', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-1',
+      title: 'Sortie historique',
+      maxAltitude: 1600,
+      routePolyline: '??',
+      startedAt: new Date('2026-05-23T06:44:33Z'),
+    });
+    prisma.summitDiscovery.findMany
+      .mockResolvedValueOnce([
+        {
+          summitId: 'user-confirmed-summit',
+          status: SummitDiscoveryStatus.CONFIRMED,
+          confirmationSource: SummitDiscoveryConfirmationSource.USER,
+          confirmedAt: new Date('2026-07-06T12:51:34Z'),
+        },
+      ])
+      .mockResolvedValueOnce([]);
+
+    await makeService(prisma).processActivities('user-1', ['activity-1']);
+
+    expect(prisma.summitDiscovery.updateMany).not.toHaveBeenCalled();
+  });
+
   it('persists a manual dismissal for a discovery owned by the user', async () => {
     const prisma = makePrisma();
     const discovery = {
@@ -323,6 +388,7 @@ describe('SummitsService', () => {
       },
       data: {
         status: SummitDiscoveryStatus.DISMISSED,
+        confirmationSource: null,
         confirmedAt: null,
         dismissedAt: expect.any(Date),
       },

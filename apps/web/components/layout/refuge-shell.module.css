@@ -625,11 +625,11 @@
   --mobile-border: #d9d1c2;
   --mobile-border-strong: #c6bcaa;
   position: fixed !important;
-  top: 4rem !important;
+  top: 0 !important;
   bottom: 0 !important;
   left: 0 !important;
   width: min(20rem, calc(100vw - 1.5rem)) !important;
-  height: calc(100dvh - 4rem) !important;
+  height: 100dvh !important;
   padding: 0 !important;
   gap: 0 !important;
   overflow: hidden !important;
@@ -638,17 +638,6 @@
   color: var(--mobile-forest-deep) !important;
   box-shadow: 18px 0 54px rgba(49, 57, 45, 0.16) !important;
   font-family: var(--font-mobile-nav-body), "Work Sans", sans-serif;
-}
-
-.mobileSheet[data-variant="refuge"] {
-  top: 72px !important;
-  height: calc(100dvh - 72px) !important;
-}
-
-:global(html.sport-theme-nature)
-  .mobileSheet.mobileSheet[data-variant="refuge"] {
-  top: 72px !important;
-  height: calc(100dvh - 72px) !important;
 }
 
 .mobileSheet::before {
@@ -911,21 +900,6 @@
     display: flex;
   }
 
-  .mobileSheet {
-    top: 5rem !important;
-    height: calc(100dvh - 5rem) !important;
-  }
-
-  .mobileSheet[data-variant="refuge"] {
-    top: 72px !important;
-    height: calc(100dvh - 72px) !important;
-  }
-
-  :global(html.sport-theme-nature)
-    .mobileSheet.mobileSheet[data-variant="refuge"] {
-    top: 72px !important;
-    height: calc(100dvh - 72px) !important;
-  }
 }
 
 @media (min-width: 1024px) {

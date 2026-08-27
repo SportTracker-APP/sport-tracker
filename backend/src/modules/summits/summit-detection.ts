@@ -1,5 +1,5 @@
-export const SUMMIT_ALTITUDE_TOLERANCE_METERS = 150;
-export const SUMMIT_DISCOVERY_RADIUS_METERS = 500;
+export const SUMMIT_ALTITUDE_TOLERANCE_METERS = 80;
+export const SUMMIT_DISCOVERY_RADIUS_METERS = 250;
 export const SUMMIT_TITLE_MATCH_RADIUS_METERS = 1_200;
 export const SUMMIT_AUTO_CONFIRM_CONFIDENCE = 0.72;
 
@@ -105,6 +105,24 @@ export function normalizeSummitName(value: string): string {
     .trim();
 }
 
+function titleRefersToNearbyLandmark(
+  normalizedTitle: string,
+  normalizedSummitNames: string[],
+) {
+  return normalizedSummitNames.some((name) => {
+    const nameIndex = normalizedTitle.indexOf(name);
+    if (nameIndex < 0) return false;
+
+    const prefix = normalizedTitle.slice(
+      Math.max(0, nameIndex - 28),
+      nameIndex,
+    );
+    return /\b(?:pieds?|refuge|lac|col|tour)(?:\s+(?:de|du|des|d))?\s*$/.test(
+      prefix,
+    );
+  });
+}
+
 export function detectSummits(
   activity: SummitDetectionInput,
   summits: SummitDetectionTarget[],
@@ -122,10 +140,12 @@ export function detectSummits(
     const closestDistance = Math.round(
       Math.min(...points.map((point) => getDistanceMeters(point, summitPoint))),
     );
-    const titleMatched = [summit.name, ...summit.aliases]
+    const normalizedSummitNames = [summit.name, ...summit.aliases]
       .map(normalizeSummitName)
-      .filter(Boolean)
-      .some((name) => normalizedTitle.includes(name));
+      .filter(Boolean);
+    const titleMatched =
+      !titleRefersToNearbyLandmark(normalizedTitle, normalizedSummitNames) &&
+      normalizedSummitNames.some((name) => normalizedTitle.includes(name));
     const altitudeMatched =
       activity.maxAltitude === null
         ? closestDistance <= 120
@@ -160,7 +180,11 @@ export function detectSummits(
         closestDistance,
         altitudeMatched,
         titleMatched,
-        autoConfirmed: confidence >= SUMMIT_AUTO_CONFIRM_CONFIDENCE,
+        autoConfirmed:
+          (closestDistance <= 100 ||
+            (titleMatched &&
+              closestDistance <= SUMMIT_DISCOVERY_RADIUS_METERS)) &&
+          confidence >= SUMMIT_AUTO_CONFIRM_CONFIDENCE,
       },
     ];
   });

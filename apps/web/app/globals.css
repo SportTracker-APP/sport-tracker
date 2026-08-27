@@ -1107,18 +1107,6 @@ html.sport-theme-nature .app-mobile-menu-trigger {
   box-shadow: 0 12px 28px rgba(21, 128, 61, 0.1) !important;
 }
 
-.app-mobile-sidebar {
-  top: 4rem !important;
-  height: calc(100dvh - 4rem) !important;
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  .app-mobile-sidebar {
-    top: 5rem !important;
-    height: calc(100dvh - 5rem) !important;
-  }
-}
-
 html.sport-theme-nature .app-mobile-sidebar {
   border-color: var(--nature-border) !important;
   background:
@@ -2216,10 +2204,8 @@ html.sport-theme-nature .app-topbar [class*="bg-violet-400"] {
 
 html.sport-theme-nature .app-mobile-sidebar {
   position: fixed !important;
-  top: 4rem !important;
   bottom: 0 !important;
   left: 0 !important;
-  height: calc(100dvh - 4rem) !important;
   isolation: isolate;
   overflow: hidden;
   border-color: var(--hovren-shell-border) !important;
@@ -2258,13 +2244,6 @@ html.sport-theme-nature .app-mobile-sidebar a {
 html.sport-theme-nature .app-mobile-sidebar a:hover {
   background: rgba(255, 255, 255, 0.42) !important;
   color: var(--hovren-shell-forest) !important;
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  html.sport-theme-nature .app-mobile-sidebar {
-    top: 5rem !important;
-    height: calc(100dvh - 5rem) !important;
-  }
 }
 
 .app-notification-menu {
