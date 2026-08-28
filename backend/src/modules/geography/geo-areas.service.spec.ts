@@ -146,7 +146,11 @@ describe('GeoAreasService', () => {
     const update = jest.fn().mockResolvedValue({ id: 'summit-1' });
     const transaction = {
       summit: {
-        findUnique: jest.fn().mockResolvedValue({ id: 'summit-1' }),
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'summit-1',
+          isActive: false,
+          primaryMassifId: 'bornes',
+        }),
         update,
       },
       geoArea: {
@@ -212,6 +216,40 @@ describe('GeoAreasService', () => {
 
     await expect(
       service.setSummitPrimaryMassif('summit-1', 'alpes'),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(createMany).not.toHaveBeenCalled();
+  });
+
+  it('refuses an unpublished primary massif on an already published summit', async () => {
+    const createMany = jest.fn();
+    const transaction = {
+      summit: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'summit-1',
+          isActive: true,
+          primaryMassifId: null,
+        }),
+      },
+      geoArea: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'vanoise',
+          name: 'Vanoise',
+          type: GeoAreaType.MASSIF,
+          isPublished: false,
+        }),
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+      summitGeoArea: { createMany },
+    };
+    const service = new GeoAreasService({
+      $transaction: jest.fn(
+        async (callback: (client: typeof transaction) => Promise<unknown>) =>
+          callback(transaction),
+      ),
+    } as unknown as PrismaService);
+
+    await expect(
+      service.setSummitPrimaryMassif('summit-1', 'vanoise'),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(createMany).not.toHaveBeenCalled();
   });

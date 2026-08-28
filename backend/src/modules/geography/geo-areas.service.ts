@@ -182,7 +182,10 @@ export class GeoAreasService {
     geoAreaId: string,
   ) {
     const [summit, massif, areas] = await Promise.all([
-      transaction.summit.findUnique({ where: { id: summitId } }),
+      transaction.summit.findUnique({
+        where: { id: summitId },
+        select: { id: true, isActive: true, primaryMassifId: true },
+      }),
       transaction.geoArea.findUnique({ where: { id: geoAreaId } }),
       transaction.geoArea.findMany({
         select: { id: true, parentId: true },
@@ -203,14 +206,22 @@ export class GeoAreasService {
       );
     }
 
+    if (summit.isActive && !massif.isPublished) {
+      throw new BadRequestException(
+        'Le massif principal d’un sommet publié doit être publié',
+      );
+    }
+
     const parentByAreaId = new Map(
       areas.map((area) => [area.id, area.parentId]),
     );
     const geoAreaIds: string[] = [];
+    const visitedAreaIds = new Set<string>();
     let currentAreaId: string | null = massif.id;
 
-    while (currentAreaId) {
+    while (currentAreaId && !visitedAreaIds.has(currentAreaId)) {
       geoAreaIds.push(currentAreaId);
+      visitedAreaIds.add(currentAreaId);
       currentAreaId = parentByAreaId.get(currentAreaId) ?? null;
     }
 

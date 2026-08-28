@@ -32,6 +32,8 @@ type OsmPeak = {
 };
 
 export type CandidateClassificationSignals = SummitCatalogTierSignals & {
+  boundaryReview: boolean;
+  boundaryDistanceMeters: number;
   nearestHigherName: string | null;
   osmName: string | null;
   osmType: OsmPeak['osmType'] | null;
@@ -140,6 +142,8 @@ export async function calculateCandidateClassificationSignals(input: {
         .sort((first, second) => first.distance - second.distance)[0];
 
       const signals: CandidateClassificationSignals = {
+        boundaryReview: candidate.boundaryReview,
+        boundaryDistanceMeters: candidate.boundaryDistanceMeters,
         legacyCertain: input.legacyCertainExternalIds.has(candidate.externalId),
         ignImportance: parseImportance(candidate),
         osmMatched: Boolean(osmMatch),

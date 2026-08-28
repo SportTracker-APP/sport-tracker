@@ -55,8 +55,19 @@ describe("SummitGeoAreasSection", () => {
           data:
             type === "MASSIF"
               ? [
-                  { id: "bornes", name: "Bornes", type: "MASSIF" },
-                  { id: "aravis", name: "Aravis", type: "MASSIF" },
+                  {
+                    id: "bornes",
+                    name: "Bornes",
+                    type: "MASSIF",
+                    isPublished: true,
+                  },
+                  {
+                    id: "aravis",
+                    name: "Aravis",
+                    type: "MASSIF",
+                    isPublished: true,
+                    hierarchy: ["France", "Alpes", "Alpes du Nord", "Aravis"],
+                  },
                 ]
               : [
                   {
@@ -110,5 +121,15 @@ describe("SummitGeoAreasSection", () => {
     expect(
       screen.getByRole("button", { name: "Retirer Bornes" }),
     ).toBeDisabled();
+  });
+
+  it("shows the complete hierarchy when choosing a massif", () => {
+    render(<SummitGeoAreasSection summit={summit} onFeedback={vi.fn()} />);
+
+    expect(
+      screen.getByRole("option", {
+        name: "France › Alpes › Alpes du Nord › Aravis",
+      }),
+    ).toBeInTheDocument();
   });
 });

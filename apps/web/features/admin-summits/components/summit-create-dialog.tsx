@@ -218,7 +218,7 @@ export function SummitCreateDialog({
                 <option value="">Sélectionner…</option>
                 {(massifOptions.data ?? []).map((area) => (
                   <option key={area.id} value={area.id}>
-                    {area.name}
+                    {area.hierarchy?.join(" › ") ?? area.name}
                   </option>
                 ))}
               </select>

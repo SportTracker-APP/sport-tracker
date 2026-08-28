@@ -92,15 +92,6 @@ export function matchIgnCandidate(
     };
   }
 
-  if (candidate.boundaryReview) {
-    return {
-      candidate,
-      status: 'CONFLICT',
-      matchedSummitId: null,
-      reason: `Sommet frontalier à ${candidate.boundaryDistanceMeters.toFixed(1)} m de la limite officielle`,
-    };
-  }
-
   if (candidate.elevation === null) {
     return {
       candidate,
@@ -178,7 +169,9 @@ export function matchIgnCandidate(
     candidate,
     status: 'READY',
     matchedSummitId: null,
-    reason: 'Nouveau candidat IGN complet sans doublon détecté',
+    reason: candidate.boundaryReview
+      ? `Nouveau candidat IGN frontalier complet sans doublon détecté (${candidate.boundaryDistanceMeters.toFixed(1)} m de la limite)`
+      : 'Nouveau candidat IGN complet sans doublon détecté',
   };
 }
 

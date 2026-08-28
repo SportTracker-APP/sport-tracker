@@ -51,6 +51,46 @@ function createService(
 }
 
 describe('AdminSummitsService', () => {
+  it('returns complete hierarchy paths for massif curation', async () => {
+    const findMany = jest
+      .fn()
+      .mockResolvedValueOnce([
+        {
+          id: 'chablais',
+          name: 'Chablais',
+          slug: 'chablais',
+          type: GeoAreaType.MASSIF,
+          isPublished: true,
+          parent: {
+            id: 'alpes-du-nord',
+            name: 'Alpes du Nord',
+            type: GeoAreaType.SECTOR,
+          },
+        },
+      ])
+      .mockResolvedValueOnce([
+        { id: 'france', name: 'France', parentId: null },
+        { id: 'alpes', name: 'Alpes', parentId: 'france' },
+        {
+          id: 'alpes-du-nord',
+          name: 'Alpes du Nord',
+          parentId: 'alpes',
+        },
+        { id: 'chablais', name: 'Chablais', parentId: 'alpes-du-nord' },
+      ]);
+
+    await expect(
+      createService({ geoArea: { findMany } }).findGeoAreaOptions({
+        type: GeoAreaType.MASSIF,
+      }),
+    ).resolves.toEqual([
+      expect.objectContaining({
+        id: 'chablais',
+        hierarchy: ['France', 'Alpes', 'Alpes du Nord', 'Chablais'],
+      }),
+    ]);
+  });
+
   it('creates a manual summit with territories, external reference and audit in one transaction', async () => {
     const transaction = {
       summit: {
@@ -756,6 +796,7 @@ describe('AdminSummitsService', () => {
           id: 'alpes',
           name: 'Alpes',
         }),
+        findMany: jest.fn().mockResolvedValue([]),
       },
       summitGeoArea: { findUnique: jest.fn().mockResolvedValue({}) },
     };
@@ -774,7 +815,10 @@ describe('AdminSummitsService', () => {
   it('refuses an unknown GeoArea before creating an association', async () => {
     const transaction = {
       summit: { findUnique: jest.fn().mockResolvedValue(completeSummit) },
-      geoArea: { findUnique: jest.fn().mockResolvedValue(null) },
+      geoArea: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        findMany: jest.fn().mockResolvedValue([]),
+      },
       summitGeoArea: {
         findUnique: jest.fn().mockResolvedValue(null),
         create: jest.fn(),
@@ -803,10 +847,14 @@ describe('AdminSummitsService', () => {
           name: 'Alpes',
           type: 'MOUNTAIN_CHAIN',
         }),
+        findMany: jest.fn().mockResolvedValue([
+          { id: 'france', parentId: null },
+          { id: 'alpes', parentId: 'france' },
+        ]),
       },
       summitGeoArea: {
         findUnique: jest.fn().mockResolvedValue(null),
-        create: jest.fn().mockResolvedValue({}),
+        createMany: jest.fn().mockResolvedValue({ count: 2 }),
       },
       summitAdminAuditLog: { create: auditCreate },
     };
@@ -823,8 +871,12 @@ describe('AdminSummitsService', () => {
 
     await service.addGeoArea('admin-1', completeSummit.id, 'alpes');
 
-    expect(transaction.summitGeoArea.create).toHaveBeenCalledWith({
-      data: { summitId: completeSummit.id, geoAreaId: 'alpes' },
+    expect(transaction.summitGeoArea.createMany).toHaveBeenCalledWith({
+      data: [
+        { summitId: completeSummit.id, geoAreaId: 'alpes' },
+        { summitId: completeSummit.id, geoAreaId: 'france' },
+      ],
+      skipDuplicates: true,
     });
     expect(auditCreate).toHaveBeenCalledWith({
       data: expect.objectContaining({
@@ -846,6 +898,9 @@ describe('AdminSummitsService', () => {
       },
       summitGeoArea: {
         findUnique: jest.fn().mockResolvedValue({}),
+        findMany: jest
+          .fn()
+          .mockResolvedValue([{ geoAreaId: 'bornes' }, { geoAreaId: 'alpes' }]),
         delete: jest.fn(),
       },
     };

@@ -298,9 +298,10 @@ export async function readIgnSummitSnapshot(input: {
 
     const coordinates = feature.geometry.coordinates;
     const inside = pointInDepartment(coordinates, department.geometry);
-    const boundaryDistanceMeters = inside
-      ? 0
-      : distanceToDepartmentBoundary(coordinates, department.geometry);
+    const boundaryDistanceMeters = distanceToDepartmentBoundary(
+      coordinates,
+      department.geometry,
+    );
     const sourcePrecisionMeters = numericPrecision(properties.PREC_PLANI);
 
     if (!inside && boundaryDistanceMeters > sourcePrecisionMeters) {
@@ -331,7 +332,11 @@ export async function readIgnSummitSnapshot(input: {
         elevation: null,
         sourceNature: properties.NATURE,
         sourceVersion: input.sourceVersion,
-        boundaryReview: !inside,
+        // A border is a geographic signal, never an automatic catalogue
+        // demotion. Points whose side cannot be asserted beyond the source
+        // precision remain visible to curation through this flag.
+        boundaryReview:
+          !inside || boundaryDistanceMeters <= sourcePrecisionMeters,
         boundaryDistanceMeters,
         sourceProperties: jsonSourceProperties(properties),
       }),

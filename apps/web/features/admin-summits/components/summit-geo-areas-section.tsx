@@ -96,7 +96,8 @@ export function SummitGeoAreasSection({
           <option value="">Non défini</option>
           {(massifsQuery.data ?? []).map((area) => (
             <option key={area.id} value={area.id}>
-              {area.name}
+              {area.hierarchy?.join(" › ") ?? area.name}
+              {!area.isPublished ? " · non publié" : ""}
             </option>
           ))}
         </select>
@@ -156,7 +157,9 @@ export function SummitGeoAreasSection({
             </option>
             {availableOptions.map((area) => (
               <option key={area.id} value={area.id}>
-                {area.name} · {area.type.replaceAll("_", " ")}
+                {area.hierarchy?.join(" › ") ?? area.name} ·{" "}
+                {area.type.replaceAll("_", " ")}
+                {!area.isPublished ? " · non publié" : ""}
               </option>
             ))}
           </select>

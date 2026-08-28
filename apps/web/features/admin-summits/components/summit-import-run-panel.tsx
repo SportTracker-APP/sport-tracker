@@ -216,13 +216,17 @@ export function SummitImportRunPanel({ enabled }: { enabled: boolean }) {
                       {candidate.homonymGroupSize > 1
                         ? ` · homonyme x${candidate.homonymGroupSize}`
                         : ""}
+                      {candidate.classificationSignals.boundaryReview
+                        ? ` · frontalier (${String(candidate.classificationSignals.boundaryDistanceMeters ?? "—")} m)`
+                        : ""}
                     </small>
                     <div className={styles.importCandidateActions}>
                       <select
                         aria-label={`Tier final de ${candidate.name}`}
                         value={candidate.catalogTier}
                         disabled={
-                          updateCandidate.isPending || Boolean(candidate.appliedAt)
+                          updateCandidate.isPending ||
+                          Boolean(candidate.appliedAt)
                         }
                         onChange={(event) =>
                           updateCandidate.mutate({

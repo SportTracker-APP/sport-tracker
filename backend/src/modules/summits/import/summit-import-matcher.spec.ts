@@ -92,13 +92,13 @@ describe('IGN summit matching', () => {
     });
   });
 
-  it('never silently imports a boundary candidate', () => {
+  it('keeps a boundary candidate unique without demoting it automatically', () => {
     const result = matchIgnCandidate(
       candidate({ boundaryReview: true, boundaryDistanceMeters: 4.2 }),
       [],
     );
 
-    expect(result).toMatchObject({ status: 'CONFLICT' });
+    expect(result).toMatchObject({ status: 'READY', matchedSummitId: null });
     expect(result.reason).toContain('frontalier');
   });
 

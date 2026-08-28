@@ -197,22 +197,39 @@ export class AdminSummitsService {
 
   async findGeoAreaOptions(query: ListAdminGeoAreasDto) {
     const search = query.search?.trim();
-    const areas = await this.prisma.geoArea.findMany({
-      where: {
-        type: query.type,
-        ...(search
-          ? {
-              OR: [
-                { name: { contains: search, mode: 'insensitive' } },
-                { slug: { contains: search, mode: 'insensitive' } },
-              ],
-            }
-          : {}),
-      },
-      take: 40,
-      orderBy: [{ type: 'asc' }, { name: 'asc' }],
-      include: { parent: { select: { id: true, name: true, type: true } } },
-    });
+    const [areas, hierarchyAreas] = await Promise.all([
+      this.prisma.geoArea.findMany({
+        where: {
+          type: query.type,
+          ...(search
+            ? {
+                OR: [
+                  { name: { contains: search, mode: 'insensitive' } },
+                  { slug: { contains: search, mode: 'insensitive' } },
+                ],
+              }
+            : {}),
+        },
+        take: 40,
+        orderBy: [{ type: 'asc' }, { name: 'asc' }],
+        include: { parent: { select: { id: true, name: true, type: true } } },
+      }),
+      this.prisma.geoArea.findMany({
+        select: { id: true, name: true, parentId: true },
+      }),
+    ]);
+    const areaById = new Map(hierarchyAreas.map((area) => [area.id, area]));
+    const hierarchyFor = (areaId: string) => {
+      const hierarchy: string[] = [];
+      const visited = new Set<string>();
+      let current = areaById.get(areaId);
+      while (current && !visited.has(current.id)) {
+        hierarchy.unshift(current.name);
+        visited.add(current.id);
+        current = current.parentId ? areaById.get(current.parentId) : undefined;
+      }
+      return hierarchy;
+    };
 
     return areas.map((area) => ({
       id: area.id,
@@ -221,6 +238,7 @@ export class AdminSummitsService {
       type: area.type,
       isPublished: area.isPublished,
       parent: area.parent,
+      hierarchy: hierarchyFor(area.id),
     }));
   }
 
@@ -1225,11 +1243,14 @@ export class AdminSummitsService {
   async addGeoArea(adminUserId: string, summitId: string, geoAreaId: string) {
     try {
       await this.prisma.$transaction(async (transaction) => {
-        const [summit, geoArea, existingLink] = await Promise.all([
+        const [summit, geoArea, existingLink, areas] = await Promise.all([
           transaction.summit.findUnique({ where: { id: summitId } }),
           transaction.geoArea.findUnique({ where: { id: geoAreaId } }),
           transaction.summitGeoArea.findUnique({
             where: { summitId_geoAreaId: { summitId, geoAreaId } },
+          }),
+          transaction.geoArea.findMany({
+            select: { id: true, parentId: true },
           }),
         ]);
 
@@ -1239,15 +1260,33 @@ export class AdminSummitsService {
           throw new ConflictException('Ce territoire est déjà associé');
         }
 
-        await transaction.summitGeoArea.create({
-          data: { summitId, geoAreaId },
+        const parentByAreaId = new Map(
+          areas.map((area) => [area.id, area.parentId]),
+        );
+        const hierarchyIds: string[] = [];
+        const visited = new Set<string>();
+        let currentId: string | null = geoAreaId;
+        while (currentId && !visited.has(currentId)) {
+          hierarchyIds.push(currentId);
+          visited.add(currentId);
+          currentId = parentByAreaId.get(currentId) ?? null;
+        }
+
+        await transaction.summitGeoArea.createMany({
+          data: hierarchyIds.map((areaId) => ({ summitId, geoAreaId: areaId })),
+          skipDuplicates: true,
         });
         await this.createAuditLog(transaction, {
           summitId,
           adminUserId,
           action: SummitAdminAuditAction.GEO_AREA_ADDED,
           before: null,
-          after: { id: geoArea.id, name: geoArea.name, type: geoArea.type },
+          after: {
+            id: geoArea.id,
+            name: geoArea.name,
+            type: geoArea.type,
+            hierarchyIds,
+          },
         });
       });
     } catch (error) {
@@ -1269,14 +1308,21 @@ export class AdminSummitsService {
     geoAreaId: string,
   ) {
     await this.prisma.$transaction(async (transaction) => {
-      const [summit, geoArea, existingLink, areas] = await Promise.all([
-        transaction.summit.findUnique({ where: { id: summitId } }),
-        transaction.geoArea.findUnique({ where: { id: geoAreaId } }),
-        transaction.summitGeoArea.findUnique({
-          where: { summitId_geoAreaId: { summitId, geoAreaId } },
-        }),
-        transaction.geoArea.findMany({ select: { id: true, parentId: true } }),
-      ]);
+      const [summit, geoArea, existingLink, areas, linkedAreas] =
+        await Promise.all([
+          transaction.summit.findUnique({ where: { id: summitId } }),
+          transaction.geoArea.findUnique({ where: { id: geoAreaId } }),
+          transaction.summitGeoArea.findUnique({
+            where: { summitId_geoAreaId: { summitId, geoAreaId } },
+          }),
+          transaction.geoArea.findMany({
+            select: { id: true, parentId: true },
+          }),
+          transaction.summitGeoArea.findMany({
+            where: { summitId },
+            select: { geoAreaId: true },
+          }),
+        ]);
 
       if (!summit) throw new NotFoundException('Sommet introuvable');
       if (!geoArea || !existingLink) {
@@ -1287,15 +1333,28 @@ export class AdminSummitsService {
       const parentByAreaId = new Map(
         areas.map((area) => [area.id, area.parentId]),
       );
+      const visitedPrimaryAreaIds = new Set<string>();
       let protectedAreaId = summit.primaryMassifId;
-      while (protectedAreaId) {
+      while (protectedAreaId && !visitedPrimaryAreaIds.has(protectedAreaId)) {
         protectedAreaIds.add(protectedAreaId);
+        visitedPrimaryAreaIds.add(protectedAreaId);
         protectedAreaId = parentByAreaId.get(protectedAreaId) ?? null;
+      }
+
+      for (const linkedArea of linkedAreas) {
+        if (linkedArea.geoAreaId === geoAreaId) continue;
+        const visitedAncestorIds = new Set<string>();
+        let ancestorId = parentByAreaId.get(linkedArea.geoAreaId) ?? null;
+        while (ancestorId && !visitedAncestorIds.has(ancestorId)) {
+          protectedAreaIds.add(ancestorId);
+          visitedAncestorIds.add(ancestorId);
+          ancestorId = parentByAreaId.get(ancestorId) ?? null;
+        }
       }
 
       if (protectedAreaIds.has(geoAreaId)) {
         throw new BadRequestException(
-          'Ce territoire est requis par le massif principal. Changez d’abord le massif principal.',
+          'Ce territoire est requis par une association plus précise. Retirez d’abord le territoire enfant concerné.',
         );
       }
 
