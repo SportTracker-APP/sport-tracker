@@ -224,6 +224,8 @@ model Activity {
 
   routePolyline String?
 
+  summitDetectionProcessedAt DateTime?
+
   // MEDIA
   coverImageUrl String?
 
@@ -261,6 +263,7 @@ model Activity {
   @@index([sport])
   @@index([startedAt])
   @@index([createdAt])
+  @@index([userId, summitDetectionProcessedAt])
 }
 
 model PlannedWorkoutCompletion {
@@ -726,6 +729,12 @@ model SummitDiscovery {
   altitudeMatched Boolean
 
   titleMatched Boolean
+
+  routePointCount Int @default(0)
+
+  nearbyPointCount Int @default(0)
+
+  detectionVersion Int @default(1)
 
   detectedAt DateTime @default(now())
 

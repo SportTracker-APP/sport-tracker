@@ -1,7 +1,11 @@
 export const SUMMIT_ALTITUDE_TOLERANCE_METERS = 80;
 export const SUMMIT_DISCOVERY_RADIUS_METERS = 250;
+export const SUMMIT_AUTO_CONFIRM_RADIUS_METERS = 100;
+export const SUMMIT_NO_ALTITUDE_DETECTION_RADIUS_METERS = 120;
 export const SUMMIT_TITLE_MATCH_RADIUS_METERS = 1_200;
 export const SUMMIT_AUTO_CONFIRM_CONFIDENCE = 0.72;
+export const SUMMIT_DETECTION_VERSION = 2;
+export const SUMMIT_MIN_ROUTE_POINTS_FOR_AUTO_CONFIRM = 2;
 
 export type GeoPoint = {
   lat: number;
@@ -30,6 +34,9 @@ export type SummitDetectionMatch = {
   altitudeMatched: boolean;
   titleMatched: boolean;
   autoConfirmed: boolean;
+  routePointCount: number;
+  nearbyPointCount: number;
+  detectionVersion: number;
 };
 
 export function decodePolyline(polyline: string): GeoPoint[] {
@@ -140,6 +147,10 @@ export function detectSummits(
     const closestDistance = Math.round(
       Math.min(...points.map((point) => getDistanceMeters(point, summitPoint))),
     );
+    const nearbyPointCount = points.filter(
+      (point) =>
+        getDistanceMeters(point, summitPoint) <= SUMMIT_DISCOVERY_RADIUS_METERS,
+    ).length;
     const normalizedSummitNames = [summit.name, ...summit.aliases]
       .map(normalizeSummitName)
       .filter(Boolean);
@@ -148,7 +159,7 @@ export function detectSummits(
       normalizedSummitNames.some((name) => normalizedTitle.includes(name));
     const altitudeMatched =
       activity.maxAltitude === null
-        ? closestDistance <= 120
+        ? closestDistance <= SUMMIT_NO_ALTITUDE_DETECTION_RADIUS_METERS
         : activity.maxAltitude >=
           summit.altitude - SUMMIT_ALTITUDE_TOLERANCE_METERS;
     const withinDetectionRadius =
@@ -180,10 +191,13 @@ export function detectSummits(
         closestDistance,
         altitudeMatched,
         titleMatched,
+        routePointCount: points.length,
+        nearbyPointCount,
+        detectionVersion: SUMMIT_DETECTION_VERSION,
         autoConfirmed:
-          (closestDistance <= 100 ||
-            (titleMatched &&
-              closestDistance <= SUMMIT_DISCOVERY_RADIUS_METERS)) &&
+          activity.maxAltitude !== null &&
+          points.length >= SUMMIT_MIN_ROUTE_POINTS_FOR_AUTO_CONFIRM &&
+          closestDistance <= SUMMIT_AUTO_CONFIRM_RADIUS_METERS &&
           confidence >= SUMMIT_AUTO_CONFIRM_CONFIDENCE,
       },
     ];

@@ -218,6 +218,65 @@ describe('StravaService security', () => {
     expect(upsert).toHaveBeenCalledTimes(1);
   });
 
+  it('retries summit detection after reconnecting an already persisted activity', async () => {
+    const updateMany = jest.fn().mockResolvedValue({ count: 1 });
+    const findUnique = jest.fn().mockResolvedValue({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    });
+    const findMany = jest.fn().mockResolvedValue([
+      {
+        stravaActivityId: '123',
+        coverImageUrl: 'https://example.test/velan.jpg',
+        title: 'Test terrain du Vélan',
+        maxAltitude: 1020,
+        routePolyline: '????????',
+        summitDetectionProcessedAt: null,
+      },
+    ]);
+    const upsert = jest.fn().mockResolvedValue({ id: 'activity-velan' });
+    const processActivities = jest.fn().mockResolvedValue(undefined);
+    jest.spyOn(global, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify([
+          {
+            id: 123,
+            name: 'Test terrain du Vélan',
+            type: 'Hike',
+            distance: 8000,
+            elapsed_time: 3600,
+            elev_high: 1020,
+            map: { summary_polyline: '????????' },
+            start_date: '2026-08-28T06:15:00.000Z',
+          },
+        ]),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
+    );
+    const service = new StravaService(
+      {
+        stravaConnection: { updateMany, findUnique },
+        activity: { findMany, upsert },
+      } as unknown as PrismaService,
+      {} as ConfigService,
+      { processActivities } as unknown as SummitsService,
+      createTokenEncryptionMock(),
+    );
+
+    await expect(service.syncActivities('user-1')).resolves.toEqual({
+      imported: 0,
+      fetched: 1,
+      latestImportedActivityTitle: null,
+    });
+    expect(processActivities).toHaveBeenCalledWith('user-1', [
+      'activity-velan',
+    ]);
+  });
+
   it('blocks another Strava synchronization during the cooldown', async () => {
     const lastSyncAttemptAt = new Date();
     const updateMany = jest.fn().mockResolvedValue({ count: 0 });

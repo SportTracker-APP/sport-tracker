@@ -2,6 +2,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  GeoAreaType,
   SummitCatalogStatus,
   SummitCatalogTier,
   SummitDiscoveryConfirmationSource,
@@ -14,7 +15,7 @@ import { GeoAreasService } from '../geography/geo-areas.service';
 import { SummitsService } from './summits.service';
 
 type PrismaMock = {
-  activity: { findFirst: jest.Mock; findMany: jest.Mock };
+  activity: { findFirst: jest.Mock; findMany: jest.Mock; update: jest.Mock };
   summit: { findMany: jest.Mock };
   summitDiscovery: {
     count: jest.Mock;
@@ -36,6 +37,7 @@ function makePrisma(): PrismaMock {
     activity: {
       findFirst: jest.fn().mockResolvedValue(null),
       findMany: jest.fn().mockResolvedValue([]),
+      update: jest.fn().mockResolvedValue({}),
     },
     summit: { findMany: jest.fn().mockResolvedValue([]) },
     summitDiscovery: {
@@ -152,6 +154,37 @@ describe('SummitsService', () => {
     );
   });
 
+  it('replays an unfinished detection when the user reconnects to the summit catalogue', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findMany
+      .mockResolvedValueOnce([{ id: 'activity-offline' }])
+      .mockResolvedValueOnce([]);
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-offline',
+      title: 'Sortie synchronisée après reconnexion',
+      maxAltitude: 1200,
+      routePolyline: '??',
+      startedAt: new Date('2026-08-27T07:00:00.000Z'),
+    });
+
+    await expect(makeService(prisma).findAll('user-1')).resolves.toEqual([]);
+
+    expect(prisma.activity.findMany).toHaveBeenNthCalledWith(1, {
+      where: {
+        userId: 'user-1',
+        status: 'COMPLETED',
+        routePolyline: { not: null },
+        summitDetectionProcessedAt: null,
+      },
+      select: { id: true },
+      orderBy: { startedAt: 'asc' },
+    });
+    expect(prisma.activity.update).toHaveBeenCalledWith({
+      where: { id: 'activity-offline' },
+      data: { summitDetectionProcessedAt: expect.any(Date) },
+    });
+  });
+
   it('exposes secondary summits only when catalogue search opts in', async () => {
     const prisma = makePrisma();
 
@@ -170,6 +203,69 @@ describe('SummitsService', () => {
         },
       }),
     );
+  });
+
+  it('counts repeated Vélan passages without duplicating the discovered summit', async () => {
+    const prisma = makePrisma();
+    const firstDate = new Date('2026-08-20T06:00:00.000Z');
+    const latestDate = new Date('2026-08-28T06:15:00.000Z');
+    prisma.summit.findMany.mockResolvedValue([
+      {
+        id: 'velan',
+        name: 'Le Vélan',
+        aliases: [],
+        altitude: 1734,
+        massif: 'Massif historique',
+        difficulty: 'À définir',
+        type: 'Sommet',
+        longitude: 6.1,
+        latitude: 45.9,
+        imageUrl: null,
+        imageCredit: null,
+        sourceUrl: null,
+        editorialImageUrl: null,
+        editorialImageCredit: null,
+        editorialSourceUrl: null,
+        catalogTier: SummitCatalogTier.CORE,
+        primaryMassif: { id: 'bornes', name: 'Bornes' },
+        geoAreas: [
+          {
+            geoArea: {
+              id: 'haute-savoie',
+              name: 'Haute-Savoie',
+              type: GeoAreaType.DEPARTMENT,
+            },
+          },
+        ],
+        discoveries: [
+          {
+            status: SummitDiscoveryStatus.CONFIRMED,
+            closestDistance: 8,
+            discoveredAt: firstDate,
+            activity: { id: 'activity-1', startedAt: firstDate },
+          },
+          {
+            status: SummitDiscoveryStatus.CONFIRMED,
+            closestDistance: 5,
+            discoveredAt: latestDate,
+            activity: { id: 'activity-2', startedAt: latestDate },
+          },
+        ],
+      },
+    ]);
+
+    const [summit] = await makeService(prisma).findAll('user-1');
+
+    expect(summit).toMatchObject({
+      id: 'velan',
+      massif: 'Bornes',
+      department: 'Haute-Savoie',
+      discovered: true,
+      activityCount: 2,
+      closestDistance: 5,
+      firstDiscoveredAt: firstDate,
+      latestDiscoveredAt: latestDate,
+    });
   });
 
   it('returns a lean published summit payload for the Exploration map', async () => {
@@ -232,6 +328,73 @@ describe('SummitsService', () => {
     ).resolves.toMatchObject({ processed: 1 });
 
     expect(prisma.activity.findFirst).toHaveBeenCalledTimes(1);
+  });
+
+  it('validates the Vélan field-test trace once and preserves its evidence', async () => {
+    const prisma = makePrisma();
+    const startedAt = new Date('2026-08-28T06:15:00.000Z');
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-velan',
+      title: 'Test terrain du Vélan',
+      maxAltitude: 1020,
+      routePolyline: '????????',
+      startedAt,
+    });
+    prisma.summit.findMany.mockResolvedValue([
+      {
+        id: 'velan',
+        name: 'Le Vélan',
+        aliases: [],
+        altitude: 1000,
+        latitude: 0,
+        longitude: 0,
+      },
+    ]);
+
+    await expect(
+      makeService(prisma).processActivities('user-1', ['activity-velan']),
+    ).resolves.toEqual({ processed: 1, detected: 1, confirmed: 1 });
+
+    expect(prisma.summitDiscovery.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          summitId_activityId: {
+            summitId: 'velan',
+            activityId: 'activity-velan',
+          },
+        },
+        create: expect.objectContaining({
+          userId: 'user-1',
+          status: SummitDiscoveryStatus.CONFIRMED,
+          confirmationSource: SummitDiscoveryConfirmationSource.AUTO,
+          discoveredAt: startedAt,
+          routePointCount: 4,
+          nearbyPointCount: 4,
+          detectionVersion: 2,
+        }),
+      }),
+    );
+    expect(prisma.activity.update).toHaveBeenCalledWith({
+      where: { id: 'activity-velan' },
+      data: { summitDetectionProcessedAt: expect.any(Date) },
+    });
+  });
+
+  it('does not mark an activity as processed when summit detection fails', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-1',
+      title: 'Sortie à reprendre',
+      maxAltitude: 1600,
+      routePolyline: '??',
+      startedAt: new Date('2026-08-28T06:15:00.000Z'),
+    });
+    prisma.summit.findMany.mockRejectedValue(new Error('database unavailable'));
+
+    await expect(
+      makeService(prisma).processActivities('user-1', ['activity-1']),
+    ).rejects.toThrow('database unavailable');
+    expect(prisma.activity.update).not.toHaveBeenCalled();
   });
 
   it('dismisses an automatic discovery that no longer reaches the corrected summit', async () => {

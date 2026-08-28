@@ -68,6 +68,7 @@ interface StravaActivity {
   total_photo_count?: number;
   photos?: StravaPhotos;
   map?: {
+    polyline?: string;
     summary_polyline?: string;
   };
 }
@@ -318,6 +319,10 @@ export class StravaService {
       select: {
         stravaActivityId: true,
         coverImageUrl: true,
+        title: true,
+        maxAltitude: true,
+        routePolyline: true,
+        summitDetectionProcessedAt: true,
       },
     });
 
@@ -332,7 +337,7 @@ export class StravaService {
     const newStravaActivityIds = new Set(
       newActivities.map((activity) => activity.id.toString()),
     );
-    const importedActivityIds: string[] = [];
+    const activityIdsToProcess: string[] = [];
 
     try {
       for (const activity of activities) {
@@ -348,6 +353,15 @@ export class StravaService {
         if (!stravaActivityId) {
           continue;
         }
+        const detectionInputsChanged = Boolean(
+          existingActivity &&
+          ((existingActivity.title ?? null) !==
+            (mappedActivity.title ?? null) ||
+            existingActivity.maxAltitude !==
+              (mappedActivity.maxAltitude ?? null) ||
+            existingActivity.routePolyline !==
+              (mappedActivity.routePolyline ?? null)),
+        );
 
         const persistedActivity = await this.prisma.activity.upsert({
           where: {
@@ -372,6 +386,9 @@ export class StravaService {
             endLatitude: mappedActivity.endLatitude,
             endLongitude: mappedActivity.endLongitude,
             routePolyline: mappedActivity.routePolyline,
+            ...(detectionInputsChanged && {
+              summitDetectionProcessedAt: null,
+            }),
             calories: mappedActivity.calories,
             averageSpeed: mappedActivity.averageSpeed,
             maxSpeed: mappedActivity.maxSpeed,
@@ -381,8 +398,12 @@ export class StravaService {
           },
         });
 
-        if (newStravaActivityIds.has(stravaActivityId)) {
-          importedActivityIds.push(persistedActivity.id);
+        if (
+          newStravaActivityIds.has(stravaActivityId) ||
+          detectionInputsChanged ||
+          !existingActivity?.summitDetectionProcessedAt
+        ) {
+          activityIdsToProcess.push(persistedActivity.id);
         }
       }
     } catch (error) {
@@ -395,15 +416,15 @@ export class StravaService {
       );
     }
 
-    if (importedActivityIds.length > 0) {
+    if (activityIdsToProcess.length > 0) {
       try {
         await this.summitsService.processActivities(
           userId,
-          importedActivityIds,
+          activityIdsToProcess,
         );
       } catch (error) {
         console.warn('Summit detection skipped after Strava sync:', {
-          importedActivities: importedActivityIds.length,
+          activityCount: activityIdsToProcess.length,
           errorName: error instanceof Error ? error.name : 'UnknownError',
         });
       }
@@ -461,9 +482,7 @@ export class StravaService {
       photoCount: details ? this.getPhotoCount(details) : null,
       coverImageUrl: photoUrls[0] ?? null,
       maxAltitude:
-        details?.elev_high !== undefined
-          ? Math.round(details.elev_high)
-          : null,
+        details?.elev_high !== undefined ? Math.round(details.elev_high) : null,
       minAltitude:
         details?.elev_low !== undefined ? Math.round(details.elev_low) : null,
     };
@@ -791,7 +810,7 @@ export class StravaService {
       startLongitude: activity.start_latlng?.[1],
       endLatitude: activity.end_latlng?.[0],
       endLongitude: activity.end_latlng?.[1],
-      routePolyline: activity.map?.summary_polyline,
+      routePolyline: activity.map?.polyline ?? activity.map?.summary_polyline,
       calories: this.mapCalories(activity, sport, distanceKm, durationMinutes),
       averageSpeed: activity.average_speed,
       maxSpeed: activity.max_speed,

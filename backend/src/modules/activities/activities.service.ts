@@ -132,6 +132,13 @@ export class ActivitiesService {
       data: {
         ...activityData,
 
+        ...((dto.title !== undefined ||
+          dto.maxAltitude !== undefined ||
+          dto.startedAt !== undefined ||
+          dto.status !== undefined) && {
+          summitDetectionProcessedAt: null,
+        }),
+
         ...(dto.startedAt && {
           startedAt: new Date(dto.startedAt),
         }),

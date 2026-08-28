@@ -37,7 +37,7 @@ type ProcessOptions = {
 @Injectable()
 export class SummitsService implements OnModuleInit {
   private readonly logger = new Logger(SummitsService.name);
-  private readonly historicalBackfillAttempts = new Set<string>();
+  private readonly detectionReconciliations = new Map<string, Promise<void>>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -139,7 +139,7 @@ export class SummitsService implements OnModuleInit {
   }
 
   async findAll(userId: string, query: ListSummitsDto = {}) {
-    await this.ensureHistoricalBackfill(userId);
+    await this.ensurePendingDetections(userId);
 
     const requestedGeoAreaIds = query.geoAreaIds?.length
       ? query.geoAreaIds
@@ -218,18 +218,15 @@ export class SummitsService implements OnModuleInit {
       const department = summit.geoAreas.find(
         ({ geoArea }) => geoArea.type === GeoAreaType.DEPARTMENT,
       )?.geoArea;
-      const publicTerritory = summit.primaryMassif
-        ? [summit.primaryMassif.name, department?.name]
-            .filter(Boolean)
-            .join(' · ')
-        : (department?.name ?? summit.massif);
+      const publicMassif = summit.primaryMassif?.name ?? summit.massif;
 
       return {
         id: summit.id,
         name: summit.name,
         aliases: summit.aliases,
         altitude: summit.altitude,
-        massif: publicTerritory,
+        massif: publicMassif,
+        department: department?.name ?? null,
         primaryMassif: summit.primaryMassif,
         geoAreas: summit.geoAreas.map(({ geoArea }) => geoArea),
         difficulty: summit.difficulty,
@@ -261,7 +258,7 @@ export class SummitsService implements OnModuleInit {
   }
 
   async findMapSummits(userId: string, query: ListSummitsDto = {}) {
-    await this.ensureHistoricalBackfill(userId);
+    await this.ensurePendingDetections(userId);
 
     const requestedGeoAreaIds = query.geoAreaIds?.length
       ? query.geoAreaIds
@@ -458,46 +455,52 @@ export class SummitsService implements OnModuleInit {
     return results;
   }
 
-  private async ensureHistoricalBackfill(userId: string): Promise<void> {
-    if (this.historicalBackfillAttempts.has(userId)) {
-      return;
-    }
+  private async ensurePendingDetections(userId: string): Promise<void> {
+    const inFlight = this.detectionReconciliations.get(userId);
+    if (inFlight) return inFlight;
 
-    this.historicalBackfillAttempts.add(userId);
+    const reconciliation = this.reconcilePendingActivityDetections(
+      userId,
+    ).finally(() => {
+      this.detectionReconciliations.delete(userId);
+    });
+    this.detectionReconciliations.set(userId, reconciliation);
 
+    return reconciliation;
+  }
+
+  private async reconcilePendingActivityDetections(userId: string) {
     try {
-      const existingDiscoveries = await this.prisma.summitDiscovery.count({
-        where: { userId },
-      });
-
-      if (existingDiscoveries > 0) {
-        return;
-      }
-
-      const completedRoutes = await this.prisma.activity.count({
+      const pendingActivities = await this.prisma.activity.findMany({
         where: {
           userId,
           status: ActivityStatus.COMPLETED,
           routePolyline: { not: null },
+          summitDetectionProcessedAt: null,
         },
+        select: { id: true },
+        orderBy: { startedAt: 'asc' },
       });
 
-      if (completedRoutes === 0) {
+      if (pendingActivities.length === 0) {
         return;
       }
 
-      const result = await this.recalculateUser(userId);
+      const result = await this.processActivities(
+        userId,
+        pendingActivities.map(({ id }) => id),
+        { sendNotifications: false },
+      );
       this.logger.log({
         processedActivities: result.processed,
         detectedSummits: result.detected,
         confirmedSummits: result.confirmed,
-        message: 'Historical summit discovery backfill completed',
+        message: 'Pending summit detection reconciliation completed',
       });
     } catch (error) {
-      this.historicalBackfillAttempts.delete(userId);
       this.logger.warn({
         errorName: error instanceof Error ? error.name : 'UnknownError',
-        message: 'Historical summit discovery backfill deferred',
+        message: 'Pending summit detection reconciliation deferred',
       });
     }
   }
@@ -647,6 +650,9 @@ export class SummitsService implements OnModuleInit {
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
           titleMatched: match.titleMatched,
+          routePointCount: match.routePointCount,
+          nearbyPointCount: match.nearbyPointCount,
+          detectionVersion: match.detectionVersion,
           discoveredAt: activity.startedAt,
           confirmedAt:
             status === SummitDiscoveryStatus.CONFIRMED ? new Date() : null,
@@ -658,6 +664,9 @@ export class SummitsService implements OnModuleInit {
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
           titleMatched: match.titleMatched,
+          routePointCount: match.routePointCount,
+          nearbyPointCount: match.nearbyPointCount,
+          detectionVersion: match.detectionVersion,
           discoveredAt: activity.startedAt,
           confirmedAt:
             status === SummitDiscoveryStatus.CONFIRMED
@@ -692,6 +701,11 @@ export class SummitsService implements OnModuleInit {
         },
       });
     }
+
+    await this.prisma.activity.update({
+      where: { id: activityId },
+      data: { summitDetectionProcessedAt: new Date() },
+    });
 
     return {
       detected: matches.length,

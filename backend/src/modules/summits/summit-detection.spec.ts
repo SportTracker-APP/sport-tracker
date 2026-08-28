@@ -52,6 +52,11 @@ describe('summit detection', () => {
       autoConfirmed: true,
     });
     expect(match.closestDistance).toBe(0);
+    expect(match).toMatchObject({
+      routePointCount: 3,
+      nearbyPointCount: 1,
+      detectionVersion: 2,
+    });
   });
 
   it('keeps a named but distant trace pending instead of confirming it', () => {
@@ -81,7 +86,7 @@ describe('summit detection', () => {
     expect(match.autoConfirmed).toBe(false);
   });
 
-  it('can confirm a named summit between 100 and 250 metres', () => {
+  it('keeps a named summit between 100 and 250 metres pending', () => {
     const [match] = detectSummits(
       {
         title: 'Sommet test au lever du jour',
@@ -92,7 +97,7 @@ describe('summit detection', () => {
     );
 
     expect(match.titleMatched).toBe(true);
-    expect(match.autoConfirmed).toBe(true);
+    expect(match.autoConfirmed).toBe(false);
   });
 
   it('rejects a trace that did not reach the summit altitude', () => {
@@ -127,7 +132,36 @@ describe('summit detection', () => {
 
   it('requires very close proximity when altitude data is unavailable', () => {
     expect(detect(makeSummit({ latitude: 38.502 }), null)).toEqual([]);
-    expect(detect(makeSummit(), null)[0]?.autoConfirmed).toBe(true);
+    expect(detect(makeSummit(), null)[0]).toMatchObject({
+      altitudeMatched: true,
+      autoConfirmed: false,
+    });
+  });
+
+  it('creates one decision when a user stays around the summit', () => {
+    const matches = detectSummits(
+      {
+        title: 'Test terrain du Vélan',
+        maxAltitude: 1_020,
+        routePolyline: '????????',
+      },
+      [
+        makeSummit({
+          id: 'velan',
+          name: 'Le Vélan',
+          latitude: 0,
+          longitude: 0,
+        }),
+      ],
+    );
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0]).toMatchObject({
+      summitId: 'velan',
+      autoConfirmed: true,
+      routePointCount: 4,
+      nearbyPointCount: 4,
+    });
   });
 
   it('ignores malformed polylines without throwing', () => {

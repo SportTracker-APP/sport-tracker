@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { getMassifProgress, type SummitView } from "@/lib/summit-discovery";
+import {
+  getDepartmentProgress,
+  getMassifProgress,
+  type SummitView,
+} from "@/lib/summit-discovery";
 
 import {
   filterSummits,
@@ -101,6 +105,50 @@ describe("summits utilities", () => {
       discoveryProgress: 33,
       highestAltitude: 1291,
     });
+  });
+
+  it("compte une découverte une seule fois par massif et dans chaque département frontalier", () => {
+    const borderSummit = createSummit({
+      id: "grand-velan",
+      name: "Grand Vélan",
+      discovered: true,
+      activityCount: 2,
+      massif: "Massif historique",
+      primaryMassif: {
+        id: "mont-blanc",
+        name: "Mont-Blanc",
+        slug: "mont-blanc",
+        type: "MASSIF",
+        parentId: null,
+        isPublished: true,
+      },
+      geoAreas: [
+        {
+          id: "haute-savoie",
+          name: "Haute-Savoie",
+          slug: "haute-savoie",
+          type: "DEPARTMENT",
+          parentId: null,
+          isPublished: true,
+        },
+        {
+          id: "savoie",
+          name: "Savoie",
+          slug: "savoie",
+          type: "DEPARTMENT",
+          parentId: null,
+          isPublished: false,
+        },
+      ],
+    });
+
+    expect(getMassifProgress([borderSummit])).toEqual([
+      { massif: "Mont-Blanc", total: 1, discovered: 1, progress: 100 },
+    ]);
+    expect(getDepartmentProgress([borderSummit])).toEqual([
+      { department: "Haute-Savoie", total: 1, discovered: 1, progress: 100 },
+      { department: "Savoie", total: 1, discovered: 1, progress: 100 },
+    ]);
   });
 
   it("filtre par statut, recherche et altitude", () => {

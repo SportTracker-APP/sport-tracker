@@ -1,6 +1,7 @@
 import {
   getMassifProgress,
   getSummitSearchNames,
+  getSummitMassifName,
   type MassifProgress,
   type SummitView,
 } from "@/lib/summit-discovery";
@@ -223,7 +224,10 @@ export function filterSummits(
         return false;
       }
 
-      if (filters.massif !== "ALL" && summit.massif !== filters.massif) {
+      if (
+        filters.massif !== "ALL" &&
+        getSummitMassifName(summit) !== filters.massif
+      ) {
         return false;
       }
 
@@ -259,8 +263,9 @@ export function getSummitSummary(
     pendingCount: pendingSummits.length,
     missingCount: missingSummits.length,
     totalCount: summits.length,
-    coveredMassifs: new Set(discoveredSummits.map((summit) => summit.massif))
-      .size,
+    coveredMassifs: new Set(
+      discoveredSummits.map((summit) => getSummitMassifName(summit)),
+    ).size,
     completedMassifs: massifProgress.filter((massif) => massif.progress === 100)
       .length,
     totalPassages: discoveredSummits.reduce(
@@ -360,7 +365,9 @@ function getMassifProgressForSummit(
   summit: SummitView,
   massifProgress: MassifProgress[],
 ) {
-  return massifProgress.find((massif) => massif.massif === summit.massif);
+  return massifProgress.find(
+    (massif) => massif.massif === getSummitMassifName(summit),
+  );
 }
 
 function getSummitSecondaryInfo(
@@ -407,7 +414,7 @@ function getSummitSecondaryInfo(
   if (remaining && remaining > 0) {
     return {
       kind: "massif",
-      label: `Encore ${remaining} sommet${remaining > 1 ? "s" : ""} pour compléter ${summit.massif}`,
+      label: `Encore ${remaining} sommet${remaining > 1 ? "s" : ""} pour compléter ${getSummitMassifName(summit)}`,
     };
   }
 
@@ -444,7 +451,7 @@ export function getSummitCardViewModels(
       summit,
       summitId: summit.id,
       name: summit.name,
-      massif: summit.massif,
+      massif: getSummitMassifName(summit),
       altitude: formatSummitAltitude(summit.altitude),
       type: summit.type,
       status,
@@ -473,7 +480,7 @@ export function getSummitCardViewModels(
             : status === "PENDING"
               ? "Détection proche"
               : massif
-                ? `${massif.discovered}/${massif.total} dans ${summit.massif}`
+                ? `${massif.discovered}/${massif.total} dans ${getSummitMassifName(summit)}`
                 : "À explorer",
       secondaryInfo: getSummitSecondaryInfo(summit, massifProgress),
       visual: visualSources[summit.id] ?? getEditorialFallbackVisual(summit),
@@ -515,7 +522,9 @@ export function getRecommendedSummit(
     ) ?? massifProgress.find((massif) => massif.progress < 100);
 
   const candidates = nextMassif
-    ? missingSummits.filter((summit) => summit.massif === nextMassif.massif)
+    ? missingSummits.filter(
+        (summit) => getSummitMassifName(summit) === nextMassif.massif,
+      )
     : missingSummits;
 
   return candidates.slice().sort((firstSummit, secondSummit) => {
@@ -539,7 +548,7 @@ export function getFeaturedMassif(
   );
   const recommendedMassif = recommendedSummit
     ? incompleteMassifs.find(
-        (massif) => massif.massif === recommendedSummit.massif,
+        (massif) => massif.massif === getSummitMassifName(recommendedSummit),
       )
     : undefined;
 
@@ -556,7 +565,9 @@ export function getFeaturedMassif(
   }
 
   const latestMassif = latestSummit
-    ? incompleteMassifs.find((massif) => massif.massif === latestSummit.massif)
+    ? incompleteMassifs.find(
+        (massif) => massif.massif === getSummitMassifName(latestSummit),
+      )
     : undefined;
 
   return (
@@ -578,7 +589,7 @@ export function getNextSummitForMassif(
   return summits
     .filter(
       (summit) =>
-        summit.massif === massif.massif &&
+        getSummitMassifName(summit) === massif.massif &&
         getSummitStatus(summit) === "MISSING",
     )
     .sort((firstSummit, secondSummit) => {
@@ -594,7 +605,9 @@ export function getNextSummitForMassif(
 
 export function getSummitOptions(summits: SummitView[]) {
   return {
-    massifs: Array.from(new Set(summits.map((summit) => summit.massif))).sort(),
+    massifs: Array.from(
+      new Set(summits.map((summit) => getSummitMassifName(summit))),
+    ).sort(),
   };
 }
 
