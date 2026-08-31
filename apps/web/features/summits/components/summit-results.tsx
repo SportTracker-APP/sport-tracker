@@ -75,15 +75,22 @@ function PendingReview({
   viewModel: SummitCardViewModel;
 }) {
   const pendingDiscoveryId = viewModel.pendingDiscoveryId;
+  const evidence = viewModel.pendingEvidence;
 
-  if (!pendingDiscoveryId) {
+  if (!pendingDiscoveryId || !evidence) {
     return null;
   }
 
   return (
     <div className={styles.reviewPanel}>
       <p>
-        <strong>Cette trace semble atteindre le sommet.</strong>
+        <strong>Tu es passé tout près de {viewModel.name}.</strong>
+        <span>
+          Ta trace est passée à {evidence.distance} du sommet
+          {evidence.activityAltitude
+            ? ` et a atteint ${evidence.activityAltitude} d’altitude (sommet à ${evidence.summitAltitude}).`
+            : "."}
+        </span>
       </p>
       <div>
         <button
@@ -92,16 +99,16 @@ function PendingReview({
           onClick={() => onReview(pendingDiscoveryId, "CONFIRMED")}
         >
           <Check aria-hidden="true" />
-          Confirmer la découverte
+          Oui, l’ajouter au carnet
         </button>
         <button
           type="button"
           disabled={isUpdating}
           onClick={() => onReview(pendingDiscoveryId, "DISMISSED")}
-          aria-label={`Ignorer la proposition pour ${viewModel.name}`}
-          title="Ignorer cette proposition"
+          aria-label={`Ne pas valider le passage proche de ${viewModel.name}`}
         >
           <X aria-hidden="true" />
+          Non, pas cette fois
         </button>
       </div>
     </div>
@@ -251,7 +258,7 @@ function SummitListRow({
               disabled={isUpdating}
               onClick={() => onReview(pendingDiscoveryId, "CONFIRMED")}
               aria-label={`Confirmer la découverte de ${viewModel.name}`}
-              title="Confirmer la découverte"
+              title="Ajouter au carnet"
             >
               <Check aria-hidden="true" />
             </button>
@@ -259,8 +266,8 @@ function SummitListRow({
               type="button"
               disabled={isUpdating}
               onClick={() => onReview(pendingDiscoveryId, "DISMISSED")}
-              aria-label={`Ignorer la découverte de ${viewModel.name}`}
-              title="Ignorer"
+              aria-label={`Ne pas valider le passage proche de ${viewModel.name}`}
+              title="Ne pas valider"
             >
               <X aria-hidden="true" />
             </button>

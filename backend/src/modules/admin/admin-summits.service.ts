@@ -18,7 +18,7 @@ import {
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { GeoAreasService } from '../geography/geo-areas.service';
-import { HAUTE_SAVOIE_GEO_AREA_SLUG } from '../summits/import/summit-import.constants';
+import { getDepartmentImportDefinitionByScope } from '../summits/import/summit-department-import';
 import { isSummitPublic } from '../summits/summit-publication';
 import { ListAdminGeoAreasDto } from './dto/list-admin-geo-areas.dto';
 import { CreateAdminSummitDto } from './dto/create-admin-summit.dto';
@@ -785,10 +785,11 @@ export class AdminSummitsService {
           ({ resolutionAction }) =>
             resolutionAction === SummitImportResolutionAction.CREATE_NEW,
         );
+        const department = getDepartmentImportDefinitionByScope(run.scope);
         const geoAreaIds = requiresCreation
           ? await this.getGeoAreaAndAncestorIds(
               transaction,
-              HAUTE_SAVOIE_GEO_AREA_SLUG,
+              department.geoAreaSlug,
             )
           : [];
 

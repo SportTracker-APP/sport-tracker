@@ -233,6 +233,7 @@ describe('StravaService security', () => {
         maxAltitude: 1020,
         routePolyline: '????????',
         summitDetectionProcessedAt: null,
+        summitDetectionVersion: 0,
       },
     ]);
     const upsert = jest.fn().mockResolvedValue({ id: 'activity-velan' });

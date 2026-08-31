@@ -24,7 +24,7 @@ import { evaluateBadgeCatalog, getBadgeProgress } from './badge-engine';
 import { UpdateSummitDiscoveryDto } from './dto/update-summit-discovery.dto';
 import { ListSummitsDto } from './dto/list-summits.dto';
 import { SUMMIT_CATALOG } from './summit-catalog';
-import { detectSummits } from './summit-detection';
+import { detectSummits, SUMMIT_DETECTION_VERSION } from './summit-detection';
 import {
   PUBLIC_MAP_SUMMIT_WHERE,
   PUBLIC_SUMMIT_WHERE,
@@ -183,6 +183,7 @@ export class SummitsService implements OnModuleInit {
                 startedAt: true,
                 distance: true,
                 elevationGain: true,
+                maxAltitude: true,
                 coverImageUrl: true,
               },
             },
@@ -476,7 +477,10 @@ export class SummitsService implements OnModuleInit {
           userId,
           status: ActivityStatus.COMPLETED,
           routePolyline: { not: null },
-          summitDetectionProcessedAt: null,
+          OR: [
+            { summitDetectionProcessedAt: null },
+            { summitDetectionVersion: { lt: SUMMIT_DETECTION_VERSION } },
+          ],
         },
         select: { id: true },
         orderBy: { startedAt: 'asc' },
@@ -704,7 +708,10 @@ export class SummitsService implements OnModuleInit {
 
     await this.prisma.activity.update({
       where: { id: activityId },
-      data: { summitDetectionProcessedAt: new Date() },
+      data: {
+        summitDetectionProcessedAt: new Date(),
+        summitDetectionVersion: SUMMIT_DETECTION_VERSION,
+      },
     });
 
     return {

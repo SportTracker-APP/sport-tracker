@@ -95,6 +95,14 @@ Commons. L’application est idempotente et ne remplace jamais une photo
 existante ou ajoutée manuellement dans le back-office. Une base distante exige
 les confirmations explicites affichées par la commande avant tout `--apply`.
 
+## Imports départementaux de sommets
+
+La procédure standard et ses garde-fous sont documentés dans
+[`../docs/departmental-summit-import-workflow.md`](../docs/departmental-summit-import-workflow.md).
+Après chaque apply, `pnpm summits:qa:import -- --import-run=<id> --strict`
+produit la checklist DB consolidée. La Savoie reste explicitement bloquée tant
+que le jalon « 74 stabilisé » n'est pas validé.
+
 ## Strava token encryption
 
 Strava access and refresh tokens are encrypted at rest with AES-256-GCM. Configure one base64-encoded 32-byte key:

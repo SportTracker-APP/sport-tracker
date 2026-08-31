@@ -234,6 +234,7 @@ describe("createRefugeViewModel", () => {
             startedAt: "2026-07-03T08:00:00.000Z",
             distance: 12.4,
             elevationGain: 680,
+            maxAltitude: 1298,
             coverImageUrl: stravaImage,
           },
         },

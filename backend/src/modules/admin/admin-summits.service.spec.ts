@@ -562,6 +562,7 @@ describe('AdminSummitsService', () => {
       summitImportRun: {
         findUnique: jest.fn().mockResolvedValue({
           id: 'published-run',
+          scope: 'D074',
           status: SummitImportRunStatus.PUBLISHED,
           provider: SummitExternalProvider.IGN_BD_TOPO,
           sourceVersion: '2026-07',
@@ -648,6 +649,7 @@ describe('AdminSummitsService', () => {
       summitImportRun: {
         findUnique: jest.fn().mockResolvedValue({
           id: 'published-run',
+          scope: 'D074',
           status: SummitImportRunStatus.PUBLISHED,
           provider: SummitExternalProvider.IGN_BD_TOPO,
           sourceVersion: '2026-07',

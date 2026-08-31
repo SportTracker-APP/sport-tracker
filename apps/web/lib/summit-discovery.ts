@@ -9,6 +9,7 @@ export type SummitActivitySummary = Pick<
   | "startedAt"
   | "distance"
   | "elevationGain"
+  | "maxAltitude"
   | "coverImageUrl"
 >;
 

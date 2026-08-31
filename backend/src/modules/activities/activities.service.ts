@@ -137,6 +137,7 @@ export class ActivitiesService {
           dto.startedAt !== undefined ||
           dto.status !== undefined) && {
           summitDetectionProcessedAt: null,
+          summitDetectionVersion: 0,
         }),
 
         ...(dto.startedAt && {

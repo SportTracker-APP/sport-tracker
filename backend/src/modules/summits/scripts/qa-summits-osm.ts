@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { getDepartmentImportDefinition } from '../import/summit-department-import';
 import { runOsmSummitQa } from '../import/summit-import-osm-qa';
 
 function getArgument(name: string) {
@@ -16,9 +17,14 @@ function requiredArgument(name: string) {
 }
 
 async function main() {
+  const department = getDepartmentImportDefinition(
+    requiredArgument('department'),
+    { requireEnabled: false },
+  );
   const report = await runOsmSummitQa({
     snapshotDirectory: path.resolve(requiredArgument('snapshot-dir')),
     sourceVersion: requiredArgument('source-version'),
+    departmentCode: department.departmentCode,
     osmSnapshotPath: path.resolve(requiredArgument('osm-snapshot')),
     reportPath: getArgument('report')
       ? path.resolve(requiredArgument('report'))

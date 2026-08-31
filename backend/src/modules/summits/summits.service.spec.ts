@@ -174,14 +174,20 @@ describe('SummitsService', () => {
         userId: 'user-1',
         status: 'COMPLETED',
         routePolyline: { not: null },
-        summitDetectionProcessedAt: null,
+        OR: [
+          { summitDetectionProcessedAt: null },
+          { summitDetectionVersion: { lt: 3 } },
+        ],
       },
       select: { id: true },
       orderBy: { startedAt: 'asc' },
     });
     expect(prisma.activity.update).toHaveBeenCalledWith({
       where: { id: 'activity-offline' },
-      data: { summitDetectionProcessedAt: expect.any(Date) },
+      data: {
+        summitDetectionProcessedAt: expect.any(Date),
+        summitDetectionVersion: 3,
+      },
     });
   });
 
@@ -370,13 +376,16 @@ describe('SummitsService', () => {
           discoveredAt: startedAt,
           routePointCount: 4,
           nearbyPointCount: 4,
-          detectionVersion: 2,
+          detectionVersion: 3,
         }),
       }),
     );
     expect(prisma.activity.update).toHaveBeenCalledWith({
       where: { id: 'activity-velan' },
-      data: { summitDetectionProcessedAt: expect.any(Date) },
+      data: {
+        summitDetectionProcessedAt: expect.any(Date),
+        summitDetectionVersion: 3,
+      },
     });
   });
 

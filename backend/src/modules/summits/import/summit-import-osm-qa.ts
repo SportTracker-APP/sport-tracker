@@ -185,6 +185,7 @@ export function compareIgnSummitsWithOsmPeaks(
 export async function runOsmSummitQa(input: {
   snapshotDirectory: string;
   sourceVersion: string;
+  departmentCode?: string;
   osmSnapshotPath: string;
   reportPath?: string;
 }): Promise<OsmQaReport> {

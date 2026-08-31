@@ -55,7 +55,7 @@ describe('summit detection', () => {
     expect(match).toMatchObject({
       routePointCount: 3,
       nearbyPointCount: 1,
-      detectionVersion: 2,
+      detectionVersion: 3,
     });
   });
 
@@ -75,7 +75,7 @@ describe('summit detection', () => {
   });
 
   it('does not detect an unnamed trace outside the physical summit radius', () => {
-    expect(detect(makeSummit({ latitude: 38.5035 }))).toEqual([]);
+    expect(detect(makeSummit({ latitude: 38.504 }))).toEqual([]);
   });
 
   it('keeps an unnamed trace between 100 and 250 metres pending', () => {
@@ -84,6 +84,42 @@ describe('summit detection', () => {
     expect(match.closestDistance).toBeGreaterThan(100);
     expect(match.closestDistance).toBeLessThanOrEqual(250);
     expect(match.autoConfirmed).toBe(false);
+  });
+
+  it('offers an altitude-compatible passage between 250 and 400 metres for confirmation', () => {
+    const [match] = detect(makeSummit({ latitude: 38.5027 }));
+
+    expect(match.closestDistance).toBeGreaterThan(250);
+    expect(match.closestDistance).toBeLessThanOrEqual(400);
+    expect(match.altitudeMatched).toBe(true);
+    expect(match.autoConfirmed).toBe(false);
+    expect(match.detectionVersion).toBe(3);
+  });
+
+  it('keeps the real Vélan near-miss profile pending at 253 metres', () => {
+    const [match] = detectSummits(
+      {
+        title: 'EP44 - Reco trail de Faverges avec le Maxence 🏔️',
+        maxAltitude: 1_758,
+        routePolyline: ROUTE,
+      },
+      [
+        makeSummit({
+          id: 'pointe-du-velan',
+          name: 'Pointe du Vélan',
+          altitude: 1_746,
+          latitude: 38.502275,
+        }),
+      ],
+    );
+
+    expect(match).toMatchObject({
+      summitId: 'pointe-du-velan',
+      closestDistance: 253,
+      altitudeMatched: true,
+      autoConfirmed: false,
+      detectionVersion: 3,
+    });
   });
 
   it('keeps a named summit between 100 and 250 metres pending', () => {

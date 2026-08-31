@@ -12,10 +12,10 @@ import {
 } from '@prisma/client';
 
 import {
-  HAUTE_SAVOIE_GEO_AREA_SLUG,
   IGN_BD_TOPO_PROVIDER,
   IGN_BD_TOPO_SOURCE_NAME,
 } from './summit-import.constants';
+import { getDepartmentImportDefinitionByScope } from './summit-department-import';
 import { enrichCandidatesWithIgnAltitude } from './summit-import-altimetry';
 import { classifySummitCatalogTier } from './summit-catalog-tier';
 import { matchIgnCandidates } from './summit-import-matcher';
@@ -38,6 +38,8 @@ export type SummitImportMode = 'dry-run' | 'prepare';
 export type SummitImportOptions = {
   snapshotDirectory: string;
   osmSnapshotPath: string;
+  departmentCode: string;
+  scope: string;
   sourceVersion: string;
   sourceChecksum?: string;
   cacheDirectory: string;
@@ -87,7 +89,7 @@ export type SummitImportReport = {
     name: string;
     version: string;
     checksum: string | null;
-    scope: 'D074';
+    scope: string;
   };
   counts: {
     source: number;
@@ -174,6 +176,23 @@ function shouldCreateCore(candidate: CoreReleaseCandidate) {
     candidate.status === SummitImportCandidateStatus.READY ||
     candidate.resolutionAction === SummitImportResolutionAction.CREATE_NEW
   );
+}
+
+function assertExpectedImportRun(
+  run: { scope: string; sourceVersion: string },
+  expected?: { scope: string; sourceVersion: string },
+) {
+  if (!expected) return;
+  if (run.scope !== expected.scope) {
+    throw new Error(
+      `ImportRun hors périmètre : attendu ${expected.scope}, reçu ${run.scope}`,
+    );
+  }
+  if (run.sourceVersion !== expected.sourceVersion) {
+    throw new Error(
+      `Version source inattendue : attendue ${expected.sourceVersion}, reçue ${run.sourceVersion}`,
+    );
+  }
 }
 
 export function buildCoreReleasePreview(
@@ -315,13 +334,15 @@ async function prepareImport(
   sourceCount: number,
   rejected: ImportRejectedFeature[],
   decisions: ClassifiedDecision[],
+  unexplainedGaps: number,
+  preflightReport: Prisma.InputJsonObject,
 ) {
   const existing = await prisma.summitImportRun.findUnique({
     where: {
       provider_sourceVersion_scope: {
         provider: SummitExternalProvider.IGN_BD_TOPO,
         sourceVersion: options.sourceVersion,
-        scope: 'D074',
+        scope: options.scope,
       },
     },
     select: { id: true, sourceChecksum: true },
@@ -345,7 +366,7 @@ async function prepareImport(
       const created = await transaction.summitImportRun.create({
         data: {
           provider: SummitExternalProvider.IGN_BD_TOPO,
-          scope: 'D074',
+          scope: options.scope,
           sourceVersion: options.sourceVersion,
           sourceName: IGN_BD_TOPO_SOURCE_NAME,
           sourceChecksum: options.sourceChecksum,
@@ -360,6 +381,8 @@ async function prepareImport(
           rejectedCount:
             rejected.length +
             decisions.filter(({ status }) => status === 'REJECTED').length,
+          errorCount: unexplainedGaps,
+          preflightReport,
           createdCount: 0,
         },
       });
@@ -399,6 +422,7 @@ async function prepareImport(
 export async function applyPreparedSummitImport(
   prisma: PrismaClient,
   importRunId: string,
+  expected?: { scope: string; sourceVersion: string },
 ) {
   const run = await prisma.summitImportRun.findUnique({
     where: { id: importRunId },
@@ -412,6 +436,7 @@ export async function applyPreparedSummitImport(
     },
   });
   if (!run) throw new Error('ImportRun introuvable');
+  assertExpectedImportRun(run, expected);
   if (
     run.status === SummitImportRunStatus.APPLIED ||
     run.status === SummitImportRunStatus.PUBLISHED
@@ -427,9 +452,10 @@ export async function applyPreparedSummitImport(
     throw new Error(`ImportRun ${run.status} non applicable`);
   }
 
+  const department = getDepartmentImportDefinitionByScope(run.scope);
   const departmentAreaIds = await getAreaAndAncestors(
     prisma,
-    HAUTE_SAVOIE_GEO_AREA_SLUG,
+    department.geoAreaSlug,
   );
   if (departmentAreaIds.length === 0) {
     throw new Error('Territoire fiable absent pour le lot CORE');
@@ -563,6 +589,7 @@ export async function applyPreparedSummitImport(
 export async function previewPreparedSummitImport(
   prisma: PrismaClient,
   importRunId: string,
+  expected?: { scope: string; sourceVersion: string },
 ) {
   const run = await prisma.summitImportRun.findUnique({
     where: { id: importRunId },
@@ -575,11 +602,13 @@ export async function previewPreparedSummitImport(
     },
   });
   if (!run) throw new Error('ImportRun introuvable');
+  assertExpectedImportRun(run, expected);
   if (run.status !== SummitImportRunStatus.PREPARED) {
     throw new Error(`ImportRun ${run.status} non prévisualisable`);
   }
 
-  await getAreaAndAncestors(prisma, HAUTE_SAVOIE_GEO_AREA_SLUG);
+  const department = getDepartmentImportDefinitionByScope(run.scope);
+  await getAreaAndAncestors(prisma, department.geoAreaSlug);
   return {
     importRunId,
     sourceVersion: run.sourceVersion,
@@ -635,7 +664,7 @@ export async function runSummitImport(
       name: IGN_BD_TOPO_SOURCE_NAME,
       version: options.sourceVersion,
       checksum: options.sourceChecksum ?? null,
-      scope: 'D074',
+      scope: options.scope,
     },
     counts: {
       source: snapshot.sourceCount,
@@ -693,6 +722,12 @@ export async function runSummitImport(
       snapshot.sourceCount,
       snapshot.rejected,
       classified,
+      unexplainedGaps,
+      {
+        counts: report.counts,
+        rejectionReasons: report.rejectionReasons,
+        unexplainedGaps: report.unexplainedGaps,
+      },
     );
     report.importRunId = prepared.importRunId;
     report.idempotent = prepared.idempotent;

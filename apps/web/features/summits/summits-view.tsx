@@ -211,7 +211,7 @@ export function SummitsView() {
           toast.success(
             status === "CONFIRMED"
               ? "Sommet ajouté à ton carnet."
-              : "Cette détection a été ignorée.",
+              : "Ce passage proche n’a pas été validé.",
           ),
         onError: () =>
           toast.error("Impossible d’enregistrer cette correction."),

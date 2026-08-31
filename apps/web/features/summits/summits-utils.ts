@@ -461,7 +461,7 @@ export function getSummitCardViewModels(
           : status === "DISCOVERED"
             ? "Découvert"
             : status === "PENDING"
-              ? "À confirmer"
+              ? "Passage proche"
               : "À découvrir",
       isNew:
         status === "DISCOVERED" &&
@@ -478,7 +478,7 @@ export function getSummitCardViewModels(
           : status === "DISCOVERED"
             ? `${summit.activityCount} passage${summit.activityCount > 1 ? "s" : ""}`
             : status === "PENDING"
-              ? "Détection proche"
+              ? "À confirmer"
               : massif
                 ? `${massif.discovered}/${massif.total} dans ${getSummitMassifName(summit)}`
                 : "À explorer",
@@ -495,6 +495,16 @@ export function getSummitCardViewModels(
             ? "Voir dans le carnet"
             : "Voir le sommet",
       pendingDiscoveryId: pending?.id ?? null,
+      pendingEvidence: pending
+        ? {
+            distance: formatSummitDistance(pending.closestDistance),
+            activityAltitude:
+              typeof pending.activity.maxAltitude === "number"
+                ? formatSummitAltitude(pending.activity.maxAltitude)
+                : null,
+            summitAltitude: formatSummitAltitude(summit.altitude),
+          }
+        : null,
     };
   });
 }

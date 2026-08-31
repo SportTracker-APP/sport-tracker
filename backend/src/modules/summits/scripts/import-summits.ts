@@ -7,8 +7,12 @@ import {
   previewPreparedSummitImport,
   runSummitImport,
 } from '../import/summit-import-runner';
-
-const PRODUCTION_CONFIRMATION = 'HAUTE-SAVOIE-CORE-2026-06-15';
+import {
+  getDepartmentImportDefinition,
+  getProductionConfirmation,
+  type SummitDepartmentImportDefinition,
+} from '../import/summit-department-import';
+import { verifySourceArchiveChecksum } from '../import/summit-source-checksum';
 
 const LOCAL_DATABASE_HOSTS = new Set(['127.0.0.1', 'localhost', '::1']);
 
@@ -58,7 +62,10 @@ function getDatabaseName(databaseUrl: URL) {
   return databaseName;
 }
 
-function assertImportDatabaseSafety() {
+function assertImportDatabaseSafety(
+  department: SummitDepartmentImportDefinition,
+  sourceVersion: string,
+) {
   const databaseUrl = getDatabaseUrl();
   const hostname = databaseUrl.hostname;
   const databaseName = getDatabaseName(databaseUrl);
@@ -76,12 +83,16 @@ function assertImportDatabaseSafety() {
   const productionConfirmation = getArgument('confirm-production');
   const expectedDatabaseHost = getArgument('expected-db-host');
   const expectedDatabaseName = getArgument('expected-db-name');
+  const expectedConfirmation = getProductionConfirmation(
+    department,
+    sourceVersion,
+  );
 
-  if (productionConfirmation !== PRODUCTION_CONFIRMATION) {
+  if (productionConfirmation !== expectedConfirmation) {
     throw new Error(
       `Base distante détectée (${hostname}). ` +
         `Confirmez explicitement la release avec ` +
-        `--confirm-production=${PRODUCTION_CONFIRMATION}`,
+        `--confirm-production=${expectedConfirmation}`,
     );
   }
 
@@ -119,8 +130,14 @@ async function main() {
     );
   }
 
+  const department = getDepartmentImportDefinition(
+    requiredArgument('department'),
+    { requireEnabled: prepare || previewApply || apply },
+  );
+  const sourceVersion = requiredArgument('source-version');
+
   if (prepare || previewApply || apply) {
-    assertImportDatabaseSafety();
+    assertImportDatabaseSafety(department, sourceVersion);
   }
 
   if (apply && !process.argv.includes('--confirm-core-release')) {
@@ -136,6 +153,7 @@ async function main() {
       const result = await previewPreparedSummitImport(
         prisma,
         requiredArgument('import-run'),
+        { scope: department.scope, sourceVersion },
       );
 
       console.log(JSON.stringify(result, null, 2));
@@ -151,6 +169,7 @@ async function main() {
       const result = await applyPreparedSummitImport(
         prisma,
         requiredArgument('import-run'),
+        { scope: department.scope, sourceVersion },
       );
 
       console.log(JSON.stringify(result, null, 2));
@@ -165,7 +184,15 @@ async function main() {
 
   const osmSnapshotPath = path.resolve(requiredArgument('osm-snapshot'));
 
-  const sourceVersion = requiredArgument('source-version');
+  const sourceChecksum = requiredArgument('source-checksum');
+  const sourceArchivePath = path.resolve(requiredArgument('source-archive'));
+  const checksum = await verifySourceArchiveChecksum(
+    sourceArchivePath,
+    sourceChecksum,
+  );
+  console.warn(
+    `SOURCE VÉRIFIÉE ${checksum.algorithm}=${checksum.actual} scope=${department.scope}`,
+  );
 
   const cacheDirectory = path.resolve(
     getArgument('cache-dir') ??
@@ -187,8 +214,10 @@ async function main() {
     const report = await runSummitImport(prisma, {
       snapshotDirectory,
       osmSnapshotPath,
+      departmentCode: department.departmentCode,
+      scope: department.scope,
       sourceVersion,
-      sourceChecksum: getArgument('source-checksum'),
+      sourceChecksum: checksum.actual,
       cacheDirectory,
       reportPath,
       mode: prepare ? 'prepare' : 'dry-run',

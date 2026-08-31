@@ -19,6 +19,7 @@ import {
 import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { SUMMIT_DETECTION_VERSION } from '../summits/summit-detection';
 import { SummitsService } from '../summits/summits.service';
 import { StravaTokenEncryptionService } from './strava-token-encryption.service';
 
@@ -323,6 +324,7 @@ export class StravaService {
         maxAltitude: true,
         routePolyline: true,
         summitDetectionProcessedAt: true,
+        summitDetectionVersion: true,
       },
     });
 
@@ -388,6 +390,7 @@ export class StravaService {
             routePolyline: mappedActivity.routePolyline,
             ...(detectionInputsChanged && {
               summitDetectionProcessedAt: null,
+              summitDetectionVersion: 0,
             }),
             calories: mappedActivity.calories,
             averageSpeed: mappedActivity.averageSpeed,
@@ -401,7 +404,9 @@ export class StravaService {
         if (
           newStravaActivityIds.has(stravaActivityId) ||
           detectionInputsChanged ||
-          !existingActivity?.summitDetectionProcessedAt
+          !existingActivity?.summitDetectionProcessedAt ||
+          (existingActivity?.summitDetectionVersion ?? 0) <
+            SUMMIT_DETECTION_VERSION
         ) {
           activityIdsToProcess.push(persistedActivity.id);
         }

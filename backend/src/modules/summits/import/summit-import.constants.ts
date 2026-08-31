@@ -2,8 +2,6 @@ export const IGN_SUMMIT_NATURES = ['Sommet', 'Pic'] as const;
 
 export const IGN_BD_TOPO_SOURCE_NAME = 'IGN BD TOPO® — Détail orographique';
 export const IGN_BD_TOPO_PROVIDER = 'IGN_BD_TOPO' as const;
-export const HAUTE_SAVOIE_DEPARTMENT_CODE = '74';
-export const HAUTE_SAVOIE_GEO_AREA_SLUG = 'haute-savoie';
 
 // A legacy coordinate can be approximate. Keep a wider review radius than the
 // certain-match radius so a close namesake is never created automatically.

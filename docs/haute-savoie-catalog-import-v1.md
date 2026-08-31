@@ -1,5 +1,12 @@
 # Catalogue Haute-Savoie V1 — contrat d’import
 
+> Ce document conserve le contrat de données historique de la release D074.
+> Les commandes ci-dessous ne sont plus la procédure opératoire de référence.
+> Utiliser exclusivement
+> [`departmental-summit-import-workflow.md`](./departmental-summit-import-workflow.md),
+> qui impose désormais le département explicite, la vérification réelle de
+> l'archive source et la QA post-import consolidée.
+
 ## Référentiel de production
 
 - Producteur : Institut national de l’information géographique et forestière

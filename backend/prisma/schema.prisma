@@ -226,6 +226,8 @@ model Activity {
 
   summitDetectionProcessedAt DateTime?
 
+  summitDetectionVersion Int @default(0)
+
   // MEDIA
   coverImageUrl String?
 
@@ -264,6 +266,7 @@ model Activity {
   @@index([startedAt])
   @@index([createdAt])
   @@index([userId, summitDetectionProcessedAt])
+  @@index([userId, summitDetectionVersion])
 }
 
 model PlannedWorkoutCompletion {
@@ -609,6 +612,8 @@ model SummitImportRun {
   rejectedCount Int @default(0)
 
   errorCount Int @default(0)
+
+  preflightReport Json?
 
   appliedAt DateTime?
 

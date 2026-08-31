@@ -78,10 +78,11 @@ function keepNativeWidgetHidden() {
 export function TawkToWidget() {
   const pathname = usePathname();
   const isLanding = isLandingPath(pathname);
+  const isEnabled = process.env.NODE_ENV === "production";
   const [isOpening, setIsOpening] = useState(false);
 
   useEffect(() => {
-    if (isLanding) {
+    if (!isEnabled || isLanding) {
       keepNativeWidgetHidden();
       return;
     }
@@ -113,7 +114,7 @@ export function TawkToWidget() {
       keepNativeWidgetHidden();
     });
     document.head.appendChild(script);
-  }, [isLanding]);
+  }, [isEnabled, isLanding]);
 
   const openChat = useCallback(() => {
     if (isOpening) {
@@ -141,7 +142,7 @@ export function TawkToWidget() {
     }, 200);
   }, [isOpening]);
 
-  if (isLanding) {
+  if (!isEnabled || isLanding) {
     return null;
   }
 

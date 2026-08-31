@@ -5,10 +5,7 @@ import type { Feature, MultiPolygon, Point, Polygon } from 'geojson';
 import proj4 from 'proj4';
 import { open } from 'shapefile';
 
-import {
-  HAUTE_SAVOIE_DEPARTMENT_CODE,
-  IGN_SUMMIT_NATURES,
-} from './summit-import.constants';
+import { IGN_SUMMIT_NATURES } from './summit-import.constants';
 import {
   ignDepartmentPropertiesSchema,
   ignDetailPropertiesSchema,
@@ -232,7 +229,9 @@ async function readToponyms(toponymBase: string) {
 export async function readIgnSummitSnapshot(input: {
   snapshotDirectory: string;
   sourceVersion: string;
+  departmentCode?: string;
 }): Promise<IgnSnapshotReadResult> {
+  const departmentCode = input.departmentCode ?? '74';
   const paths = getSnapshotPaths(input.snapshotDirectory);
   await Promise.all([
     assertShapefile(paths.detailBase),
@@ -247,13 +246,13 @@ export async function readIgnSummitSnapshot(input: {
   ]);
   const department = departments.find((feature) => {
     const parsed = ignDepartmentPropertiesSchema.safeParse(feature.properties);
-    return (
-      parsed.success && parsed.data.INSEE_DEP === HAUTE_SAVOIE_DEPARTMENT_CODE
-    );
+    return parsed.success && parsed.data.INSEE_DEP === departmentCode;
   });
 
   if (!department || !isDepartmentFeature(department)) {
-    throw new Error('Polygone officiel du département 74 introuvable');
+    throw new Error(
+      `Polygone officiel du département ${departmentCode} introuvable`,
+    );
   }
 
   const candidates: NormalizedIgnSummit[] = [];

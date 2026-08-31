@@ -17,6 +17,7 @@ const activity = {
   startedAt: "2026-07-20T08:00:00.000Z",
   distance: 12.4,
   elevationGain: 680,
+  maxAltitude: 1298,
   coverImageUrl: "/landing/summit-discovery-wildflowers.jpg",
 };
 
@@ -67,13 +68,13 @@ const summitCatalog = [
           ...activity,
           id: "activity-talamarche",
           title: "Trail de Talamarche",
+          maxAltitude: 1840,
         },
       },
     ],
-    imageUrl: "/summits/pointe-de-talamarche.webp",
-    imageCredit: "Photo : Guilhem Vellut",
-    sourceUrl:
-      "https://commons.wikimedia.org/wiki/File:Pointe_de_Talamarche_@_Hike_to_Lanfonnet_%26_Pointe_de_Talamarche_(15353800805).jpg",
+    imageUrl: null,
+    imageCredit: null,
+    sourceUrl: null,
   },
   {
     id: "montagne-sous-dine",
@@ -300,8 +301,27 @@ test("une détection proche peut être confirmée sans quitter le carnet", async
   await expect(
     page.getByRole("heading", { name: "Pointe de Talamarche" }),
   ).toBeVisible();
+  await expect(
+    page.getByText(/Ta trace est passée à 42 m du sommet/i),
+  ).toBeVisible();
+  const pendingCard = page
+    .getByRole("heading", { name: "Pointe de Talamarche" })
+    .locator("xpath=ancestor::article");
+  await expect(
+    pendingCard.getByRole("img", {
+      name: "Illustration de relief pour Pointe de Talamarche",
+    }),
+  ).toBeVisible();
+  await expect(
+    pendingCard
+      .getByRole("img", {
+        name: "Illustration de relief pour Pointe de Talamarche",
+      })
+      .locator("svg")
+      .first(),
+  ).toBeHidden();
   await page
-    .getByRole("button", { name: "Confirmer la découverte", exact: true })
+    .getByRole("button", { name: "Oui, l’ajouter au carnet", exact: true })
     .click();
 
   await expect.poll(mock.getPendingStatus).toBe("CONFIRMED");
@@ -323,7 +343,9 @@ test("la collection évite les photos répétées et conserve des actions utiles
     catalog.locator('img[alt^="Photo de la sortie liée à"]'),
   ).toHaveCount(0);
   await expect(
-    catalog.getByRole("img", { name: "Vue de Pointe de Talamarche" }),
+    catalog.getByRole("img", {
+      name: "Illustration de relief pour Pointe de Talamarche",
+    }),
   ).toBeVisible();
   await expect(
     catalog
@@ -514,6 +536,30 @@ test.describe("rendu iPhone 13", () => {
       path: testInfo.outputPath("sommets-mobile-card.png"),
       fullPage: false,
     });
+  });
+
+  test("le statut du fallback reste net sur mobile", async ({ page }) => {
+    await mockSummitsPage(page);
+    await page.goto("/sommets?statut=a-confirmer");
+
+    const pendingCard = page
+      .getByRole("heading", { name: "Pointe de Talamarche" })
+      .locator("xpath=ancestor::article");
+    const fallback = pendingCard.getByRole("img", {
+      name: "Illustration de relief pour Pointe de Talamarche",
+    });
+
+    await expect(pendingCard.getByText("Passage proche")).toBeVisible();
+    await expect(fallback.locator("svg").first()).toBeHidden();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            document.documentElement.scrollWidth <=
+            document.documentElement.clientWidth,
+        ),
+      )
+      .toBe(true);
   });
 });
 

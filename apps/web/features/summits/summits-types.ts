@@ -87,4 +87,9 @@ export type SummitCardViewModel = {
   href: string;
   ctaLabel: string;
   pendingDiscoveryId: string | null;
+  pendingEvidence: {
+    distance: string;
+    activityAltitude: string | null;
+    summitAltitude: string;
+  } | null;
 };

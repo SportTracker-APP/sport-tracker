@@ -3645,8 +3645,17 @@
   font-size: 0.57rem;
 }
 
+.reviewPanel > p span {
+  overflow: visible;
+  font-size: 0.52rem;
+  line-height: 1.35;
+  text-overflow: clip;
+  white-space: normal;
+}
+
 .reviewPanel > div {
   display: flex;
+  flex-wrap: wrap;
   gap: 5px;
 }
 
@@ -3657,9 +3666,9 @@
 }
 
 .reviewPanel button:last-child {
-  width: 30px;
+  width: auto;
   justify-content: center;
-  padding: 0;
+  padding: 5px 7px;
 }
 
 .cardFooter {
@@ -3697,6 +3706,12 @@
   left: 18px;
   width: 26px;
   height: 26px;
+}
+
+/* The card status already owns this corner; avoid stacking the fallback icon
+   underneath “Découvert”, “Passage proche” or “À découvrir”. */
+.cardImage .summitVisualFallback > svg:first-of-type {
+  display: none;
 }
 
 .fallbackIdentity {

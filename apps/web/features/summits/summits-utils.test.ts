@@ -60,6 +60,7 @@ describe("summits utilities", () => {
       startedAt: "2026-07-20T08:00:00.000Z",
       distance: 12,
       elevationGain: 740,
+      maxAltitude: 1298,
       coverImageUrl: null,
     },
   });
@@ -80,6 +81,7 @@ describe("summits utilities", () => {
           startedAt: "2026-07-21T08:00:00.000Z",
           distance: 18,
           elevationGain: 1200,
+          maxAltitude: 1840,
           coverImageUrl: null,
         },
       },
@@ -374,13 +376,18 @@ describe("summits utilities", () => {
     });
     expect(viewModels[1]).toMatchObject({
       status: "PENDING",
-      statusLabel: "À confirmer",
-      passageLabel: "Détection proche",
+      statusLabel: "Passage proche",
+      passageLabel: "À confirmer",
       secondaryInfo: {
         kind: "activity",
         label: "Proposé pendant « Trail des Bornes »",
       },
       pendingDiscoveryId: "pending-1",
+      pendingEvidence: {
+        distance: "48 m",
+        activityAltitude: "1 840 m",
+        summitAltitude: "1 852 m",
+      },
     });
     expect(viewModels[2]).toMatchObject({
       status: "MISSING",
