@@ -267,6 +267,7 @@ model Activity {
   @@index([createdAt])
   @@index([userId, summitDetectionProcessedAt])
   @@index([userId, summitDetectionVersion])
+  @@index([summitDetectionVersion, startedAt])
 }
 
 model PlannedWorkoutCompletion {

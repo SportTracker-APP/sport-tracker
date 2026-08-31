@@ -15,7 +15,12 @@ import { GeoAreasService } from '../geography/geo-areas.service';
 import { SummitsService } from './summits.service';
 
 type PrismaMock = {
-  activity: { findFirst: jest.Mock; findMany: jest.Mock; update: jest.Mock };
+  activity: {
+    count: jest.Mock;
+    findFirst: jest.Mock;
+    findMany: jest.Mock;
+    update: jest.Mock;
+  };
   summit: { findMany: jest.Mock };
   summitDiscovery: {
     count: jest.Mock;
@@ -35,6 +40,7 @@ type PrismaMock = {
 function makePrisma(): PrismaMock {
   return {
     activity: {
+      count: jest.fn().mockResolvedValue(0),
       findFirst: jest.fn().mockResolvedValue(null),
       findMany: jest.fn().mockResolvedValue([]),
       update: jest.fn().mockResolvedValue({}),
@@ -154,41 +160,62 @@ describe('SummitsService', () => {
     );
   });
 
-  it('replays an unfinished detection when the user reconnects to the summit catalogue', async () => {
+  it('does not reconcile unfinished detections inside the summit catalogue request', async () => {
     const prisma = makePrisma();
-    prisma.activity.findMany
-      .mockResolvedValueOnce([{ id: 'activity-offline' }])
-      .mockResolvedValueOnce([]);
-    prisma.activity.findFirst.mockResolvedValue({
-      id: 'activity-offline',
-      title: 'Sortie synchronisée après reconnexion',
-      maxAltitude: 1200,
-      routePolyline: '??',
-      startedAt: new Date('2026-08-27T07:00:00.000Z'),
-    });
 
     await expect(makeService(prisma).findAll('user-1')).resolves.toEqual([]);
 
+    expect(prisma.activity.findMany).not.toHaveBeenCalled();
+    expect(prisma.activity.update).not.toHaveBeenCalled();
+  });
+
+  it('reconciles pending detections in bounded idempotent batches', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findMany
+      .mockResolvedValueOnce([
+        { id: 'activity-1', userId: 'user-1' },
+        { id: 'activity-2', userId: 'user-1' },
+        { id: 'activity-3', userId: 'user-2' },
+      ])
+      .mockResolvedValueOnce([]);
+    const service = makeService(prisma);
+    const processActivities = jest
+      .spyOn(service, 'processActivities')
+      .mockResolvedValueOnce({ processed: 2, detected: 1, confirmed: 1 })
+      .mockResolvedValueOnce({ processed: 1, detected: 2, confirmed: 0 });
+
+    await expect(
+      service.reconcilePendingActivityDetections({ batchSize: 3 }),
+    ).resolves.toEqual({
+      batches: 1,
+      processed: 3,
+      detected: 3,
+      confirmed: 1,
+      remaining: 0,
+    });
+
     expect(prisma.activity.findMany).toHaveBeenNthCalledWith(1, {
       where: {
-        userId: 'user-1',
         status: 'COMPLETED',
         routePolyline: { not: null },
-        OR: [
-          { summitDetectionProcessedAt: null },
-          { summitDetectionVersion: { lt: 3 } },
-        ],
+        summitDetectionVersion: { lt: 3 },
       },
-      select: { id: true },
-      orderBy: { startedAt: 'asc' },
+      select: { id: true, userId: true },
+      orderBy: [{ startedAt: 'asc' }, { id: 'asc' }],
+      take: 3,
     });
-    expect(prisma.activity.update).toHaveBeenCalledWith({
-      where: { id: 'activity-offline' },
-      data: {
-        summitDetectionProcessedAt: expect.any(Date),
-        summitDetectionVersion: 3,
-      },
-    });
+    expect(processActivities).toHaveBeenNthCalledWith(
+      1,
+      'user-1',
+      ['activity-1', 'activity-2'],
+      { sendNotifications: false },
+    );
+    expect(processActivities).toHaveBeenNthCalledWith(
+      2,
+      'user-2',
+      ['activity-3'],
+      { sendNotifications: false },
+    );
   });
 
   it('exposes secondary summits only when catalogue search opts in', async () => {
@@ -321,6 +348,7 @@ describe('SummitsService', () => {
         }),
       }),
     );
+    expect(prisma.activity.findMany).not.toHaveBeenCalled();
   });
 
   it('processes a repeated activity identifier only once', async () => {
@@ -404,6 +432,28 @@ describe('SummitsService', () => {
       makeService(prisma).processActivities('user-1', ['activity-1']),
     ).rejects.toThrow('database unavailable');
     expect(prisma.activity.update).not.toHaveBeenCalled();
+  });
+
+  it('marks an empty stored route as terminal without creating a discovery', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-empty-route',
+      routePolyline: '',
+    });
+
+    await expect(
+      makeService(prisma).processActivities('user-1', ['activity-empty-route']),
+    ).resolves.toEqual({ processed: 1, detected: 0, confirmed: 0 });
+
+    expect(prisma.summit.findMany).not.toHaveBeenCalled();
+    expect(prisma.summitDiscovery.upsert).not.toHaveBeenCalled();
+    expect(prisma.activity.update).toHaveBeenCalledWith({
+      where: { id: 'activity-empty-route' },
+      data: {
+        summitDetectionProcessedAt: expect.any(Date),
+        summitDetectionVersion: 3,
+      },
+    });
   });
 
   it('dismisses an automatic discovery that no longer reaches the corrected summit', async () => {

@@ -34,10 +34,25 @@ type ProcessOptions = {
   sendNotifications?: boolean;
 };
 
+type ReconcilePendingDetectionOptions = {
+  batchSize?: number;
+  maxBatches?: number;
+};
+
+export type PendingDetectionReconciliationResult = {
+  batches: number;
+  processed: number;
+  detected: number;
+  confirmed: number;
+  remaining: number;
+};
+
+const DEFAULT_DETECTION_BATCH_SIZE = 20;
+const MAX_DETECTION_BATCH_SIZE = 100;
+
 @Injectable()
 export class SummitsService implements OnModuleInit {
   private readonly logger = new Logger(SummitsService.name);
-  private readonly detectionReconciliations = new Map<string, Promise<void>>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -139,8 +154,6 @@ export class SummitsService implements OnModuleInit {
   }
 
   async findAll(userId: string, query: ListSummitsDto = {}) {
-    await this.ensurePendingDetections(userId);
-
     const requestedGeoAreaIds = query.geoAreaIds?.length
       ? query.geoAreaIds
       : query.geoAreaId
@@ -259,8 +272,6 @@ export class SummitsService implements OnModuleInit {
   }
 
   async findMapSummits(userId: string, query: ListSummitsDto = {}) {
-    await this.ensurePendingDetections(userId);
-
     const requestedGeoAreaIds = query.geoAreaIds?.length
       ? query.geoAreaIds
       : query.geoAreaId
@@ -456,57 +467,90 @@ export class SummitsService implements OnModuleInit {
     return results;
   }
 
-  private async ensurePendingDetections(userId: string): Promise<void> {
-    const inFlight = this.detectionReconciliations.get(userId);
-    if (inFlight) return inFlight;
+  async reconcilePendingActivityDetections(
+    options: ReconcilePendingDetectionOptions = {},
+  ): Promise<PendingDetectionReconciliationResult> {
+    const batchSize = Math.min(
+      MAX_DETECTION_BATCH_SIZE,
+      Math.max(
+        1,
+        Math.trunc(options.batchSize ?? DEFAULT_DETECTION_BATCH_SIZE),
+      ),
+    );
+    const maxBatches =
+      options.maxBatches === undefined
+        ? Number.POSITIVE_INFINITY
+        : Math.max(0, Math.trunc(options.maxBatches));
+    const totals = {
+      batches: 0,
+      processed: 0,
+      detected: 0,
+      confirmed: 0,
+    };
+    const attemptedActivityIds = new Set<string>();
 
-    const reconciliation = this.reconcilePendingActivityDetections(
-      userId,
-    ).finally(() => {
-      this.detectionReconciliations.delete(userId);
-    });
-    this.detectionReconciliations.set(userId, reconciliation);
-
-    return reconciliation;
-  }
-
-  private async reconcilePendingActivityDetections(userId: string) {
-    try {
+    while (totals.batches < maxBatches) {
       const pendingActivities = await this.prisma.activity.findMany({
         where: {
-          userId,
           status: ActivityStatus.COMPLETED,
           routePolyline: { not: null },
-          OR: [
-            { summitDetectionProcessedAt: null },
-            { summitDetectionVersion: { lt: SUMMIT_DETECTION_VERSION } },
-          ],
+          summitDetectionVersion: { lt: SUMMIT_DETECTION_VERSION },
         },
-        select: { id: true },
-        orderBy: { startedAt: 'asc' },
+        select: { id: true, userId: true },
+        orderBy: [{ startedAt: 'asc' }, { id: 'asc' }],
+        take: batchSize,
       });
 
       if (pendingActivities.length === 0) {
-        return;
+        break;
       }
 
-      const result = await this.processActivities(
-        userId,
-        pendingActivities.map(({ id }) => id),
-        { sendNotifications: false },
+      const repeatedActivity = pendingActivities.find(({ id }) =>
+        attemptedActivityIds.has(id),
       );
+      if (repeatedActivity) {
+        throw new Error(
+          `Summit detection batch made no progress for activity ${repeatedActivity.id}`,
+        );
+      }
+      pendingActivities.forEach(({ id }) => attemptedActivityIds.add(id));
+
+      const activityIdsByUser = new Map<string, string[]>();
+      for (const activity of pendingActivities) {
+        const activityIds = activityIdsByUser.get(activity.userId) ?? [];
+        activityIds.push(activity.id);
+        activityIdsByUser.set(activity.userId, activityIds);
+      }
+
+      for (const [userId, activityIds] of activityIdsByUser) {
+        const result = await this.processActivities(userId, activityIds, {
+          sendNotifications: false,
+        });
+        totals.processed += result.processed;
+        totals.detected += result.detected;
+        totals.confirmed += result.confirmed;
+      }
+
+      totals.batches += 1;
       this.logger.log({
-        processedActivities: result.processed,
-        detectedSummits: result.detected,
-        confirmedSummits: result.confirmed,
-        message: 'Pending summit detection reconciliation completed',
-      });
-    } catch (error) {
-      this.logger.warn({
-        errorName: error instanceof Error ? error.name : 'UnknownError',
-        message: 'Pending summit detection reconciliation deferred',
+        batch: totals.batches,
+        batchActivities: pendingActivities.length,
+        processedActivities: totals.processed,
+        detectedSummits: totals.detected,
+        confirmedSummits: totals.confirmed,
+        message: 'Pending summit detection batch completed',
       });
     }
+
+    const remaining = await this.prisma.activity.count({
+      where: {
+        status: ActivityStatus.COMPLETED,
+        routePolyline: { not: null },
+        summitDetectionVersion: { lt: SUMMIT_DETECTION_VERSION },
+      },
+    });
+
+    return { ...totals, remaining };
   }
 
   async updateDiscovery(
@@ -583,7 +627,12 @@ export class SummitsService implements OnModuleInit {
       },
     });
 
-    if (!activity?.routePolyline) {
+    if (!activity) {
+      return { detected: 0, confirmed: 0 };
+    }
+
+    if (!activity.routePolyline) {
+      await this.markActivityDetectionProcessed(activity.id);
       return { detected: 0, confirmed: 0 };
     }
 
@@ -706,6 +755,15 @@ export class SummitsService implements OnModuleInit {
       });
     }
 
+    await this.markActivityDetectionProcessed(activityId);
+
+    return {
+      detected: matches.length,
+      confirmed: matches.filter((match) => match.autoConfirmed).length,
+    };
+  }
+
+  private async markActivityDetectionProcessed(activityId: string) {
     await this.prisma.activity.update({
       where: { id: activityId },
       data: {
@@ -713,11 +771,6 @@ export class SummitsService implements OnModuleInit {
         summitDetectionVersion: SUMMIT_DETECTION_VERSION,
       },
     });
-
-    return {
-      detected: matches.length,
-      confirmed: matches.filter((match) => match.autoConfirmed).length,
-    };
   }
 
   private async reconcileBadges(userId: string, sendNotifications: boolean) {
