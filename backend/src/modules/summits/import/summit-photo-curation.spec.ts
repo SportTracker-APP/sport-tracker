@@ -49,6 +49,7 @@ describe('summit photo curation', () => {
       latitude: 46.2331,
       longitude: 6.4901,
       wikidataId: 'Q123',
+      hasUniqueName: true,
     };
 
     expect(matchWikidataPhoto(target, wikidataEntity())).toMatchObject({

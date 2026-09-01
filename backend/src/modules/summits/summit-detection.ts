@@ -4,7 +4,7 @@ export const SUMMIT_AUTO_CONFIRM_RADIUS_METERS = 100;
 export const SUMMIT_NO_ALTITUDE_DETECTION_RADIUS_METERS = 120;
 export const SUMMIT_TITLE_MATCH_RADIUS_METERS = 1_200;
 export const SUMMIT_AUTO_CONFIRM_CONFIDENCE = 0.72;
-export const SUMMIT_DETECTION_VERSION = 3;
+export const SUMMIT_DETECTION_VERSION = 4;
 export const SUMMIT_MIN_ROUTE_POINTS_FOR_AUTO_CONFIRM = 2;
 
 export type GeoPoint = {
@@ -14,7 +14,6 @@ export type GeoPoint = {
 
 export type SummitDetectionInput = {
   title: string | null;
-  maxAltitude: number | null;
   routePolyline: string;
 };
 
@@ -37,6 +36,24 @@ export type SummitDetectionMatch = {
   routePointCount: number;
   nearbyPointCount: number;
   detectionVersion: number;
+  closestRouteAltitude: number | null;
+  altitudeSource: SummitDetectionAltitudeSource | null;
+};
+
+export type SummitDetectionAltitudeSource = 'IGN_RGE_ALTI';
+
+export type SummitLocalAltitudeEvidence = {
+  altitude: number;
+  source: SummitDetectionAltitudeSource;
+};
+
+export type SummitDetectionCandidate = {
+  summit: SummitDetectionTarget;
+  closestPoint: GeoPoint;
+  closestDistance: number;
+  titleMatched: boolean;
+  routePointCount: number;
+  nearbyPointCount: number;
 };
 
 export function decodePolyline(polyline: string): GeoPoint[] {
@@ -130,10 +147,10 @@ function titleRefersToNearbyLandmark(
   });
 }
 
-export function detectSummits(
+export function findSummitDetectionCandidates(
   activity: SummitDetectionInput,
   summits: SummitDetectionTarget[],
-): SummitDetectionMatch[] {
+): SummitDetectionCandidate[] {
   const points = decodePolyline(activity.routePolyline);
 
   if (points.length === 0) {
@@ -144,29 +161,71 @@ export function detectSummits(
 
   return summits.flatMap((summit) => {
     const summitPoint = { lat: summit.latitude, lng: summit.longitude };
-    const closestDistance = Math.round(
-      Math.min(...points.map((point) => getDistanceMeters(point, summitPoint))),
-    );
-    const nearbyPointCount = points.filter(
-      (point) =>
-        getDistanceMeters(point, summitPoint) <= SUMMIT_DISCOVERY_RADIUS_METERS,
-    ).length;
+    let closestPoint = points[0];
+    let closestDistance = Number.POSITIVE_INFINITY;
+    let nearbyPointCount = 0;
+
+    for (const point of points) {
+      const distance = getDistanceMeters(point, summitPoint);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestPoint = point;
+      }
+      if (distance <= SUMMIT_DISCOVERY_RADIUS_METERS) {
+        nearbyPointCount += 1;
+      }
+    }
+
+    const roundedClosestDistance = Math.round(closestDistance);
     const normalizedSummitNames = [summit.name, ...summit.aliases]
       .map(normalizeSummitName)
       .filter(Boolean);
     const titleMatched =
       !titleRefersToNearbyLandmark(normalizedTitle, normalizedSummitNames) &&
       normalizedSummitNames.some((name) => normalizedTitle.includes(name));
-    const altitudeMatched =
-      activity.maxAltitude === null
-        ? closestDistance <= SUMMIT_NO_ALTITUDE_DETECTION_RADIUS_METERS
-        : activity.maxAltitude >=
-          summit.altitude - SUMMIT_ALTITUDE_TOLERANCE_METERS;
     const withinDetectionRadius =
-      closestDistance <= SUMMIT_DISCOVERY_RADIUS_METERS ||
-      (titleMatched && closestDistance <= SUMMIT_TITLE_MATCH_RADIUS_METERS);
+      roundedClosestDistance <= SUMMIT_DISCOVERY_RADIUS_METERS ||
+      (titleMatched &&
+        roundedClosestDistance <= SUMMIT_TITLE_MATCH_RADIUS_METERS);
 
-    if (!withinDetectionRadius || !altitudeMatched) {
+    if (!withinDetectionRadius) {
+      return [];
+    }
+
+    return [
+      {
+        summit,
+        closestPoint,
+        closestDistance: roundedClosestDistance,
+        titleMatched,
+        routePointCount: points.length,
+        nearbyPointCount,
+      },
+    ];
+  });
+}
+
+export function evaluateSummitDetectionCandidates(
+  candidates: SummitDetectionCandidate[],
+  localAltitudes: ReadonlyMap<string, SummitLocalAltitudeEvidence> = new Map(),
+): SummitDetectionMatch[] {
+  return candidates.flatMap((candidate) => {
+    const {
+      summit,
+      closestDistance,
+      titleMatched,
+      routePointCount,
+      nearbyPointCount,
+    } = candidate;
+    const altitudeEvidence = localAltitudes.get(summit.id) ?? null;
+    const closestRouteAltitude = altitudeEvidence?.altitude ?? null;
+    const altitudeMatched =
+      closestRouteAltitude === null
+        ? closestDistance <= SUMMIT_NO_ALTITUDE_DETECTION_RADIUS_METERS
+        : closestRouteAltitude >=
+          summit.altitude - SUMMIT_ALTITUDE_TOLERANCE_METERS;
+
+    if (!altitudeMatched) {
       return [];
     }
 
@@ -180,7 +239,7 @@ export function detectSummits(
       confidence = 0.25;
     }
 
-    confidence += activity.maxAltitude === null ? 0.15 : 0.25;
+    confidence += closestRouteAltitude === null ? 0.15 : 0.25;
     confidence += titleMatched ? 0.15 : 0;
     confidence = Math.min(1, Number(confidence.toFixed(2)));
 
@@ -191,15 +250,28 @@ export function detectSummits(
         closestDistance,
         altitudeMatched,
         titleMatched,
-        routePointCount: points.length,
+        routePointCount,
         nearbyPointCount,
         detectionVersion: SUMMIT_DETECTION_VERSION,
+        closestRouteAltitude,
+        altitudeSource: altitudeEvidence?.source ?? null,
         autoConfirmed:
-          activity.maxAltitude !== null &&
-          points.length >= SUMMIT_MIN_ROUTE_POINTS_FOR_AUTO_CONFIRM &&
+          closestRouteAltitude !== null &&
+          routePointCount >= SUMMIT_MIN_ROUTE_POINTS_FOR_AUTO_CONFIRM &&
           closestDistance <= SUMMIT_AUTO_CONFIRM_RADIUS_METERS &&
           confidence >= SUMMIT_AUTO_CONFIRM_CONFIDENCE,
       },
     ];
   });
+}
+
+export function detectSummits(
+  activity: SummitDetectionInput,
+  summits: SummitDetectionTarget[],
+  localAltitudes: ReadonlyMap<string, SummitLocalAltitudeEvidence> = new Map(),
+): SummitDetectionMatch[] {
+  return evaluateSummitDetectionCandidates(
+    findSummitDetectionCandidates(activity, summits),
+    localAltitudes,
+  );
 }

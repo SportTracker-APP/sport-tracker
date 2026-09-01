@@ -127,6 +127,10 @@ export const GEO_AREA_CATALOG: GeoAreaCatalogEntry[] = [
   northernAlpsMassif('geo-bornes', 'Bornes', 'bornes', true),
   northernAlpsMassif('geo-bargy', 'Bargy', 'bargy', true),
   northernAlpsMassif('geo-chablais', 'Chablais', 'chablais', true),
+  northernAlpsMassif('geo-faucigny', 'Faucigny', 'faucigny', true),
+  northernAlpsMassif('geo-beaufortain', 'Beaufortain', 'beaufortain', true),
+  northernAlpsMassif('geo-giffre', 'Giffre', 'giffre', true),
+  northernAlpsMassif('geo-chambotte', 'Chambotte', 'chambotte', true),
   northernAlpsMassif(
     'geo-aiguilles-rouges',
     'Aiguilles Rouges',

@@ -29,7 +29,8 @@
     "summits:import": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/import-summits.ts",
     "summits:qa:import": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/qa-summit-import.ts",
     "summits:qa:osm": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/qa-summits-osm.ts",
-    "summits:photos": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/curate-summit-photos.ts"
+    "summits:photos": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/curate-summit-photos.ts",
+    "summits:massifs": "ts-node -r tsconfig-paths/register src/modules/summits/scripts/curate-summit-massifs.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

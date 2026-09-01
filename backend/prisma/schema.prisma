@@ -734,6 +734,10 @@ model SummitDiscovery {
 
   altitudeMatched Boolean
 
+  closestRouteAltitude Int?
+
+  altitudeSource SummitDiscoveryAltitudeSource?
+
   titleMatched Boolean
 
   routePointCount Int @default(0)
@@ -909,6 +913,10 @@ enum SummitDiscoveryConfirmationSource {
   USER
 }
 
+enum SummitDiscoveryAltitudeSource {
+  IGN_RGE_ALTI
+}
+
 enum SummitCatalogStatus {
   DRAFT
   REVIEW
@@ -956,6 +964,7 @@ enum UserGeoAreaPreferenceType {
 
 enum SummitExternalProvider {
   IGN_BD_TOPO
+  WIKIDATA
 }
 
 enum SummitImportRunStatus {

@@ -11,6 +11,7 @@ import {
   Prisma,
   SummitCatalogStatus,
   SummitCatalogTier,
+  SummitDiscoveryAltitudeSource,
   SummitDiscoveryConfirmationSource,
   SummitDiscoveryStatus,
 } from '@prisma/client';
@@ -24,7 +25,12 @@ import { evaluateBadgeCatalog, getBadgeProgress } from './badge-engine';
 import { UpdateSummitDiscoveryDto } from './dto/update-summit-discovery.dto';
 import { ListSummitsDto } from './dto/list-summits.dto';
 import { SUMMIT_CATALOG } from './summit-catalog';
-import { detectSummits, SUMMIT_DETECTION_VERSION } from './summit-detection';
+import {
+  evaluateSummitDetectionCandidates,
+  findSummitDetectionCandidates,
+  SUMMIT_DETECTION_VERSION,
+} from './summit-detection';
+import { SummitElevationService } from './summit-elevation.service';
 import {
   PUBLIC_MAP_SUMMIT_WHERE,
   PUBLIC_SUMMIT_WHERE,
@@ -59,6 +65,7 @@ export class SummitsService implements OnModuleInit {
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
     private readonly geoAreasService: GeoAreasService,
+    private readonly summitElevationService: SummitElevationService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -647,13 +654,18 @@ export class SummitsService implements OnModuleInit {
         longitude: true,
       },
     });
-    const matches = detectSummits(
+    const candidates = findSummitDetectionCandidates(
       {
         title: activity.title,
-        maxAltitude: activity.maxAltitude,
         routePolyline: activity.routePolyline,
       },
       summits,
+    );
+    const localAltitudes =
+      await this.summitElevationService.getLocalAltitudes(candidates);
+    const matches = evaluateSummitDetectionCandidates(
+      candidates,
+      localAltitudes,
     );
     const existingDiscoveries = await this.prisma.summitDiscovery.findMany({
       where: { activityId },
@@ -702,6 +714,11 @@ export class SummitsService implements OnModuleInit {
           confidence: match.confidence,
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
+          closestRouteAltitude: match.closestRouteAltitude,
+          altitudeSource:
+            match.altitudeSource === 'IGN_RGE_ALTI'
+              ? SummitDiscoveryAltitudeSource.IGN_RGE_ALTI
+              : null,
           titleMatched: match.titleMatched,
           routePointCount: match.routePointCount,
           nearbyPointCount: match.nearbyPointCount,
@@ -716,6 +733,11 @@ export class SummitsService implements OnModuleInit {
           confidence: match.confidence,
           closestDistance: match.closestDistance,
           altitudeMatched: match.altitudeMatched,
+          closestRouteAltitude: match.closestRouteAltitude,
+          altitudeSource:
+            match.altitudeSource === 'IGN_RGE_ALTI'
+              ? SummitDiscoveryAltitudeSource.IGN_RGE_ALTI
+              : null,
           titleMatched: match.titleMatched,
           routePointCount: match.routePointCount,
           nearbyPointCount: match.nearbyPointCount,

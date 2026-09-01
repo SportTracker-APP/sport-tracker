@@ -1,0 +1,1 @@
+ALTER TYPE "SummitExternalProvider" ADD VALUE IF NOT EXISTS 'WIKIDATA';

@@ -12,6 +12,8 @@ import {
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { GeoAreasService } from '../geography/geo-areas.service';
+import type { SummitDetectionCandidate } from './summit-detection';
+import { SummitElevationService } from './summit-elevation.service';
 import { SummitsService } from './summits.service';
 
 type PrismaMock = {
@@ -67,12 +69,27 @@ function makeService(
   geoAreasService: Pick<GeoAreasService, 'getPublishedAreaIdsForMany'> = {
     getPublishedAreaIdsForMany: jest.fn(),
   },
+  summitElevationService: Pick<SummitElevationService, 'getLocalAltitudes'> = {
+    getLocalAltitudes: jest
+      .fn()
+      .mockImplementation((candidates: SummitDetectionCandidate[]) =>
+        Promise.resolve(
+          new Map(
+            candidates.map(({ summit }) => [
+              summit.id,
+              { altitude: summit.altitude, source: 'IGN_RGE_ALTI' as const },
+            ]),
+          ),
+        ),
+      ),
+  },
 ) {
   return new SummitsService(
     prisma as unknown as PrismaService,
     {} as MailService,
     {} as ConfigService,
     geoAreasService as GeoAreasService,
+    summitElevationService as SummitElevationService,
   );
 }
 
@@ -198,7 +215,7 @@ describe('SummitsService', () => {
       where: {
         status: 'COMPLETED',
         routePolyline: { not: null },
-        summitDetectionVersion: { lt: 3 },
+        summitDetectionVersion: { lt: 4 },
       },
       select: { id: true, userId: true },
       orderBy: [{ startedAt: 'asc' }, { id: 'asc' }],
@@ -404,7 +421,9 @@ describe('SummitsService', () => {
           discoveredAt: startedAt,
           routePointCount: 4,
           nearbyPointCount: 4,
-          detectionVersion: 3,
+          detectionVersion: 4,
+          closestRouteAltitude: 1000,
+          altitudeSource: 'IGN_RGE_ALTI',
         }),
       }),
     );
@@ -412,7 +431,7 @@ describe('SummitsService', () => {
       where: { id: 'activity-velan' },
       data: {
         summitDetectionProcessedAt: expect.any(Date),
-        summitDetectionVersion: 3,
+        summitDetectionVersion: 4,
       },
     });
   });
@@ -434,6 +453,40 @@ describe('SummitsService', () => {
     expect(prisma.activity.update).not.toHaveBeenCalled();
   });
 
+  it('keeps detection retryable when local IGN altitude is unavailable', async () => {
+    const prisma = makePrisma();
+    prisma.activity.findFirst.mockResolvedValue({
+      id: 'activity-1',
+      title: 'Sortie proche du sommet',
+      maxAltitude: 2_000,
+      routePolyline: '??',
+      startedAt: new Date('2026-08-28T06:15:00.000Z'),
+    });
+    prisma.summit.findMany.mockResolvedValue([
+      {
+        id: 'summit-1',
+        name: 'Sommet test',
+        aliases: [],
+        altitude: 1_000,
+        latitude: 0,
+        longitude: 0,
+      },
+    ]);
+    const getLocalAltitudes = jest
+      .fn()
+      .mockRejectedValue(new Error('IGN unavailable'));
+
+    await expect(
+      makeService(prisma, undefined, { getLocalAltitudes }).processActivities(
+        'user-1',
+        ['activity-1'],
+      ),
+    ).rejects.toThrow('IGN unavailable');
+
+    expect(prisma.summitDiscovery.upsert).not.toHaveBeenCalled();
+    expect(prisma.activity.update).not.toHaveBeenCalled();
+  });
+
   it('marks an empty stored route as terminal without creating a discovery', async () => {
     const prisma = makePrisma();
     prisma.activity.findFirst.mockResolvedValue({
@@ -451,7 +504,7 @@ describe('SummitsService', () => {
       where: { id: 'activity-empty-route' },
       data: {
         summitDetectionProcessedAt: expect.any(Date),
-        summitDetectionVersion: 3,
+        summitDetectionVersion: 4,
       },
     });
   });

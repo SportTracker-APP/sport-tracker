@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { MailService } from '../../mail/mail.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { GeoAreasService } from '../geography/geo-areas.service';
+import { SummitElevationService } from './summit-elevation.service';
 import { SummitsService } from './summits.service';
 
 describe.each([100, 1_000, 5_000])(
@@ -29,6 +30,7 @@ describe.each([100, 1_000, 5_000])(
         {} as MailService,
         {} as ConfigService,
         {} as GeoAreasService,
+        {} as SummitElevationService,
       );
       const startedAt = performance.now();
 
