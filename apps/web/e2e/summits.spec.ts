@@ -508,6 +508,19 @@ test.describe("rendu iPhone 13", () => {
           ),
       )
       .toBe(true);
+    const latestDiscovery = page
+      .getByRole("heading", { name: "Mont Veyrier" })
+      .first()
+      .locator("xpath=ancestor::section");
+    const latestDiscoveryImage = latestDiscovery.getByRole("img", {
+      name: "Vue de Mont Veyrier",
+    });
+    await expect
+      .poll(async () => (await latestDiscoveryImage.boundingBox())?.width ?? 0)
+      .toBeGreaterThan(300);
+    await expect
+      .poll(async () => (await latestDiscoveryImage.boundingBox())?.height ?? 0)
+      .toBeGreaterThanOrEqual(228);
     await page.waitForTimeout(650);
     await page.screenshot({
       path: testInfo.outputPath("sommets-mobile-hero.png"),

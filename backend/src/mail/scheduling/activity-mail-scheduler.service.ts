@@ -124,7 +124,8 @@ export class ActivityMailSchedulerService {
       this.logger.log({
         emailType: 'activity.completed_congratulations',
         activityId: input.activityId,
-        message: 'Completed activity email skipped because completion is too old',
+        message:
+          'Completed activity email skipped because completion is too old',
       });
       return;
     }

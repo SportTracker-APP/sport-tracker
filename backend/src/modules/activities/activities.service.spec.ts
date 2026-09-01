@@ -1,4 +1,8 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ActivityStatus, ActivityType, SportType } from '@prisma/client';
 
 import { ActivityMailSchedulerService } from '../../mail/scheduling/activity-mail-scheduler.service';
@@ -294,6 +298,23 @@ describe('ActivitiesService planned workout completion', () => {
     );
   });
 
+  it('refuses to mark a future planned activity as completed', async () => {
+    const prisma = makePrismaMock();
+    const plannedActivity = makeActivity({
+      id: 'planned-future',
+      status: ActivityStatus.PLANNED,
+      startedAt: new Date('2026-06-21T08:00:00.000Z'),
+    });
+    prisma.activity.findFirst.mockResolvedValue(plannedActivity);
+
+    await expect(
+      makeService(prisma).update('user-1', plannedActivity.id, {
+        status: ActivityStatusDto.COMPLETED,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.activity.update).not.toHaveBeenCalled();
+  });
+
   it('cancels an upcoming reminder when a planned activity is deleted', async () => {
     const prisma = makePrismaMock();
     const scheduler = makeSchedulerMock();
@@ -329,6 +350,28 @@ describe('ActivitiesService planned workout completion', () => {
         activityId: 'activity-1',
       }),
     ).rejects.toBeInstanceOf(NotFoundException);
+    expect(tx.activity.update).not.toHaveBeenCalled();
+  });
+
+  it('refuses to link a completion before the planned departure time', async () => {
+    const tx = makePrismaMock();
+    tx.activity.findFirst.mockResolvedValue(
+      makeActivity({
+        id: 'planned-future',
+        status: ActivityStatus.PLANNED,
+        startedAt: new Date('2026-06-21T08:00:00.000Z'),
+      }),
+    );
+    const prisma = makePrismaMock();
+    prisma.$transaction.mockImplementation(
+      (callback: (client: PrismaMock) => Promise<unknown>) => callback(tx),
+    );
+
+    await expect(
+      makeService(prisma).completePlannedWorkout('user-1', 'planned-future', {
+        activityId: 'activity-1',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
     expect(tx.activity.update).not.toHaveBeenCalled();
   });
 

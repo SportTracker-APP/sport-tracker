@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AlertTriangle, Loader2, X } from "lucide-react";
 
@@ -13,6 +13,7 @@ type ConfirmationDialogProps = {
   open: boolean;
   title: string;
   description: string;
+  eyebrow?: string;
   confirmLabel?: string;
   cancelLabel?: string;
   tone?: ConfirmationDialogTone;
@@ -32,10 +33,13 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
+const subscribeToClientMount = () => () => undefined;
+
 export function ConfirmationDialog({
   open,
   title,
   description,
+  eyebrow = "Confirmation requise",
   confirmLabel = "Confirmer",
   cancelLabel = "Annuler",
   tone = "default",
@@ -45,7 +49,11 @@ export function ConfirmationDialog({
   onConfirm,
   onOpenChange,
 }: ConfirmationDialogProps) {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useSyncExternalStore(
+    subscribeToClientMount,
+    () => true,
+    () => false,
+  );
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -54,12 +62,13 @@ export function ConfirmationDialog({
   const isLoadingRef = useRef(isLoading);
   const onOpenChangeRef = useRef(onOpenChange);
 
-  isLoadingRef.current = isLoading;
-  onOpenChangeRef.current = onOpenChange;
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    onOpenChangeRef.current = onOpenChange;
+  }, [onOpenChange]);
 
   useEffect(() => {
     if (!open) {
@@ -174,7 +183,7 @@ export function ConfirmationDialog({
         </div>
 
         <div className={styles.content}>
-          <p className={styles.eyebrow}>Confirmation requise</p>
+          <p className={styles.eyebrow}>{eyebrow}</p>
           <h2 id={titleId}>{title}</h2>
           <p id={descriptionId}>{description}</p>
         </div>
@@ -202,8 +211,10 @@ export function ConfirmationDialog({
             onClick={() => void onConfirm()}
             disabled={isLoading}
           >
-            {isLoading && <Loader2 className={styles.spinner} aria-hidden="true" />}
-            {isLoading ? "Suppression…" : confirmLabel}
+            {isLoading && (
+              <Loader2 className={styles.spinner} aria-hidden="true" />
+            )}
+            {isLoading ? "Traitement…" : confirmLabel}
           </button>
         </div>
       </div>

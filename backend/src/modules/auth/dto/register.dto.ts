@@ -12,6 +12,7 @@ import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
 } from '../auth-security.constants';
+import { normalizeEmailInput } from './normalize-email';
 
 export class RegisterDto {
   @IsString()
@@ -19,9 +20,7 @@ export class RegisterDto {
   @MaxLength(30)
   firstName: string;
 
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
+  @Transform(({ value }: { value: unknown }) => normalizeEmailInput(value))
   @IsEmail()
   @MaxLength(EMAIL_MAX_LENGTH)
   email: string;

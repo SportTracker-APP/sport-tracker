@@ -14,7 +14,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,7 +71,7 @@ export function RegisterForm() {
   const {
     register: formRegister,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -84,7 +84,7 @@ export function RegisterForm() {
     },
   });
 
-  const password = watch("password") || "";
+  const password = useWatch({ control, name: "password" }) || "";
   const showFirstNameError = Boolean(errors.firstName && isSubmitted);
   const showEmailError = Boolean(errors.email && isSubmitted);
   const showPasswordError = Boolean(errors.password && isSubmitted);

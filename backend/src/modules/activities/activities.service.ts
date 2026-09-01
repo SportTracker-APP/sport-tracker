@@ -21,6 +21,7 @@ import { CreateActivityDto } from './dto/create-activity.dto';
 import { CompletePlannedWorkoutDto } from './dto/complete-planned-workout.dto';
 
 import { UpdateActivityDto } from './dto/update-activity.dto';
+import { ActivityStatus as ActivityStatusDto } from './dto/create-activity.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -39,6 +40,7 @@ export class ActivitiesService {
     }
 
     const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
+    void _plannedWorkoutId;
 
     const activity = await this.prisma.activity.create({
       data: {
@@ -109,7 +111,7 @@ export class ActivitiesService {
         maxAltitude: enrichment.maxAltitude ?? activity.maxAltitude,
         minAltitude: enrichment.minAltitude,
       };
-    } catch (error) {
+    } catch {
       this.logger.warn({
         activityId,
         sport: activity.sport,
@@ -123,6 +125,17 @@ export class ActivitiesService {
   async update(userId: string, activityId: string, dto: UpdateActivityDto) {
     const currentActivity = await this.findOne(userId, activityId);
     const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
+    void _plannedWorkoutId;
+    const targetStartedAt = dto.startedAt
+      ? new Date(dto.startedAt)
+      : currentActivity.startedAt;
+
+    if (
+      currentActivity.status === ActivityStatus.PLANNED &&
+      dto.status === ActivityStatusDto.COMPLETED
+    ) {
+      this.assertPlannedWorkoutHasStarted(targetStartedAt);
+    }
 
     const updatedActivity = await this.prisma.activity.update({
       where: {
@@ -372,6 +385,8 @@ export class ActivitiesService {
       throw new BadRequestException('Cette séance ne peut pas être terminée');
     }
 
+    this.assertPlannedWorkoutHasStarted(plannedWorkout.startedAt);
+
     const activity = await tx.activity.findFirst({
       where: {
         id: activityId,
@@ -431,6 +446,14 @@ export class ActivitiesService {
       completedActivity: activity,
       plannedWorkout: null,
     });
+  }
+
+  private assertPlannedWorkoutHasStarted(startedAt: Date) {
+    if (startedAt.getTime() > Date.now()) {
+      throw new BadRequestException(
+        'Une sortie planifiée ne peut pas être terminée avant son heure de départ',
+      );
+    }
   }
 
   private async withCompletionData(activities: Activity[]) {

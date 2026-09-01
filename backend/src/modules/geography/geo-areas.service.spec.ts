@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access -- Jest mock call arguments are exposed as `any`. */
 import { BadRequestException } from '@nestjs/common';
 import {
   GeoAreaType,

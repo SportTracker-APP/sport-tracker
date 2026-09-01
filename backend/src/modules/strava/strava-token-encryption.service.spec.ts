@@ -2,12 +2,12 @@ import { ConfigService } from '@nestjs/config';
 
 import { StravaTokenEncryptionService } from './strava-token-encryption.service';
 
-const ACTIVE_KEY = Buffer.from(
-  '0123456789abcdef0123456789abcdef',
-).toString('base64');
-const PREVIOUS_KEY = Buffer.from(
-  'abcdef0123456789abcdef0123456789',
-).toString('base64');
+const ACTIVE_KEY = Buffer.from('0123456789abcdef0123456789abcdef').toString(
+  'base64',
+);
+const PREVIOUS_KEY = Buffer.from('abcdef0123456789abcdef0123456789').toString(
+  'base64',
+);
 
 function createService(keys: string): StravaTokenEncryptionService {
   return new StravaTokenEncryptionService({

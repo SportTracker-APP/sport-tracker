@@ -20,14 +20,13 @@ export function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const token = searchParams.get("token");
 
   const [status, setStatus] = useState<VerificationStatus>("loading");
+  const displayedStatus = token ? status : "error";
 
   useEffect(() => {
-    const token = searchParams.get("token");
-
     if (!token) {
-      setStatus("error");
       return;
     }
 
@@ -45,7 +44,7 @@ export function VerifyEmailForm() {
         setAuth(response.accessToken, response.user);
         setStatus("success");
         window.setTimeout(() => router.replace("/refuge"), 900);
-      } catch (error: unknown) {
+      } catch {
         if (isMounted) {
           setStatus("error");
         }
@@ -57,9 +56,9 @@ export function VerifyEmailForm() {
     return () => {
       isMounted = false;
     };
-  }, [router, searchParams, setAuth]);
+  }, [router, setAuth, token]);
 
-  return <VerificationPanel status={status} />;
+  return <VerificationPanel status={displayedStatus} />;
 }
 
 export function VerifyEmailPending() {

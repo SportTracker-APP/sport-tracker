@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   BookOpen,
   Map,
   Mountain,

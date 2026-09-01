@@ -449,7 +449,8 @@ export default function AdminPage() {
     try {
       const session = await startAdminImpersonation(adminUser.id);
       setAuth(session.accessToken, session.user);
-      window.location.assign("/refuge");
+      router.replace("/refuge");
+      router.refresh();
     } catch {
       setError("Impossible d’accéder à ce compte en mode administrateur.");
       setImpersonatingUserId(null);

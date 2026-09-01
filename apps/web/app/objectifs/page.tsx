@@ -580,36 +580,6 @@ export default function GoalsPage() {
     [activities, primaryGoal],
   );
 
-  const goalProgressById = useMemo(
-    () =>
-      new Map(
-        goals.map((goal) => [goal.id, calculateGoalProgress(goal, activities)]),
-      ),
-    [activities, goals],
-  );
-  const goalPeriodSnapshotById = useMemo(
-    () =>
-      new Map(
-        goals.map((goal) => {
-          const progress =
-            goalProgressById.get(goal.id) ??
-            calculateGoalProgress(goal, activities);
-          const { startDate, endDate } = getGoalPeriodBounds(goal);
-
-          return [
-            goal.id,
-            {
-              progress,
-              startDate,
-              endDate,
-              statusLabel: progress.remaining <= 0 ? "Terminé" : "Actif",
-              isArchived: false,
-            } satisfies GoalDisplaySnapshot,
-          ];
-        }),
-      ),
-    [activities, goalProgressById, goals],
-  );
 
   const activeGoals = goals.filter((goal) => goal.isActive);
   const pausedGoals = goals.filter((goal) => !goal.isActive);

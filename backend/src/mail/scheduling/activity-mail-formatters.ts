@@ -46,8 +46,8 @@ export function formatActivityLocation(input: {
   city: string | null;
   country: string | null;
 }): string {
-  const parts = [input.city, input.country].filter(
-    (value): value is string => Boolean(value?.trim()),
+  const parts = [input.city, input.country].filter((value): value is string =>
+    Boolean(value?.trim()),
   );
 
   return parts.length > 0 ? parts.join(', ') : MISSING_ACTIVITY_LOCATION;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { createElement, useEffect, useMemo, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -77,10 +77,7 @@ import {
 } from "@/lib/goal-progress";
 
 import styles from "./dashboard.module.css";
-import {
-  getDailyRefugeMessage,
-  REFUGE_MESSAGES,
-} from "./refuge-messages";
+import { getDailyRefugeMessage } from "./refuge-messages";
 
 type StravaStatus = {
   connected: boolean;
@@ -1339,7 +1336,10 @@ function SummitCollectionPanel({
   const featuredSummit = latestSummit ?? dailySuggestedSummit ?? nextSummit;
   const unlockedBadges = badges.filter((badge) => badge.unlocked);
   const nextBadge = badges.find((badge) => !badge.unlocked) ?? unlockedBadges[0];
-  const BadgeIcon = nextBadge ? getBadgeIcon(nextBadge.icon) : ShieldCheck;
+  const nextBadgeIcon = createElement(
+    nextBadge ? getBadgeIcon(nextBadge.icon) : ShieldCheck,
+    { "aria-hidden": true },
+  );
   const featuredSummitImageStyle: SummitStoryStyle | undefined =
     featuredSummit?.imageUrl
       ? { "--summit-discovery-image": toCssImageUrl(featuredSummit.imageUrl) }
@@ -1454,7 +1454,7 @@ function SummitCollectionPanel({
 
             <Link href="/badges" className={styles.nextBadgeCard}>
               <span className={styles.nextBadgeIcon}>
-                <BadgeIcon aria-hidden="true" />
+                {nextBadgeIcon}
               </span>
               <div>
                 <p>{nextBadge?.unlocked ? "Badge récent" : "Badge à viser"}</p>
@@ -1485,35 +1485,31 @@ export default function DashboardPage() {
   const [isLoadingStravaStatus, setIsLoadingStravaStatus] = useState(true);
   const [chartMetric, setChartMetric] = useState<ChartMetric>("distance");
   const [chartPeriod, setChartPeriod] = useState<ActivityChartPeriod>("30d");
-  const [refugeMessage, setRefugeMessage] = useState(REFUGE_MESSAGES[0]);
+  const [refugeMessage] = useState(() => getDailyRefugeMessage(new Date()));
   const [summitCelebrationEvent, setSummitCelebrationEvent] =
     useState<StoredDashboardSummitEvent | null>(null);
 
   useEffect(() => {
     const storedMetric = window.localStorage.getItem(CHART_METRIC_STORAGE_KEY);
-
-    if (isChartMetric(storedMetric)) {
-      setChartMetric(storedMetric);
-    }
-
     const storedPeriod = window.localStorage.getItem(
       ACTIVITY_CHART_PERIOD_STORAGE_KEY,
     );
 
-    if (isActivityChartPeriod(storedPeriod)) {
-      setChartPeriod(storedPeriod);
-    }
-  }, []);
-
-  useEffect(() => {
-    setRefugeMessage(getDailyRefugeMessage(new Date()));
+    queueMicrotask(() => {
+      if (isChartMetric(storedMetric)) {
+        setChartMetric(storedMetric);
+      }
+      if (isActivityChartPeriod(storedPeriod)) {
+        setChartPeriod(storedPeriod);
+      }
+    });
   }, []);
 
   useEffect(() => {
     const storedEvent = readDashboardSummitEvent();
 
     if (storedEvent) {
-      setSummitCelebrationEvent(storedEvent);
+      queueMicrotask(() => setSummitCelebrationEvent(storedEvent));
       markDashboardSummitEventRead(storedEvent);
     }
 

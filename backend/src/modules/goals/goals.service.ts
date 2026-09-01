@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Goal, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -18,15 +19,21 @@ const goalSelectWithoutPrimary = {
   createdAt: true,
   updatedAt: true,
   userId: true,
-};
+} as const satisfies Prisma.GoalSelect;
+
+type GoalWithoutPrimary = Prisma.GoalGetPayload<{
+  select: typeof goalSelectWithoutPrimary;
+}>;
 
 function isMissingPrimaryGoalColumn(error: unknown) {
   if (!error || typeof error !== 'object') {
     return false;
   }
 
-  const code = 'code' in error ? error.code : undefined;
-  const message = error instanceof Error ? error.message : String(error);
+  const code =
+    'code' in error && typeof error.code === 'string' ? error.code : undefined;
+  const message =
+    error instanceof Error ? error.message : (JSON.stringify(error) ?? '');
 
   return code === 'P2022' && message.includes('isPrimary');
 }
@@ -252,7 +259,7 @@ export class GoalsService {
   }
 
   private async findOne(userId: string, goalId: string) {
-    let goal;
+    let goal: Goal | GoalWithoutPrimary | null;
 
     try {
       goal = await this.prisma.goal.findFirst({

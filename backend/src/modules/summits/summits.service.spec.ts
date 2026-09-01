@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- Jest mock and asymmetric matcher typings expose `any`. */
 import { NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {

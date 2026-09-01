@@ -3,7 +3,6 @@ import {
   Bike,
   Flame,
   Footprints,
-  Goal,
   Mountain,
   Route,
   Trophy,

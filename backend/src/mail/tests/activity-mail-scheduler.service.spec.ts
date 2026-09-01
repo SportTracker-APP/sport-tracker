@@ -181,12 +181,13 @@ describe('ActivityMailSchedulerService', () => {
       }),
     );
 
-    await makeService(prisma, timeService).scheduleCompletedActivityCongratulations(
-      {
-        activityId: 'activity-1',
-        completedAt: new Date('2026-06-27T16:00:00.000Z'),
-      },
-    );
+    await makeService(
+      prisma,
+      timeService,
+    ).scheduleCompletedActivityCongratulations({
+      activityId: 'activity-1',
+      completedAt: new Date('2026-06-27T16:00:00.000Z'),
+    });
 
     expect(prisma.scheduledEmail.create).toHaveBeenCalledWith({
       data: {
@@ -203,12 +204,13 @@ describe('ActivityMailSchedulerService', () => {
     const timeService = makeTimeServiceMock();
     prisma.activity.findUnique.mockResolvedValue(makeActivity());
 
-    await makeService(prisma, timeService).scheduleCompletedActivityCongratulations(
-      {
-        activityId: 'activity-1',
-        completedAt: new Date('2026-06-27T16:00:00.000Z'),
-      },
-    );
+    await makeService(
+      prisma,
+      timeService,
+    ).scheduleCompletedActivityCongratulations({
+      activityId: 'activity-1',
+      completedAt: new Date('2026-06-27T16:00:00.000Z'),
+    });
 
     expect(prisma.scheduledEmail.create).not.toHaveBeenCalled();
   });
@@ -223,12 +225,13 @@ describe('ActivityMailSchedulerService', () => {
       }),
     );
 
-    await makeService(prisma, timeService).scheduleCompletedActivityCongratulations(
-      {
-        activityId: 'activity-1',
-        completedAt: new Date('2026-06-20T16:00:00.000Z'),
-      },
-    );
+    await makeService(
+      prisma,
+      timeService,
+    ).scheduleCompletedActivityCongratulations({
+      activityId: 'activity-1',
+      completedAt: new Date('2026-06-20T16:00:00.000Z'),
+    });
 
     expect(prisma.scheduledEmail.create).not.toHaveBeenCalled();
   });

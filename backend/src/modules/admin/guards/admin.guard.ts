@@ -8,13 +8,14 @@ import {
 import { UserRole } from '@prisma/client';
 
 import { PrismaService } from '../../../prisma/prisma.service';
+import type { AuthenticatedRequest } from '../../auth/authenticated-request.type';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const userId = request.user?.id;
 
     if (!userId) {

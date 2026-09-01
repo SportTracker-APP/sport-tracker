@@ -3867,6 +3867,15 @@
 }
 
 @media (max-width: 1020px) {
+  .latestDiscovery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .latestPhoto {
+    width: 100%;
+    min-width: 0;
+  }
+
   .latestPaper {
     margin-left: 0;
     padding-left: 25px;

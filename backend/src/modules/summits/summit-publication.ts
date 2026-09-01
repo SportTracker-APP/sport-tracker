@@ -1,8 +1,4 @@
-import {
-  Prisma,
-  SummitCatalogStatus,
-  SummitCatalogTier,
-} from '@prisma/client';
+import { Prisma, SummitCatalogStatus, SummitCatalogTier } from '@prisma/client';
 
 export const PUBLIC_SUMMIT_WHERE = {
   isActive: true,

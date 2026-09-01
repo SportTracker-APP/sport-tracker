@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ExternalLink, MapPin, Save } from "lucide-react";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { useUpdateAdminSummit } from "@/hooks/use-admin-summits";
 import type { AdminSummitDetail } from "@/lib/admin-summits";
@@ -28,7 +28,7 @@ export function SummitIdentityForm({
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { errors, isDirty },
   } = useForm<AdminSummitIdentityFormValue>({
     resolver: zodResolver(adminSummitIdentitySchema),
@@ -42,8 +42,10 @@ export function SummitIdentityForm({
       type: summit.type,
     },
   });
-  const latitude = watch("latitude");
-  const longitude = watch("longitude");
+  const [latitude, longitude] = useWatch({
+    control,
+    name: ["latitude", "longitude"],
+  });
   const hasValidCoordinates =
     Number.isFinite(latitude) && Number.isFinite(longitude);
   const ignMapUrl = hasValidCoordinates

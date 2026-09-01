@@ -114,6 +114,14 @@ function createWeekActivities() {
       description: "Rester souple et garder une allure régulière.",
     }),
     createActivity({
+      id: "planned-past",
+      title: "Marche du matin",
+      startedAt: new Date(Date.now() - 60 * 60 * 1000),
+      status: "PLANNED",
+      sport: "WALKING",
+      duration: 45,
+    }),
+    createActivity({
       id: "planned-bike",
       title: "Tour du plateau",
       startedAt: new Date(nextHour.getTime() + 30 * 60 * 1000),
@@ -277,9 +285,13 @@ test("le planning reprend le carnet HOVREN et conserve sa navigation", async ({
   await expect(weeklySummary.getByText("12,4 km")).toBeVisible();
   await expect(weeklySummary.getByText("1 h 30")).toBeVisible();
   await expect(
-    page.getByText("Séances prévues", { exact: true }),
+    page.getByText("Sorties prévues", { exact: true }),
   ).toBeVisible();
   await expect(page.locator("[data-day]")).toHaveCount(7);
+  const dayHeights = await page.locator("[data-day]").evaluateAll((cards) =>
+    cards.map((card) => Math.round(card.getBoundingClientRect().height)),
+  );
+  expect(new Set(dayHeights).size).toBe(1);
 
   await page.screenshot({
     path: "/tmp/hovren-planning-desktop-top.png",
@@ -339,16 +351,16 @@ test("le planning reprend le carnet HOVREN et conserve sa navigation", async ({
   const sunday = addDays(monday, 6);
   await expect(
     page.locator(`[data-day="${toDateInput(monday)}"]`).getByRole("link", {
-      name: /Planifier une séance/,
+      name: /Planifier une sortie/,
     }),
   ).toHaveAttribute("href", new RegExp(`date=${toDateInput(monday)}`));
   await expect(
     page.locator(`[data-day="${toDateInput(sunday)}"]`).getByRole("link", {
-      name: /Planifier une séance/,
+      name: /Planifier une sortie/,
     }),
   ).toHaveAttribute("href", new RegExp(`date=${toDateInput(sunday)}`));
   await expect(
-    page.getByRole("link", { name: "Planifier une séance", exact: true }),
+    page.getByRole("link", { name: "Planifier une sortie", exact: true }),
   ).toHaveAttribute("href", new RegExp(`date=${toDateInput(new Date())}`));
   await expectNoHorizontalOverflow(page);
 
@@ -358,7 +370,7 @@ test("le planning reprend le carnet HOVREN et conserve sa navigation", async ({
   });
 });
 
-test("les actions d’une séance restent fonctionnelles", async ({ page }) => {
+test("les actions d’une sortie respectent la date prévue", async ({ page }) => {
   const mock = await mockPlanning(page);
   await page.goto("/calendrier", { waitUntil: "domcontentloaded" });
 
@@ -367,8 +379,9 @@ test("les actions d’une séance restent fonctionnelles", async ({ page }) => {
   ).toHaveAttribute("href", "/activites/completed-trail");
 
   await page
-    .getByRole("button", { name: /Supprimer la séance prévue/ })
-    .first()
+    .getByRole("button", {
+      name: /Supprimer la sortie prévue Sortie d’endurance progressive/,
+    })
     .click();
   await expect(
     page.getByRole("heading", { name: "Supprimer cette sortie prévue ?" }),
@@ -382,8 +395,15 @@ test("les actions d’une séance restent fonctionnelles", async ({ page }) => {
     .toBe(false);
   await expect(page.getByText("Sortie d’endurance progressive")).toHaveCount(0);
 
+  const futureActions = page.locator('button[data-future="true"]');
+  await expect(futureActions).toHaveCount(1);
+  await expect(futureActions.first()).toBeDisabled();
+  await expect(
+    futureActions.getByText("À venir", { exact: true }),
+  ).toHaveCount(1);
+
   await page
-    .getByRole("button", { name: /Indiquer que la séance Tour du plateau/ })
+    .getByRole("button", { name: /Indiquer que la sortie Marche du matin/ })
     .click();
   await expect(page.getByText("Terminée", { exact: true })).toBeVisible();
 });
@@ -396,7 +416,7 @@ test("la semaine totalement vide reste complète à tous les breakpoints", async
   await page.goto("/calendrier", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("heading", { name: "À imaginer" })).toBeVisible();
-  await expect(page.getByText("Aucune séance programmée.")).toBeVisible();
+  await expect(page.getByText("Aucune sortie programmée.")).toBeVisible();
   const weeklySummary = page.getByLabel("Résumé de la semaine");
   await expect(weeklySummary.getByText("0 km")).toBeVisible();
   await expect(weeklySummary.getByText("0 min")).toBeVisible();
@@ -457,6 +477,27 @@ test("le mobile affiche une liste verticale de sept fiches sans débordement", a
   );
   expect(new Set(positions.map((position) => position.x)).size).toBe(1);
   expect(positions[6].y).toBeGreaterThan(positions[0].y);
+  const cardSizes = await dayCards.evaluateAll((cards) =>
+    cards.map((card) => {
+      const bounds = card.getBoundingClientRect();
+      return { height: bounds.height, width: bounds.width };
+    }),
+  );
+  expect(new Set(cardSizes.map(({ width }) => Math.round(width))).size).toBe(1);
+  expect(
+    Math.min(...cardSizes.map(({ height }) => height)),
+  ).toBeGreaterThanOrEqual(300);
+
+  const touchTargets = page.locator(
+    '[data-day] button, [data-day] a[aria-label^="Planifier une sortie"]',
+  );
+  const touchTargetSizes = await touchTargets.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return Math.min(bounds.width, bounds.height);
+    }),
+  );
+  expect(Math.min(...touchTargetSizes)).toBeGreaterThanOrEqual(44);
   await expectNoHorizontalOverflow(page);
 
   await page.screenshot({

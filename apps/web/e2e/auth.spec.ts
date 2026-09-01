@@ -149,6 +149,35 @@ test("un sommet découvert peut être retiré après confirmation sur mobile", a
       }),
     });
   });
+  await page.route("**/users/me/geo-preferences", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ discovery: [], onboardingCompleted: true }),
+    });
+  });
+  await page.route("**/auth/refresh", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        accessToken: "e2e-access-token",
+        user: {
+          id: "user-1",
+          firstName: "Camille",
+          email: "camille@example.test",
+          role: "USER",
+        },
+      }),
+    });
+  });
+  await page.route("**/strava/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ connected: false }),
+    });
+  });
   await page.route("**/summits**", async (route) => {
     const request = route.request();
     const pathname = new URL(request.url()).pathname;

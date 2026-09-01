@@ -47,8 +47,8 @@ describe('public summit publication rule', () => {
   it('counts only one CORE near a trace containing secondary and reference points', () => {
     const nearby = [
       SummitCatalogTier.CORE,
-      ...Array(3).fill(SummitCatalogTier.SECONDARY),
-      ...Array(4).fill(SummitCatalogTier.REFERENCE),
+      ...Array.from({ length: 3 }, () => SummitCatalogTier.SECONDARY),
+      ...Array.from({ length: 4 }, () => SummitCatalogTier.REFERENCE),
     ];
 
     expect(nearby.filter(isCollectibleSummitTier)).toHaveLength(1);

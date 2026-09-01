@@ -68,7 +68,10 @@ export class ActivityMailTimeService {
   }): Date | null {
     const now = input.now ?? new Date();
 
-    if (now.getTime() - input.completedAt.getTime() > COMPLETED_EMAIL_MAX_AGE_MS) {
+    if (
+      now.getTime() - input.completedAt.getTime() >
+      COMPLETED_EMAIL_MAX_AGE_MS
+    ) {
       return null;
     }
 
@@ -80,7 +83,10 @@ export class ActivityMailTimeService {
   }
 }
 
-export function getZonedDateParts(date: Date, timezone: string): ZonedDateParts {
+export function getZonedDateParts(
+  date: Date,
+  timezone: string,
+): ZonedDateParts {
   const formatter = new Intl.DateTimeFormat('en-CA', {
     timeZone: timezone,
     year: 'numeric',
@@ -92,8 +98,9 @@ export function getZonedDateParts(date: Date, timezone: string): ZonedDateParts 
     hourCycle: 'h23',
   });
 
-  const parts = formatter.formatToParts(date).reduce<Partial<ZonedDateParts>>(
-    (accumulator, part) => {
+  const parts = formatter
+    .formatToParts(date)
+    .reduce<Partial<ZonedDateParts>>((accumulator, part) => {
       if (
         part.type === 'year' ||
         part.type === 'month' ||
@@ -106,9 +113,7 @@ export function getZonedDateParts(date: Date, timezone: string): ZonedDateParts 
       }
 
       return accumulator;
-    },
-    {},
-  );
+    }, {});
 
   if (
     parts.year === undefined ||

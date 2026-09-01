@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ type AuthCardMode = "login" | "forgot-password";
 
 export function LoginForm() {
   const setAuth = useAuthStore((state) => state.setAuth);
+  const router = useRouter();
 
   const loginCardRef = useRef<HTMLDivElement | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -165,8 +167,9 @@ export function LoginForm() {
 
       setAuth(response.accessToken, response.user);
 
-      window.location.href = "/refuge";
-    } catch (error: unknown) {
+      router.replace("/refuge");
+      router.refresh();
+    } catch {
       setServerError("Email ou mot de passe invalide");
     }
   }
@@ -179,7 +182,7 @@ export function LoginForm() {
       const response = await forgotPassword(data.email);
 
       setForgotPasswordConfirmation(response.message);
-    } catch (error: unknown) {
+    } catch {
       setForgotPasswordError(
         "Impossible de traiter la demande pour le moment.",
       );

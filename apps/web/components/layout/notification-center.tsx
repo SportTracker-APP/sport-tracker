@@ -125,22 +125,35 @@ export function NotificationCenter() {
     notificationKeys.some((key) => !seenNotificationKeys.has(key));
 
   useEffect(() => {
+    let isCancelled = false;
+
     try {
       const storedKeys = window.localStorage.getItem(
         SEEN_NOTIFICATIONS_STORAGE_KEY,
       );
       const parsedKeys: unknown = storedKeys ? JSON.parse(storedKeys) : [];
 
-      setSeenNotificationKeys(
-        new Set(
-          Array.isArray(parsedKeys)
-            ? parsedKeys.filter((key): key is string => typeof key === "string")
-            : [],
-        ),
+      const initialKeys = new Set(
+        Array.isArray(parsedKeys)
+          ? parsedKeys.filter((key): key is string => typeof key === "string")
+          : [],
       );
+      queueMicrotask(() => {
+        if (!isCancelled) {
+          setSeenNotificationKeys(initialKeys);
+        }
+      });
     } catch {
-      setSeenNotificationKeys(new Set());
+      queueMicrotask(() => {
+        if (!isCancelled) {
+          setSeenNotificationKeys(new Set());
+        }
+      });
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -170,7 +183,7 @@ export function NotificationCenter() {
       // The visual read state still works when browser storage is unavailable.
     }
 
-    setSeenNotificationKeys(new Set(storedKeys));
+    queueMicrotask(() => setSeenNotificationKeys(new Set(storedKeys)));
   }, [isLoading, isOpen, notificationKeys, seenNotificationKeys]);
 
   useEffect(() => {

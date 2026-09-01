@@ -130,9 +130,7 @@ export function createResendClient(config: MailConfig): ResendEmailClient {
 function createDisabledResendClient(): ResendEmailClient {
   return {
     emails: {
-      send: async () => {
-        throw new Error('Resend client is disabled');
-      },
+      send: () => Promise.reject(new Error('Resend client is disabled')),
     },
   };
 }

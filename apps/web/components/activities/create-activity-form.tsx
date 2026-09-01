@@ -18,7 +18,7 @@ import {
   Route,
 } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -176,14 +176,8 @@ export function CreateActivityForm() {
     : requestedStatus === "PLANNED"
       ? "PLANNED"
       : "COMPLETED";
-
-  const [activityMode, setActivityMode] = useState<ActivityMode>(initialMode);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [saveConfirmation, setSaveConfirmation] =
-    useState<SaveConfirmation | null>(null);
-  const lockedToPlannedWorkout = Boolean(plannedWorkoutId);
+  const initialSport = getActivitySport(plannedSport ?? "TRAIL").value;
+  const initialIsStrengthSport = initialSport === "GYM";
   const parsedPlannedDuration = plannedDuration
     ? Number.parseInt(plannedDuration, 10)
     : 0;
@@ -191,23 +185,39 @@ export function CreateActivityForm() {
     ? Number.parseFloat(plannedDistance)
     : 0;
 
+  const [activityMode, setActivityMode] = useState<ActivityMode>(initialMode);
+  const [hours, setHours] = useState(() =>
+    !initialIsStrengthSport && parsedPlannedDuration > 0
+      ? Math.floor(parsedPlannedDuration / 60)
+      : 0,
+  );
+  const [minutes, setMinutes] = useState(() =>
+    !initialIsStrengthSport && parsedPlannedDuration > 0
+      ? parsedPlannedDuration % 60
+      : 0,
+  );
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [saveConfirmation, setSaveConfirmation] =
+    useState<SaveConfirmation | null>(null);
+  const lockedToPlannedWorkout = Boolean(plannedWorkoutId);
+
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<CreateActivityInput>({
     resolver: zodResolver(createActivitySchema),
     defaultValues: {
-      sport: getActivitySport(plannedSport ?? "TRAIL").value,
+      sport: initialSport,
       status: initialMode,
       title: plannedTitle ?? "",
-      distance: Number.isFinite(parsedPlannedDistance)
+      distance: !initialIsStrengthSport && Number.isFinite(parsedPlannedDistance)
         ? parsedPlannedDistance
         : 0,
-      duration: Number.isFinite(parsedPlannedDuration)
+      duration: !initialIsStrengthSport && Number.isFinite(parsedPlannedDuration)
         ? parsedPlannedDuration
         : 0,
       elevationGain: 0,
@@ -219,40 +229,32 @@ export function CreateActivityForm() {
     },
   });
 
-  const selectedSport = watch("sport");
-  const title = watch("title");
-  const startedAt = watch("startedAt");
-  const distance = watch("distance");
-  const elevationGain = watch("elevationGain");
-  const calories = watch("calories");
-  const notes = watch("notes");
+  const [
+    selectedSport,
+    title,
+    startedAt,
+    distance,
+    elevationGain,
+    calories,
+    notes,
+  ] = useWatch({
+    control,
+    name: [
+      "sport",
+      "title",
+      "startedAt",
+      "distance",
+      "elevationGain",
+      "calories",
+      "notes",
+    ],
+  });
   const totalDuration = hours * 60 + minutes;
   const isPlannedMode = activityMode === "PLANNED";
   const sport = getActivitySport(selectedSport);
   const SportIcon = sport.icon;
-  const isStrengthSport =
-    selectedSport === "GYM" || selectedSport === "FITNESS";
+  const isStrengthSport = selectedSport === "GYM";
   const shouldShowPerformanceMetrics = !isPlannedMode && !isStrengthSport;
-
-  useEffect(() => {
-    if (Number.isFinite(parsedPlannedDuration) && parsedPlannedDuration > 0) {
-      setHours(Math.floor(parsedPlannedDuration / 60));
-      setMinutes(parsedPlannedDuration % 60);
-    }
-  }, [parsedPlannedDuration]);
-
-  useEffect(() => {
-    if (!isStrengthSport) {
-      return;
-    }
-
-    setHours(0);
-    setMinutes(0);
-    setValue("distance", 0, { shouldDirty: true });
-    setValue("duration", 0, { shouldDirty: true });
-    setValue("elevationGain", 0, { shouldDirty: true });
-    setValue("calories", 0, { shouldDirty: true });
-  }, [isStrengthSport, setValue]);
 
   const summary = useMemo(
     () => [
@@ -308,6 +310,7 @@ export function CreateActivityForm() {
         plannedWorkoutId: submittedPlannedWorkoutId,
         ...activityData
       } = data;
+      void _returnTo;
 
       await api.post("/activities", {
         ...activityData,
@@ -355,6 +358,24 @@ export function CreateActivityForm() {
 
     setSubmitError(null);
     setActivityMode(mode);
+  }
+
+  function updateSport(value: ActivitySportValue) {
+    setValue("sport", value, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    if (value !== "GYM") {
+      return;
+    }
+
+    setHours(0);
+    setMinutes(0);
+    setValue("distance", 0, { shouldDirty: true });
+    setValue("duration", 0, { shouldDirty: true });
+    setValue("elevationGain", 0, { shouldDirty: true });
+    setValue("calories", 0, { shouldDirty: true });
   }
 
   function goToPlanning() {
@@ -422,12 +443,7 @@ export function CreateActivityForm() {
           >
             <SportSelector
               value={selectedSport}
-              onChange={(value: ActivitySportValue) =>
-                setValue("sport", value, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                })
-              }
+              onChange={updateSport}
             />
           </FormSection>
 
@@ -742,9 +758,10 @@ export function CreateActivityForm() {
         description={
           saveConfirmation?.description ?? "Ta sortie a bien été enregistrée."
         }
+        eyebrow="Sortie enregistrée"
         confirmLabel="Voir le planning"
         cancelLabel="Rester ici"
-        tone="default"
+        tone="success"
         icon={<CheckCircle2 aria-hidden="true" />}
         onConfirm={goToPlanning}
         onOpenChange={(open) => {

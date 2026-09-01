@@ -53,13 +53,17 @@ describe('Authentication API (e2e)', () => {
   });
 
   it('expose les sondes de vie et de disponibilité', async () => {
-    const live = await request(app.getHttpServer()).get('/health/live').expect(200);
+    const live = await request(app.getHttpServer())
+      .get('/health/live')
+      .expect(200);
     expect(live.body).toMatchObject({
       status: 'ok',
       service: 'hovren-backend',
     });
 
-    const ready = await request(app.getHttpServer()).get('/health/ready').expect(200);
+    const ready = await request(app.getHttpServer())
+      .get('/health/ready')
+      .expect(200);
     expect(ready.body).toMatchObject({
       status: 'ok',
       info: { database: { status: 'up' } },

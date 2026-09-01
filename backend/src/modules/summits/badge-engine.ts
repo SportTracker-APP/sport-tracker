@@ -380,7 +380,9 @@ export function getBadgeProgress(
       return {
         current: Math.max(
           0,
-          ...getMonthGroups(activities, rule.month).map((values) => values.length),
+          ...getMonthGroups(activities, rule.month).map(
+            (values) => values.length,
+          ),
         ),
         target: rule.threshold,
         unit: 'sorties',
@@ -392,10 +394,7 @@ export function getBadgeProgress(
           ...getMonthGroups(activities, rule.month).map((values) =>
             values
               .filter(isOutdoor)
-              .reduce(
-                (total, activity) => total + (activity.distance ?? 0),
-                0,
-              ),
+              .reduce((total, activity) => total + (activity.distance ?? 0), 0),
           ),
         ),
         target: rule.thresholdKm,

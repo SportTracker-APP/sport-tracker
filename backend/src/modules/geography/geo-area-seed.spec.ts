@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- The focused Prisma transaction mock intentionally exposes Jest call data. */
-
 import { PrismaClient } from '@prisma/client';
 
 import { seedNationalGeoCatalog } from './geo-area-seed';

@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { stopAdminImpersonation } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
@@ -12,6 +13,7 @@ export function AdminImpersonationFrame({
 }: Readonly<{ children: React.ReactNode }>) {
   const user = useAuthStore((state) => state.user);
   const setAuth = useAuthStore((state) => state.setAuth);
+  const router = useRouter();
   const impersonation = user?.impersonation;
 
   if (!user || !impersonation) {
@@ -22,9 +24,11 @@ export function AdminImpersonationFrame({
     try {
       const session = await stopAdminImpersonation();
       setAuth(session.accessToken, session.user);
-      window.location.assign("/admin");
+      router.replace("/admin");
+      router.refresh();
     } catch {
-      window.location.assign("/admin");
+      router.replace("/admin");
+      router.refresh();
     }
   }
 

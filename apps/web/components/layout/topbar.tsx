@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -26,6 +27,7 @@ type TopbarProps = {
 export function Topbar({ variant = "default" }: TopbarProps) {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const router = useRouter();
 
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
@@ -70,7 +72,8 @@ export function Topbar({ variant = "default" }: TopbarProps) {
       await logoutSession();
     } finally {
       logout();
-      window.location.href = "/login";
+      router.replace("/login");
+      router.refresh();
     }
   };
 

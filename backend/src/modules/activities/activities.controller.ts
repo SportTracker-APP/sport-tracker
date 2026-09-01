@@ -52,7 +52,10 @@ export class ActivitiesController {
     @Param('id')
     activityId: string,
   ) {
-    return this.activitiesService.findPlannedWorkoutSuggestion(userId, activityId);
+    return this.activitiesService.findPlannedWorkoutSuggestion(
+      userId,
+      activityId,
+    );
   }
 
   @Get(':id')

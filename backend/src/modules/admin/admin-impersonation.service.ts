@@ -143,10 +143,7 @@ export class AdminImpersonationService {
     };
   }
 
-  async stop(
-    targetUserId: string,
-    impersonation?: AuthenticatedImpersonation,
-  ) {
+  async stop(targetUserId: string, impersonation?: AuthenticatedImpersonation) {
     if (!impersonation) {
       throw new BadRequestException('Aucun mode admin actif');
     }

@@ -46,7 +46,7 @@ export default function JournalPage() {
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">
                 Les chiffres disent combien. Le journal dira pourquoi. Bientôt,
                 chaque sortie pourra garder son ressenti, son terrain, et le
-                petit détail qui donne envie d'y retourner.
+                petit détail qui donne envie d’y retourner.
               </p>
 
               <Link

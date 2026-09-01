@@ -155,14 +155,15 @@ export class ActivityMailWorkerService {
       return;
     }
 
-    if (now.getTime() - scheduledEmail.scheduledAt.getTime() > MAX_SEND_DELAY_MS) {
+    if (
+      now.getTime() - scheduledEmail.scheduledAt.getTime() >
+      MAX_SEND_DELAY_MS
+    ) {
       await this.cancelEmail(scheduledEmail.id, 'Scheduled email is too old');
       return;
     }
 
-    if (
-      scheduledEmail.type === ScheduledEmailType.ACTIVITY_UPCOMING_REMINDER
-    ) {
+    if (scheduledEmail.type === ScheduledEmailType.ACTIVITY_UPCOMING_REMINDER) {
       await this.sendUpcomingReminder(scheduledEmail, now);
       return;
     }
@@ -180,7 +181,10 @@ export class ActivityMailWorkerService {
       activity.status !== ActivityStatus.PLANNED ||
       activity.startedAt.getTime() <= now.getTime()
     ) {
-      await this.cancelEmail(scheduledEmail.id, 'Activity is no longer planned');
+      await this.cancelEmail(
+        scheduledEmail.id,
+        'Activity is no longer planned',
+      );
       return;
     }
 
@@ -311,12 +315,16 @@ export class ActivityMailWorkerService {
   }
 
   private buildActivityUrl(activityId: string): string {
-    return new URL(`/activites/${activityId}`, this.config.appBaseUrl).toString();
+    return new URL(
+      `/activites/${activityId}`,
+      this.config.appBaseUrl,
+    ).toString();
   }
 }
 
 function sanitizeError(error: unknown): string {
-  const message = error instanceof Error ? error.message : 'Unknown email error';
+  const message =
+    error instanceof Error ? error.message : 'Unknown email error';
 
   return message.slice(0, MAX_STORED_ERROR_LENGTH);
 }

@@ -128,10 +128,7 @@ export class StravaTokenEncryptionService {
     }
   }
 
-  reencryptIfNeeded(
-    storedToken: string,
-    context: StravaTokenContext,
-  ): string {
+  reencryptIfNeeded(storedToken: string, context: StravaTokenContext): string {
     if (!this.needsReencryption(storedToken)) {
       return storedToken;
     }

@@ -565,7 +565,7 @@
 .weekGrid {
   display: grid;
   min-width: 0;
-  align-items: start;
+  align-items: stretch;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
 }
@@ -575,6 +575,7 @@
   display: flex;
   min-width: 0;
   min-height: 430px;
+  height: 100%;
   flex-direction: column;
   padding: 16px 14px 14px;
   overflow: hidden;
@@ -587,10 +588,6 @@
     transform 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease;
-}
-
-.emptyDayCard {
-  min-height: 378px;
 }
 
 .dayCard::after {
@@ -1054,7 +1051,18 @@
 }
 
 .completeAction:disabled {
+  cursor: not-allowed;
+  border-color: var(--planning-line);
+  background: var(--planning-paper-deep);
+  color: var(--planning-moss);
+  opacity: 1;
+}
+
+.completeAction[data-pending="true"]:disabled {
   cursor: wait;
+  border-color: var(--planning-terracotta);
+  background: var(--planning-terracotta);
+  color: #fffaf2;
   opacity: 0.58;
 }
 
@@ -1072,6 +1080,11 @@
 .completeAction:hover {
   border-color: var(--planning-terracotta-deep);
   background: var(--planning-terracotta-deep);
+}
+
+.completeAction:disabled:not([data-pending="true"]):hover {
+  border-color: var(--planning-line);
+  background: var(--planning-paper-deep);
 }
 
 .deleteAction:hover {
@@ -1573,7 +1586,19 @@
 
   .dayCard {
     min-height: 300px;
+    height: auto;
     padding: 18px;
+  }
+
+  .dayAddButton {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+  .emptyDay a {
+    min-height: 44px;
+    align-items: center;
   }
 
   .dayContent {
@@ -1601,6 +1626,11 @@
 
   .plannedActions {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .completeAction,
+  .deleteAction {
+    min-height: 44px;
   }
 
   .mutationError {

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment -- Jest asymmetric matchers expose `any` in their public typings. */
-
 import { ConfigService } from '@nestjs/config';
 import { SummitAdminAuditAction } from '@prisma/client';
 import { createClient } from '@supabase/supabase-js';

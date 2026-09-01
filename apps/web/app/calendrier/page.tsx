@@ -317,15 +317,15 @@ export default function CalendarPage() {
 
                     <h1>Ta semaine, du premier pas au prochain sommet.</h1>
                     <p className={styles.heroDescription}>
-                      Retrouve tes sorties, tes séances prévues et l’espace qui
-                      reste pour improviser une aventure.
+                      Retrouve tes sorties prévues et l’espace qui reste pour
+                      improviser une aventure.
                     </p>
                   </div>
 
                   <div className={styles.nextWorkout}>
                     <div className={styles.nextWorkoutHeader}>
                       <div>
-                        <span>Prochaine séance</span>
+                        <span>Prochaine sortie</span>
                         <h2>{nextActivity ? "À venir" : "À imaginer"}</h2>
                       </div>
                       <span className={styles.nextWorkoutIcon}>
@@ -336,7 +336,7 @@ export default function CalendarPage() {
                     {nextActivity ? (
                       <div className={styles.nextWorkoutBody}>
                         <strong>
-                          {nextActivity.title ?? "Séance planifiée"}
+                          {nextActivity.title ?? "Sortie planifiée"}
                         </strong>
                         <p>
                           {longDayFormatter.format(
@@ -348,7 +348,7 @@ export default function CalendarPage() {
                       </div>
                     ) : (
                       <div className={styles.nextWorkoutBody}>
-                        <strong>Aucune séance programmée.</strong>
+                        <strong>Aucune sortie programmée.</strong>
                         <p>Ton prochain créneau est encore libre.</p>
                       </div>
                     )}
@@ -371,7 +371,7 @@ export default function CalendarPage() {
                   />
                   <HeroMetric
                     icon={Target}
-                    label="Séances prévues"
+                    label="Sorties prévues"
                     value={String(plannedActivities.length)}
                   />
                   <HeroMetric
@@ -431,7 +431,7 @@ export default function CalendarPage() {
                   className={styles.primaryButton}
                 >
                   <Plus aria-hidden="true" />
-                  Planifier une séance
+                  Planifier une sortie
                 </Link>
               </div>
             </FadeIn>
@@ -468,7 +468,7 @@ export default function CalendarPage() {
                       </h2>
                     </div>
                     <p>
-                      {weekActivities.length} séance
+                      {weekActivities.length} sortie
                       {weekActivities.length > 1 ? "s" : ""} cette semaine.
                       Chaque fiche garde sa place, même quand le terrain reste
                       ouvert.
@@ -501,11 +501,11 @@ export default function CalendarPage() {
           title="Supprimer cette sortie prévue ?"
           description={
             activityToDelete
-              ? `La séance “${activityToDelete.title ?? "sans titre"}” sera retirée du planning.`
-              : "Cette séance sera retirée du planning."
+              ? `La sortie “${activityToDelete.title ?? "sans titre"}” sera retirée du planning.`
+              : "Cette sortie sera retirée du planning."
           }
           confirmLabel="Supprimer du planning"
-          cancelLabel="Garder la séance"
+          cancelLabel="Garder la sortie"
           tone="danger"
           icon={<Trash2 aria-hidden="true" />}
           isLoading={deleteActivityMutation.isPending}
@@ -605,7 +605,7 @@ function DayColumn({
 
   return (
     <div
-      className={`${styles.dayCard} ${activities.length === 0 ? styles.emptyDayCard : ""} ${isToday ? styles.todayCard : ""}`}
+      className={`${styles.dayCard} ${isToday ? styles.todayCard : ""}`}
       data-day={formatDateInput(day)}
       aria-current={isToday ? "date" : undefined}
       aria-label={`${longDayFormatter.format(day)}${isToday ? ", aujourd’hui" : ""}`}
@@ -621,7 +621,7 @@ function DayColumn({
         <Link
           href={getPlanningHref(day)}
           className={styles.dayAddButton}
-          aria-label={`Planifier une séance le ${longDayFormatter.format(day)}`}
+          aria-label={`Planifier une sortie le ${longDayFormatter.format(day)}`}
         >
           <Plus aria-hidden="true" />
         </Link>
@@ -634,7 +634,7 @@ function DayColumn({
         <span className={styles.dayCount}>
           {activities.length === 0
             ? "Journée libre"
-            : `${activities.length} séance${activities.length > 1 ? "s" : ""}`}
+            : `${activities.length} sortie${activities.length > 1 ? "s" : ""}`}
         </span>
         {plannedCount > 0 ? (
           <span className={styles.plannedCount}>
@@ -651,6 +651,7 @@ function DayColumn({
             <CalendarActivity
               key={activity.id}
               activity={activity}
+              now={today}
               onDeletePlannedActivity={onDeletePlannedActivity}
             />
           ))
@@ -668,11 +669,11 @@ function EmptyDay({ day }: { day: Date }) {
       </span>
       <div>
         <strong>Journée libre</strong>
-        <p>Aucune séance prévue. Le terrain reste ouvert.</p>
+        <p>Aucune sortie prévue. Le terrain reste ouvert.</p>
       </div>
       <Link href={getPlanningHref(day)}>
         <Plus aria-hidden="true" />
-        Ajouter une séance
+        Ajouter une sortie
       </Link>
     </div>
   );
@@ -680,9 +681,11 @@ function EmptyDay({ day }: { day: Date }) {
 
 function CalendarActivity({
   activity,
+  now,
   onDeletePlannedActivity,
 }: {
   activity: Activity;
+  now: Date;
   onDeletePlannedActivity: (activity: Activity) => void;
 }) {
   const activityDate = getActivityDate(activity);
@@ -700,7 +703,7 @@ function CalendarActivity({
     status: "PLANNED",
     date: formatDateInput(new Date()),
     sport: activity.sport,
-    title: activity.title ?? "Séance planifiée",
+    title: activity.title ?? "Sortie planifiée",
     duration: String(activity.duration ?? 0),
     distance: String(activity.distance ?? 0),
     returnTo: "/calendrier",
@@ -711,6 +714,10 @@ function CalendarActivity({
     missed: styles.activityMissed,
     canceled: styles.activityCanceled,
   }[status.tone];
+  const canMarkAsCompleted = activityDate.getTime() <= now.getTime();
+  const futureCompletionLabel = `Disponible à partir du ${longDayFormatter.format(
+    activityDate,
+  )} à ${timeFormatter.format(activityDate)}`;
 
   return (
     <div className={`${styles.activityCard} ${toneClass}`}>
@@ -731,9 +738,9 @@ function CalendarActivity({
       <Link
         href={activityHref}
         className={styles.activityTitle}
-        title={activity.title ?? "Séance sans titre"}
+        title={activity.title ?? "Sortie sans titre"}
       >
-        {activity.title ?? "Séance sans titre"}
+        {activity.title ?? "Sortie sans titre"}
       </Link>
 
       {plannedNote ? (
@@ -776,20 +783,35 @@ function CalendarActivity({
           <button
             type="button"
             className={styles.completeAction}
-            aria-label={`Indiquer que la séance ${activity.title ?? "planifiée"} a été réalisée`}
-            disabled={completePlannedWorkoutMutation.isPending}
+            aria-label={
+              canMarkAsCompleted
+                ? `Indiquer que la sortie ${activity.title ?? "planifiée"} a été réalisée`
+                : `${activity.title ?? "Sortie planifiée"} : ${futureCompletionLabel}`
+            }
+            title={canMarkAsCompleted ? undefined : futureCompletionLabel}
+            data-future={!canMarkAsCompleted}
+            data-pending={completePlannedWorkoutMutation.isPending}
+            disabled={
+              !canMarkAsCompleted || completePlannedWorkoutMutation.isPending
+            }
             onClick={() => completePlannedWorkoutMutation.mutate(activity.id)}
           >
-            <CheckCircle2 aria-hidden="true" />
+            {canMarkAsCompleted ? (
+              <CheckCircle2 aria-hidden="true" />
+            ) : (
+              <Clock3 aria-hidden="true" />
+            )}
             {completePlannedWorkoutMutation.isPending
               ? "Validation…"
-              : "Sortie faite"}
+              : canMarkAsCompleted
+                ? "Sortie faite"
+                : "À venir"}
           </button>
           <button
             type="button"
             className={styles.deleteAction}
             onClick={() => onDeletePlannedActivity(activity)}
-            aria-label={`Supprimer la séance prévue ${activity.title ?? "sans titre"} du planning`}
+            aria-label={`Supprimer la sortie prévue ${activity.title ?? "sans titre"} du planning`}
             title="Supprimer du planning"
           >
             <Trash2 aria-hidden="true" />

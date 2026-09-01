@@ -50,7 +50,7 @@ export function ForgotPasswordForm() {
       const response = await forgotPassword(data.email);
 
       setConfirmationMessage(response.message);
-    } catch (error: unknown) {
+    } catch {
       setServerError("Impossible de traiter la demande pour le moment.");
     }
   }

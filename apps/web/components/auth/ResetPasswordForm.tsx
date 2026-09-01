@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -36,7 +36,7 @@ export function ResetPasswordForm() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
@@ -48,7 +48,7 @@ export function ResetPasswordForm() {
     },
   });
 
-  const password = watch("password") || "";
+  const password = useWatch({ control, name: "password" }) || "";
   const passwordStrength = useMemo(
     () => getPasswordStrength(password),
     [password],
@@ -76,7 +76,7 @@ export function ResetPasswordForm() {
 
       setSuccessMessage(response.message);
       window.setTimeout(() => router.push("/login"), 1200);
-    } catch (error: unknown) {
+    } catch {
       setServerError("Lien invalide, expiré ou déjà utilisé.");
     }
   }

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
 const avatarMimeExtensions: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -14,7 +14,7 @@ const avatarMimeExtensions: Record<string, string> = {
 
 @Injectable()
 export class UploadService {
-  private supabase: SupabaseClient;
+  private readonly supabase: ReturnType<typeof createClient>;
 
   constructor(
     private readonly configService: ConfigService,

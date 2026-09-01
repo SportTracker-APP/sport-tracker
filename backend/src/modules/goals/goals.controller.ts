@@ -30,10 +30,7 @@ export class GoalsController {
   }
 
   @Post()
-  create(
-    @CurrentUser('id') userId: string,
-    @Body() dto: CreateGoalDto,
-  ) {
+  create(@CurrentUser('id') userId: string, @Body() dto: CreateGoalDto) {
     return this.goalsService.create(userId, dto);
   }
 
@@ -47,10 +44,7 @@ export class GoalsController {
   }
 
   @Delete(':id')
-  remove(
-    @CurrentUser('id') userId: string,
-    @Param('id') goalId: string,
-  ) {
+  remove(@CurrentUser('id') userId: string, @Param('id') goalId: string) {
     return this.goalsService.remove(userId, goalId);
   }
 }

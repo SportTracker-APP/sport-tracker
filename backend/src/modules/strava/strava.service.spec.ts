@@ -318,7 +318,8 @@ describe('StravaService security', () => {
 
   it('keeps the altitude stream when Strava activity details are unavailable', async () => {
     jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const url = String(input);
+      await Promise.resolve();
+      const url = input instanceof Request ? input.url : input.toString();
 
       if (url.includes('/streams')) {
         return new Response(
@@ -368,7 +369,8 @@ describe('StravaService security', () => {
     let streamAttempts = 0;
 
     jest.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const url = String(input);
+      await Promise.resolve();
+      const url = input instanceof Request ? input.url : input.toString();
 
       if (url.includes('/streams')) {
         streamAttempts += 1;

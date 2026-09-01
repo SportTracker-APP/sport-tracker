@@ -380,11 +380,7 @@ export class AuthService {
       verificationToken.user.role,
     );
 
-    await this.updateRefreshToken(
-      verificationToken.user.id,
-      refreshToken,
-      now,
-    );
+    await this.updateRefreshToken(verificationToken.user.id, refreshToken, now);
 
     try {
       await this.mailService.sendWelcomeEmail({

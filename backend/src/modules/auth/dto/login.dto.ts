@@ -5,11 +5,10 @@ import {
   EMAIL_MAX_LENGTH,
   PASSWORD_MAX_LENGTH,
 } from '../auth-security.constants';
+import { normalizeEmailInput } from './normalize-email';
 
 export class LoginDto {
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
+  @Transform(({ value }: { value: unknown }) => normalizeEmailInput(value))
   @IsEmail()
   @MaxLength(EMAIL_MAX_LENGTH)
   email: string;

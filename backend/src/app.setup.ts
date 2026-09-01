@@ -1,6 +1,8 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
+import type { Express } from 'express';
 import helmet from 'helmet';
 
 function normalizeOrigin(origin: string): string | null {
@@ -51,7 +53,8 @@ export function isCorsOriginAllowed(
 }
 
 export function configureApplication(app: INestApplication): void {
-  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  const expressApplication = app.getHttpAdapter().getInstance() as Express;
+  expressApplication.set('trust proxy', 1);
 
   app.use(
     helmet({
@@ -70,7 +73,7 @@ export function configureApplication(app: INestApplication): void {
     .filter((origin): origin is string => origin !== null);
   const allowedOrigins = new Set(configuredOrigins);
 
-  app.enableCors({
+  const corsOptions: CorsOptions = {
     origin(origin, callback) {
       if (isCorsOriginAllowed(origin, allowedOrigins, isProduction)) {
         callback(null, true);
@@ -83,7 +86,8 @@ export function configureApplication(app: INestApplication): void {
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     maxAge: 600,
-  });
+  };
+  app.enableCors(corsOptions);
 
   app.use(cookieParser());
   app.useGlobalPipes(
