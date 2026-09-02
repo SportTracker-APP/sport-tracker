@@ -95,11 +95,12 @@ export default function WelcomePage() {
               />
               <path
                 className={styles.mountainRoute}
-                d="M150 192c22-8 37-27 48-51 12-25 25-46 40-61 13 15 23 33 36 49 15-12 25-39 39-59 8-11 14-17 19-18"
+                d="M150 192 238 80 274 129 332 52"
                 stroke="#c85b2f"
                 strokeWidth="2.5"
                 strokeDasharray="5 7"
                 strokeLinecap="round"
+                strokeLinejoin="round"
               />
               <circle cx="150" cy="192" r="4" fill="#c85b2f" />
               <circle cx="238" cy="80" r="3.25" fill="#c85b2f" />
