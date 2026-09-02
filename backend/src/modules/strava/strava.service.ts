@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
@@ -21,6 +22,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SUMMIT_DETECTION_VERSION } from '../summits/summit-detection';
 import { SummitsService } from '../summits/summits.service';
+import { PlannedWorkoutReconciliationService } from './planned-workout-reconciliation.service';
 import { StravaTokenEncryptionService } from './strava-token-encryption.service';
 
 interface StravaStatePayload {
@@ -120,6 +122,8 @@ export class StravaService {
     private readonly configService: ConfigService,
     private readonly summitsService: SummitsService,
     private readonly tokenEncryption: StravaTokenEncryptionService,
+    @Optional()
+    private readonly plannedWorkoutReconciliation?: PlannedWorkoutReconciliationService,
   ) {}
 
   async getStatus(userId: string) {
@@ -340,6 +344,7 @@ export class StravaService {
       newActivities.map((activity) => activity.id.toString()),
     );
     const activityIdsToProcess: string[] = [];
+    const activityIdsToReconcile: string[] = [];
 
     try {
       for (const activity of activities) {
@@ -401,6 +406,8 @@ export class StravaService {
           },
         });
 
+        activityIdsToReconcile.push(persistedActivity.id);
+
         if (
           newStravaActivityIds.has(stravaActivityId) ||
           detectionInputsChanged ||
@@ -433,6 +440,16 @@ export class StravaService {
           errorName: error instanceof Error ? error.name : 'UnknownError',
         });
       }
+    }
+
+    if (
+      activityIdsToReconcile.length > 0 &&
+      this.plannedWorkoutReconciliation
+    ) {
+      await this.plannedWorkoutReconciliation.reconcileStravaActivities(
+        userId,
+        activityIdsToReconcile,
+      );
     }
 
     return {

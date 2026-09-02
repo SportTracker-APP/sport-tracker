@@ -43,9 +43,13 @@ export function ActivitiesView() {
     () => filterActivities(completedActivities, activeFilter),
     [activeFilter, completedActivities],
   );
-  const summary = useMemo(
+  const globalSummary = useMemo(
     () => createYearlySummary(completedActivities, currentYear),
     [completedActivities, currentYear],
+  );
+  const filteredSummary = useMemo(
+    () => createYearlySummary(filteredActivities, currentYear),
+    [filteredActivities, currentYear],
   );
   const totalPages = Math.max(
     1,
@@ -83,7 +87,7 @@ export function ActivitiesView() {
       <div className={styles.page}>
         <ActivitiesPageHeader
           totalCount={completedActivities.length}
-          summary={summary}
+          summary={globalSummary}
           isLoading={activitiesQuery.isLoading}
         />
 
@@ -108,7 +112,7 @@ export function ActivitiesView() {
                 onChange={handleFilterChange}
               />
 
-              <YearlyJournalSummary summary={summary} />
+              <YearlyJournalSummary summary={filteredSummary} />
 
               <main className={styles.journalColumn}>
                 {filteredActivities.length === 0 ? (
