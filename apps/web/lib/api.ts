@@ -99,6 +99,7 @@ api.interceptors.response.use(
     const requestUrl = request?.url ?? "";
     const cannotRefresh =
       requestUrl.includes("/auth/login") ||
+      requestUrl.includes("/auth/verify-email") ||
       requestUrl.includes("/auth/refresh") ||
       requestUrl.includes("/auth/logout");
 

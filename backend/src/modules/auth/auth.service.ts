@@ -33,6 +33,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import type { GoogleIdentity } from './google-auth.service';
 
 const FORGOT_PASSWORD_MESSAGE =
   'Si un compte correspond à cette adresse, un email de réinitialisation a été envoyé.';
@@ -468,6 +469,125 @@ export class AuthService {
 
         email: user.email,
 
+        role: user.role,
+      },
+    };
+  }
+
+  async loginWithGoogle(identity: GoogleIdentity) {
+    const email = this.normalizeEmail(identity.email);
+    const now = new Date();
+    let isNewUser = false;
+
+    this.assertAuthRateLimit(`google-login:${email}`);
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const userByGoogleSubject = await tx.user.findUnique({
+        where: {
+          googleSubject: identity.subject,
+        },
+      });
+
+      if (userByGoogleSubject) {
+        return userByGoogleSubject;
+      }
+
+      const userByEmail = await tx.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (userByEmail) {
+        if (
+          userByEmail.googleSubject &&
+          userByEmail.googleSubject !== identity.subject
+        ) {
+          throw new UnauthorizedException('Compte Google déjà associé');
+        }
+
+        await tx.emailVerificationToken.updateMany({
+          where: {
+            userId: userByEmail.id,
+            usedAt: null,
+          },
+          data: {
+            usedAt: now,
+          },
+        });
+
+        return tx.user.update({
+          where: {
+            id: userByEmail.id,
+          },
+          data: {
+            googleSubject: identity.subject,
+            emailVerifiedAt: userByEmail.emailVerifiedAt ?? now,
+          },
+        });
+      }
+
+      isNewUser = true;
+      const generatedPassword = await bcrypt.hash(
+        randomBytes(32).toString('hex'),
+        BCRYPT_COST,
+      );
+
+      return tx.user.create({
+        data: {
+          firstName: identity.firstName,
+          lastName: identity.lastName,
+          email,
+          password: generatedPassword,
+          googleSubject: identity.subject,
+          emailVerifiedAt: now,
+          goals: {
+            create: buildDefaultGoals(),
+          },
+        },
+      });
+    });
+
+    if (user.isBlocked) {
+      throw new UnauthorizedException('Compte bloqué');
+    }
+
+    const accessToken = await this.generateAccessToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+    const refreshToken = await this.generateRefreshToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+
+    await this.updateRefreshToken(user.id, refreshToken, now);
+
+    if (isNewUser) {
+      try {
+        await this.mailService.sendWelcomeEmail({
+          to: user.email,
+          userName: user.firstName,
+          businessId: user.id,
+        });
+      } catch {
+        this.logger.warn({
+          emailType: 'auth.welcome',
+          recipient: maskEmailAddress(user.email),
+          message: 'Google welcome email failed',
+        });
+      }
+    }
+
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
         role: user.role,
       },
     };

@@ -18,6 +18,7 @@ type UserMock = {
   email: string;
   firstName: string;
   password: string;
+  googleSubject: string | null;
   role: 'USER' | 'ADMIN';
   isBlocked: boolean;
   emailVerifiedAt: Date | null;
@@ -85,6 +86,7 @@ const user: UserMock = {
   email: 'camille@example.test',
   firstName: 'Camille',
   password: 'old-hash',
+  googleSubject: null,
   role: 'USER',
   isBlocked: false,
   emailVerifiedAt: new Date('2026-06-24T12:00:00.000Z'),
@@ -403,6 +405,112 @@ describe('AuthService password reset', () => {
     await expect(service.login(user.email, 'Password1')).rejects.toThrow(
       'Veuillez vérifier votre adresse email',
     );
+  });
+
+  it('links Google to an existing account with the same verified email', async () => {
+    const { service, prisma } = makeService();
+    const linkedUser = {
+      ...user,
+      googleSubject: 'google-subject-1',
+    };
+    prisma.user.findUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(user);
+    prisma.user.update
+      .mockResolvedValueOnce(linkedUser)
+      .mockResolvedValueOnce(linkedUser);
+
+    await expect(
+      service.loginWithGoogle({
+        subject: 'google-subject-1',
+        email: '  CAMILLE@EXAMPLE.TEST ',
+        firstName: 'Camille',
+        lastName: 'Martin',
+      }),
+    ).resolves.toEqual({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
+    expect(prisma.user.create).not.toHaveBeenCalled();
+    expect(prisma.user.update).toHaveBeenNthCalledWith(1, {
+      where: {
+        id: user.id,
+      },
+      data: {
+        googleSubject: 'google-subject-1',
+        emailVerifiedAt: user.emailVerifiedAt,
+      },
+    });
+  });
+
+  it('creates one verified HOVREN account for a new Google identity', async () => {
+    const { service, prisma, mail } = makeService();
+    const googleUser = {
+      ...user,
+      googleSubject: 'google-subject-2',
+    };
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue(googleUser);
+
+    await expect(
+      service.loginWithGoogle({
+        subject: 'google-subject-2',
+        email: user.email,
+        firstName: user.firstName,
+        lastName: 'Martin',
+      }),
+    ).resolves.toMatchObject({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    });
+
+    expect(prisma.user.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        email: user.email,
+        emailVerifiedAt: expect.any(Date),
+        firstName: user.firstName,
+        lastName: 'Martin',
+        googleSubject: 'google-subject-2',
+        password: expect.stringMatching(/^\$2[ab]\$/),
+        goals: {
+          create: expect.any(Array),
+        },
+      }),
+    });
+    expect(mail.sendWelcomeEmail).toHaveBeenCalledWith({
+      to: user.email,
+      userName: user.firstName,
+      businessId: user.id,
+    });
+  });
+
+  it('refuses Google authentication for a blocked linked account', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      googleSubject: 'google-subject-blocked',
+      isBlocked: true,
+    });
+
+    await expect(
+      service.loginWithGoogle({
+        subject: 'google-subject-blocked',
+        email: user.email,
+        firstName: user.firstName,
+        lastName: null,
+      }),
+    ).rejects.toThrow('Compte bloqué');
   });
 
   it('rotates a valid refresh token and returns a fresh session', async () => {

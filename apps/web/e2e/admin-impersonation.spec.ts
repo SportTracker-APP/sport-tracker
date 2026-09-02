@@ -114,6 +114,7 @@ test("un admin accède au compte client puis quitte clairement le mode admin", a
           lastName: null,
           isBlocked: false,
           createdAt: "2026-07-01T08:00:00.000Z",
+          hasGoogle: false,
           hasStrava: false,
           stravaUpdatedAt: null,
           activitiesCount: 0,
@@ -124,6 +125,7 @@ test("un admin accède au compte client puis quitte clairement le mode admin", a
           lastName: "Martin",
           isBlocked: false,
           createdAt: "2026-07-02T08:00:00.000Z",
+          hasGoogle: true,
           hasStrava: true,
           stravaUpdatedAt: "2026-07-20T08:00:00.000Z",
           activitiesCount: 12,
@@ -158,6 +160,7 @@ test("un admin accède au compte client puis quitte clairement le mode admin", a
 
   await page.goto("/admin");
   await page.getByRole("button", { name: "Gestion utilisateurs" }).click();
+  await expect(page.getByText("Google lié", { exact: true })).toBeVisible();
   const accessButton = page.getByRole("button", {
     name: "Accéder au compte",
   });

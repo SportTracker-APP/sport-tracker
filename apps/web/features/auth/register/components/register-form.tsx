@@ -19,6 +19,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getPasswordStrength } from "@/components/auth/password-strength";
+import { GoogleAuthSection } from "@/components/auth/google-auth-section";
 import { registerUser } from "@/lib/auth";
 import { registerSchema, RegisterSchema } from "@/lib/schemas/auth.schema";
 
@@ -257,6 +258,8 @@ export function RegisterForm() {
         <h2>Crée ton carnet</h2>
         <p>Commence ton carnet de sommets et prépare tes premières traces.</p>
       </div>
+
+      <GoogleAuthSection mode="register" />
 
       <form
         noValidate

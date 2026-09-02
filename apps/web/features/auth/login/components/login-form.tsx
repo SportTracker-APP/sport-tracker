@@ -10,7 +10,12 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { forgotPassword, login } from "@/lib/auth";
+import { GoogleAuthSection } from "@/components/auth/google-auth-section";
+import {
+  completeGoogleLogin,
+  forgotPassword,
+  login,
+} from "@/lib/auth";
 import {
   forgotPasswordSchema,
   ForgotPasswordSchema,
@@ -29,7 +34,9 @@ export function LoginForm() {
   const router = useRouter();
 
   const loginCardRef = useRef<HTMLDivElement | null>(null);
+  const googleCallbackHandledRef = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isGoogleCompleting, setIsGoogleCompleting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [forgotPasswordError, setForgotPasswordError] = useState<string | null>(
     null,
@@ -159,6 +166,56 @@ export function LoginForm() {
     };
   }, []);
 
+  useEffect(() => {
+    if (googleCallbackHandledRef.current) {
+      return;
+    }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const googleStatus = searchParams.get("google");
+
+    if (!googleStatus) {
+      return;
+    }
+
+    googleCallbackHandledRef.current = true;
+    const requestedReturnTo = searchParams.get("returnTo");
+    const returnTo =
+      requestedReturnTo?.startsWith("/") &&
+      !requestedReturnTo.startsWith("//")
+        ? requestedReturnTo
+        : "/refuge";
+    window.history.replaceState({}, "", "/login");
+
+    if (googleStatus !== "success") {
+      window.setTimeout(() => {
+        setServerError(
+          "La connexion Google n’a pas abouti. Tu peux réessayer.",
+        );
+      }, 0);
+      return;
+    }
+
+    const finishGoogleLogin = async () => {
+      setIsGoogleCompleting(true);
+
+      try {
+        const response = await completeGoogleLogin();
+
+        setAuth(response.accessToken, response.user);
+        router.replace(returnTo);
+        router.refresh();
+      } catch {
+        setServerError(
+          "Impossible d’ouvrir ton carnet avec Google pour le moment.",
+        );
+        setIsGoogleCompleting(false);
+      }
+    };
+
+    void finishGoogleLogin();
+  }, [router, setAuth]);
+
   async function onLoginSubmit(data: LoginSchema) {
     try {
       setServerError(null);
@@ -221,11 +278,16 @@ export function LoginForm() {
       </div>
 
       {mode === "login" ? (
-        <form
-          noValidate
-          onSubmit={handleLoginSubmit(onLoginSubmit)}
-          className={styles.form}
-        >
+        <>
+          <GoogleAuthSection
+            mode="login"
+            isCompleting={isGoogleCompleting}
+          />
+          <form
+            noValidate
+            onSubmit={handleLoginSubmit(onLoginSubmit)}
+            className={styles.form}
+          >
           <div className={styles.fieldGroup}>
             <label htmlFor="login-email">Email</label>
             <div className={styles.inputWrap}>
@@ -311,7 +373,8 @@ export function LoginForm() {
             Pas encore de carnet ?{" "}
             <Link href="/register">Créer mon compte</Link>
           </p>
-        </form>
+          </form>
+        </>
       ) : (
         <form
           noValidate

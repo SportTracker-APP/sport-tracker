@@ -33,6 +33,8 @@ model User {
 
   password String
 
+  googleSubject String? @unique
+
   refreshToken String?
 
   emailVerifiedAt DateTime?

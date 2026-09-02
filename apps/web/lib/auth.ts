@@ -69,6 +69,22 @@ export async function login(
   return data;
 }
 
+export function getGoogleAuthorizationUrl(returnTo = "/refuge"): string {
+  const apiBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  const authorizationUrl = new URL("/auth/google", apiBaseUrl);
+
+  authorizationUrl.searchParams.set("returnTo", returnTo);
+
+  return authorizationUrl.toString();
+}
+
+export async function completeGoogleLogin(): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>("/auth/refresh");
+
+  return data;
+}
+
 export async function logoutSession(): Promise<void> {
   if (
     typeof window !== "undefined" &&

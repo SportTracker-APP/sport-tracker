@@ -53,6 +53,7 @@ interface AdminUser {
   isBlocked: boolean;
   createdAt: string;
   lastLoginAt: string | null;
+  hasGoogle: boolean;
   hasStrava: boolean;
   stravaUpdatedAt: string | null;
   activitiesCount: number;
@@ -867,6 +868,11 @@ export default function AdminPage() {
                               >
                                 {adminUser.isBlocked ? "Bloqué" : "Actif"}
                               </span>
+                              {adminUser.hasGoogle ? (
+                                <span className={styles.googleBadge}>
+                                  Google lié
+                                </span>
+                              ) : null}
                             </div>
                             <p className={styles.userEmail}>
                               {adminUser.email}

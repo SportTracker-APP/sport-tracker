@@ -18,6 +18,97 @@ test("la connexion valide les champs obligatoires", async ({ page }) => {
   await expect(page.getByText("Minimum 6 caractères")).toBeVisible();
 });
 
+test("connexion et inscription proposent Google avant le formulaire classique", async ({
+  page,
+}) => {
+  for (const { path, width } of [
+    { path: "/login", width: 1280 },
+    { path: "/register", width: 1280 },
+    { path: "/login", width: 390 },
+    { path: "/register", width: 390 },
+  ]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    await page.goto(path);
+
+    const googleLink = page.getByRole("link", {
+      name:
+        path === "/login"
+          ? "Se connecter avec Google"
+          : "Créer un compte avec Google",
+    });
+    await expect(googleLink).toBeVisible();
+    await expect(googleLink).toHaveAttribute(
+      "href",
+      "http://localhost:4000/auth/google?returnTo=%2Frefuge",
+    );
+    await expect(page.getByText("ou avec ton email")).toBeVisible();
+    await expect
+      .poll(() =>
+        page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
+      )
+      .toBe(0);
+  }
+});
+
+test("le retour Google restaure la session HOVREN existante", async ({
+  page,
+}) => {
+  const authUser = {
+    id: "google-user-1",
+    firstName: "Camille",
+    email: "camille@example.test",
+    role: "USER",
+    needsDiscoveryOnboarding: false,
+  };
+
+  await page.route("**/auth/refresh", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        accessToken: "google-access-token",
+        user: authUser,
+      }),
+    });
+  });
+  await page.route("**/users/me", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(authUser),
+    });
+  });
+  await page.route("**/activities**", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: "[]" });
+  });
+  await page.route("**/goals**", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: "[]" });
+  });
+  await page.route("**/summits**", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: "[]" });
+  });
+
+  await page.goto("/login?google=success&returnTo=%2Frefuge");
+
+  await expect(page).toHaveURL(/\/refuge$/);
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("accessToken")))
+    .toBe("google-access-token");
+});
+
+test("un refus Google revient sur une erreur calme et actionnable", async ({
+  page,
+}) => {
+  await page.goto("/login?google=error&returnTo=%2Frefuge");
+
+  await expect(
+    page.getByText("La connexion Google n’a pas abouti. Tu peux réessayer."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Se connecter avec Google" }),
+  ).toBeVisible();
+});
+
 test("un utilisateur peut demander un lien depuis la card de connexion", async ({
   page,
 }) => {
