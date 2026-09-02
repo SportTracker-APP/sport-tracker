@@ -381,6 +381,44 @@ test("le planning reprend le carnet HOVREN et conserve sa navigation", async ({
   });
 });
 
+test("la vue mois permet de parcourir les projets lointains", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await mockPlanning(page);
+  await page.goto("/calendrier", { waitUntil: "domcontentloaded" });
+
+  await page.getByRole("button", { name: "Mois", exact: true }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Tout le mois en un coup d’œil." }),
+  ).toBeVisible();
+  await expect(page.getByText("Planning mensuel")).toBeVisible();
+  await expect(page.locator("[data-month-day]")).toHaveCount(42);
+  await expect(
+    page.getByRole("button", { name: "Mois", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("link", {
+      name: "Sortie d’endurance progressive avec un titre volontairement très long",
+    }),
+  ).toBeVisible();
+
+  const monthLabel = page.locator('[aria-live="polite"]').first();
+  const initialMonth = await monthLabel.textContent();
+  await page
+    .getByRole("button", { name: "Afficher le mois suivant" })
+    .click();
+  await expect(monthLabel).not.toHaveText(initialMonth ?? "");
+  await page.getByRole("button", { name: "Aujourd’hui" }).click();
+  await expect(monthLabel).toHaveText(initialMonth ?? "");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByLabel("Agenda du mois")).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+});
+
 test("les actions d’une sortie respectent la date prévue", async ({ page }) => {
   const mock = await mockPlanning(page);
   await page.goto("/calendrier", { waitUntil: "domcontentloaded" });

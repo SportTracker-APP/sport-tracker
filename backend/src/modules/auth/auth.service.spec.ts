@@ -359,6 +359,7 @@ describe('AuthService password reset', () => {
         firstName: user.firstName,
         email: user.email,
         role: user.role,
+        needsWelcomeOnboarding: true,
       },
     });
 
@@ -435,6 +436,7 @@ describe('AuthService password reset', () => {
         firstName: user.firstName,
         email: user.email,
         role: user.role,
+        needsWelcomeOnboarding: false,
       },
     });
 
@@ -717,6 +719,7 @@ describe('AuthService password reset', () => {
       },
       data: {
         password: updatePayload?.data?.password,
+        passwordConfiguredAt: expect.any(Date),
         refreshToken: null,
       },
     });

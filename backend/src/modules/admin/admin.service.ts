@@ -150,6 +150,7 @@ export class AdminService {
         lastName: dto.lastName,
         email: dto.email,
         password: hashedPassword,
+        passwordConfiguredAt: new Date(),
         role: dto.role ?? UserRole.USER,
         goals: {
           create: buildDefaultGoals(),
@@ -249,6 +250,7 @@ export class AdminService {
       },
       data: {
         password: hashedPassword,
+        passwordConfiguredAt: new Date(),
         refreshToken: null,
       },
     });

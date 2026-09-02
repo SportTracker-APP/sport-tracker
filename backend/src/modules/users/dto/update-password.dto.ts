@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 import {
   PASSWORD_MAX_LENGTH,
@@ -7,8 +7,9 @@ import {
 
 export class UpdatePasswordDto {
   @IsString()
+  @IsOptional()
   @MaxLength(PASSWORD_MAX_LENGTH)
-  currentPassword: string;
+  currentPassword?: string;
 
   @IsString()
   @MinLength(PASSWORD_MIN_LENGTH)

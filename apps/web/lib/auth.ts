@@ -21,6 +21,12 @@ export interface AuthUser {
 
   needsDiscoveryOnboarding?: boolean;
 
+  needsWelcomeOnboarding?: boolean;
+
+  hasGoogle?: boolean;
+
+  hasPassword?: boolean;
+
   impersonation?: AdminImpersonationContext | null;
 }
 

@@ -261,6 +261,8 @@ export class AuthService {
 
             password: hashedPassword,
 
+            passwordConfiguredAt: new Date(),
+
             goals: {
               create: buildDefaultGoals(),
             },
@@ -410,6 +412,8 @@ export class AuthService {
         email: verificationToken.user.email,
 
         role: verificationToken.user.role,
+
+        needsWelcomeOnboarding: true,
       },
     };
   }
@@ -589,6 +593,7 @@ export class AuthService {
         firstName: user.firstName,
         email: user.email,
         role: user.role,
+        needsWelcomeOnboarding: isNewUser,
       },
     };
   }
@@ -718,6 +723,7 @@ export class AuthService {
         },
         data: {
           password: hashedPassword,
+          passwordConfiguredAt: now,
           refreshToken: null,
         },
       });

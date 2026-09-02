@@ -8,10 +8,14 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
+import { useAuthStore } from "@/store/auth-store";
 
 import styles from "./settings.module.css";
 
 export function PasswordSettingsCard() {
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
+  const requiresCurrentPassword = user?.hasPassword !== false;
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +27,11 @@ export function PasswordSettingsCard() {
     setSuccessMessage("");
     setErrorMessage("");
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (
+      (requiresCurrentPassword && !currentPassword) ||
+      !newPassword ||
+      !confirmPassword
+    ) {
       setErrorMessage("Veuillez remplir tous les champs.");
       return;
     }
@@ -44,14 +52,21 @@ export function PasswordSettingsCard() {
       setIsSaving(true);
 
       await api.patch("/users/password", {
-        currentPassword,
+        ...(requiresCurrentPassword ? { currentPassword } : {}),
         newPassword,
       });
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setSuccessMessage("Mot de passe mis à jour avec succès.");
+      setSuccessMessage(
+        requiresCurrentPassword
+          ? "Mot de passe mis à jour avec succès."
+          : "Ton mot de passe HOVREN est maintenant défini.",
+      );
+      if (user) {
+        setUser({ ...user, hasPassword: true });
+      }
     } catch (error: unknown) {
       console.error(error);
 
@@ -73,22 +88,33 @@ export function PasswordSettingsCard() {
     <div className={styles.cardContent}>
       <header className={styles.cardHeader}>
         <h2>Sécurité</h2>
-        <p>Modifie ton mot de passe.</p>
+        <p>
+          {requiresCurrentPassword
+            ? "Modifie ton mot de passe."
+            : "Ajoute un mot de passe HOVREN en complément de Google."}
+        </p>
       </header>
 
       <div className={styles.formStack}>
-        <div className={styles.field}>
-          <label htmlFor="current-password">Mot de passe actuel</label>
+        {requiresCurrentPassword ? (
+          <div className={styles.field}>
+            <label htmlFor="current-password">Mot de passe actuel</label>
 
-          <Input
-            id="current-password"
-            type="password"
-            autoComplete="current-password"
-            value={currentPassword}
-            onChange={(event) => setCurrentPassword(event.target.value)}
-            className={styles.input}
-          />
-        </div>
+            <Input
+              id="current-password"
+              type="password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.target.value)}
+              className={styles.input}
+            />
+          </div>
+        ) : (
+          <div className={styles.googlePasswordNotice}>
+            Ton compte est actuellement accessible avec Google. Définis un mot
+            de passe pour pouvoir aussi te connecter directement avec ton email.
+          </div>
+        )}
 
         <div className={styles.field}>
           <label htmlFor="new-password">Nouveau mot de passe</label>
@@ -148,7 +174,9 @@ export function PasswordSettingsCard() {
                 Mise à jour...
               </>
             ) : (
-              "Modifier le mot de passe"
+              requiresCurrentPassword
+                ? "Modifier le mot de passe"
+                : "Définir mon mot de passe"
             )}
           </Button>
         </div>

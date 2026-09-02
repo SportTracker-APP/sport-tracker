@@ -27,21 +27,21 @@ async function fulfillUser(route: Route, user = mockUser) {
   });
 }
 
-async function mockSettingsShell(page: Page) {
+async function mockSettingsShell(page: Page, user = mockUser) {
   await page.addInitScript(() => {
     window.localStorage.setItem("accessToken", "e2e-access-token");
   });
   await page.route(/^https:\/\/(?:[^/]+\.)?tawk\.to\//, async (route) =>
     route.abort(),
   );
-  await page.route("**/users/me", async (route) => fulfillUser(route));
+  await page.route("**/users/me", async (route) => fulfillUser(route, user));
   await page.route("**/auth/refresh", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
         accessToken: "e2e-refreshed-token",
-        user: mockUser,
+        user,
       }),
     });
   });
@@ -142,6 +142,43 @@ test("le profil et le mot de passe conservent leurs actions et validations", asy
     currentPassword: "mot-de-passe-actuel",
     newPassword: "nouveau-secret",
   });
+});
+
+test("un compte Google peut définir son premier mot de passe HOVREN", async ({
+  page,
+}) => {
+  const googleUser = {
+    ...mockUser,
+    hasGoogle: true,
+    hasPassword: false,
+  };
+  await mockSettingsShell(page, googleUser);
+  let passwordPayload: unknown = null;
+
+  await page.route("**/users/password", async (route) => {
+    passwordPayload = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "Mot de passe mis à jour" }),
+    });
+  });
+
+  await page.goto("/parametres", { waitUntil: "domcontentloaded" });
+  await expectSettingsSettled(page);
+
+  await expect(page.getByLabel("Mot de passe actuel")).toHaveCount(0);
+  await expect(
+    page.getByText("Ton compte est actuellement accessible avec Google."),
+  ).toBeVisible();
+  await page.getByLabel("Nouveau mot de passe").fill("HovrenPassword1");
+  await page.getByLabel("Confirmation").fill("HovrenPassword1");
+  await page.getByRole("button", { name: "Définir mon mot de passe" }).click();
+
+  await expect(page.getByRole("status")).toHaveText(
+    "Ton mot de passe HOVREN est maintenant défini.",
+  );
+  expect(passwordPayload).toEqual({ newPassword: "HovrenPassword1" });
 });
 
 test("l’avatar se synchronise après un seul upload et explique les formats Mac", async ({

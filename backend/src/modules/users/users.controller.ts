@@ -38,6 +38,12 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Put('me/onboarding/welcome')
+  completeWelcomeOnboarding(@Req() req: AuthenticatedRequest) {
+    return this.usersService.completeWelcomeOnboarding(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Req() req: AuthenticatedRequest) {
     const profile = await this.usersService.getProfile(req.user.id);

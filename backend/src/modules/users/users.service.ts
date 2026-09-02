@@ -19,6 +19,8 @@ import { UpdateDiscoveryGeoPreferencesDto } from './dto/update-discovery-geo-pre
 import {
   DISCOVERY_AREAS_ONBOARDING_KEY,
   DISCOVERY_AREAS_ONBOARDING_VERSION,
+  PRODUCT_WELCOME_ONBOARDING_KEY,
+  PRODUCT_WELCOME_ONBOARDING_VERSION,
 } from './user-onboarding.constants';
 import { PUBLIC_SUMMIT_WHERE } from '../summits/summit-publication';
 
@@ -40,6 +42,8 @@ export class UsersService {
           role: true,
           avatarUrl: true,
           createdAt: true,
+          googleSubject: true,
+          passwordConfiguredAt: true,
           geoAreaPreferences: {
             where: { type: UserGeoAreaPreferenceType.DISCOVERY },
             select: { id: true },
@@ -47,11 +51,14 @@ export class UsersService {
           },
           onboardingStates: {
             where: {
-              key: DISCOVERY_AREAS_ONBOARDING_KEY,
-              version: { gte: DISCOVERY_AREAS_ONBOARDING_VERSION },
+              key: {
+                in: [
+                  DISCOVERY_AREAS_ONBOARDING_KEY,
+                  PRODUCT_WELCOME_ONBOARDING_KEY,
+                ],
+              },
             },
-            select: { id: true },
-            take: 1,
+            select: { id: true, key: true, version: true },
           },
         },
       })
@@ -61,12 +68,45 @@ export class UsersService {
               ...profile,
               geoAreaPreferences: undefined,
               onboardingStates: undefined,
+              hasGoogle: Boolean(profile.googleSubject),
+              hasPassword: Boolean(profile.passwordConfiguredAt),
+              googleSubject: undefined,
+              passwordConfiguredAt: undefined,
               needsDiscoveryOnboarding:
                 profile.geoAreaPreferences.length === 0 &&
-                profile.onboardingStates.length === 0,
+                !profile.onboardingStates.some(
+                  (state) =>
+                    state.key === DISCOVERY_AREAS_ONBOARDING_KEY &&
+                    state.version >= DISCOVERY_AREAS_ONBOARDING_VERSION,
+                ),
+              needsWelcomeOnboarding: !profile.onboardingStates.some(
+                (state) =>
+                  state.key === PRODUCT_WELCOME_ONBOARDING_KEY &&
+                  state.version >= PRODUCT_WELCOME_ONBOARDING_VERSION,
+              ),
             }
           : null,
       );
+  }
+
+  async completeWelcomeOnboarding(userId: string) {
+    await this.prisma.userOnboardingState.upsert({
+      where: {
+        userId_key: { userId, key: PRODUCT_WELCOME_ONBOARDING_KEY },
+      },
+      create: {
+        userId,
+        key: PRODUCT_WELCOME_ONBOARDING_KEY,
+        version: PRODUCT_WELCOME_ONBOARDING_VERSION,
+        completedAt: new Date(),
+      },
+      update: {
+        version: PRODUCT_WELCOME_ONBOARDING_VERSION,
+        completedAt: new Date(),
+      },
+    });
+
+    return { completed: true };
   }
 
   async getGeoPreferences(userId: string) {
@@ -185,13 +225,21 @@ export class UsersService {
       throw new UnauthorizedException();
     }
 
-    const passwordMatch = await bcrypt.compare(
-      dto.currentPassword,
-      user.password,
-    );
+    if (user.passwordConfiguredAt) {
+      if (!dto.currentPassword) {
+        throw new BadRequestException('Mot de passe actuel requis');
+      }
 
-    if (!passwordMatch) {
-      throw new BadRequestException('Mot de passe actuel incorrect');
+      const passwordMatch = await bcrypt.compare(
+        dto.currentPassword,
+        user.password,
+      );
+
+      if (!passwordMatch) {
+        throw new BadRequestException('Mot de passe actuel incorrect');
+      }
+    } else if (!user.googleSubject) {
+      throw new BadRequestException('Impossible de définir ce mot de passe');
     }
 
     const hashedPassword = await bcrypt.hash(dto.newPassword, BCRYPT_COST);
@@ -203,6 +251,7 @@ export class UsersService {
 
       data: {
         password: hashedPassword,
+        passwordConfiguredAt: new Date(),
         refreshToken: null,
       },
     });

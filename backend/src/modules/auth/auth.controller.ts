@@ -157,9 +157,12 @@ export class AuthController {
     try {
       const identity = await this.googleAuthService.exchangeCode(code);
       const session = await this.authService.loginWithGoogle(identity);
+      const destination = session.user.needsWelcomeOnboarding
+        ? '/bienvenue'
+        : returnTo;
 
       this.setRefreshTokenCookie(response, session.refreshToken);
-      response.redirect(this.buildFrontendAuthUrl('success', returnTo));
+      response.redirect(this.buildFrontendAuthUrl('success', destination));
     } catch {
       response.redirect(this.buildFrontendAuthUrl('error', returnTo));
     }

@@ -43,7 +43,7 @@ export function VerifyEmailForm() {
 
         setAuth(response.accessToken, response.user);
         setStatus("success");
-        window.setTimeout(() => router.replace("/refuge"), 900);
+        window.setTimeout(() => router.replace("/bienvenue"), 900);
       } catch {
         if (isMounted) {
           setStatus("error");

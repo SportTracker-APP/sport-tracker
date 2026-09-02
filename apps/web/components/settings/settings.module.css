@@ -193,6 +193,16 @@
   margin-top: var(--refuge-flow-gap, 24px);
 }
 
+.googlePasswordNotice {
+  border: 1px solid rgba(66, 133, 244, 0.2);
+  border-radius: 7px;
+  padding: 13px 14px;
+  background: rgba(66, 133, 244, 0.055);
+  color: var(--settings-moss);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 .territoryContent {
   padding: 29px 30px 30px;
 }

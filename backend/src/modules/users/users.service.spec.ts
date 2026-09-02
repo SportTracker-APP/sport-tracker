@@ -37,6 +37,8 @@ describe('UsersService security', () => {
     prisma.user.findUnique.mockResolvedValue({
       id: 'user-1',
       password: currentPasswordHash,
+      passwordConfiguredAt: new Date(),
+      googleSubject: null,
     });
 
     await new UsersService(prisma as unknown as PrismaService).updatePassword(
@@ -50,13 +52,39 @@ describe('UsersService security', () => {
     const updatePayload = prisma.user.update.mock.calls[0]?.[0] as {
       data: {
         password: string;
+        passwordConfiguredAt: Date;
         refreshToken: null;
       };
     };
 
     expect(updatePayload.data.password).not.toBe('NewPassword1');
     expect(updatePayload.data.password).toMatch(/^\$2[ab]\$/);
+    expect(updatePayload.data.passwordConfiguredAt).toBeInstanceOf(Date);
     expect(updatePayload.data.refreshToken).toBeNull();
+  });
+
+  it('lets a Google-only account define its first HOVREN password', async () => {
+    const prisma = makePrismaMock();
+    prisma.user.findUnique.mockResolvedValue({
+      id: 'user-google',
+      password: 'generated-technical-hash',
+      passwordConfiguredAt: null,
+      googleSubject: 'google-subject',
+    });
+
+    await new UsersService(prisma as unknown as PrismaService).updatePassword(
+      'user-google',
+      { newPassword: 'MyPassword1' },
+    );
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 'user-google' },
+      data: {
+        password: expect.stringMatching(/^\$2[ab]\$/),
+        passwordConfiguredAt: expect.any(Date),
+        refreshToken: null,
+      },
+    });
   });
 });
 

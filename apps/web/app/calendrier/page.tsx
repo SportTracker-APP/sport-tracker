@@ -46,6 +46,20 @@ const monthFormatter = new Intl.DateTimeFormat("fr-FR", {
   month: "long",
 });
 
+const monthYearFormatter = new Intl.DateTimeFormat("fr-FR", {
+  month: "long",
+  year: "numeric",
+});
+
+const shortDateFormatter = new Intl.DateTimeFormat("fr-FR", {
+  day: "numeric",
+  month: "short",
+});
+
+const monthWeekdays = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+type PlanningView = "week" | "month";
+
 const timeFormatter = new Intl.DateTimeFormat("fr-FR", {
   hour: "2-digit",
   minute: "2-digit",
@@ -83,11 +97,30 @@ function addDays(date: Date, days: number) {
   return nextDate;
 }
 
+function startOfMonth(date: Date) {
+  const nextDate = new Date(date.getFullYear(), date.getMonth(), 1);
+
+  nextDate.setHours(0, 0, 0, 0);
+
+  return nextDate;
+}
+
+function addMonths(date: Date, months: number) {
+  return new Date(date.getFullYear(), date.getMonth() + months, 1);
+}
+
 function isSameDay(firstDate: Date, secondDate: Date) {
   return (
     firstDate.getFullYear() === secondDate.getFullYear() &&
     firstDate.getMonth() === secondDate.getMonth() &&
     firstDate.getDate() === secondDate.getDate()
+  );
+}
+
+function isSameMonth(firstDate: Date, secondDate: Date) {
+  return (
+    firstDate.getFullYear() === secondDate.getFullYear() &&
+    firstDate.getMonth() === secondDate.getMonth()
   );
 }
 
@@ -151,6 +184,12 @@ function formatWeekTitle(weekStart: Date, weekEnd: Date) {
   )} – ${weekEnd.getDate()} ${monthFormatter.format(weekEnd)} ${weekEnd.getFullYear()}`;
 }
 
+function formatMonthTitle(monthStart: Date) {
+  const label = monthYearFormatter.format(monthStart);
+
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 function SportGlyph({ sport }: { sport: string }) {
   if (["ROAD_CYCLING", "GRAVEL", "MTB"].includes(sport)) {
     return <Bike aria-hidden="true" />;
@@ -171,6 +210,12 @@ function getActivityDate(activity: Activity) {
   return new Date(activity.startedAt);
 }
 
+function getActivityHref(activity: Activity) {
+  return activity.completedActivityId
+    ? `/activites/${activity.completedActivityId}`
+    : `/activites/${activity.id}`;
+}
+
 function getActivityStatus(activity: Activity) {
   if (activity.status === "PLANNED") {
     return { label: "Planifiée", tone: "planned" as const, icon: CalendarDays };
@@ -188,7 +233,9 @@ function getActivityStatus(activity: Activity) {
 }
 
 export default function CalendarPage() {
+  const [view, setView] = useState<PlanningView>("week");
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  const [monthStart, setMonthStart] = useState(() => startOfMonth(new Date()));
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
     null,
   );
@@ -202,12 +249,24 @@ export default function CalendarPage() {
   );
   const weekEnd = weekDays[6];
 
+  const monthDays = useMemo(() => {
+    const calendarStart = startOfWeek(monthStart);
+
+    return Array.from({ length: 42 }, (_, index) =>
+      addDays(calendarStart, index),
+    );
+  }, [monthStart]);
+
+  const calendarActivities = useMemo(
+    () => activities.filter((activity) => !activity.plannedWorkoutId),
+    [activities],
+  );
+
   const activitiesByDay = useMemo(
     () =>
       weekDays.map((day) => ({
         day,
-        activities: activities
-          .filter((activity) => !activity.plannedWorkoutId)
+        activities: calendarActivities
           .filter((activity) => isSameDay(getActivityDate(activity), day))
           .sort(
             (firstActivity, secondActivity) =>
@@ -215,7 +274,22 @@ export default function CalendarPage() {
               getActivityDate(secondActivity).getTime(),
           ),
       })),
-    [activities, weekDays],
+    [calendarActivities, weekDays],
+  );
+
+  const monthActivitiesByDay = useMemo(
+    () =>
+      monthDays.map((day) => ({
+        day,
+        activities: calendarActivities
+          .filter((activity) => isSameDay(getActivityDate(activity), day))
+          .sort(
+            (firstActivity, secondActivity) =>
+              getActivityDate(firstActivity).getTime() -
+              getActivityDate(secondActivity).getTime(),
+          ),
+      })),
+    [calendarActivities, monthDays],
   );
 
   const weekActivities = useMemo(
@@ -223,18 +297,35 @@ export default function CalendarPage() {
     [activitiesByDay],
   );
 
+  const monthActivities = useMemo(
+    () =>
+      calendarActivities
+        .filter((activity) =>
+          isSameMonth(getActivityDate(activity), monthStart),
+        )
+        .sort(
+          (firstActivity, secondActivity) =>
+            getActivityDate(firstActivity).getTime() -
+            getActivityDate(secondActivity).getTime(),
+        ),
+    [calendarActivities, monthStart],
+  );
+
+  const visibleActivities = view === "week" ? weekActivities : monthActivities;
+
   const completedActivities = useMemo(
     () =>
-      weekActivities.filter(
+      visibleActivities.filter(
         (activity) =>
           activity.status === "COMPLETED" && !activity.completedActivityId,
       ),
-    [weekActivities],
+    [visibleActivities],
   );
 
   const plannedActivities = useMemo(
-    () => weekActivities.filter((activity) => activity.status === "PLANNED"),
-    [weekActivities],
+    () =>
+      visibleActivities.filter((activity) => activity.status === "PLANNED"),
+    [visibleActivities],
   );
 
   const weekDistance = useMemo(
@@ -255,10 +346,24 @@ export default function CalendarPage() {
     [completedActivities],
   );
 
-  const activeDays = useMemo(
-    () => activitiesByDay.filter((day) => day.activities.length > 0).length,
-    [activitiesByDay],
-  );
+  const activeDays = useMemo(() => {
+    const uniqueDays = new Set(
+      visibleActivities.map((activity) =>
+        formatDateInput(getActivityDate(activity)),
+      ),
+    );
+
+    return uniqueDays.size;
+  }, [visibleActivities]);
+
+  const periodDayCount =
+    view === "week"
+      ? 7
+      : new Date(
+          monthStart.getFullYear(),
+          monthStart.getMonth() + 1,
+          0,
+        ).getDate();
 
   const nextActivity = useMemo(
     () =>
@@ -275,16 +380,44 @@ export default function CalendarPage() {
     [activities, today],
   );
 
-  function goToPreviousWeek() {
-    setWeekStart((currentWeekStart) => addDays(currentWeekStart, -7));
+  function changeView(nextView: PlanningView) {
+    if (nextView === view) {
+      return;
+    }
+
+    if (nextView === "month") {
+      setMonthStart(startOfMonth(addDays(weekStart, 3)));
+    } else {
+      const currentMonth = isSameMonth(monthStart, today);
+      setWeekStart(startOfWeek(currentMonth ? today : monthStart));
+    }
+
+    setView(nextView);
   }
 
-  function goToNextWeek() {
-    setWeekStart((currentWeekStart) => addDays(currentWeekStart, 7));
+  function goToPreviousPeriod() {
+    if (view === "week") {
+      setWeekStart((currentWeekStart) => addDays(currentWeekStart, -7));
+      return;
+    }
+
+    setMonthStart((currentMonthStart) => addMonths(currentMonthStart, -1));
   }
 
-  function goToCurrentWeek() {
-    setWeekStart(startOfWeek(new Date()));
+  function goToNextPeriod() {
+    if (view === "week") {
+      setWeekStart((currentWeekStart) => addDays(currentWeekStart, 7));
+      return;
+    }
+
+    setMonthStart((currentMonthStart) => addMonths(currentMonthStart, 1));
+  }
+
+  function goToCurrentPeriod() {
+    const now = new Date();
+
+    setWeekStart(startOfWeek(now));
+    setMonthStart(startOfMonth(now));
   }
 
   async function handleConfirmDelete() {
@@ -312,13 +445,18 @@ export default function CalendarPage() {
                   <div className={styles.heroMain}>
                     <div className={styles.heroKicker}>
                       <CalendarDays aria-hidden="true" />
-                      Planning hebdomadaire
+                      Planning {view === "week" ? "hebdomadaire" : "mensuel"}
                     </div>
 
-                    <h1>Ta semaine, du premier pas au prochain sommet.</h1>
+                    <h1>
+                      {view === "week"
+                        ? "Ta semaine, du premier pas au prochain sommet."
+                        : "Ton mois, des rendez-vous aux grandes aventures."}
+                    </h1>
                     <p className={styles.heroDescription}>
-                      Retrouve tes sorties prévues et l’espace qui reste pour
-                      improviser une aventure.
+                      {view === "week"
+                        ? "Retrouve tes sorties prévues et l’espace qui reste pour improviser une aventure."
+                        : "Prends de la hauteur sur les sorties, courses et objectifs déjà inscrits à ton agenda."}
                     </p>
                   </div>
 
@@ -357,7 +495,7 @@ export default function CalendarPage() {
 
                 <div
                   className={styles.metrics}
-                  aria-label="Résumé de la semaine"
+                  aria-label={`Résumé ${view === "week" ? "de la semaine" : "du mois"}`}
                 >
                   <HeroMetric
                     icon={Route}
@@ -377,7 +515,7 @@ export default function CalendarPage() {
                   <HeroMetric
                     icon={Sparkles}
                     label="Jours actifs"
-                    value={`${activeDays}/7`}
+                    value={`${activeDays}/${periodDayCount}`}
                   />
                 </div>
               </header>
@@ -388,38 +526,69 @@ export default function CalendarPage() {
                 className={styles.toolbar}
                 aria-label="Navigation du planning"
               >
-                <div className={styles.toolbarLabel}>
-                  <span>Chapitre en cours</span>
-                  <strong>Choisir la semaine</strong>
+                <div className={styles.toolbarStart}>
+                  <div className={styles.toolbarLabel}>
+                    <span>Chapitre en cours</span>
+                    <strong>
+                      Choisir {view === "week" ? "la semaine" : "le mois"}
+                    </strong>
+                  </div>
+
+                  <div
+                    className={styles.viewSwitcher}
+                    role="group"
+                    aria-label="Affichage du planning"
+                  >
+                    <button
+                      type="button"
+                      aria-pressed={view === "week"}
+                      onClick={() => changeView("week")}
+                    >
+                      Semaine
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={view === "month"}
+                      onClick={() => changeView("month")}
+                    >
+                      Mois
+                    </button>
+                  </div>
                 </div>
 
                 <div className={styles.weekNavigation}>
                   <button
                     type="button"
-                    onClick={goToPreviousWeek}
+                    onClick={goToPreviousPeriod}
                     className={styles.iconButton}
-                    aria-label="Afficher la semaine précédente"
+                    aria-label={`Afficher ${view === "week" ? "la semaine" : "le mois"} précédent${view === "week" ? "e" : ""}`}
                   >
                     <ChevronLeft aria-hidden="true" />
                   </button>
 
                   <div className={styles.weekLabel} aria-live="polite">
-                    <span>Semaine affichée</span>
-                    <strong>{formatWeekTitle(weekStart, weekEnd)}</strong>
+                    <span>
+                      {view === "week" ? "Semaine affichée" : "Mois affiché"}
+                    </span>
+                    <strong>
+                      {view === "week"
+                        ? formatWeekTitle(weekStart, weekEnd)
+                        : formatMonthTitle(monthStart)}
+                    </strong>
                   </div>
 
                   <button
                     type="button"
-                    onClick={goToNextWeek}
+                    onClick={goToNextPeriod}
                     className={styles.iconButton}
-                    aria-label="Afficher la semaine suivante"
+                    aria-label={`Afficher ${view === "week" ? "la semaine suivante" : "le mois suivant"}`}
                   >
                     <ChevronRight aria-hidden="true" />
                   </button>
 
                   <button
                     type="button"
-                    onClick={goToCurrentWeek}
+                    onClick={goToCurrentPeriod}
                     className={styles.todayButton}
                   >
                     Aujourd’hui
@@ -443,7 +612,7 @@ export default function CalendarPage() {
                   <strong>Le planning n’a pas pu rejoindre ton carnet.</strong>
                   <p>
                     Tes activités sont intactes. Réessaie simplement de charger
-                    cette semaine.
+                    cette période.
                   </p>
                 </div>
                 <button type="button" onClick={() => void refetch()}>
@@ -455,41 +624,53 @@ export default function CalendarPage() {
               <FadeIn delay={0.08}>
                 <section
                   className={styles.weekSection}
-                  aria-labelledby="week-heading"
+                  aria-labelledby="planning-heading"
                 >
                   <div className={styles.calendarHeading}>
                     <div>
                       <span className={styles.sectionEyebrow}>
                         <CalendarDays aria-hidden="true" />
-                        Vue semaine
+                        Vue {view === "week" ? "semaine" : "mois"}
                       </span>
-                      <h2 id="week-heading">
-                        Sept jours pour trouver ton rythme.
+                      <h2 id="planning-heading">
+                        {view === "week"
+                          ? "Sept jours pour trouver ton rythme."
+                          : "Tout le mois en un coup d’œil."}
                       </h2>
                     </div>
                     <p>
-                      {weekActivities.length} sortie
-                      {weekActivities.length > 1 ? "s" : ""} cette semaine.
-                      Chaque fiche garde sa place, même quand le terrain reste
-                      ouvert.
+                      {visibleActivities.length} sortie
+                      {visibleActivities.length > 1 ? "s" : ""} {view === "week" ? "cette semaine" : "ce mois-ci"}.
+                      {view === "week"
+                        ? " Chaque fiche garde sa place, même quand le terrain reste ouvert."
+                        : " Les dates importantes restent visibles sans parcourir chaque semaine."}
                     </p>
                   </div>
 
-                  <div className={styles.calendarViewport}>
-                    <div className={styles.weekGrid}>
-                      {activitiesByDay.map(
-                        ({ day, activities: dayActivities }) => (
-                          <DayColumn
-                            key={day.toISOString()}
-                            day={day}
-                            today={today}
-                            activities={dayActivities}
-                            onDeletePlannedActivity={setActivityToDelete}
-                          />
-                        ),
-                      )}
+                  {view === "week" ? (
+                    <div className={styles.calendarViewport}>
+                      <div className={styles.weekGrid}>
+                        {activitiesByDay.map(
+                          ({ day, activities: dayActivities }) => (
+                            <DayColumn
+                              key={day.toISOString()}
+                              day={day}
+                              today={today}
+                              activities={dayActivities}
+                              onDeletePlannedActivity={setActivityToDelete}
+                            />
+                          ),
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <MonthCalendar
+                      monthStart={monthStart}
+                      today={today}
+                      days={monthActivitiesByDay}
+                      monthActivities={monthActivities}
+                    />
+                  )}
                 </section>
               </FadeIn>
             )}
@@ -584,6 +765,159 @@ function PlanningSkeleton() {
         ))}
       </div>
     </div>
+  );
+}
+
+function MonthCalendar({
+  monthStart,
+  today,
+  days,
+  monthActivities,
+}: {
+  monthStart: Date;
+  today: Date;
+  days: Array<{ day: Date; activities: Activity[] }>;
+  monthActivities: Activity[];
+}) {
+  return (
+    <div className={styles.monthCalendar}>
+      <div className={styles.monthWeekdays} aria-hidden="true">
+        {monthWeekdays.map((weekday) => (
+          <span key={weekday}>{weekday}</span>
+        ))}
+      </div>
+
+      <div
+        className={styles.monthGrid}
+        aria-label={`Calendrier de ${formatMonthTitle(monthStart)}`}
+      >
+        {days.map(({ day, activities: dayActivities }) => (
+          <MonthDay
+            key={day.toISOString()}
+            day={day}
+            today={today}
+            currentMonth={monthStart}
+            activities={dayActivities}
+          />
+        ))}
+      </div>
+
+      <div className={styles.monthAgenda} aria-label="Agenda du mois">
+        <div className={styles.monthAgendaHeading}>
+          <span>Agenda</span>
+          <strong>{formatMonthTitle(monthStart)}</strong>
+        </div>
+        {monthActivities.length > 0 ? (
+          monthActivities.map((activity) => {
+            const status = getActivityStatus(activity);
+            const StatusIcon = status.icon;
+
+            return (
+              <Link
+                href={getActivityHref(activity)}
+                className={styles.monthAgendaItem}
+                key={activity.id}
+              >
+                <time dateTime={activity.startedAt}>
+                  {shortDateFormatter.format(getActivityDate(activity))}
+                </time>
+                <span className={styles.monthAgendaIcon}>
+                  <SportGlyph sport={activity.sport} />
+                </span>
+                <span className={styles.monthAgendaCopy}>
+                  <strong>{activity.title ?? "Sortie sans titre"}</strong>
+                  <small>
+                    {timeFormatter.format(getActivityDate(activity))}
+                    <span aria-hidden="true"> · </span>
+                    {sportLabels[activity.sport] ?? activity.sport}
+                  </small>
+                </span>
+                <span className={styles.monthAgendaStatus}>
+                  <StatusIcon aria-hidden="true" />
+                  {status.label}
+                </span>
+              </Link>
+            );
+          })
+        ) : (
+          <div className={styles.monthAgendaEmpty}>
+            <Mountain aria-hidden="true" />
+            <span>
+              <strong>Le mois est encore ouvert.</strong>
+              <small>Ajoute une date dès que ton prochain projet se précise.</small>
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MonthDay({
+  day,
+  today,
+  currentMonth,
+  activities,
+}: {
+  day: Date;
+  today: Date;
+  currentMonth: Date;
+  activities: Activity[];
+}) {
+  const isToday = isSameDay(day, today);
+  const belongsToMonth = isSameMonth(day, currentMonth);
+  const visibleActivities = activities.slice(0, 3);
+
+  return (
+    <article
+      className={`${styles.monthDay} ${isToday ? styles.monthToday : ""} ${!belongsToMonth ? styles.monthOutside : ""}`}
+      data-month-day={formatDateInput(day)}
+      data-current-month={belongsToMonth ? "true" : "false"}
+      aria-current={isToday ? "date" : undefined}
+      aria-label={`${longDayFormatter.format(day)}${isToday ? ", aujourd’hui" : ""}`}
+    >
+      <div className={styles.monthDayHeader}>
+        <time dateTime={formatDateInput(day)}>{day.getDate()}</time>
+        <Link
+          href={getPlanningHref(day)}
+          className={styles.monthAddButton}
+          aria-label={`Planifier une sortie le ${longDayFormatter.format(day)}`}
+        >
+          <Plus aria-hidden="true" />
+        </Link>
+      </div>
+
+      <div className={styles.monthDayActivities}>
+        {visibleActivities.map((activity) => {
+          const tone = getActivityStatus(activity).tone;
+          const toneClass = {
+            planned: styles.monthActivityPlanned,
+            completed: styles.monthActivityCompleted,
+            missed: styles.monthActivityMuted,
+            canceled: styles.monthActivityMuted,
+          }[tone];
+
+          return (
+            <Link
+              key={activity.id}
+              href={getActivityHref(activity)}
+              className={`${styles.monthActivity} ${toneClass}`}
+              title={`${timeFormatter.format(getActivityDate(activity))} — ${activity.title ?? "Sortie sans titre"}`}
+            >
+              <span aria-hidden="true" />
+              <time>{timeFormatter.format(getActivityDate(activity))}</time>
+              <strong>{activity.title ?? "Sortie sans titre"}</strong>
+            </Link>
+          );
+        })}
+        {activities.length > visibleActivities.length ? (
+          <span className={styles.monthMore}>
+            +{activities.length - visibleActivities.length} autre
+            {activities.length - visibleActivities.length > 1 ? "s" : ""}
+          </span>
+        ) : null}
+      </div>
+    </article>
   );
 }
 
@@ -695,9 +1029,7 @@ function CalendarActivity({
   const hasDuration = activity.duration > 0;
   const plannedNote =
     activity.status === "PLANNED" ? activity.description?.trim() : null;
-  const activityHref = activity.completedActivityId
-    ? `/activites/${activity.completedActivityId}`
-    : `/activites/${activity.id}`;
+  const activityHref = getActivityHref(activity);
   const replanHref = `/activites/nouvelle?${new URLSearchParams({
     status: "PLANNED",
     date: formatDateInput(new Date()),
