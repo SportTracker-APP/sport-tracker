@@ -90,6 +90,7 @@ async function fulfillJson(route: Route, body: unknown, status = 200) {
 async function mockAuthenticatedApp(
   page: Page,
   activityResponse: ActivityResponse = "loaded",
+  activities: unknown[] = [activity],
 ) {
   await page.addInitScript(() => {
     window.localStorage.setItem("accessToken", "e2e-mobile-p0-token");
@@ -140,7 +141,7 @@ async function mockAuthenticatedApp(
       return;
     }
 
-    await fulfillJson(route, activityResponse === "empty" ? [] : [activity]);
+    await fulfillJson(route, activityResponse === "empty" ? [] : activities);
   });
 }
 
@@ -343,6 +344,43 @@ test("la liste des sorties expose son chargement sur iPhone", async ({
   await expect(
     page.getByRole("heading", { name: activity.title }),
   ).toBeVisible();
+});
+
+test("le planning reste absent des Sorties et du Refuge", async ({ page }) => {
+  const plannedActivity = {
+    ...activity,
+    id: "planned-mobile-p0",
+    title: "Randonnée prévue samedi",
+    stravaActivityId: null,
+    status: "PLANNED",
+    distance: 0,
+    duration: 0,
+    elevationGain: 0,
+    routePolyline: null,
+    startedAt: "2099-09-06T08:00:00.000Z",
+  };
+  const legacyPlanningPlaceholder = {
+    ...plannedActivity,
+    id: "legacy-planning-placeholder",
+    title: "Ancienne planification vide",
+    status: "COMPLETED",
+    startedAt: "2026-08-18T08:00:00.000Z",
+  };
+
+  await mockAuthenticatedApp(page, "loaded", [
+    plannedActivity,
+    legacyPlanningPlaceholder,
+    activity,
+  ]);
+
+  for (const path of ["/activites", "/refuge"]) {
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    await expect(page.getByText(plannedActivity.title)).toHaveCount(0);
+    await expect(page.getByText(legacyPlanningPlaceholder.title)).toHaveCount(
+      0,
+    );
+    await expect(page.getByText(activity.title).first()).toBeVisible();
+  }
 });
 
 test("l’exploration expose son erreur sur iPhone", async ({ page }) => {

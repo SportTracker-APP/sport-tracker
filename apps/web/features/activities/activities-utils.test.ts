@@ -53,10 +53,21 @@ function activity(overrides: Partial<Activity> = {}): Activity {
 }
 
 describe("activities utils", () => {
-  it("excludes planned duplicates and sorts completed activities", () => {
+  it("only keeps past recorded activities and sorts them", () => {
     const result = getCompletedActivities([
       activity({ id: "older", startedAt: "2026-06-01T08:00:00.000Z" }),
       activity({ id: "planned", status: "PLANNED" }),
+      activity({ id: "missed", status: "MISSED" }),
+      activity({ id: "canceled", status: "CANCELED" }),
+      activity({ id: "future", startedAt: "2099-07-01T08:00:00.000Z" }),
+      activity({
+        id: "planning-placeholder",
+        stravaActivityId: null,
+        routePolyline: null,
+        distance: 0,
+        duration: 0,
+        elevationGain: 0,
+      }),
       activity({ id: "duplicate", completedActivityId: "older" }),
       activity({ id: "newer", startedAt: "2026-07-01T08:00:00.000Z" }),
     ]);

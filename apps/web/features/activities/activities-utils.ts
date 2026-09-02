@@ -1,4 +1,5 @@
 import type { Activity } from "@/lib/activities";
+import { isRecordedCompletedActivity } from "@/lib/activity-visibility";
 
 import type {
   ActivityFilter,
@@ -209,11 +210,10 @@ export function createRouteSketch(
 }
 
 export function getCompletedActivities(activities: Activity[]) {
+  const now = Date.now();
+
   return activities
-    .filter(
-      (activity) =>
-        activity.status === "COMPLETED" && !activity.completedActivityId,
-    )
+    .filter((activity) => isRecordedCompletedActivity(activity, now))
     .sort(
       (left, right) =>
         new Date(right.startedAt).getTime() -

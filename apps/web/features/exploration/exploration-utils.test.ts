@@ -15,9 +15,7 @@ import {
 
 const ROUTE_POLYLINE = "_p~iF~ps|U_ulLnnqC_mqNvxq`@";
 
-function createActivity(
-  overrides: Partial<Activity> = {},
-): Activity {
+function createActivity(overrides: Partial<Activity> = {}): Activity {
   const id = overrides.id ?? "activity-1";
   return {
     id,
@@ -79,10 +77,16 @@ describe("exploration utilities", () => {
     expect(geoJson.features[0]?.geometry.coordinates.length).toBeGreaterThan(1);
   });
 
-  it("ignore les séances planifiées, les sports intérieurs et les sorties sans trace", () => {
+  it("ignore tout ce qui n’est pas une trace réellement terminée", () => {
     const routes = mapActivitiesToRoutes([
       createActivity({ id: "valid" }),
       createActivity({ id: "planned", status: "PLANNED" }),
+      createActivity({ id: "missed", status: "MISSED" }),
+      createActivity({ id: "canceled", status: "CANCELED" }),
+      createActivity({
+        id: "future",
+        startedAt: new Date(Date.now() + 86_400_000).toISOString(),
+      }),
       createActivity({ id: "gym", sport: "GYM" }),
       createActivity({ id: "without-route", routePolyline: null }),
     ]);

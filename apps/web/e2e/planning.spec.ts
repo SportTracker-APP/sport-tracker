@@ -288,9 +288,11 @@ test("le planning reprend le carnet HOVREN et conserve sa navigation", async ({
     page.getByText("Sorties prévues", { exact: true }),
   ).toBeVisible();
   await expect(page.locator("[data-day]")).toHaveCount(7);
-  const dayHeights = await page.locator("[data-day]").evaluateAll((cards) =>
-    cards.map((card) => Math.round(card.getBoundingClientRect().height)),
-  );
+  const dayHeights = await page
+    .locator("[data-day]")
+    .evaluateAll((cards) =>
+      cards.map((card) => Math.round(card.getBoundingClientRect().height)),
+    );
   expect(new Set(dayHeights).size).toBe(1);
 
   await page.screenshot({
@@ -353,15 +355,24 @@ test("le planning reprend le carnet HOVREN et conserve sa navigation", async ({
     page.locator(`[data-day="${toDateInput(monday)}"]`).getByRole("link", {
       name: /Planifier une sortie/,
     }),
-  ).toHaveAttribute("href", new RegExp(`date=${toDateInput(monday)}`));
+  ).toHaveAttribute(
+    "href",
+    new RegExp(`status=PLANNED.*date=${toDateInput(monday)}`),
+  );
   await expect(
     page.locator(`[data-day="${toDateInput(sunday)}"]`).getByRole("link", {
       name: /Planifier une sortie/,
     }),
-  ).toHaveAttribute("href", new RegExp(`date=${toDateInput(sunday)}`));
+  ).toHaveAttribute(
+    "href",
+    new RegExp(`status=PLANNED.*date=${toDateInput(sunday)}`),
+  );
   await expect(
     page.getByRole("link", { name: "Planifier une sortie", exact: true }),
-  ).toHaveAttribute("href", new RegExp(`date=${toDateInput(new Date())}`));
+  ).toHaveAttribute(
+    "href",
+    new RegExp(`status=PLANNED.*date=${toDateInput(new Date())}`),
+  );
   await expectNoHorizontalOverflow(page);
 
   await page.screenshot({
@@ -395,17 +406,19 @@ test("les actions d’une sortie respectent la date prévue", async ({ page }) =
     .toBe(false);
   await expect(page.getByText("Sortie d’endurance progressive")).toHaveCount(0);
 
-  const futureActions = page.locator('button[data-future="true"]');
-  await expect(futureActions).toHaveCount(1);
-  await expect(futureActions.first()).toBeDisabled();
-  await expect(
-    futureActions.getByText("À venir", { exact: true }),
-  ).toHaveCount(1);
+  const futureStates = page.locator('[data-trace-state="future"]');
+  await expect(futureStates).toHaveCount(1);
+  await expect(futureStates).toHaveText("À venir");
 
-  await page
-    .getByRole("button", { name: /Indiquer que la sortie Marche du matin/ })
-    .click();
-  await expect(page.getByText("Terminée", { exact: true })).toBeVisible();
+  const waitingStates = page.locator('[data-trace-state="waiting"]');
+  await expect(waitingStates).toHaveCount(1);
+  await expect(waitingStates).toHaveText("En attente d’une trace");
+  await expect(page.getByRole("button", { name: /Sortie faite/ })).toHaveCount(
+    0,
+  );
+  expect(
+    mock.getActivities().find((item) => item.id === "planned-past")?.status,
+  ).toBe("PLANNED");
 });
 
 test("la semaine totalement vide reste complète à tous les breakpoints", async ({

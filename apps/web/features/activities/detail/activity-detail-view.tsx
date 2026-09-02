@@ -142,12 +142,12 @@ export function ActivityDetailView() {
         </header>
 
         {plannedSuggestion ? (
-          <section className={styles.plannedLink} aria-label="Séance planifiée">
+          <section className={styles.plannedLink} aria-label="Sortie planifiée">
             <div>
               <span>Correspondance trouvée</span>
               <strong>
                 Cette trace ressemble à «{" "}
-                {plannedSuggestion.title || "ta séance planifiée"} ».
+                {plannedSuggestion.title || "ta sortie planifiée"} ».
               </strong>
             </div>
             <button
@@ -162,7 +162,7 @@ export function ActivityDetailView() {
             >
               {completePlannedWorkout.isPending
                 ? "Association…"
-                : "Associer la séance"}
+                : "Associer la sortie"}
             </button>
           </section>
         ) : null}

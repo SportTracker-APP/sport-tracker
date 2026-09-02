@@ -8,6 +8,7 @@ import type {
   GeoJsonFeatureCollection,
   NotableRoute,
 } from "./exploration-types";
+import { isRecordedCompletedActivity } from "@/lib/activity-visibility";
 import { getEditorialActivityImage } from "@/lib/mountain-visuals";
 
 export const OUTDOOR_SPORTS = new Set([
@@ -62,7 +63,7 @@ export function mapActivitiesToRoutes(
   return activities
     .filter(
       (activity) =>
-        activity.status !== "PLANNED" &&
+        isRecordedCompletedActivity(activity) &&
         Boolean(activity.routePolyline) &&
         OUTDOOR_SPORTS.has(activity.sport),
     )

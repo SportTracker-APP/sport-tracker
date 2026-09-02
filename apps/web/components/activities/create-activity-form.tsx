@@ -315,6 +315,7 @@ export function CreateActivityForm() {
       await api.post("/activities", {
         ...activityData,
         type: "TRAINING",
+        status: activityMode,
         description: activityNotes || undefined,
         distance: shouldShowPerformanceMetrics ? activityData.distance : 0,
         duration: shouldShowPerformanceMetrics ? totalDuration : 0,

@@ -41,7 +41,7 @@ const TAWK_SCRIPT_URL =
   "https://embed.tawk.to/6a60c831ff3acf1d4aaccba3/1ju50s0ah";
 const TAWK_SCRIPT_ID = "tawk-to-widget";
 
-const LANDING_PATHS = new Set(["/", "/landing-page-v1"]);
+const LANDING_PATHS = new Set(["/"]);
 
 function isLandingPath(pathname: string) {
   return LANDING_PATHS.has(pathname);

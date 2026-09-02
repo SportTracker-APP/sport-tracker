@@ -27,11 +27,7 @@ import {
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { FadeIn } from "@/components/ui/fade-in";
-import {
-  useActivities,
-  useDeleteActivity,
-  useMarkPlannedWorkoutCompleted,
-} from "@/hooks/use-activities";
+import { useActivities, useDeleteActivity } from "@/hooks/use-activities";
 import type { Activity } from "@/lib/activities";
 
 import styles from "./planning-page.module.css";
@@ -104,7 +100,11 @@ function formatDateInput(date: Date) {
 }
 
 function getPlanningHref(date: Date) {
-  return `/activites/nouvelle?date=${formatDateInput(date)}`;
+  return `/activites/nouvelle?${new URLSearchParams({
+    status: "PLANNED",
+    date: formatDateInput(date),
+    returnTo: "/calendrier",
+  }).toString()}`;
 }
 
 function formatDuration(minutes: number) {
@@ -695,7 +695,6 @@ function CalendarActivity({
   const hasDuration = activity.duration > 0;
   const plannedNote =
     activity.status === "PLANNED" ? activity.description?.trim() : null;
-  const completePlannedWorkoutMutation = useMarkPlannedWorkoutCompleted();
   const activityHref = activity.completedActivityId
     ? `/activites/${activity.completedActivityId}`
     : `/activites/${activity.id}`;
@@ -714,10 +713,11 @@ function CalendarActivity({
     missed: styles.activityMissed,
     canceled: styles.activityCanceled,
   }[status.tone];
-  const canMarkAsCompleted = activityDate.getTime() <= now.getTime();
-  const futureCompletionLabel = `Disponible à partir du ${longDayFormatter.format(
-    activityDate,
-  )} à ${timeFormatter.format(activityDate)}`;
+  const isUpcoming = activityDate.getTime() > now.getTime();
+  const traceStateLabel = isUpcoming ? "À venir" : "En attente d’une trace";
+  const traceStateDescription = isUpcoming
+    ? `Prévue le ${longDayFormatter.format(activityDate)} à ${timeFormatter.format(activityDate)}`
+    : "Elle apparaîtra dans Sorties dès qu’une trace Strava ou HOVREN lui sera associée.";
 
   return (
     <div className={`${styles.activityCard} ${toneClass}`}>
@@ -780,33 +780,18 @@ function CalendarActivity({
 
       {activity.status === "PLANNED" ? (
         <div className={styles.plannedActions}>
-          <button
-            type="button"
-            className={styles.completeAction}
-            aria-label={
-              canMarkAsCompleted
-                ? `Indiquer que la sortie ${activity.title ?? "planifiée"} a été réalisée`
-                : `${activity.title ?? "Sortie planifiée"} : ${futureCompletionLabel}`
-            }
-            title={canMarkAsCompleted ? undefined : futureCompletionLabel}
-            data-future={!canMarkAsCompleted}
-            data-pending={completePlannedWorkoutMutation.isPending}
-            disabled={
-              !canMarkAsCompleted || completePlannedWorkoutMutation.isPending
-            }
-            onClick={() => completePlannedWorkoutMutation.mutate(activity.id)}
+          <div
+            className={styles.traceState}
+            data-trace-state={isUpcoming ? "future" : "waiting"}
+            title={traceStateDescription}
           >
-            {canMarkAsCompleted ? (
-              <CheckCircle2 aria-hidden="true" />
-            ) : (
+            {isUpcoming ? (
               <Clock3 aria-hidden="true" />
+            ) : (
+              <RefreshCw aria-hidden="true" />
             )}
-            {completePlannedWorkoutMutation.isPending
-              ? "Validation…"
-              : canMarkAsCompleted
-                ? "Sortie faite"
-                : "À venir"}
-          </button>
+            <span>{traceStateLabel}</span>
+          </div>
           <button
             type="button"
             className={styles.deleteAction}
@@ -817,11 +802,6 @@ function CalendarActivity({
             <Trash2 aria-hidden="true" />
             Supprimer
           </button>
-          {completePlannedWorkoutMutation.isError ? (
-            <p className={styles.mutationError}>
-              Impossible de valider la sortie.
-            </p>
-          ) : null}
         </div>
       ) : null}
     </div>

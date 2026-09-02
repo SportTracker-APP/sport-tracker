@@ -58,6 +58,7 @@ import { useGoals } from "@/hooks/use-goals";
 import { useSummitBadges, useSummits } from "@/hooks/use-summits";
 import { api } from "@/lib/api";
 import type { Activity as SportActivity } from "@/lib/activities";
+import { isRecordedCompletedActivity } from "@/lib/activity-visibility";
 import {
   ACTIVITY_CHART_PERIOD_STORAGE_KEY,
   getActivityChartSummary,
@@ -505,11 +506,10 @@ function isChartMetric(value: string | null): value is ChartMetric {
 }
 
 function getCompletedActivities(activities: SportActivity[]) {
+  const now = Date.now();
+
   return activities
-    .filter(
-      (activity) =>
-        activity.status === "COMPLETED" && !activity.completedActivityId,
-    )
+    .filter((activity) => isRecordedCompletedActivity(activity, now))
     .sort(
       (firstActivity, secondActivity) =>
         new Date(secondActivity.startedAt).getTime() -
@@ -1144,7 +1144,7 @@ function PlannedWorkoutCelebrationCard({
         </div>
         <div className={styles.celebrationContent}>
           <p className={styles.celebrationKicker}>Sortie accomplie</p>
-          <h2>{plannedWorkout.title ?? "Séance planifiée terminée"}</h2>
+          <h2>{plannedWorkout.title ?? "Sortie planifiée terminée"}</h2>
           <p>Vous aviez prévu cette sortie. Vous l’avez réalisée.</p>
           <div className={styles.celebrationMetrics}>
             <span>{getSportLabel(completedActivity)}</span>

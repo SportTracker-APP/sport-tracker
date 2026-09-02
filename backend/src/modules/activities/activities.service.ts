@@ -41,12 +41,20 @@ export class ActivitiesService {
 
     const { plannedWorkoutId: _plannedWorkoutId, ...activityData } = dto;
     void _plannedWorkoutId;
+    const startedAt = new Date(dto.startedAt);
+
+    if (
+      (dto.status ?? ActivityStatusDto.COMPLETED) ===
+      ActivityStatusDto.COMPLETED
+    ) {
+      this.assertCompletedActivityHasStarted(startedAt);
+    }
 
     const activity = await this.prisma.activity.create({
       data: {
         ...activityData,
 
-        startedAt: new Date(dto.startedAt),
+        startedAt,
 
         userId,
       },
@@ -130,11 +138,19 @@ export class ActivitiesService {
       ? new Date(dto.startedAt)
       : currentActivity.startedAt;
 
+    const targetStatus = dto.status ?? currentActivity.status;
+
     if (
       currentActivity.status === ActivityStatus.PLANNED &&
-      dto.status === ActivityStatusDto.COMPLETED
+      targetStatus === ActivityStatusDto.COMPLETED
     ) {
-      this.assertPlannedWorkoutHasStarted(targetStartedAt);
+      throw new BadRequestException(
+        'Associe une activité enregistrée pour valider cette sortie planifiée',
+      );
+    }
+
+    if (targetStatus === ActivityStatusDto.COMPLETED) {
+      this.assertCompletedActivityHasStarted(targetStartedAt);
     }
 
     const updatedActivity = await this.prisma.activity.update({
@@ -309,17 +325,20 @@ export class ActivitiesService {
     dto: CreateActivityDto,
   ) {
     const { plannedWorkoutId, ...activityData } = dto;
+    const startedAt = new Date(dto.startedAt);
 
     if (!plannedWorkoutId) {
       throw new BadRequestException('Séance planifiée manquante');
     }
+
+    this.assertCompletedActivityHasStarted(startedAt);
 
     const completedWorkout = await this.prisma.$transaction(async (tx) => {
       const activity = await tx.activity.create({
         data: {
           ...activityData,
           status: ActivityStatus.COMPLETED,
-          startedAt: new Date(dto.startedAt),
+          startedAt,
           userId,
         },
       });
@@ -385,7 +404,7 @@ export class ActivitiesService {
       throw new BadRequestException('Cette séance ne peut pas être terminée');
     }
 
-    this.assertPlannedWorkoutHasStarted(plannedWorkout.startedAt);
+    this.assertCompletedActivityHasStarted(plannedWorkout.startedAt);
 
     const activity = await tx.activity.findFirst({
       where: {
@@ -448,7 +467,7 @@ export class ActivitiesService {
     });
   }
 
-  private assertPlannedWorkoutHasStarted(startedAt: Date) {
+  private assertCompletedActivityHasStarted(startedAt: Date) {
     if (startedAt.getTime() > Date.now()) {
       throw new BadRequestException(
         'Une sortie planifiée ne peut pas être terminée avant son heure de départ',

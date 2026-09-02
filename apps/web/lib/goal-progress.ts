@@ -1,4 +1,5 @@
 import type { Activity } from "./activities";
+import { isRecordedCompletedActivity } from "./activity-visibility";
 import type { Goal, GoalPeriod, GoalType } from "./goals";
 
 export type GoalLike = Goal & {
@@ -230,7 +231,7 @@ export function calculateGoalProgress(
       : getGoalPeriodBounds(goal));
 
   const goalActivities = activities.filter((activity) => {
-    if (activity.status === "PLANNED") {
+    if (!isRecordedCompletedActivity(activity)) {
       return false;
     }
 

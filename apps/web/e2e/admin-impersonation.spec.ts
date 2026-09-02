@@ -47,6 +47,48 @@ test("un admin accède au compte client puis quitte clairement le mode admin", a
       body: JSON.stringify(currentUser),
     });
   });
+  await page.route("**/users/me/geo-preferences", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ discovery: [], onboardingCompleted: true }),
+    });
+  });
+  await page.route("**/auth/refresh", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ accessToken: "admin-access-token", user: admin }),
+    });
+  });
+  await page.route("**/strava/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ connected: false }),
+    });
+  });
+  await page.route("**/activities**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "[]",
+    });
+  });
+  await page.route("**/summits**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "[]",
+    });
+  });
+  await page.route("**/goals**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "[]",
+    });
+  });
   await page.route("**/admin/metrics", async (route) => {
     await route.fulfill({
       status: 200,
@@ -115,9 +157,7 @@ test("un admin accède au compte client puis quitte clairement le mode admin", a
   });
 
   await page.goto("/admin");
-  await page
-    .getByRole("button", { name: "Gestion utilisateurs" })
-    .click();
+  await page.getByRole("button", { name: "Gestion utilisateurs" }).click();
   const accessButton = page.getByRole("button", {
     name: "Accéder au compte",
   });

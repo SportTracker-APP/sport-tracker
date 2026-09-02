@@ -233,7 +233,7 @@ test("un admin recherche, ouvre et modifie un sommet sans quitter le catalogue",
   await expect(page.getByText("Données essentielles complètes.")).toBeVisible();
 
   await page.getByLabel("Nom").fill("La Tournette — catalogue");
-  await page.getByRole("button", { name: "Enregistrer" }).click();
+  await page.getByRole("button", { name: "Enregistrer", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("enregistrées");
 
   await page.getByRole("button", { name: "Publier", exact: true }).click();

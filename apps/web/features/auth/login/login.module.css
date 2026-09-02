@@ -676,6 +676,9 @@
 }
 
 .verificationLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   width: fit-content;
   color: var(--pine);
   font-size: 0.9rem;
@@ -795,11 +798,11 @@
 .passwordToggle {
   position: absolute;
   top: 50%;
-  right: 14px;
+  right: 6px;
   z-index: 2;
   display: inline-flex;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   align-items: center;
   justify-content: center;
   border: 0;
@@ -922,6 +925,8 @@
 .formUtility button,
 .formFooter a,
 .backButton {
+  min-height: 44px;
+  align-items: center;
   color: var(--pine);
   font-weight: 700;
   text-decoration: none;
@@ -931,6 +936,7 @@
 }
 
 .formUtility button {
+  display: inline-flex;
   border: 0;
   background: transparent;
   font-size: 0.88rem;
@@ -1022,6 +1028,10 @@
   color: rgba(83, 96, 79, 0.82);
   font-size: 0.92rem;
   text-align: center;
+}
+
+.formFooter a {
+  display: inline-flex;
 }
 
 .backButton {

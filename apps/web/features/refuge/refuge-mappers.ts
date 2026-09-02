@@ -1,4 +1,5 @@
 import type { Activity } from "@/lib/activities";
+import { isRecordedCompletedActivity } from "@/lib/activity-visibility";
 import {
   calculateGoalProgress,
   formatGoalValue,
@@ -326,8 +327,9 @@ export function createRefugeViewModel(input: {
   badges: SummitBadge[];
   goals: Goal[];
 }): RefugeViewModel {
+  const now = Date.now();
   const completedActivities = input.activities
-    .filter((activity) => activity.status !== "PLANNED")
+    .filter((activity) => isRecordedCompletedActivity(activity, now))
     .sort(
       (first, second) =>
         new Date(second.startedAt).getTime() -
@@ -371,7 +373,7 @@ export function createRefugeViewModel(input: {
       .filter(
         (activity) =>
           activity.status === "PLANNED" &&
-          new Date(activity.startedAt).getTime() >= Date.now(),
+          new Date(activity.startedAt).getTime() >= now,
       )
       .sort(
         (first, second) =>

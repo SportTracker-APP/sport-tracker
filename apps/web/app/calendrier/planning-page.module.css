@@ -406,7 +406,6 @@
 .todayButton,
 .primaryButton,
 .dayAddButton,
-.completeAction,
 .deleteAction,
 .secondaryAction,
 .viewAction,
@@ -996,7 +995,6 @@
 
 .viewAction,
 .secondaryAction,
-.completeAction,
 .deleteAction {
   display: inline-flex;
   min-height: 32px;
@@ -1026,7 +1024,6 @@
 
 .viewAction svg,
 .secondaryAction svg,
-.completeAction svg,
 .deleteAction svg {
   width: 13px;
   height: 13px;
@@ -1039,31 +1036,31 @@
   margin-top: 10px;
 }
 
-.completeAction,
 .deleteAction {
   width: 100%;
 }
 
-.completeAction {
-  border-color: var(--planning-terracotta);
-  background: var(--planning-terracotta);
-  color: #fffaf2;
-}
-
-.completeAction:disabled {
-  cursor: not-allowed;
-  border-color: var(--planning-line);
+.traceState {
+  display: inline-flex;
+  width: 100%;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 9px;
+  border: 1px solid var(--planning-line);
+  border-radius: 3px;
   background: var(--planning-paper-deep);
   color: var(--planning-moss);
-  opacity: 1;
+  font-size: 0.64rem;
+  font-weight: 800;
+  text-align: center;
 }
 
-.completeAction[data-pending="true"]:disabled {
-  cursor: wait;
-  border-color: var(--planning-terracotta);
-  background: var(--planning-terracotta);
-  color: #fffaf2;
-  opacity: 0.58;
+.traceState svg {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
 }
 
 .deleteAction {
@@ -1077,26 +1074,8 @@
   background: rgba(47, 99, 82, 0.06);
 }
 
-.completeAction:hover {
-  border-color: var(--planning-terracotta-deep);
-  background: var(--planning-terracotta-deep);
-}
-
-.completeAction:disabled:not([data-pending="true"]):hover {
-  border-color: var(--planning-line);
-  background: var(--planning-paper-deep);
-}
-
 .deleteAction:hover {
   background: rgba(204, 88, 47, 0.07);
-}
-
-.mutationError {
-  margin: 0;
-  color: #963a2b;
-  font-size: 0.6rem;
-  line-height: 1.4;
-  text-align: center;
 }
 
 .errorState {
@@ -1301,7 +1280,6 @@
 .activityTitle:focus-visible,
 .viewAction:focus-visible,
 .secondaryAction:focus-visible,
-.completeAction:focus-visible,
 .deleteAction:focus-visible,
 .errorState button:focus-visible {
   outline: 3px solid rgba(204, 88, 47, 0.34);
@@ -1628,13 +1606,9 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .completeAction,
+  .traceState,
   .deleteAction {
     min-height: 44px;
-  }
-
-  .mutationError {
-    grid-column: 1 / -1;
   }
 
   .errorState {

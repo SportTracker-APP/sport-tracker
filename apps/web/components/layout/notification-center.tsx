@@ -310,7 +310,7 @@ export function NotificationCenter() {
                           </span>
                           <span className="min-w-0 flex-1">
                             <strong className="app-notification-item-title block truncate text-xs font-semibold">
-                              {activity.title || "Séance prévue"}
+                              {activity.title || "Sortie prévue"}
                             </strong>
                             <span className="app-notification-item-meta mt-0.5 block truncate text-[0.68rem]">
                               {getSportLabel(activity.sport)} ·{" "}

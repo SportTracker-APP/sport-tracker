@@ -21,7 +21,6 @@ const publicRoutes = [
   "/forgot-password",
   "/reset-password",
   "/verify-email",
-  "/theme-lab",
   "/confidentialite",
   "/conditions",
 ];

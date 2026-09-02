@@ -182,8 +182,7 @@ describe("createRefugeViewModel", () => {
     expect(result.nextBadge).toMatchObject({
       criterionLabel: "Réalise 1 500 m D+ sur une seule sortie.",
       progressLabel: "Meilleure sortie : 1 470 / 1 500 m D+",
-      remainingLabel:
-        "Plus que 30 m D+ sur une même sortie pour le débloquer.",
+      remainingLabel: "Plus que 30 m D+ sur une même sortie pour le débloquer.",
     });
   });
 
@@ -350,6 +349,26 @@ describe("createRefugeViewModel", () => {
     expect(result.welcomeMessage).toBe(
       "Ta prochaine aventure est déjà au programme.",
     );
+  });
+
+  it("ignore les sorties futures, manquées ou annulées dans le carnet et les défis", () => {
+    const futureDate = new Date(Date.now() + 86_400_000).toISOString();
+    const result = createRefugeViewModel({
+      activities: [
+        createActivity({ id: "future", startedAt: futureDate }),
+        createActivity({ id: "missed", status: "MISSED" }),
+        createActivity({ id: "canceled", status: "CANCELED" }),
+      ],
+      summits: [],
+      badges: [],
+      goals: [goal],
+    });
+
+    expect(result.activityCount).toBe(0);
+    expect(result.recentActivities).toHaveLength(0);
+    expect(result.storyEvents).toHaveLength(0);
+    expect(result.challenge.progress).toBe(0);
+    expect(result.challenge.currentLabel).toBe("0 km");
   });
 
   it("met une découverte récente au premier plan", () => {

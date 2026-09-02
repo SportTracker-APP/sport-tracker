@@ -276,6 +276,22 @@ describe('ActivitiesService planned workout completion', () => {
     );
   });
 
+  it('refuses to create a completed activity in the future', async () => {
+    const prisma = makePrismaMock();
+
+    await expect(
+      makeService(prisma).create('user-1', {
+        type: ActivityTypeDto.TRAINING,
+        sport: SportTypeDto.HIKING,
+        status: ActivityStatusDto.COMPLETED,
+        title: 'Randonnée de samedi',
+        duration: 0,
+        startedAt: '2026-06-21T08:00:00.000Z',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.activity.create).not.toHaveBeenCalled();
+  });
+
   it('reschedules an upcoming reminder when a planned activity is updated', async () => {
     const prisma = makePrismaMock();
     const scheduler = makeSchedulerMock();
@@ -298,12 +314,12 @@ describe('ActivitiesService planned workout completion', () => {
     );
   });
 
-  it('refuses to mark a future planned activity as completed', async () => {
+  it('refuses to complete a planned activity without a recorded trace', async () => {
     const prisma = makePrismaMock();
     const plannedActivity = makeActivity({
-      id: 'planned-future',
+      id: 'planned-past',
       status: ActivityStatus.PLANNED,
-      startedAt: new Date('2026-06-21T08:00:00.000Z'),
+      startedAt: new Date('2026-06-20T08:00:00.000Z'),
     });
     prisma.activity.findFirst.mockResolvedValue(plannedActivity);
 

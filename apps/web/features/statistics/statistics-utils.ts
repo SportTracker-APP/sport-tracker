@@ -1,5 +1,6 @@
 import type { ActivityChartPeriod } from "@/lib/activity-chart-period";
 import type { Activity } from "@/lib/activities";
+import { isRecordedCompletedActivity } from "@/lib/activity-visibility";
 
 export type ActivityTotals = {
   count: number;
@@ -60,7 +61,11 @@ function getDateKey(date: Date) {
 }
 
 export function getCompletedActivities(activities: Activity[]) {
-  return activities.filter((activity) => activity.status !== "PLANNED");
+  const now = Date.now();
+
+  return activities.filter((activity) =>
+    isRecordedCompletedActivity(activity, now),
+  );
 }
 
 export function sumActivities(activities: Activity[]): ActivityTotals {

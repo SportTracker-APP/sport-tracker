@@ -255,7 +255,7 @@ export function RegisterForm() {
       <div className={styles.formHeader}>
         <span className={styles.formEyebrow}>Ton futur refuge</span>
         <h2>Crée ton carnet</h2>
-        <p>Commence ton carnet outdoor et prépare tes premières traces.</p>
+        <p>Commence ton carnet de sommets et prépare tes premières traces.</p>
       </div>
 
       <form

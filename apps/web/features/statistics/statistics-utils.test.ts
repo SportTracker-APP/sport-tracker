@@ -6,6 +6,7 @@ import {
   getActiveDayCount,
   getCalendarDays,
   getCalendarMonthDays,
+  getCompletedActivities,
   getPeriodComparison,
   getPeriodHighlightActivity,
   getSportDistribution,
@@ -71,6 +72,24 @@ describe("statistics-utils", () => {
       distance: 8,
     }),
   ];
+
+  it("ne comptabilise que les sorties réellement terminées et déjà commencées", () => {
+    const filtered = getCompletedActivities([
+      ...activities,
+      createActivity(new Date(Date.now() + 86_400_000).toISOString()),
+      createActivity(new Date(2026, 6, 28, 8).toISOString(), {
+        status: "PLANNED",
+      }),
+      createActivity(new Date(2026, 6, 28, 9).toISOString(), {
+        status: "MISSED",
+      }),
+      createActivity(new Date(2026, 6, 28, 10).toISOString(), {
+        status: "CANCELED",
+      }),
+    ]);
+
+    expect(filtered).toEqual(activities);
+  });
 
   it("additionne uniquement les valeurs disponibles", () => {
     expect(sumActivities(activities)).toEqual({

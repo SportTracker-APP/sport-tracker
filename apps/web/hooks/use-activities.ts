@@ -8,7 +8,6 @@ import {
   getActivity,
   getActivities,
   getPlannedWorkoutSuggestion,
-  markPlannedWorkoutCompleted,
   markPlannedWorkoutCelebrationSeen,
 } from "@/lib/activities";
 
@@ -64,20 +63,6 @@ export function useDeleteActivity() {
     mutationFn: deleteActivity,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["activities"] });
-    },
-  });
-}
-
-export function useMarkPlannedWorkoutCompleted() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: markPlannedWorkoutCompleted,
-    onSuccess: (activity) => {
-      void queryClient.invalidateQueries({ queryKey: ["activities"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["activities", activity.id],
-      });
     },
   });
 }

@@ -128,6 +128,13 @@ const stravaSportCases = [
 ] as const;
 
 async function mockActivityDetail(page: Page) {
+  const user = {
+    id: "user-activity-detail",
+    firstName: "Camille",
+    email: "camille@example.test",
+    role: "USER",
+  };
+
   await page.addInitScript(() => {
     window.localStorage.setItem("accessToken", "e2e-access-token");
   });
@@ -140,12 +147,47 @@ async function mockActivityDetail(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({
-        id: "user-activity-detail",
-        firstName: "Camille",
-        email: "camille@example.test",
-        role: "USER",
-      }),
+      body: JSON.stringify(user),
+    });
+  });
+
+  await page.route("**/users/me/geo-preferences", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ discovery: [], onboardingCompleted: true }),
+    });
+  });
+
+  await page.route("**/auth/refresh", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ accessToken: "e2e-access-token", user }),
+    });
+  });
+
+  await page.route("**/strava/status", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ connected: false }),
+    });
+  });
+
+  await page.route("**/goals**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "[]",
+    });
+  });
+
+  await page.route("**/summits**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: "[]",
     });
   });
 
@@ -168,15 +210,15 @@ async function mockActivityDetail(page: Page) {
       ? sparseActivity
       : pathname.endsWith("/activity-talamarche")
         ? talamarcheActivity
-      : pathname.endsWith("/activity-aggregate-elevation")
-        ? aggregateElevationActivity
-        : sportCase
-          ? {
-              ...detailedActivity,
-              id: `activity-sport-${sportCase.slug}`,
-              sport: sportCase.sport,
-            }
-          : detailedActivity;
+        : pathname.endsWith("/activity-aggregate-elevation")
+          ? aggregateElevationActivity
+          : sportCase
+            ? {
+                ...detailedActivity,
+                id: `activity-sport-${sportCase.slug}`,
+                sport: sportCase.sport,
+              }
+            : detailedActivity;
 
     await route.fulfill({
       status: 200,
@@ -215,9 +257,12 @@ test("la fiche d’expédition conserve toutes les données utiles sur desktop",
     fullPage: true,
   });
 
-  await page.locator("main > div").first().evaluate((element) => {
-    element.scrollTo({ top: element.scrollHeight, behavior: "instant" });
-  });
+  await page
+    .locator("main > div")
+    .first()
+    .evaluate((element) => {
+      element.scrollTo({ top: element.scrollHeight, behavior: "instant" });
+    });
   await page.waitForTimeout(200);
   await page.screenshot({
     path: testInfo.outputPath("activity-detail-desktop-lower.png"),
@@ -238,7 +283,9 @@ test("la fiche reste honnête et lisible sans photo, tracé ou altitude", async 
   ).toBeVisible();
   await expect(page.getByText("Aucun tracé GPS disponible")).toBeVisible();
   await expect(page.getByText("Profil d’altitude indisponible")).toBeVisible();
-  await expect(page.getByText("Aucun souvenir écrit pour cette sortie.")).toBeVisible();
+  await expect(
+    page.getByText("Aucun souvenir écrit pour cette sortie."),
+  ).toBeVisible();
   await expect(page.getByRole("tab", { name: "Carte" })).toBeVisible();
   await expect(page.getByRole("tab", { name: /Photos/ })).toHaveCount(0);
 
@@ -352,7 +399,9 @@ test("la fiche d’activité se recompose proprement sur iPhone 13", async ({
     page.getByLabel("Lecture rapide").getByText("12,4 km"),
   ).toBeVisible();
 
-  const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  const pageWidth = await page.evaluate(
+    () => document.documentElement.scrollWidth,
+  );
   expect(pageWidth).toBeLessThanOrEqual(iphone13.viewport.width);
 
   await page.waitForTimeout(700);
@@ -361,9 +410,12 @@ test("la fiche d’activité se recompose proprement sur iPhone 13", async ({
     fullPage: true,
   });
 
-  await page.locator("main > div").first().evaluate((element) => {
-    element.scrollTo({ top: element.scrollHeight, behavior: "instant" });
-  });
+  await page
+    .locator("main > div")
+    .first()
+    .evaluate((element) => {
+      element.scrollTo({ top: element.scrollHeight, behavior: "instant" });
+    });
   await page.waitForTimeout(200);
   await page.screenshot({
     path: testInfo.outputPath("activity-detail-iphone-13-lower.png"),
@@ -405,8 +457,12 @@ test("Carte, Photos, partage et menu restent utilisables", async ({ page }) => {
   await page
     .getByRole("button", { name: "Ouvrir les actions de la sortie" })
     .click();
-  await expect(page.getByRole("link", { name: "Voir mes statistiques" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Toutes mes sorties" }).first()).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Voir mes statistiques" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Toutes mes sorties" }).first(),
+  ).toBeVisible();
 });
 
 for (const viewport of [
@@ -415,9 +471,7 @@ for (const viewport of [
   { name: "mobile-large", width: 430, height: 932 },
   { name: "mobile", width: 390, height: 844 },
 ]) {
-  test(`la composition reste stable en ${viewport.name}`, async ({
-    page,
-  }, testInfo) => {
+  test(`la composition reste stable en ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({
       width: viewport.width,
       height: viewport.height,
@@ -434,9 +488,5 @@ for (const viewport of [
       () => document.documentElement.scrollWidth,
     );
     expect(pageWidth).toBeLessThanOrEqual(viewport.width);
-
-    await page.screenshot({
-      path: testInfo.outputPath(`activity-detail-${viewport.name}.png`),
-    });
   });
 }
