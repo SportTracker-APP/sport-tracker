@@ -12,11 +12,12 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleAuthService } from './google-auth.service';
 import { MailModule } from '../../mail/mail.module';
+import { MobileAuthController } from './mobile-auth.controller';
 
 @Module({
   imports: [ConfigModule, PassportModule, JwtModule.register({}), MailModule],
 
-  controllers: [AuthController],
+  controllers: [AuthController, MobileAuthController],
 
   providers: [AuthService, GoogleAuthService, JwtStrategy],
 

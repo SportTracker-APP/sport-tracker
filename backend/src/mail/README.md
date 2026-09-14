@@ -16,6 +16,7 @@ Ils peuvent être archivés dans Resend après le déploiement de cette version.
 | --- | --- | --- |
 | `auth.verify_email` | `auth-verify-email.html` | Création ou renvoi de vérification |
 | `auth.welcome` | `auth-welcome.html` | Validation de l'adresse email |
+| `auth.registration_notification` | `auth-registration-notification.html` | Création effective d'un nouveau compte email ou Google |
 | `auth.reset_password` | `auth-reset-password.html` | Demande de réinitialisation |
 | `auth.password_changed` | `auth-password-changed.html` | Réinitialisation réussie |
 | `activity.first_created` | `activity-first-created.html` | Prêt à l'emploi, volontairement non branché faute de déclencheur métier fiable |
@@ -45,6 +46,7 @@ RESEND_API_KEY=
 MAIL_ENABLED=false
 MAIL_FROM=HOVREN - Ton carnet outdoor <noreply@hovren.fr>
 MAIL_REPLY_TO=contact@hovren.fr
+MAIL_REGISTRATION_NOTIFICATION_TO=contact@hovren.fr
 MAIL_TEST_RECIPIENT=recipient@example.test
 MAIL_SMOKE_TYPE=auth.welcome
 APP_BASE_URL=http://localhost:3000

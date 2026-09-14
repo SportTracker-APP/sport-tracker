@@ -1,6 +1,7 @@
 export type MailEmailType =
   | 'auth.verify_email'
   | 'auth.welcome'
+  | 'auth.registration_notification'
   | 'auth.reset_password'
   | 'auth.password_changed'
   | 'activity.first_created'
@@ -16,6 +17,7 @@ export type MailConfig = {
   from: string;
   replyTo?: string;
   testRecipient?: string;
+  registrationNotificationTo: string;
   appBaseUrl: string;
   defaultTimezone: string;
 };
@@ -49,6 +51,14 @@ export type WelcomeMailInput = {
   to: string;
   userName: string;
   businessId?: string;
+};
+
+export type RegistrationNotificationMailInput = {
+  userEmail: string;
+  userName: string;
+  signupMethod: 'email' | 'google';
+  registeredAt: Date;
+  businessId: string;
 };
 
 export type PasswordResetMailInput = {

@@ -28,6 +28,9 @@ import {
           MAIL_FROM: configService.get<string>('MAIL_FROM'),
           MAIL_REPLY_TO: configService.get<string>('MAIL_REPLY_TO'),
           MAIL_TEST_RECIPIENT: configService.get<string>('MAIL_TEST_RECIPIENT'),
+          MAIL_REGISTRATION_NOTIFICATION_TO: configService.get<string>(
+            'MAIL_REGISTRATION_NOTIFICATION_TO',
+          ),
           APP_BASE_URL: configService.get<string>('APP_BASE_URL'),
           FRONTEND_URL: configService.get<string>('FRONTEND_URL'),
           APP_DEFAULT_TIMEZONE: configService.get<string>(

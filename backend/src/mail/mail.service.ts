@@ -12,6 +12,7 @@ import type {
   MailSendResult,
   PasswordChangedMailInput,
   PasswordResetMailInput,
+  RegistrationNotificationMailInput,
   WelcomeMailInput,
 } from './mail.types';
 
@@ -48,6 +49,28 @@ export class MailService {
         USER_NAME: input.userName,
         DASHBOARD_URL: this.buildAppUrl('/'),
         STRAVA_CONNECT_URL: this.buildAppUrl('/integrations/strava'),
+      },
+    });
+  }
+
+  sendRegistrationNotification(
+    input: RegistrationNotificationMailInput,
+  ): Promise<MailSendResult> {
+    return this.provider.sendTemplate({
+      type: 'auth.registration_notification',
+      to: this.config.registrationNotificationTo,
+      businessId: input.businessId,
+      variables: {
+        ...this.commonVariables(),
+        USER_NAME: input.userName,
+        USER_EMAIL: input.userEmail,
+        SIGNUP_METHOD:
+          input.signupMethod === 'google' ? 'Google' : 'Email et mot de passe',
+        REGISTERED_AT: new Intl.DateTimeFormat('fr-FR', {
+          dateStyle: 'long',
+          timeStyle: 'short',
+          timeZone: this.config.defaultTimezone,
+        }).format(input.registeredAt),
       },
     });
   }

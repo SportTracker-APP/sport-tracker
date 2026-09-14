@@ -54,6 +54,8 @@ type RefreshTokenPayload = {
   sub: string;
 };
 
+type RefreshTokenChannel = 'mobile' | 'web';
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -124,7 +126,37 @@ export class AuthService {
     });
   }
 
+  private async updateMobileRefreshToken(
+    userId: string,
+    refreshToken: string,
+    lastLoginAt?: Date,
+  ) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, BCRYPT_COST);
+
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+
+      data: {
+        mobileRefreshToken: hashedRefreshToken,
+        ...(lastLoginAt ? { lastLoginAt } : {}),
+      },
+    });
+  }
+
   async refreshSession(refreshToken?: string) {
+    return this.refreshSessionForChannel(refreshToken, 'web');
+  }
+
+  async refreshMobileSession(refreshToken?: string) {
+    return this.refreshSessionForChannel(refreshToken, 'mobile');
+  }
+
+  private async refreshSessionForChannel(
+    refreshToken: string | undefined,
+    channel: RefreshTokenChannel,
+  ) {
     if (!refreshToken) {
       throw new UnauthorizedException('Session expirée');
     }
@@ -149,18 +181,21 @@ export class AuthService {
       },
     });
 
+    const storedRefreshToken =
+      channel === 'mobile' ? user?.mobileRefreshToken : user?.refreshToken;
+
     if (
       !user ||
       user.isBlocked ||
       !user.emailVerifiedAt ||
-      !user.refreshToken
+      !storedRefreshToken
     ) {
       throw new UnauthorizedException('Session expirée');
     }
 
     const refreshTokenMatches = await bcrypt.compare(
       refreshToken,
-      user.refreshToken,
+      storedRefreshToken,
     );
 
     if (!refreshTokenMatches) {
@@ -178,7 +213,11 @@ export class AuthService {
       user.role,
     );
 
-    await this.updateRefreshToken(user.id, nextRefreshToken);
+    if (channel === 'mobile') {
+      await this.updateMobileRefreshToken(user.id, nextRefreshToken);
+    } else {
+      await this.updateRefreshToken(user.id, nextRefreshToken);
+    }
 
     return {
       accessToken,
@@ -193,6 +232,17 @@ export class AuthService {
   }
 
   async logout(refreshToken?: string): Promise<void> {
+    return this.logoutSessionForChannel(refreshToken, 'web');
+  }
+
+  async logoutMobileSession(refreshToken?: string): Promise<void> {
+    return this.logoutSessionForChannel(refreshToken, 'mobile');
+  }
+
+  private async logoutSessionForChannel(
+    refreshToken: string | undefined,
+    channel: RefreshTokenChannel,
+  ): Promise<void> {
     if (!refreshToken) {
       return;
     }
@@ -211,20 +261,25 @@ export class AuthService {
         },
         select: {
           refreshToken: true,
+          mobileRefreshToken: true,
         },
       });
 
+      const storedRefreshToken =
+        channel === 'mobile' ? user?.mobileRefreshToken : user?.refreshToken;
+
       if (
-        user?.refreshToken &&
-        (await bcrypt.compare(refreshToken, user.refreshToken))
+        storedRefreshToken &&
+        (await bcrypt.compare(refreshToken, storedRefreshToken))
       ) {
         await this.prisma.user.update({
           where: {
             id: payload.sub,
           },
-          data: {
-            refreshToken: null,
-          },
+          data:
+            channel === 'mobile'
+              ? { mobileRefreshToken: null }
+              : { refreshToken: null },
         });
       }
     } catch {
@@ -312,6 +367,8 @@ export class AuthService {
         message: 'Email verification email failed',
       });
     }
+
+    await this.sendRegistrationNotification(user, 'email');
 
     return {
       message: REGISTER_MESSAGE,
@@ -419,6 +476,18 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
+    return this.loginForChannel(email, password, 'web');
+  }
+
+  async loginMobile(email: string, password: string) {
+    return this.loginForChannel(email, password, 'mobile');
+  }
+
+  private async loginForChannel(
+    email: string,
+    password: string,
+    channel: RefreshTokenChannel,
+  ) {
     const normalizedEmail = this.normalizeEmail(email);
 
     this.assertAuthRateLimit(`login:${normalizedEmail}`);
@@ -459,7 +528,11 @@ export class AuthService {
       user.role,
     );
 
-    await this.updateRefreshToken(user.id, refreshToken, new Date());
+    if (channel === 'mobile') {
+      await this.updateMobileRefreshToken(user.id, refreshToken, new Date());
+    } else {
+      await this.updateRefreshToken(user.id, refreshToken, new Date());
+    }
 
     return {
       accessToken,
@@ -583,6 +656,8 @@ export class AuthService {
           message: 'Google welcome email failed',
         });
       }
+
+      await this.sendRegistrationNotification(user, 'google');
     }
 
     return {
@@ -596,6 +671,26 @@ export class AuthService {
         needsWelcomeOnboarding: isNewUser,
       },
     };
+  }
+
+  private async sendRegistrationNotification(
+    user: { id: string; email: string; firstName: string },
+    signupMethod: 'email' | 'google',
+  ): Promise<void> {
+    try {
+      await this.mailService.sendRegistrationNotification({
+        userEmail: user.email,
+        userName: user.firstName,
+        signupMethod,
+        registeredAt: new Date(),
+        businessId: user.id,
+      });
+    } catch {
+      this.logger.warn({
+        emailType: 'auth.registration_notification',
+        message: 'Registration notification email failed',
+      });
+    }
   }
 
   async forgotPassword(
@@ -725,6 +820,7 @@ export class AuthService {
           password: hashedPassword,
           passwordConfiguredAt: now,
           refreshToken: null,
+          mobileRefreshToken: null,
         },
       });
 

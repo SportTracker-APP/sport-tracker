@@ -7,6 +7,7 @@ const mailConfig: MailConfig = {
   apiKey: 'resend-api-key',
   from: 'Hovren <sender@example.test>',
   replyTo: 'contact@hovren.fr',
+  registrationNotificationTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
 };
@@ -66,6 +67,31 @@ describe('MailService', () => {
         USER_NAME: 'Camille',
         DASHBOARD_URL: 'http://localhost:3000/',
         STRAVA_CONNECT_URL: 'http://localhost:3000/integrations/strava',
+      }),
+    });
+  });
+
+  it('maps a new registration to the internal contact notification', async () => {
+    const provider = makeProvider();
+    const service = new MailService(mailConfig, provider);
+
+    await service.sendRegistrationNotification({
+      userEmail: 'camille@example.test',
+      userName: 'Camille',
+      signupMethod: 'email',
+      registeredAt: new Date('2026-09-09T08:15:00.000Z'),
+      businessId: 'user-1',
+    });
+
+    expect(provider.sendTemplate).toHaveBeenCalledWith({
+      type: 'auth.registration_notification',
+      to: 'contact@hovren.fr',
+      businessId: 'user-1',
+      variables: expect.objectContaining({
+        USER_NAME: 'Camille',
+        USER_EMAIL: 'camille@example.test',
+        SIGNUP_METHOD: 'Email et mot de passe',
+        REGISTERED_AT: expect.stringContaining('9 septembre 2026'),
       }),
     });
   });

@@ -39,6 +39,8 @@ model User {
 
   refreshToken String?
 
+  mobileRefreshToken String?
+
   emailVerifiedAt DateTime?
 
   role UserRole @default(USER)

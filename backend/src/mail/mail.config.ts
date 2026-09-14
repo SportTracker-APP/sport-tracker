@@ -8,6 +8,7 @@ export type MailEnvValues = {
   MAIL_FROM?: string;
   MAIL_REPLY_TO?: string;
   MAIL_TEST_RECIPIENT?: string;
+  MAIL_REGISTRATION_NOTIFICATION_TO?: string;
   APP_BASE_URL?: string;
   FRONTEND_URL?: string;
   APP_DEFAULT_TIMEZONE?: string;
@@ -43,6 +44,10 @@ const mailEnvSchema = z
       emptyStringToUndefined,
       z.string().trim().email().optional(),
     ),
+    MAIL_REGISTRATION_NOTIFICATION_TO: z.preprocess(
+      emptyStringToUndefined,
+      z.string().trim().email().default('contact@hovren.fr'),
+    ),
     APP_BASE_URL: z.string().trim().url().default('http://localhost:3000'),
     FRONTEND_URL: z.string().trim().url().default('http://localhost:3000'),
     APP_DEFAULT_TIMEZONE: z.string().trim().min(1).default('Europe/Paris'),
@@ -66,6 +71,7 @@ export function createMailConfigFromEnv(values: MailEnvValues): MailConfig {
     from: parsed.MAIL_FROM,
     replyTo: parsed.MAIL_REPLY_TO,
     testRecipient: parsed.MAIL_TEST_RECIPIENT,
+    registrationNotificationTo: parsed.MAIL_REGISTRATION_NOTIFICATION_TO,
     appBaseUrl: parsed.FRONTEND_URL || parsed.APP_BASE_URL,
     defaultTimezone: parsed.APP_DEFAULT_TIMEZONE,
   };

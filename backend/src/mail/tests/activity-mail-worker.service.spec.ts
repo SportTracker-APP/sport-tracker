@@ -36,6 +36,7 @@ const config: MailConfig = {
   apiKey: 'resend-api-key',
   from: 'Hovren <sender@example.test>',
   replyTo: 'contact@hovren.fr',
+  registrationNotificationTo: 'contact@hovren.fr',
   appBaseUrl: 'http://localhost:3000',
   defaultTimezone: 'Europe/Paris',
 };

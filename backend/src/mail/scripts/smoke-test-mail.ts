@@ -14,6 +14,7 @@ type MailSmokeType =
   | 'all'
   | 'auth.verify_email'
   | 'auth.welcome'
+  | 'auth.registration_notification'
   | 'auth.reset_password'
   | 'auth.password_changed'
   | 'activity.first_created'
@@ -25,6 +26,7 @@ const mailSmokeTypes = [
   'all',
   'auth.verify_email',
   'auth.welcome',
+  'auth.registration_notification',
   'auth.reset_password',
   'auth.password_changed',
   'activity.first_created',
@@ -44,13 +46,18 @@ async function runSmokeTest() {
     throw new Error('MAIL_TEST_RECIPIENT is required for mail smoke test');
   }
 
-  const resendClient = createResendClient(config);
+  const smokeConfig: MailConfig = {
+    ...config,
+    registrationNotificationTo: config.testRecipient,
+  };
+
+  const resendClient = createResendClient(smokeConfig);
   const mailProvider = new ResendMailProvider(
-    config,
+    smokeConfig,
     resendClient,
     new MailTemplateRenderer(),
   );
-  const mailService = new MailService(config, mailProvider);
+  const mailService = new MailService(smokeConfig, mailProvider);
   const smokeType = getMailSmokeType(process.env.MAIL_SMOKE_TYPE);
   const selectedTypes =
     smokeType === 'all'
@@ -58,7 +65,7 @@ async function runSmokeTest() {
       : [smokeType];
 
   for (const selectedType of selectedTypes) {
-    await sendSmokeEmail(mailService, config, selectedType);
+    await sendSmokeEmail(mailService, smokeConfig, selectedType);
   }
 }
 
@@ -91,6 +98,15 @@ async function sendSmokeEmail(
       await mailService.sendWelcomeEmail({
         to: recipient,
         userName: 'Camille',
+        businessId: smokeId,
+      });
+      return;
+    case 'auth.registration_notification':
+      await mailService.sendRegistrationNotification({
+        userEmail: 'camille@example.test',
+        userName: 'Camille',
+        signupMethod: 'email',
+        registeredAt: new Date(),
         businessId: smokeId,
       });
       return;
@@ -201,6 +217,8 @@ function getMailEnvValues(): MailEnvValues {
     MAIL_ENABLED: process.env.MAIL_ENABLED,
     MAIL_FROM: process.env.MAIL_FROM,
     MAIL_REPLY_TO: process.env.MAIL_REPLY_TO,
+    MAIL_REGISTRATION_NOTIFICATION_TO:
+      process.env.MAIL_REGISTRATION_NOTIFICATION_TO,
     MAIL_TEST_RECIPIENT: process.env.MAIL_TEST_RECIPIENT,
     APP_BASE_URL: process.env.APP_BASE_URL,
     FRONTEND_URL: process.env.FRONTEND_URL,

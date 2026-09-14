@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "HOVREN",
+    "slug": "hovren",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "hovren",
+    "icon": "./assets/images/app-icon.png",
+    "ios": {
+      "bundleIdentifier": "fr.hovren.app",
+      "supportsTablet": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-dev-client",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F4F0E6",
+          "image": "./assets/images/splash-mark.png",
+          "imageWidth": 160,
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7e617b84-3a65-4ed6-94ef-9aa33176b656"
+      }
+    },
+    "owner": "hovren-app"
+  }
+}

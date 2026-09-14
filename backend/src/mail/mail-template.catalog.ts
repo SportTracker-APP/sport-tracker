@@ -31,6 +31,18 @@ export const MAIL_TEMPLATE_CATALOG: Record<
       'STRAVA_CONNECT_URL',
     ],
   },
+  'auth.registration_notification': {
+    fileName: 'auth-registration-notification.html',
+    variables: [
+      'APP_NAME',
+      'SUPPORT_EMAIL',
+      'CURRENT_YEAR',
+      'USER_NAME',
+      'USER_EMAIL',
+      'SIGNUP_METHOD',
+      'REGISTERED_AT',
+    ],
+  },
   'auth.reset_password': {
     fileName: 'auth-reset-password.html',
     variables: [

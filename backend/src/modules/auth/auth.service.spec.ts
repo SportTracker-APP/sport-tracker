@@ -22,6 +22,7 @@ type UserMock = {
   role: 'USER' | 'ADMIN';
   isBlocked: boolean;
   emailVerifiedAt: Date | null;
+  mobileRefreshToken?: string | null;
 };
 
 type PasswordResetTokenMock = {
@@ -67,6 +68,7 @@ type PrismaMock = {
 type MailMock = {
   sendEmailVerification: jest.Mock;
   sendWelcomeEmail: jest.Mock;
+  sendRegistrationNotification: jest.Mock;
   sendPasswordResetEmail: jest.Mock;
   sendPasswordChangedEmail: jest.Mock;
 };
@@ -132,6 +134,10 @@ function makeMailMock(): MailMock {
     sendWelcomeEmail: jest.fn().mockResolvedValue({
       skipped: false,
       resendId: 'email-welcome',
+    }),
+    sendRegistrationNotification: jest.fn().mockResolvedValue({
+      skipped: false,
+      resendId: 'email-registration-notification',
     }),
     sendPasswordResetEmail: jest.fn().mockResolvedValue({
       skipped: false,
@@ -297,6 +303,13 @@ describe('AuthService password reset', () => {
         businessId: 'verify-token-1',
       }),
     );
+    expect(mail.sendRegistrationNotification).toHaveBeenCalledWith({
+      userEmail: user.email,
+      userName: user.firstName,
+      signupMethod: 'email',
+      registeredAt: expect.any(Date),
+      businessId: user.id,
+    });
   });
 
   it('normalizes email before registering a user', async () => {
@@ -331,6 +344,28 @@ describe('AuthService password reset', () => {
       emailVerifiedAt: null,
     });
     mail.sendEmailVerification.mockRejectedValue(new Error('Resend failed'));
+
+    await expect(
+      service.register({
+        firstName: user.firstName,
+        email: user.email,
+        password: 'Password1',
+      }),
+    ).resolves.toEqual({
+      message: registerMessage,
+    });
+  });
+
+  it('does not fail registration when the internal notification fails', async () => {
+    const { service, prisma, mail } = makeService();
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      ...user,
+      emailVerifiedAt: null,
+    });
+    mail.sendRegistrationNotification.mockRejectedValue(
+      new Error('Resend failed'),
+    );
 
     await expect(
       service.register({
@@ -394,6 +429,7 @@ describe('AuthService password reset', () => {
       userName: user.firstName,
       businessId: user.id,
     });
+    expect(mail.sendRegistrationNotification).not.toHaveBeenCalled();
   });
 
   it('rejects login before email verification', async () => {
@@ -406,6 +442,38 @@ describe('AuthService password reset', () => {
     await expect(service.login(user.email, 'Password1')).rejects.toThrow(
       'Veuillez vérifier votre adresse email',
     );
+  });
+
+  it('creates a mobile session without replacing the web refresh token', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      password: await bcrypt.hash('Password1', 4),
+      refreshToken: 'existing-web-token-hash',
+      mobileRefreshToken: null,
+    });
+
+    await expect(service.loginMobile(user.email, 'Password1')).resolves.toEqual(
+      {
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          email: user.email,
+          role: user.role,
+        },
+      },
+    );
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: {
+        id: user.id,
+      },
+      data: {
+        mobileRefreshToken: expect.stringMatching(/^\$2[ab]\$/),
+        lastLoginAt: expect.any(Date),
+      },
+    });
   });
 
   it('links Google to an existing account with the same verified email', async () => {
@@ -495,6 +563,13 @@ describe('AuthService password reset', () => {
       userName: user.firstName,
       businessId: user.id,
     });
+    expect(mail.sendRegistrationNotification).toHaveBeenCalledWith({
+      userEmail: user.email,
+      userName: user.firstName,
+      signupMethod: 'google',
+      registeredAt: expect.any(Date),
+      businessId: user.id,
+    });
   });
 
   it('refuses Google authentication for a blocked linked account', async () => {
@@ -545,6 +620,72 @@ describe('AuthService password reset', () => {
       },
       data: {
         refreshToken: expect.stringMatching(/^\$2[ab]\$/),
+      },
+    });
+  });
+
+  it('rotates a mobile refresh token without replacing the web session', async () => {
+    const { service, prisma } = makeService();
+    const rawMobileRefreshToken = 'valid-mobile-session-token';
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      refreshToken: await bcrypt.hash('web-session-token', 4),
+      mobileRefreshToken: await bcrypt.hash(rawMobileRefreshToken, 4),
+    });
+
+    await expect(
+      service.refreshMobileSession(rawMobileRefreshToken),
+    ).resolves.toEqual({
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: {
+        id: user.id,
+      },
+      data: {
+        mobileRefreshToken: expect.stringMatching(/^\$2[ab]\$/),
+      },
+    });
+  });
+
+  it('does not accept the browser refresh token on the mobile channel', async () => {
+    const { service, prisma } = makeService();
+    prisma.user.findUnique.mockResolvedValue({
+      ...user,
+      refreshToken: await bcrypt.hash('web-session-token', 4),
+      mobileRefreshToken: await bcrypt.hash('mobile-session-token', 4),
+    });
+
+    await expect(
+      service.refreshMobileSession('web-session-token'),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it('revokes only the mobile refresh token on mobile logout', async () => {
+    const { service, prisma } = makeService();
+    const rawMobileRefreshToken = 'mobile-session-token';
+    prisma.user.findUnique.mockResolvedValue({
+      refreshToken: await bcrypt.hash('web-session-token', 4),
+      mobileRefreshToken: await bcrypt.hash(rawMobileRefreshToken, 4),
+    });
+
+    await service.logoutMobileSession(rawMobileRefreshToken);
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: {
+        id: user.id,
+      },
+      data: {
+        mobileRefreshToken: null,
       },
     });
   });
@@ -721,6 +862,7 @@ describe('AuthService password reset', () => {
         password: updatePayload?.data?.password,
         passwordConfiguredAt: expect.any(Date),
         refreshToken: null,
+        mobileRefreshToken: null,
       },
     });
   });
