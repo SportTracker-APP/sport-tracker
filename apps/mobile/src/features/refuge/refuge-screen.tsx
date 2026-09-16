@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/src/auth';
-import { Button, Text } from '@/src/components';
+import { Button, Text, TopographicAccent } from '@/src/components';
 import { getRefugeSummitImage } from '@/src/features/refuge/refuge-images';
 import {
   createRefugeViewModel,
@@ -174,7 +174,10 @@ function CarnetProgress({
       }
       style={({ pressed }) => [styles.progressCard, pressed && styles.pressed]}
     >
-      <View style={styles.progressDecoration} />
+      <TopographicAccent
+        color="rgba(221, 228, 214, 0.18)"
+        style={styles.progressDecoration}
+      />
       <View style={styles.progressHeader}>
         <View>
           <Text style={styles.onForestMuted} variant="eyebrow">
@@ -189,9 +192,6 @@ function CarnetProgress({
           </Text>
         </View>
         <View style={styles.progressAction}>
-          <Text style={styles.progressActionText} variant="label">
-            Voir
-          </Text>
           <Ionicons color={colors.forest} name="chevron-forward" size={17} />
         </View>
       </View>
@@ -372,9 +372,6 @@ function HighlightSection({
               {highlight.date}
             </Text>
             <View style={styles.highlightAction}>
-              <Text style={styles.highlightActionText} variant="label">
-                Voir
-              </Text>
               <Ionicons color={colors.forest} name="arrow-forward" size={17} />
             </View>
           </View>
@@ -476,7 +473,10 @@ function RecentSection({
             accessibilityRole="button"
             hitSlop={8}
             onPress={() => router.push('/action')}
-            style={styles.roundArrow}
+            style={({ pressed }) => [
+              styles.roundArrow,
+              pressed && styles.pressed,
+            ]}
           >
             <Ionicons color={colors.surfaceStrong} name="add" size={22} />
           </Pressable>
@@ -616,7 +616,10 @@ function PartialError({ onRetry }: { onRetry: () => void }) {
         accessibilityRole="button"
         hitSlop={8}
         onPress={onRetry}
-        style={styles.retryLink}
+        style={({ pressed }) => [
+          styles.retryLink,
+          pressed && styles.pressed,
+        ]}
       >
         <Text style={styles.retryText} variant="label">
           Réessayer
@@ -773,15 +776,9 @@ const styles = StyleSheet.create({
     ...shadows.card,
   },
   progressDecoration: {
-    position: 'absolute',
-    top: -70,
-    right: -45,
-    width: 190,
-    height: 190,
-    borderWidth: 34,
-    borderColor: '#2E4B3A',
-    borderRadius: radii.pill,
-    opacity: 0.72,
+    top: -22,
+    right: -58,
+    transform: [{ rotate: '-8deg' }],
   },
   progressHeader: {
     flexDirection: 'row',
@@ -796,23 +793,24 @@ const styles = StyleSheet.create({
     lineHeight: 50,
   },
   progressAction: {
+    width: 40,
+    height: 40,
     minHeight: 40,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xxs,
-    paddingHorizontal: spacing.sm,
     borderRadius: radii.pill,
     backgroundColor: colors.sageSoft,
   },
-  progressActionText: { color: colors.forest },
   progressTrack: {
     height: 8,
     overflow: 'hidden',
     borderRadius: radii.pill,
     backgroundColor: colors.sageSoft,
   },
-  progressTrackDark: { marginTop: spacing.sm, backgroundColor: '#3F5949' },
+  progressTrackDark: {
+    marginTop: spacing.sm,
+    backgroundColor: colors.forestTrack,
+  },
   progressFill: {
     height: '100%',
     borderRadius: radii.pill,
@@ -826,17 +824,17 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
     paddingTop: spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#55705F',
+    borderTopColor: colors.forestDivider,
   },
   metric: { flex: 1, alignItems: 'center', gap: spacing.xxs },
   metricValue: {
     color: colors.surfaceStrong,
-    fontFamily: fontFamilies.editorial,
+    fontFamily: fontFamilies.displaySemibold,
   },
   metricLabel: { color: colors.sage },
   metricDivider: {
     width: StyleSheet.hairlineWidth,
-    backgroundColor: '#55705F',
+    backgroundColor: colors.forestDivider,
   },
   sectionHeading: {
     minHeight: 36,
@@ -848,10 +846,9 @@ const styles = StyleSheet.create({
   },
   sectionHeadingCopy: { flex: 1, gap: spacing.xxs },
   sectionTitle: {
-    fontFamily: fontFamilies.sans,
+    fontFamily: fontFamilies.sansSemibold,
     fontSize: 18,
     lineHeight: 25,
-    fontWeight: '700',
   },
   headingAction: { minHeight: 44, justifyContent: 'center' },
   highlightCard: {
@@ -930,21 +927,22 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   highlightAction: {
+    width: 36,
+    height: 36,
     minHeight: 36,
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xxs,
-    paddingHorizontal: spacing.sm,
+    justifyContent: 'center',
     borderRadius: radii.pill,
     backgroundColor: colors.sageSoft,
   },
-  highlightActionText: { color: colors.forest },
   goalCard: {
     gap: spacing.md,
     borderWidth: StyleSheet.hairlineWidth,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.terracotta,
     borderColor: colors.warmGraySoft,
     borderRadius: radii.lg,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceStrong,
     padding: spacing.lg,
   },
   goalCardCompact: { padding: spacing.md },
@@ -960,7 +958,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radii.md,
-    backgroundColor: '#F3E1D9',
+    backgroundColor: colors.terracottaSoft,
   },
   goalIconCompact: { width: 40, height: 40 },
   goalHeading: { flex: 1, gap: spacing.xxs },
@@ -1006,7 +1004,7 @@ const styles = StyleSheet.create({
   recentList: {
     overflow: 'hidden',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.warmGraySoft,
+    borderColor: colors.sage,
     borderRadius: radii.lg,
     backgroundColor: colors.surfaceStrong,
   },
@@ -1070,7 +1068,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     marginBottom: spacing.lg,
     borderRadius: radii.md,
-    backgroundColor: '#F3E1DD',
+    backgroundColor: colors.dangerSoft,
     paddingHorizontal: spacing.md,
   },
   partialErrorCopy: { flex: 1, color: colors.danger },

@@ -14,9 +14,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, FormField, Text } from '@/src/components';
+import { Button, FormField, Text, TopographicAccent } from '@/src/components';
 import { DetailSheet } from '@/src/components/mobile-controls';
-import { colors, fontFamilies, radii, spacing } from '@/src/theme/tokens';
+import { colors, radii, spacing } from '@/src/theme/tokens';
 import { ActivityDateSheet } from './activity-date-sheet';
 import {
   ACTIVITY_SPORTS,
@@ -120,22 +120,28 @@ export function CreateActivityView({
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.screen}>
         <ScrollView contentContainerStyle={styles.successContent}>
           <View accessibilityLiveRegion="polite" style={styles.success}>
-            <View style={styles.successMark}>
-              <Ionicons
-                name="checkmark"
-                color={colors.surfaceStrong}
-                size={42}
+            <View style={styles.successHero}>
+              <TopographicAccent
+                color="rgba(221, 228, 214, 0.16)"
+                style={styles.successTopo}
               />
+              <View style={styles.successMark}>
+                <Ionicons name="checkmark" color={colors.forest} size={38} />
+              </View>
+              <Text variant="eyebrow" style={styles.successEyebrow}>
+                Sortie enregistrée
+              </Text>
+              <Text
+                variant="heading"
+                align="center"
+                style={styles.successTitle}
+              >
+                C’est dans ton carnet.
+              </Text>
+              <Text align="center" style={styles.successSubtitle}>
+                {saved.title?.trim() || draft.title.trim() || sport.label}
+              </Text>
             </View>
-            <Text variant="eyebrow" tone="accent">
-              Sortie enregistrée
-            </Text>
-            <Text variant="heading" align="center" style={styles.successTitle}>
-              C’est dans ton carnet.
-            </Text>
-            <Text align="center" tone="secondary">
-              {saved.title?.trim() || draft.title.trim() || sport.label}
-            </Text>
             <View style={styles.receipt}>
               <Ionicons name={sport.icon} color={colors.forest} size={23} />
               <View style={styles.receiptCopy}>
@@ -177,7 +183,7 @@ export function CreateActivityView({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.header}>
-          <Text accessibilityRole="header" style={styles.title}>
+          <Text accessibilityRole="header" variant="screenTitle">
             Nouvelle sortie
           </Text>
           <Text tone="secondary" variant="caption">
@@ -549,23 +555,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
+    paddingBottom: spacing.md,
     gap: spacing.xxs,
-  },
-  title: {
-    fontFamily: fontFamilies.sans,
-    fontSize: 30,
-    fontWeight: '700',
-    lineHeight: 36,
-    letterSpacing: -0.7,
   },
   content: {
     width: '100%',
     maxWidth: 620,
     alignSelf: 'center',
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.lg,
-    gap: spacing.lg,
+    paddingBottom: spacing.md,
+    gap: spacing.md,
   },
   sportSelector: {
     flexDirection: 'row',
@@ -640,12 +639,12 @@ const styles = StyleSheet.create({
   },
   fieldError: { color: colors.danger },
   errorPanel: {
-    backgroundColor: '#F3E1DD',
+    backgroundColor: colors.dangerSoft,
     padding: spacing.md,
     gap: spacing.sm,
     borderRadius: radii.md,
   },
-  pressed: { opacity: 0.75 },
+  pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
   sportsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   sportOption: {
     flexBasis: '45%',
@@ -654,7 +653,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     backgroundColor: colors.surfaceStrong,
     borderRadius: radii.md,
-    minHeight: 96,
+    minHeight: 88,
   },
   sportSelected: { backgroundColor: colors.forest },
   inverse: { color: colors.surfaceStrong },
@@ -669,18 +668,40 @@ const styles = StyleSheet.create({
     maxWidth: 460,
     alignSelf: 'center',
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: spacing.md,
+  },
+  successHero: {
+    position: 'relative',
+    overflow: 'hidden',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.xxxl,
+    borderRadius: radii.lg,
+    backgroundColor: colors.forest,
+  },
+  successTopo: {
+    top: -16,
+    right: -56,
+    transform: [{ rotate: '-10deg' }],
   },
   successMark: {
-    width: 84,
-    height: 84,
+    width: 72,
+    height: 72,
     borderRadius: radii.pill,
-    backgroundColor: colors.forest,
+    backgroundColor: colors.sageSoft,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.sm,
   },
-  successTitle: { fontSize: 30, lineHeight: 38 },
+  successEyebrow: { color: colors.sage },
+  successTitle: {
+    color: colors.surfaceStrong,
+    fontSize: 30,
+    lineHeight: 38,
+  },
+  successSubtitle: { color: colors.sage, maxWidth: 320 },
   receipt: {
     alignSelf: 'stretch',
     flexDirection: 'row',
@@ -690,7 +711,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: colors.surfaceStrong,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.warmGraySoft,
+    borderColor: colors.sage,
+    marginTop: -spacing.xl,
+    zIndex: 1,
   },
   fullWidth: { alignSelf: 'stretch' },
 });

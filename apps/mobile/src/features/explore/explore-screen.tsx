@@ -24,7 +24,8 @@ import {
   SearchField,
 } from '@/src/components/mobile-controls';
 import { getRefugeSummitImage } from '@/src/features/refuge/refuge-images';
-import { colors, fontFamilies, radii, spacing } from '@/src/theme/tokens';
+import { colors, radii, spacing } from '@/src/theme/tokens';
+import { ExploreMap } from './explore-map';
 import {
   DEFAULT_FILTERS,
   filterSummits,
@@ -64,6 +65,7 @@ export function ExploreView({
   onSelect,
   onClose,
 }: ExploreViewProps) {
+  const [mode, setMode] = useState<'map' | 'list'>('map');
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<ExploreFilters>(DEFAULT_FILTERS);
   const [draft, setDraft] = useState<ExploreFilters | null>(null);
@@ -96,30 +98,105 @@ export function ExploreView({
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.screen}>
-      <View style={styles.toolbar}>
+      <View style={[styles.toolbar, mode === 'map' && styles.mapToolbar]}>
         <View style={styles.titleRow}>
           <View style={styles.titleCopy}>
-            <Text accessibilityRole="header" style={styles.title}>
+            <Text
+              accessibilityRole="header"
+              variant="screenTitle"
+              style={mode === 'map' ? styles.mapTitle : undefined}
+            >
               Explorer
             </Text>
-            <Text variant="caption" tone="secondary">
-              Trouve ton prochain sommet.
-            </Text>
+            {mode === 'list' ? (
+              <Text variant="caption" tone="secondary">
+                Trouve ton prochain sommet.
+              </Text>
+            ) : null}
           </View>
-          <View style={styles.compass}>
-            <Ionicons name="compass-outline" size={27} color={colors.forest} />
+          <View style={styles.modeSwitch} accessibilityRole="tablist">
+            <Pressable
+              accessibilityRole="tab"
+              accessibilityState={{ selected: mode === 'map' }}
+              onPress={() => setMode('map')}
+              style={({ pressed }) => [
+                styles.modeButton,
+                mode === 'map' && styles.modeButtonSelected,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons
+                name="map-outline"
+                size={17}
+                color={mode === 'map' ? colors.surfaceStrong : colors.forest}
+              />
+              <Text
+                variant="caption"
+                style={mode === 'map' ? styles.modeLabelSelected : undefined}
+              >
+                Carte
+              </Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="tab"
+              accessibilityState={{ selected: mode === 'list' }}
+              onPress={() => setMode('list')}
+              style={({ pressed }) => [
+                styles.modeButton,
+                mode === 'list' && styles.modeButtonSelected,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons
+                name="list-outline"
+                size={18}
+                color={mode === 'list' ? colors.surfaceStrong : colors.forest}
+              />
+              <Text
+                variant="caption"
+                style={mode === 'list' ? styles.modeLabelSelected : undefined}
+              >
+                Liste
+              </Text>
+            </Pressable>
           </View>
         </View>
-        <SearchField
-          value={query}
-          onChange={setQuery}
-          placeholder="Un sommet, un massif…"
-        />
+        <View style={styles.searchRow}>
+          <View style={styles.searchField}>
+            <SearchField
+              value={query}
+              onChange={setQuery}
+              placeholder="Un sommet, un massif…"
+            />
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Filtres et tri${advancedCount ? `, ${advancedCount} actifs` : ''}`}
+            onPress={() => setDraft({ ...filters })}
+            style={({ pressed }) => [
+              styles.filterButton,
+              advancedCount > 0 && styles.filterButtonActive,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons
+              name="options-outline"
+              color={advancedCount ? colors.surfaceStrong : colors.forest}
+              size={21}
+            />
+            {advancedCount ? (
+              <View style={styles.filterCount}>
+                <Text variant="caption" style={styles.filterCountText}>
+                  {advancedCount}
+                </Text>
+              </View>
+            ) : null}
+          </Pressable>
+        </View>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chips}
-          keyboardShouldPersistTaps="handled"
         >
           <ChoiceChip
             label="Tous"
@@ -138,7 +215,7 @@ export function ExploreView({
             onPress={() => setFilters({ ...filters, status: 'discovered' })}
           />
         </ScrollView>
-        <View style={styles.resultsHeader}>
+        {mode === 'list' ? (
           <Text
             variant="caption"
             tone="secondary"
@@ -151,82 +228,84 @@ export function ExploreView({
                 : 'Catalogue indisponible'
               : `${results.length} sommet${results.length > 1 ? 's' : ''}${filters.massif ? ` · ${filters.massif}` : ''}`}
           </Text>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Filtres et tri${advancedCount ? `, ${advancedCount} actifs` : ''}`}
-            onPress={() => setDraft({ ...filters })}
-            style={({ pressed }) => [
-              styles.filterButton,
-              pressed && styles.pressed,
-            ]}
-          >
-            <Ionicons name="options-outline" color={colors.forest} size={19} />
-            <Text variant="label">
-              Filtres{advancedCount ? ` · ${advancedCount}` : ''}
-            </Text>
-          </Pressable>
-        </View>
+        ) : null}
       </View>
-      <FlatList
-        data={results}
-        keyExtractor={(item) => item.id}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        contentContainerStyle={styles.list}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading && summits !== null}
-            onRefresh={() => void refresh()}
-            tintColor={colors.forest}
-            colors={[colors.forest]}
-          />
-        }
-        ListHeaderComponent={
-          error && summits !== null ? (
-            <DataNotice onRetry={() => void refresh()} />
-          ) : null
-        }
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListEmptyComponent={
-          summits === null && loading ? (
-            <LoadingRows />
-          ) : summits === null ? (
-            <ContentState
-              icon="cloud-offline-outline"
-              title="Le catalogue est indisponible"
-              message="Vérifie ta connexion et réessaie."
-              action={
-                <Button label="Réessayer" onPress={() => void refresh()} />
-              }
+      {mode === 'map' ? (
+        <ExploreMap
+          allSummits={summits ?? []}
+          summits={results}
+          query={query}
+          selected={selected}
+          selectedMassif={filters.massif}
+          status={filters.status}
+          loading={loading}
+          error={error}
+          onSelect={onSelect}
+          onClose={onClose}
+          onRetry={() => void refresh()}
+        />
+      ) : (
+        <FlatList
+          data={results}
+          keyExtractor={(item) => item.id}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          contentContainerStyle={styles.list}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading && summits !== null}
+              onRefresh={() => void refresh()}
+              tintColor={colors.forest}
+              colors={[colors.forest]}
             />
-          ) : (
-            <ContentState
-              title={
-                hasFilters
-                  ? 'Aucun sommet trouvé'
-                  : 'Le catalogue arrive bientôt'
-              }
-              message={
-                hasFilters
-                  ? 'Essaie un autre nom ou élargis tes filtres.'
-                  : 'Les sommets publiés apparaîtront ici.'
-              }
-              action={
-                hasFilters ? (
-                  <Button
-                    label="Effacer les filtres"
-                    variant="secondary"
-                    onPress={reset}
-                  />
-                ) : undefined
-              }
-            />
-          )
-        }
-        renderItem={({ item }) => (
-          <SummitRow summit={item} onPress={() => onSelect(item.id)} />
-        )}
-      />
+          }
+          ListHeaderComponent={
+            error && summits !== null ? (
+              <DataNotice onRetry={() => void refresh()} />
+            ) : null
+          }
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ListEmptyComponent={
+            summits === null && loading ? (
+              <LoadingRows />
+            ) : summits === null ? (
+              <ContentState
+                icon="cloud-offline-outline"
+                title="Le catalogue est indisponible"
+                message="Vérifie ta connexion et réessaie."
+                action={
+                  <Button label="Réessayer" onPress={() => void refresh()} />
+                }
+              />
+            ) : (
+              <ContentState
+                title={
+                  hasFilters
+                    ? 'Aucun sommet trouvé'
+                    : 'Le catalogue arrive bientôt'
+                }
+                message={
+                  hasFilters
+                    ? 'Essaie un autre nom ou élargis tes filtres.'
+                    : 'Les sommets publiés apparaîtront ici.'
+                }
+                action={
+                  hasFilters ? (
+                    <Button
+                      label="Effacer les filtres"
+                      variant="secondary"
+                      onPress={reset}
+                    />
+                  ) : undefined
+                }
+              />
+            )
+          }
+          renderItem={({ item }) => (
+            <SummitRow summit={item} onPress={() => onSelect(item.id)} />
+          )}
+        />
+      )}
 
       <DetailSheet
         visible={draft !== null}
@@ -299,7 +378,7 @@ export function ExploreView({
         ) : null}
       </DetailSheet>
       <DetailSheet
-        visible={Boolean(selectedId)}
+        visible={mode === 'list' && Boolean(selectedId)}
         title="Le sommet"
         onClose={onClose}
       >
@@ -447,23 +526,16 @@ function SummitDetail({ summit }: { summit: Summit }) {
           {summit.name}
         </Text>
       </View>
-      <View style={styles.factStrip}>
-        <View style={styles.fact}>
+      <View style={styles.altitudePanel}>
+        <View style={styles.altitudeIcon}>
           <Ionicons name="triangle-outline" size={21} color={colors.moss} />
+        </View>
+        <View style={styles.rowCopy}>
           <Text variant="label">{summitAltitude(summit)}</Text>
           <Text variant="caption" tone="secondary">
             Altitude
           </Text>
         </View>
-        {summit.difficulty ? (
-          <View style={styles.fact}>
-            <Ionicons name="trail-sign-outline" size={21} color={colors.moss} />
-            <Text variant="label">{summit.difficulty}</Text>
-            <Text variant="caption" tone="secondary">
-              Difficulté du catalogue
-            </Text>
-          </View>
-        ) : null}
       </View>
       <View style={styles.discoveryPanel}>
         <Ionicons
@@ -490,11 +562,7 @@ function SummitDetail({ summit }: { summit: Summit }) {
       </View>
       {coordinates ? (
         <Button
-          label={
-            Platform.OS === 'ios'
-              ? 'Situer dans Plans'
-              : 'Situer dans Google Maps'
-          }
+          label="Voir sur la carte"
           loading={opening}
           onPress={() => void openMap()}
         />
@@ -519,8 +587,14 @@ const styles = StyleSheet.create({
     maxWidth: 620,
     alignSelf: 'center',
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    gap: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    gap: spacing.sm,
+  },
+  mapToolbar: {
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.xs,
+    gap: spacing.xs,
   },
   titleRow: {
     flexDirection: 'row',
@@ -529,36 +603,73 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   titleCopy: { flex: 1, gap: spacing.xxs },
-  title: {
-    fontFamily: fontFamilies.sans,
-    fontSize: 30,
-    fontWeight: '700',
-    lineHeight: 36,
-    letterSpacing: -0.7,
+  mapTitle: { fontSize: 30, lineHeight: 34 },
+  modeSwitch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.xxs,
+    borderRadius: radii.md,
+    backgroundColor: colors.sageSoft,
   },
-  compass: {
-    width: 46,
-    height: 46,
+  modeButton: {
+    minHeight: 38,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xxs,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radii.sm,
+  },
+  modeButtonSelected: { backgroundColor: colors.forest },
+  modeLabelSelected: { color: colors.surfaceStrong },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  searchField: { flex: 1 },
+  chips: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    paddingRight: spacing.xxs,
+  },
+  filterButton: {
+    width: 48,
+    height: 48,
+    flexDirection: 'row',
     borderRadius: radii.pill,
     backgroundColor: colors.sageSoft,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.warmGraySoft,
   },
-  chips: { gap: spacing.xs, paddingRight: spacing.xxs },
-  resultsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginTop: -spacing.xs,
+  filterButtonActive: {
+    backgroundColor: colors.forest,
+    borderColor: colors.forest,
   },
-  resultCopy: { flex: 1 },
-  filterButton: {
-    minHeight: 44,
-    flexDirection: 'row',
-    gap: spacing.xs,
+  filterCount: {
+    position: 'absolute',
+    right: -2,
+    top: -3,
+    minWidth: 20,
+    height: 20,
     alignItems: 'center',
-    paddingHorizontal: spacing.xs,
-    borderRadius: radii.sm,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xxs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.terracotta,
+    borderWidth: 2,
+    borderColor: colors.canvas,
+  },
+  filterCountText: {
+    color: colors.surfaceStrong,
+    fontSize: 11,
+    lineHeight: 14,
+  },
+  resultCopy: {
+    minHeight: 20,
+    paddingHorizontal: spacing.xxs,
   },
   list: {
     width: '100%',
@@ -574,7 +685,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    minHeight: 122,
+    minHeight: 112,
     padding: spacing.sm,
     borderRadius: radii.md,
     backgroundColor: colors.surfaceStrong,
@@ -582,7 +693,7 @@ const styles = StyleSheet.create({
     borderColor: colors.warmGraySoft,
     overflow: 'hidden',
   },
-  thumbnail: { width: 76, height: 92, borderRadius: radii.sm },
+  thumbnail: { width: 72, height: 84, borderRadius: radii.sm },
   thumbnailFallback: {
     backgroundColor: colors.sageSoft,
     alignItems: 'center',
@@ -603,14 +714,21 @@ const styles = StyleSheet.create({
   detailImage: { width: '100%', height: 190, borderRadius: radii.md },
   credit: { marginTop: spacing.xxs, fontSize: 11, lineHeight: 16 },
   detailIntro: { gap: spacing.xxs },
-  factStrip: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  fact: {
-    flex: 1,
-    minWidth: 120,
-    gap: spacing.xs,
+  altitudePanel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
     padding: spacing.md,
     borderRadius: radii.md,
     backgroundColor: colors.surfaceStrong,
+  },
+  altitudeIcon: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radii.sm,
+    backgroundColor: colors.sageSoft,
   },
   discoveryPanel: {
     flexDirection: 'row',

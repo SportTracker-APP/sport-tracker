@@ -1,15 +1,11 @@
-import {
-  Oswald_400Regular,
-  Oswald_500Medium,
-  Oswald_600SemiBold,
-  Oswald_700Bold,
-} from '@expo-google-fonts/oswald';
-import {
-  WorkSans_400Regular,
-  WorkSans_500Medium,
-  WorkSans_600SemiBold,
-  WorkSans_700Bold,
-} from '@expo-google-fonts/work-sans';
+import { Oswald_400Regular } from '@expo-google-fonts/oswald/400Regular';
+import { Oswald_500Medium } from '@expo-google-fonts/oswald/500Medium';
+import { Oswald_600SemiBold } from '@expo-google-fonts/oswald/600SemiBold';
+import { Oswald_700Bold } from '@expo-google-fonts/oswald/700Bold';
+import { WorkSans_400Regular } from '@expo-google-fonts/work-sans/400Regular';
+import { WorkSans_500Medium } from '@expo-google-fonts/work-sans/500Medium';
+import { WorkSans_600SemiBold } from '@expo-google-fonts/work-sans/600SemiBold';
+import { WorkSans_700Bold } from '@expo-google-fonts/work-sans/700Bold';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';

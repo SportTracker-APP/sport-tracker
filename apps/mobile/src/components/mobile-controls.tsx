@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import type { ComponentProps, ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
 import {
   Modal,
   Pressable,
@@ -30,7 +30,10 @@ export function IconButton({
       accessibilityLabel={label}
       accessibilityRole="button"
       onPress={onPress}
-      style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.iconButton,
+        pressed && styles.iconButtonPressed,
+      ]}
     >
       <Ionicons name={icon} color={colors.forest} size={22} />
     </Pressable>
@@ -56,7 +59,7 @@ export function ChoiceChip({
       style={({ pressed }) => [
         styles.chip,
         selected && styles.chipSelected,
-        pressed && styles.pressed,
+        pressed && styles.chipPressed,
       ]}
     >
       {icon ? (
@@ -82,8 +85,10 @@ export function SearchField({
   onChange: (value: string) => void;
   placeholder: string;
 }) {
+  const [focused, setFocused] = useState(false);
+
   return (
-    <View style={styles.search}>
+    <View style={[styles.search, focused && styles.searchFocused]}>
       <Ionicons name="search-outline" color={colors.moss} size={21} />
       <TextInput
         accessibilityLabel={placeholder}
@@ -94,6 +99,8 @@ export function SearchField({
         placeholderTextColor={colors.warmGray}
         value={value}
         onChangeText={onChange}
+        onBlur={() => setFocused(false)}
+        onFocus={() => setFocused(true)}
         style={styles.input}
       />
       {value ? (
@@ -150,6 +157,7 @@ export function DetailSheet({
             },
           ]}
         >
+          <View accessible={false} style={styles.sheetHandle} />
           <View style={styles.sheetHeader}>
             <Text
               accessibilityRole="header"
@@ -249,7 +257,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: radii.pill,
   },
-  pressed: { opacity: 0.72 },
+  iconButtonPressed: {
+    backgroundColor: colors.sageSoft,
+    opacity: 0.78,
+    transform: [{ scale: 0.96 }],
+  },
   chip: {
     minHeight: 44,
     flexDirection: 'row',
@@ -263,6 +275,7 @@ const styles = StyleSheet.create({
     borderColor: colors.warmGraySoft,
   },
   chipSelected: { backgroundColor: colors.forest, borderColor: colors.forest },
+  chipPressed: { opacity: 0.78, transform: [{ scale: 0.985 }] },
   inverse: { color: colors.surfaceStrong },
   search: {
     minHeight: 52,
@@ -285,6 +298,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.forest,
   },
+  searchFocused: { borderColor: colors.moss },
   modal: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -298,6 +312,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     overflow: 'hidden',
+  },
+  sheetHandle: {
+    alignSelf: 'center',
+    width: 38,
+    height: 4,
+    marginTop: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: colors.warmGraySoft,
   },
   sheetHeader: {
     flexDirection: 'row',
@@ -363,7 +385,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     paddingLeft: spacing.sm,
     borderRadius: radii.sm,
-    backgroundColor: '#F3E1DD',
+    backgroundColor: colors.dangerSoft,
   },
   noticeText: { flex: 1, color: colors.danger },
 });

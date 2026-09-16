@@ -7,11 +7,12 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, Text } from '@/src/components';
+import { Button, Text, TopographicAccent } from '@/src/components';
 import {
   ChoiceChip,
   ContentState,
@@ -35,7 +36,13 @@ import {
   isRecordedCompletedActivity,
 } from '@/src/features/refuge/refuge-model';
 import { useRefugeData } from '@/src/features/refuge/use-refuge-data';
-import { colors, fontFamilies, radii, spacing } from '@/src/theme/tokens';
+import {
+  colors,
+  fontFamilies,
+  radii,
+  shadows,
+  spacing,
+} from '@/src/theme/tokens';
 
 type JournalSection = 'activities' | 'progress';
 type Icon = ComponentProps<typeof Ionicons>['name'];
@@ -78,6 +85,7 @@ export function JournalView({
   onClose,
   onExplore,
 }: JournalViewProps) {
+  const { width } = useWindowDimensions();
   const [query, setQuery] = useState('');
   const [sport, setSport] = useState('all');
   const activities = useMemo(
@@ -106,6 +114,26 @@ export function JournalView({
     [activities, sport, query],
   );
   const selected = activities.find((item) => item.id === selectedId);
+  const sportChoices = (
+    <>
+      <ChoiceChip
+        label="Toutes"
+        selected={sport === 'all'}
+        onPress={() => setSport('all')}
+      />
+      {[...new Set(activities.map((item) => item.sport))]
+        .sort()
+        .map((value) => (
+          <ChoiceChip
+            key={value}
+            label={sportLabel(value)}
+            icon={sportIcon(value)}
+            selected={sport === value}
+            onPress={() => setSport(value)}
+          />
+        ))}
+    </>
+  );
   const refreshControl = (
     <RefreshControl
       refreshing={data.isRefreshing}
@@ -120,7 +148,7 @@ export function JournalView({
       <View style={styles.toolbar}>
         <View style={styles.titleRow}>
           <View style={styles.copy}>
-            <Text accessibilityRole="header" style={styles.title}>
+            <Text accessibilityRole="header" variant="screenTitle">
               Ton carnet
             </Text>
             <Text variant="caption" tone="secondary">
@@ -165,29 +193,20 @@ export function JournalView({
               onChange={setQuery}
               placeholder="Retrouver une sortie…"
             />
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chips}
-              keyboardShouldPersistTaps="handled"
-            >
-              <ChoiceChip
-                label="Toutes"
-                selected={sport === 'all'}
-                onPress={() => setSport('all')}
-              />
-              {[...new Set(activities.map((item) => item.sport))]
-                .sort()
-                .map((value) => (
-                  <ChoiceChip
-                    key={value}
-                    label={sportLabel(value)}
-                    icon={sportIcon(value)}
-                    selected={sport === value}
-                    onPress={() => setSport(value)}
-                  />
-                ))}
-            </ScrollView>
+            {width < 420 ? (
+              <View style={[styles.chips, styles.chipsWrap]}>
+                {sportChoices}
+              </View>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.chips}
+                keyboardShouldPersistTaps="handled"
+              >
+                {sportChoices}
+              </ScrollView>
+            )}
           </>
         ) : null}
       </View>
@@ -267,12 +286,16 @@ export function JournalView({
             <View>
               {monthKey(item.startedAt) !==
               monthKey(filtered[index - 1]?.startedAt) ? (
-                <Text variant="label" style={styles.month}>
-                  {new Date(item.startedAt).toLocaleDateString('fr-FR', {
-                    month: 'long',
-                    year: 'numeric',
-                  })}
-                </Text>
+                <View style={styles.monthHeader}>
+                  <View style={styles.monthMark} />
+                  <Text variant="label" style={styles.month}>
+                    {new Date(item.startedAt).toLocaleDateString('fr-FR', {
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </Text>
+                  <View style={styles.monthRule} />
+                </View>
               ) : null}
               <ActivityRow activity={item} onPress={() => onSelect(item.id)} />
             </View>
@@ -487,6 +510,10 @@ function ProgressContent({
         <DataNotice onRetry={() => void data.retry()} />
       ) : null}
       <View style={styles.collection}>
+        <TopographicAccent
+          color="rgba(221, 228, 214, 0.14)"
+          style={styles.collectionTopo}
+        />
         <View style={styles.detailTop}>
           <Ionicons name="flag-outline" color={colors.sage} size={24} />
           <Text variant="label" style={styles.inverse}>
@@ -636,13 +663,6 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  title: {
-    fontFamily: fontFamilies.sans,
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: '700',
-    letterSpacing: -0.7,
-  },
   book: {
     width: 46,
     height: 46,
@@ -670,7 +690,12 @@ const styles = StyleSheet.create({
   },
   segmentActive: { backgroundColor: colors.forest },
   segmentTextActive: { color: colors.surfaceStrong },
-  chips: { gap: spacing.xs },
+  chips: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    paddingRight: spacing.xxs,
+  },
+  chipsWrap: { flexWrap: 'wrap' },
   list: {
     width: '100%',
     maxWidth: 620,
@@ -680,10 +705,26 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   listHeader: { gap: spacing.sm, paddingVertical: spacing.xs },
-  month: {
+  monthHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     marginTop: spacing.md,
     marginBottom: spacing.sm,
+  },
+  month: {
     textTransform: 'capitalize',
+  },
+  monthMark: {
+    width: 4,
+    height: 18,
+    borderRadius: radii.pill,
+    backgroundColor: colors.terracotta,
+  },
+  monthRule: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.sage,
   },
   activity: {
     flexDirection: 'row',
@@ -695,6 +736,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceStrong,
     borderColor: colors.warmGraySoft,
     borderWidth: StyleSheet.hairlineWidth,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.sage,
     overflow: 'hidden',
   },
   activityTitle: { fontSize: 16, lineHeight: 22 },
@@ -706,7 +749,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.sageSoft,
   },
-  pressed: { opacity: 0.8 },
+  pressed: { backgroundColor: colors.sageSoft, opacity: 0.82 },
   detailTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   metric: {
@@ -727,27 +770,45 @@ const styles = StyleSheet.create({
   },
   progressContent: { gap: spacing.md, paddingTop: spacing.sm },
   collection: {
+    position: 'relative',
+    overflow: 'hidden',
     backgroundColor: colors.forest,
     borderRadius: radii.lg,
     padding: spacing.lg,
     gap: spacing.sm,
+    ...shadows.card,
   },
+  collectionTopo: { top: -28, right: -62, transform: [{ rotate: '-9deg' }] },
   inverse: { color: colors.surfaceStrong },
   collectionValue: {
-    fontFamily: fontFamilies.sans,
+    fontFamily: fontFamilies.displaySemibold,
     color: colors.surfaceStrong,
     fontSize: 44,
-    fontWeight: '700',
     lineHeight: 52,
   },
-  collectionTotal: { color: colors.sage, fontSize: 24, lineHeight: 30 },
-  sectionTitle: { fontSize: 18, lineHeight: 24, marginTop: spacing.sm },
+  collectionTotal: {
+    color: colors.sage,
+    fontFamily: fontFamilies.displayMedium,
+    fontSize: 24,
+    lineHeight: 30,
+  },
+  sectionTitle: {
+    fontFamily: fontFamilies.sansSemibold,
+    fontSize: 18,
+    lineHeight: 24,
+    marginTop: spacing.sm,
+    paddingLeft: spacing.sm,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.terracotta,
+  },
   goal: {
     gap: spacing.sm,
     padding: spacing.lg,
-    backgroundColor: colors.surfaceStrong,
-    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
     borderWidth: StyleSheet.hairlineWidth,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.terracotta,
     borderColor: colors.warmGraySoft,
   },
   goalTop: {
@@ -759,7 +820,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: radii.sm,
-    backgroundColor: '#F3E1D9',
+    backgroundColor: colors.terracottaSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -779,7 +840,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginVertical: spacing.xs,
   },
-  trackDark: { backgroundColor: '#3F5949' },
+  trackDark: { backgroundColor: colors.forestTrack },
   fill: {
     height: '100%',
     backgroundColor: colors.terracotta,
@@ -791,7 +852,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
     padding: spacing.md,
-    backgroundColor: colors.surfaceStrong,
+    backgroundColor: colors.sageMist,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.sage,
     borderRadius: radii.md,
   },
 });

@@ -24,7 +24,7 @@ export function SocialAuthButton({ icon, label }: SocialAuthButtonProps) {
         {label}
       </Text>
       <Text style={styles.soon} tone="secondary" variant="caption">
-        Bientôt
+        À venir
       </Text>
     </Pressable>
   );

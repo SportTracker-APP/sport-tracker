@@ -91,7 +91,10 @@ export default function LoginScreen() {
               accessibilityRole="button"
               disabled={isSubmitting}
               onPress={() => void auth.restoreSession()}
-              style={styles.inlineButton}
+              style={({ pressed }) => [
+                styles.inlineButton,
+                pressed && styles.linkPressed,
+              ]}
             >
               <Text style={styles.linkText} variant="label">
                 Réessayer
@@ -104,7 +107,6 @@ export default function LoginScreen() {
           autoComplete="email"
           autoCorrect={false}
           error={errors.email}
-          icon="mail-outline"
           keyboardType="email-address"
           label="Email"
           maxLength={254}
@@ -125,7 +127,6 @@ export default function LoginScreen() {
             autoCapitalize="none"
             autoComplete="current-password"
             error={errors.password}
-            icon="lock-closed-outline"
             label="Mot de passe"
             maxLength={72}
             onChangeText={(value) => {
@@ -144,7 +145,10 @@ export default function LoginScreen() {
             accessibilityRole="link"
             disabled={isSubmitting}
             onPress={() => void openForgotPassword()}
-            style={styles.forgotButton}
+            style={({ pressed }) => [
+              styles.forgotButton,
+              pressed && styles.linkPressed,
+            ]}
           >
             <Text style={styles.linkText} variant="caption">
               Mot de passe oublié ?
@@ -164,7 +168,10 @@ export default function LoginScreen() {
           accessibilityRole="link"
           disabled={isSubmitting}
           onPress={() => router.push('/auth/register')}
-          style={styles.switchButton}
+          style={({ pressed }) => [
+            styles.switchButton,
+            pressed && styles.linkPressed,
+          ]}
         >
           <Text style={styles.linkText} variant="label">
             S’inscrire
@@ -207,5 +214,8 @@ const styles = StyleSheet.create({
   switchButton: {
     minHeight: 44,
     justifyContent: 'center',
+  },
+  linkPressed: {
+    opacity: 0.58,
   },
 });

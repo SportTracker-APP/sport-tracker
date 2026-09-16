@@ -9,10 +9,15 @@ export const colors = {
   moss: '#63745E',
   sage: '#A6B59A',
   sageSoft: '#DDE4D6',
+  sageMist: '#E8ECE2',
+  forestTrack: '#3F5949',
+  forestDivider: '#55705F',
   warmGray: '#756F65',
   warmGraySoft: '#D8D0C2',
   terracotta: '#B9684C',
+  terracottaSoft: '#F3E1D9',
   danger: '#984B3F',
+  dangerSoft: '#F3E1DD',
   success: '#46684D',
   white: '#FFFFFF',
 } as const;
@@ -45,7 +50,6 @@ export const fontFamilies = {
   sansMedium: 'WorkSans_500Medium',
   sansSemibold: 'WorkSans_600SemiBold',
   sansBold: 'WorkSans_700Bold',
-  editorial: 'Oswald_600SemiBold',
 } as const;
 
 export const typography = {
@@ -62,6 +66,12 @@ export const typography = {
     letterSpacing: 0.1,
     lineHeight: 42,
   },
+  screenTitle: {
+    fontFamily: fontFamilies.displaySemibold,
+    fontSize: 32,
+    letterSpacing: 0.1,
+    lineHeight: 38,
+  },
   heading: {
     fontFamily: fontFamilies.displaySemibold,
     fontSize: 24,
@@ -71,7 +81,6 @@ export const typography = {
   body: {
     fontFamily: fontFamilies.sans,
     fontSize: 16,
-    fontWeight: '400',
     lineHeight: 24,
   },
   label: {

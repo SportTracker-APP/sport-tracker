@@ -16,6 +16,13 @@
       "expo-dev-client",
       "expo-font",
       "expo-secure-store",
+      "@rnmapbox/maps",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "HOVREN utilise ta position uniquement lorsque tu demandes à voir les sommets autour de toi."
+        }
+      ],
       [
         "expo-splash-screen",
         {

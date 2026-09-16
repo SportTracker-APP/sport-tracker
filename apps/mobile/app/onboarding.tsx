@@ -101,7 +101,10 @@ export default function OnboardingScreen() {
               disabled={isCompleting}
               hitSlop={8}
               onPress={() => void finishOnboarding()}
-              style={styles.skipButton}
+              style={({ pressed }) => [
+                styles.skipButton,
+                pressed && styles.skipButtonPressed,
+              ]}
             >
               <Text tone="secondary" variant="label">
                 Passer
@@ -206,6 +209,9 @@ const styles = StyleSheet.create({
     minHeight: 44,
     alignItems: 'flex-end',
     justifyContent: 'center',
+  },
+  skipButtonPressed: {
+    opacity: 0.58,
   },
   content: {
     flex: 1,

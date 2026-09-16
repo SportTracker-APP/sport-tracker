@@ -45,17 +45,24 @@ doit utiliser une URL de développement accessible depuis l’appareil.
 cp env.local.example .env.local
 ```
 
-Deux valeurs publiques sont disponibles :
+Trois valeurs publiques sont disponibles :
 
 ```dotenv
 EXPO_PUBLIC_API_URL=http://localhost:4000
 EXPO_PUBLIC_WEB_URL=http://localhost:3000
+EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.your-public-mapbox-token
 ```
 
 `EXPO_PUBLIC_API_URL` cible l’API NestJS. `EXPO_PUBLIC_WEB_URL` sert uniquement à
 ouvrir le parcours web existant « Mot de passe oublié ». Ces valeurs sont intégrées
 à l’application et ne doivent donc contenir aucun secret. Les builds hors
 développement refusent une URL non HTTPS.
+
+`EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN` est la clé publique d’affichage Mapbox (`pk.*`).
+La clé secrète de téléchargement des SDK (`sk.*`, scope `downloads:read`) ne doit
+jamais être écrite dans le dépôt : configure-la sous le nom
+`RNMAPBOX_MAPS_DOWNLOAD_TOKEN` dans l’environnement EAS. Ces deux clés ont des
+rôles distincts et doivent rester séparées.
 
 Dans Expo Go sur un iPhone physique, remplace `localhost` dans ces deux URLs par
 l’adresse IP locale du Mac, par exemple `http://192.168.1.20:4000`. L’iPhone et le
@@ -102,10 +109,12 @@ développement ou de production : Expo Go n’en reproduit pas fidèlement le re
 Le Refuge ouvre maintenant le contenu sélectionné : fiche sommet dans Explorer,
 détail de sortie dans Carnet, ou section Progression pour les objectifs.
 
-- Explorer utilise `GET /summits` : recherche par nom, alias et massif, filtres de
-  découverte, massif et altitude, tri, et fiche en panneau modal natif. La position
-  du sommet s’ouvre dans Plans sur iOS ou Google Maps sur Android ; aucune carte
-  intégrée ni permission de localisation n’est ajoutée dans cette étape.
+- Explorer utilise `GET /summits` pour ses modes Carte et Liste : recherche par
+  nom, alias et massif, filtres de découverte, massif et altitude, et tri. La carte
+  Mapbox native affiche le relief, regroupe les marqueurs denses et ouvre une fiche
+  sommet contextuelle avec la progression réelle du massif. La localisation de
+  premier plan n’est demandée qu’après un appui sur le bouton dédié, sans suivi en
+  arrière-plan. La liste conserve sa fiche détaillée existante.
 - Carnet réutilise les ressources et calculs du Refuge (`/activities`, `/summits`,
   `/goals`, `/summits/badges`). Les sorties réellement enregistrées sont classées
   par mois, recherchables et filtrables par sport. La section Progression présente
@@ -142,9 +151,10 @@ de trace GPS et ne crée pas de découverte de sommet côté client.
 Les exports `RefugeView`, `ExploreView` et `JournalView` séparent présentation et
 chargement. Aucun preview, fixture de présentation ou contournement de session
 n’est branché à l’application. Les tests de modèles se lancent avec `npm test`
-(Node 22.22 ou plus récent). Les changements de cette étape n’ajoutent aucune
-dépendance native et peuvent être chargés par Metro dans la development build
-existante.
+(Node 22.22 ou plus récent). La majorité des changements peut ensuite être chargée
+par Metro. L’ajout initial de Mapbox et d’Expo Location modifie toutefois le
+binaire natif et exige une nouvelle development build avant le premier test de la
+carte.
 
 ## Development Build iOS avec EAS
 

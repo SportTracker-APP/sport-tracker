@@ -143,9 +143,8 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   tabBarLabel: {
-    fontFamily: fontFamilies.sans,
+    fontFamily: fontFamilies.sansSemibold,
     fontSize: 11,
-    fontWeight: '600',
     lineHeight: 14,
   },
   primaryActionIcon: {

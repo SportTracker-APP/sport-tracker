@@ -8,3 +8,4 @@ export { Screen } from './screen';
 export { SocialAuthButton } from './social-auth-button';
 export { StatusMessage } from './status-message';
 export { Text, type TextProps } from './text';
+export { TopographicAccent } from './topographic-accent';

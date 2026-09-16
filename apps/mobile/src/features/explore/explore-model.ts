@@ -16,6 +16,29 @@ export type ExploreFilters = {
   sort: 'name' | 'altitude';
 };
 
+export type Coordinates = [longitude: number, latitude: number];
+
+export type SummitFeatureProperties = {
+  discovered: boolean;
+  id: string;
+  label: string;
+  name: string;
+  selected: boolean;
+};
+
+export type SummitFeatureCollection = {
+  type: 'FeatureCollection';
+  features: {
+    type: 'Feature';
+    id: string;
+    properties: SummitFeatureProperties;
+    geometry: {
+      type: 'Point';
+      coordinates: [number, number];
+    };
+  }[];
+};
+
 export const DEFAULT_FILTERS: ExploreFilters = {
   status: 'all',
   massif: null,
@@ -90,13 +113,93 @@ export function summitAltitude(summit: Summit) {
     : 'Altitude non renseignée';
 }
 
-export function validCoordinates(summit: Summit) {
+export function validCoordinates(summit: Summit): Coordinates | null {
   const point = summit.coordinates;
   return point?.length === 2 &&
     Number.isFinite(point[0]) &&
     Number.isFinite(point[1]) &&
     Math.abs(point[0]) <= 180 &&
     Math.abs(point[1]) <= 90
-    ? point
+    ? [point[0], point[1]]
     : null;
+}
+
+export function summitsToGeoJson(
+  summits: Summit[],
+  selectedId?: string,
+): SummitFeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: summits.flatMap((summit) => {
+      const coordinates = validCoordinates(summit);
+      if (!coordinates) return [];
+      return [
+        {
+          type: 'Feature' as const,
+          id: summit.id,
+          properties: {
+            discovered: summit.discovered,
+            id: summit.id,
+            label:
+              summit.altitude != null && Number.isFinite(summit.altitude)
+                ? `${summit.name}\n${summitAltitude(summit)}`
+                : summit.name,
+            name: summit.name,
+            selected: summit.id === selectedId,
+          },
+          geometry: {
+            type: 'Point' as const,
+            coordinates: [coordinates[0], coordinates[1]] as [number, number],
+          },
+        },
+      ];
+    }),
+  };
+}
+
+export function getMassifProgress(summits: Summit[], summit: Summit) {
+  const massif = summitMassif(summit);
+  if (!massif) return null;
+  const members = summits.filter((item) => summitMassif(item) === massif);
+  if (!members.length) return null;
+  const discovered = members.filter((item) => item.discovered).length;
+  return {
+    massif,
+    total: members.length,
+    discovered,
+    percent: Math.round((discovered / members.length) * 100),
+  };
+}
+
+export function distanceInKilometers(
+  first: Coordinates,
+  second: Coordinates,
+) {
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const [firstLongitude, firstLatitude] = first;
+  const [secondLongitude, secondLatitude] = second;
+  const latitudeDelta = toRadians(secondLatitude - firstLatitude);
+  const longitudeDelta = toRadians(secondLongitude - firstLongitude);
+  const firstLatitudeRadians = toRadians(firstLatitude);
+  const secondLatitudeRadians = toRadians(secondLatitude);
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(firstLatitudeRadians) *
+      Math.cos(secondLatitudeRadians) *
+      Math.sin(longitudeDelta / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+}
+
+export function countNearbySummits(
+  summits: Summit[],
+  location: Coordinates,
+  radiusKilometers = 30,
+) {
+  return summits.filter((summit) => {
+    const coordinates = validCoordinates(summit);
+    return (
+      coordinates !== null &&
+      distanceInKilometers(location, coordinates) <= radiusKilometers
+    );
+  }).length;
 }
