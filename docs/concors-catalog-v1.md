@@ -31,9 +31,10 @@ Le Concors utilise `Montagne de Concors.jpg`, photographie de Gundan sous licenc
 CC BY-SA 4.0, [page source Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Montagne_de_Concors.jpg).
 La conversion WebP est redimensionnée et compressée, sans retouche éditoriale.
 
-La Vigie de Marinas conserve l'illustration topo HOVREN : aucune photographie
-libre identifiée ne représentait avec certitude le sujet exact. Une photo locale
-peut être ajoutée plus tard via le back-office avec son crédit et sa source.
+La Vigie de Marinas utilise temporairement une photographie issue de la fiche
+Decathlon Outdoor « Vigie Meyrargues ». La source est conservée dans les crédits
+afin de faciliter son remplacement par une photographie HOVREN ou librement
+licenciée.
 
 ## Backlog admin prioritaire
 
