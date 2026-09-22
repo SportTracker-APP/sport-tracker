@@ -6,6 +6,10 @@ type RefugeSummitImage = {
 };
 
 const SUMMIT_IMAGES: Record<string, RefugeSummitImage> = {
+  'le concors': {
+    credit: 'Gundan · CC BY-SA 4.0',
+    source: require('../../../assets/refuge/le-concors.webp'),
+  },
   'la tournette': {
     credit: 'Guilhem Vellut · CC BY 2.0',
     source: require('../../../assets/refuge/la-tournette.webp'),
