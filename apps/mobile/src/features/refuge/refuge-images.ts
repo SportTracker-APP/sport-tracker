@@ -6,6 +6,10 @@ type RefugeSummitImage = {
 };
 
 const SUMMIT_IMAGES: Record<string, RefugeSummitImage> = {
+  'vigie de marinas': {
+    credit: 'Decathlon Outdoor',
+    source: require('../../../assets/refuge/vigie-de-marinas.webp'),
+  },
   'le concors': {
     credit: 'Gundan · CC BY-SA 4.0',
     source: require('../../../assets/refuge/le-concors.webp'),
