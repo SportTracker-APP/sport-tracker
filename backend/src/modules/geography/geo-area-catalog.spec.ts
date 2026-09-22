@@ -36,6 +36,17 @@ describe('national GeoArea catalog', () => {
       parentSlug: 'alpes-du-nord',
       isPublished: true,
     });
+    expect(bySlug.get('bouches-du-rhone')).toMatchObject({
+      type: GeoAreaType.DEPARTMENT,
+      parentSlug: 'provence-alpes-cote-d-azur',
+      isPublished: true,
+    });
+    expect(bySlug.get('massif-du-concors')).toMatchObject({
+      name: 'Massif du Concors',
+      type: GeoAreaType.MASSIF,
+      parentSlug: 'chaine-pyreneo-provencale',
+      isPublished: true,
+    });
 
     for (const slug of [
       'pyrenees',

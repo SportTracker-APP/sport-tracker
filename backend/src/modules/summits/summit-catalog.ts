@@ -2,6 +2,8 @@ export type SummitCatalogEntry = {
   id: string;
   name: string;
   aliases?: string[];
+  /** Defaults to Haute-Savoie for the historical bundled catalogue. */
+  administrativeAreaSlug?: string;
   altitude: number;
   massif: string;
   difficulty: string;
@@ -326,5 +328,31 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     imageCredit: 'Photo : Jacek Rużyczka',
     sourceUrl:
       'https://commons.wikimedia.org/wiki/File:Aiguille_Verte_depuis_l%27Aiguille_du_Midi.jpg',
+  },
+  {
+    id: 'vigie-de-marinas',
+    name: 'Vigie de Marinas',
+    aliases: ['Vigie de Meyrargues', 'Tour de guet de Marinas', 'Marinas'],
+    administrativeAreaSlug: 'bouches-du-rhone',
+    altitude: 498,
+    massif: 'Massif du Concors',
+    difficulty: 'Modérée',
+    type: 'Belvédère',
+    coordinates: [5.5429654, 43.626469],
+  },
+  {
+    id: 'le-concors',
+    name: 'Le Concors',
+    aliases: ['Concors', 'Sommet du Concors', 'Montagne de Concors'],
+    administrativeAreaSlug: 'bouches-du-rhone',
+    altitude: 782,
+    massif: 'Massif du Concors',
+    difficulty: 'Modérée',
+    type: 'Sommet',
+    coordinates: [5.6141699, 43.5945673],
+    imageUrl: '/summits/le-concors.webp',
+    imageCredit: 'Photo : Gundan · CC BY-SA 4.0',
+    sourceUrl:
+      'https://commons.wikimedia.org/wiki/File:Montagne_de_Concors.jpg',
   },
 ];

@@ -40,6 +40,7 @@ leur sujet, de leur auteur et de leur licence.
 | Mont Blanc                   | `mont-blanc.webp`            | Hseugut          | CC BY-SA 4.0   | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Mont_Blanc_Aiguille.jpg)                                                               |
 | Le Brévent                   | `le-brevent.webp`            | Franck Langlois  | CC BY-SA 3.0   | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Br%C3%A9vent_Depuis_Chamonix_19082008.jpg)                                             |
 | Aiguille Verte du Mont-Blanc | `aiguille-verte.webp`        | Jacek Rużyczka   | CC BY-SA 4.0   | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Aiguille_Verte_depuis_l%27Aiguille_du_Midi.jpg)                                        |
+| Le Concors                   | `le-concors.webp`            | Gundan           | CC BY-SA 4.0   | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Montagne_de_Concors.jpg)                                                               |
 
 Les fichiers WebP sont des conversions optimisées des originaux. Aucune photo
 issue d'une activité Strava n'est utilisée sur les pages Refuge ou Sommets.
