@@ -339,6 +339,10 @@ export const SUMMIT_CATALOG: SummitCatalogEntry[] = [
     difficulty: 'Modérée',
     type: 'Belvédère',
     coordinates: [5.5429654, 43.626469],
+    imageUrl: '/summits/vigie-de-marinas.webp',
+    imageCredit: 'Photo : Decathlon Outdoor',
+    sourceUrl:
+      'https://www.decathlon-outdoor.com/fr-fr/explore/france/vigie-meyrargues-65a153737f383',
   },
   {
     id: 'le-concors',
