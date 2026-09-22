@@ -154,10 +154,26 @@ export class SummitsService implements OnModuleInit {
       ),
     ]);
 
-    await seedNationalGeoCatalog(this.prisma, {
-      summitIds: SUMMIT_CATALOG.map((summit) => summit.id),
-      administrativeAreaSlug: 'haute-savoie',
-    });
+    const summitIdsByAdministrativeArea = new Map<string, string[]>();
+
+    for (const summit of SUMMIT_CATALOG) {
+      const administrativeAreaSlug =
+        summit.administrativeAreaSlug ?? 'haute-savoie';
+      const summitIds =
+        summitIdsByAdministrativeArea.get(administrativeAreaSlug) ?? [];
+      summitIds.push(summit.id);
+      summitIdsByAdministrativeArea.set(administrativeAreaSlug, summitIds);
+    }
+
+    for (const [
+      administrativeAreaSlug,
+      summitIds,
+    ] of summitIdsByAdministrativeArea) {
+      await seedNationalGeoCatalog(this.prisma, {
+        summitIds,
+        administrativeAreaSlug,
+      });
+    }
   }
 
   async findAll(userId: string, query: ListSummitsDto = {}) {
