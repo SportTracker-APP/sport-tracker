@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import {
   ActivityStatus,
@@ -55,11 +56,15 @@ export class ActivityMailWorkerService {
     private readonly mailService: MailService,
     private readonly timeService: ActivityMailTimeService,
     @Inject(MAIL_CONFIG) private readonly config: MailConfig,
+    private readonly configService: ConfigService,
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
   async processDueEmails(): Promise<void> {
-    if (!this.config.enabled) {
+    if (
+      !this.config.enabled ||
+      this.configService.get<string>('ACTIVITY_MAIL_WORKER_ENABLED') !== 'true'
+    ) {
       return;
     }
 

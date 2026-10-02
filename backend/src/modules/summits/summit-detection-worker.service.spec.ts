@@ -11,15 +11,13 @@ function makeWorker(
   return new SummitDetectionWorkerService(
     { reconcilePendingActivityDetections } as unknown as SummitsService,
     {
-      get: jest
-        .fn()
-        .mockImplementation((key: string) => {
-          if (key === 'NODE_ENV') return environment;
-          if (key === 'SUMMIT_DETECTION_WORKER_ENABLED') {
-            return workerEnabled ? 'true' : undefined;
-          }
-          return undefined;
-        }),
+      get: jest.fn().mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') return environment;
+        if (key === 'SUMMIT_DETECTION_WORKER_ENABLED') {
+          return workerEnabled ? 'true' : undefined;
+        }
+        return undefined;
+      }),
     } as unknown as ConfigService,
   );
 }
