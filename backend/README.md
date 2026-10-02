@@ -70,6 +70,18 @@ $ pnpm run test:cov
 
 Request bodies, authentication headers, cookies, query strings and user details are excluded from observability payloads.
 
+## Coût Neon et réconciliation des sommets
+
+La détection des sommets est exécutée directement lors de la création ou de la
+synchronisation d'une activité. Le worker de rattrapage toutes les cinq minutes
+est désactivé par défaut, y compris en production, afin de laisser le compute
+Neon passer en veille. Ne définir `SUMMIT_DETECTION_WORKER_ENABLED=true` que
+temporairement pour résorber un backlog. Pour un rattrapage ponctuel, préférer :
+
+```bash
+pnpm summits:reconcile-pending
+```
+
 ## Curation des photos de sommets
 
 `pnpm summits:photos --report=/tmp/summit-photos.json` prépare un rapport sans

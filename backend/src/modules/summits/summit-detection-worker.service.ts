@@ -49,9 +49,8 @@ export class SummitDetectionWorkerService {
 
   private isEnabled(): boolean {
     return (
-      this.configService.get<string>('NODE_ENV') === 'production' ||
       this.configService.get<string>('SUMMIT_DETECTION_WORKER_ENABLED') ===
-        'true'
+      'true'
     );
   }
 }
