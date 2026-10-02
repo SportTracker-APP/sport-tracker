@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   ActivityStatus,
   ActivityType,
@@ -148,12 +149,16 @@ function makeService(
   mailService: MailServiceMock,
   timeService: TimeServiceMock = makeTimeServiceMock(),
   mailConfig: MailConfig = config,
+  workerEnabled = true,
 ) {
   return new ActivityMailWorkerService(
     prisma as unknown as PrismaService,
     mailService as unknown as MailService,
     timeService as unknown as ActivityMailTimeService,
     mailConfig,
+    {
+      get: jest.fn().mockReturnValue(workerEnabled ? 'true' : undefined),
+    } as unknown as ConfigService,
   );
 }
 
@@ -177,6 +182,22 @@ describe('ActivityMailWorkerService', () => {
       ...config,
       enabled: false,
     }).processDueEmails();
+
+    expect(prisma.scheduledEmail.updateMany).not.toHaveBeenCalled();
+    expect(prisma.scheduledEmail.findMany).not.toHaveBeenCalled();
+  });
+
+  it('does not wake PostgreSQL when scheduled delivery is not enabled', async () => {
+    const prisma = makePrismaMock();
+    const mailService = makeMailServiceMock();
+
+    await makeService(
+      prisma,
+      mailService,
+      makeTimeServiceMock(),
+      config,
+      false,
+    ).processDueEmails();
 
     expect(prisma.scheduledEmail.updateMany).not.toHaveBeenCalled();
     expect(prisma.scheduledEmail.findMany).not.toHaveBeenCalled();

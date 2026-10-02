@@ -82,6 +82,11 @@ temporairement pour résorber un backlog. Pour un rattrapage ponctuel, préfére
 pnpm summits:reconcile-pending
 ```
 
+Les e-mails transactionnels d'authentification restent contrôlés par
+`MAIL_ENABLED`. Le polling horaire des rappels et félicitations d'activité est
+séparé via `ACTIVITY_MAIL_WORKER_ENABLED` et reste désactivé par défaut pour ne
+pas réveiller Neon sans trafic utilisateur.
+
 ## Curation des photos de sommets
 
 `pnpm summits:photos --report=/tmp/summit-photos.json` prépare un rapport sans
