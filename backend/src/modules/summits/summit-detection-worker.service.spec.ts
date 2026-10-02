@@ -6,15 +6,20 @@ import { SummitsService } from './summits.service';
 function makeWorker(
   reconcilePendingActivityDetections: jest.Mock,
   environment = 'production',
+  workerEnabled = true,
 ) {
   return new SummitDetectionWorkerService(
     { reconcilePendingActivityDetections } as unknown as SummitsService,
     {
       get: jest
         .fn()
-        .mockImplementation((key: string) =>
-          key === 'NODE_ENV' ? environment : undefined,
-        ),
+        .mockImplementation((key: string) => {
+          if (key === 'NODE_ENV') return environment;
+          if (key === 'SUMMIT_DETECTION_WORKER_ENABLED') {
+            return workerEnabled ? 'true' : undefined;
+          }
+          return undefined;
+        }),
     } as unknown as ConfigService,
   );
 }
@@ -65,11 +70,12 @@ describe('SummitDetectionWorkerService', () => {
     expect(reconcilePendingActivityDetections).toHaveBeenCalledTimes(1);
   });
 
-  it('does not touch a remote database automatically from development', async () => {
+  it('does not touch the database when the worker is not explicitly enabled', async () => {
     const reconcilePendingActivityDetections = jest.fn();
     const worker = makeWorker(
       reconcilePendingActivityDetections,
-      'development',
+      'production',
+      false,
     );
 
     await worker.reconcilePendingDetections();
