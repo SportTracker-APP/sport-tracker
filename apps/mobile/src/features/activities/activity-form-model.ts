@@ -28,11 +28,12 @@ export type ActivityDraft = {
   notes: string;
 };
 export type ActivityFormErrors = Partial<Record<keyof ActivityDraft, string>>;
+export type ActivityStatus = 'COMPLETED' | 'PLANNED';
 
 /** Matches POST /activities. The current API and Strava importer store duration in minutes. */
 export type CreateActivityPayload = {
   type: 'TRAINING';
-  status: 'COMPLETED';
+  status: ActivityStatus;
   sport: ActivitySport;
   startedAt: string;
   duration: number;
@@ -49,12 +50,19 @@ export function localDateKey(date: Date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-export function createActivityDraft(now = new Date()): ActivityDraft {
+export function createActivityDraft(
+  now = new Date(),
+  presetDate?: string,
+): ActivityDraft {
+  const plannedDate =
+    presetDate && parseLocalStart(presetDate, '12:00')
+      ? presetDate
+      : null;
   return {
     sport: 'HIKING',
     title: '',
-    date: localDateKey(now),
-    time: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
+    date: plannedDate ?? localDateKey(now),
+    time: plannedDate ? '12:00' : `${pad(now.getHours())}:${pad(now.getMinutes())}`,
     hours: '',
     minutes: '',
     distance: '',
@@ -111,6 +119,7 @@ function optionalNumber(text: string) {
 export function validateActivityDraft(
   draft: ActivityDraft,
   now = new Date(),
+  status: ActivityStatus = 'COMPLETED',
 ):
   | { ok: true; payload: CreateActivityPayload }
   | { ok: false; errors: ActivityFormErrors } {
@@ -124,7 +133,7 @@ export function validateActivityDraft(
     errors.date = 'Choisis une date valide.';
   else if (!startedAt)
     errors.time = 'Indique une heure valide au format 09:30.';
-  else if (startedAt > now)
+  else if (status === 'COMPLETED' && startedAt > now)
     errors.time = 'Le départ doit être dans le passé pour une sortie terminée.';
 
   const hours =
@@ -145,6 +154,7 @@ export function validateActivityDraft(
     errors.minutes = 'Entre 0 et 59 minutes.';
   const duration = hours * 60 + minutes;
   if (
+    status === 'COMPLETED' &&
     !errors.hours &&
     !errors.minutes &&
     (duration <= 0 || duration > 2_147_483_647)
@@ -152,9 +162,14 @@ export function validateActivityDraft(
     errors.minutes = 'Renseigne la durée de ta sortie.';
   const distance = optionalNumber(draft.distance);
   const elevationGain = optionalNumber(draft.elevationGain);
-  if (distance !== undefined && !Number.isFinite(distance))
+  if (
+    status === 'COMPLETED' &&
+    distance !== undefined &&
+    !Number.isFinite(distance)
+  )
     errors.distance = 'Indique une distance positive, par exemple 8,5.';
   if (
+    status === 'COMPLETED' &&
     elevationGain !== undefined &&
     (!Number.isSafeInteger(elevationGain) || elevationGain > 2_147_483_647)
   )
@@ -165,15 +180,17 @@ export function validateActivityDraft(
     ok: true,
     payload: {
       type: 'TRAINING',
-      status: 'COMPLETED',
+      status,
       sport: draft.sport,
       startedAt: startedAt.toISOString(),
-      duration,
+      duration: status === 'PLANNED' ? 0 : duration,
       ...(draft.title.trim() ? { title: draft.title.trim() } : {}),
       ...(draft.notes.trim() ? { description: draft.notes.trim() } : {}),
       ...(draft.city.trim() ? { city: draft.city.trim() } : {}),
-      ...(distance !== undefined ? { distance } : {}),
-      ...(elevationGain !== undefined ? { elevationGain } : {}),
+      ...(status === 'COMPLETED' && distance !== undefined ? { distance } : {}),
+      ...(status === 'COMPLETED' && elevationGain !== undefined
+        ? { elevationGain }
+        : {}),
     },
   };
 }

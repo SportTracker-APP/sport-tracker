@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
   AccessibilityInfo,
@@ -27,23 +27,30 @@ import {
   validateActivityDraft,
   type ActivityDraft,
   type ActivityFormErrors,
+  type ActivityStatus,
   type CreateActivityPayload,
 } from './activity-form-model';
 import { useCreateActivity } from './use-create-activity';
 
 export default function CreateActivityScreen() {
   const creation = useCreateActivity();
+  const params = useLocalSearchParams<{ date?: string; status?: string }>();
+  const status: ActivityStatus =
+    params.status === 'PLANNED' ? 'PLANNED' : 'COMPLETED';
   const [version, setVersion] = useState(0);
   return (
     <CreateActivityView
-      key={version}
+      key={`${status}-${params.date ?? ''}-${version}`}
       {...creation}
+      status={status}
+      initialDate={params.date}
       onJournal={(id) =>
         router.navigate({
           pathname: '/journal',
           params: { section: 'activities', activity: id },
         })
       }
+      onPlanning={() => router.replace('/planning')}
       onNew={() => {
         creation.reset();
         setVersion((value) => value + 1);
@@ -57,20 +64,28 @@ export type CreateActivityViewProps = Pick<
   'saving' | 'error' | 'uncertain' | 'saved'
 > & {
   submit: (payload: CreateActivityPayload) => Promise<void>;
+  initialDate?: string;
   onJournal: (id?: string) => void;
   onNew: () => void;
+  onPlanning: () => void;
+  status: ActivityStatus;
 };
 
 export function CreateActivityView({
   saving,
   error,
+  initialDate,
   uncertain,
   saved,
   submit,
   onJournal,
   onNew,
+  onPlanning,
+  status,
 }: CreateActivityViewProps) {
-  const [draft, setDraft] = useState(createActivityDraft);
+  const [draft, setDraft] = useState(() =>
+    createActivityDraft(new Date(), initialDate),
+  );
   const [errors, setErrors] = useState<ActivityFormErrors>({});
   const [sportPicker, setSportPicker] = useState(false);
   const [datePicker, setDatePicker] = useState(false);
@@ -78,6 +93,7 @@ export function CreateActivityView({
   const fields = useRef<Partial<Record<keyof ActivityDraft, TextInput>>>({});
   const scroll = useRef<ScrollView>(null);
   const sport = getActivitySport(draft.sport)!;
+  const isPlanned = status === 'PLANNED';
   const displayDate = parseLocalStart(draft.date, '12:00')?.toLocaleDateString(
     'fr-FR',
     { day: 'numeric', month: 'short', year: 'numeric' },
@@ -97,7 +113,7 @@ export function CreateActivityView({
   };
   const save = () => {
     if (saving) return;
-    const result = validateActivityDraft(draft);
+    const result = validateActivityDraft(draft, new Date(), status);
     if (!result.ok) {
       setErrors(result.errors);
       const first = Object.keys(result.errors)[0] as keyof ActivityDraft;
@@ -129,14 +145,14 @@ export function CreateActivityView({
                 <Ionicons name="checkmark" color={colors.forest} size={38} />
               </View>
               <Text variant="eyebrow" style={styles.successEyebrow}>
-                Sortie enregistrée
+                {isPlanned ? 'Séance planifiée' : 'Sortie enregistrée'}
               </Text>
               <Text
                 variant="heading"
                 align="center"
                 style={styles.successTitle}
               >
-                C’est dans ton carnet.
+                {isPlanned ? 'C’est dans ton planning.' : 'C’est dans ton carnet.'}
               </Text>
               <Text align="center" style={styles.successSubtitle}>
                 {saved.title?.trim() || draft.title.trim() || sport.label}
@@ -148,10 +164,12 @@ export function CreateActivityView({
                 <Text variant="label">{sport.label}</Text>
                 <Text variant="caption" tone="secondary">
                   {displayDate} ·{' '}
-                  {formatActivityDuration(saved.duration) ??
-                    formatActivityDuration(
-                      Number(draft.hours) * 60 + Number(draft.minutes),
-                    )}
+                  {isPlanned
+                    ? draft.time
+                    : (formatActivityDuration(saved.duration) ??
+                      formatActivityDuration(
+                        Number(draft.hours) * 60 + Number(draft.minutes),
+                      ))}
                 </Text>
               </View>
               <Ionicons
@@ -161,12 +179,16 @@ export function CreateActivityView({
               />
             </View>
             <Button
-              label="Voir ma sortie"
-              onPress={() => onJournal(saved.id)}
+              label={isPlanned ? 'Retour au planning' : 'Voir ma sortie'}
+              onPress={isPlanned ? onPlanning : () => onJournal(saved.id)}
               style={styles.fullWidth}
             />
             <Button
-              label="Ajouter une autre sortie"
+              label={
+                isPlanned
+                  ? 'Planifier une autre séance'
+                  : 'Ajouter une autre sortie'
+              }
               variant="secondary"
               onPress={onNew}
               style={styles.fullWidth}
@@ -184,10 +206,12 @@ export function CreateActivityView({
       >
         <View style={styles.header}>
           <Text accessibilityRole="header" variant="screenTitle">
-            Nouvelle sortie
+            {isPlanned ? 'Planifier une séance' : 'Nouvelle sortie'}
           </Text>
           <Text tone="secondary" variant="caption">
-            Une sortie terminée, à garder dans ton carnet.
+            {isPlanned
+              ? 'Choisis le créneau et l’intention de ta prochaine sortie.'
+              : 'Une sortie terminée, à garder dans ton carnet.'}
           </Text>
         </View>
         <ScrollView
@@ -294,8 +318,12 @@ export function CreateActivityView({
                   maxLength={5}
                   autoCorrect={false}
                   autoCapitalize="none"
-                  returnKeyType="next"
-                  onSubmitEditing={() => fields.current.hours?.focus()}
+                  returnKeyType={isPlanned ? 'done' : 'next'}
+                  onSubmitEditing={() =>
+                    isPlanned
+                      ? Keyboard.dismiss()
+                      : fields.current.hours?.focus()
+                  }
                 />
               </View>
             </View>
@@ -309,90 +337,94 @@ export function CreateActivityView({
               </Text>
             ) : null}
           </View>
-          <View style={styles.formSection}>
-            <View style={styles.sectionHeading}>
-              <Text variant="label">Ta durée</Text>
-              <Text variant="caption" tone="secondary">
-                Obligatoire
-              </Text>
-            </View>
-            <View style={styles.columns}>
-              <View style={styles.column}>
-                <FormField
-                  ref={(ref) => {
-                    if (ref) fields.current.hours = ref;
-                  }}
-                  label="Heures"
-                  icon="time-outline"
-                  placeholder="0"
-                  keyboardType="number-pad"
-                  maxLength={6}
-                  editable={!saving}
-                  value={draft.hours}
-                  onChangeText={(value) => change('hours', value)}
-                  error={errors.hours}
-                />
+          {!isPlanned ? (
+            <>
+              <View style={styles.formSection}>
+                <View style={styles.sectionHeading}>
+                  <Text variant="label">Ta durée</Text>
+                  <Text variant="caption" tone="secondary">
+                    Obligatoire
+                  </Text>
+                </View>
+                <View style={styles.columns}>
+                  <View style={styles.column}>
+                    <FormField
+                      ref={(ref) => {
+                        if (ref) fields.current.hours = ref;
+                      }}
+                      label="Heures"
+                      icon="time-outline"
+                      placeholder="0"
+                      keyboardType="number-pad"
+                      maxLength={6}
+                      editable={!saving}
+                      value={draft.hours}
+                      onChangeText={(value) => change('hours', value)}
+                      error={errors.hours}
+                    />
+                  </View>
+                  <View style={styles.column}>
+                    <FormField
+                      ref={(ref) => {
+                        if (ref) fields.current.minutes = ref;
+                      }}
+                      label="Minutes"
+                      icon="timer-outline"
+                      placeholder="00"
+                      keyboardType="number-pad"
+                      maxLength={2}
+                      editable={!saving}
+                      value={draft.minutes}
+                      onChangeText={(value) => change('minutes', value)}
+                      error={errors.minutes}
+                    />
+                  </View>
+                </View>
               </View>
-              <View style={styles.column}>
-                <FormField
-                  ref={(ref) => {
-                    if (ref) fields.current.minutes = ref;
-                  }}
-                  label="Minutes"
-                  icon="timer-outline"
-                  placeholder="00"
-                  keyboardType="number-pad"
-                  maxLength={2}
-                  editable={!saving}
-                  value={draft.minutes}
-                  onChangeText={(value) => change('minutes', value)}
-                  error={errors.minutes}
-                />
+              <View style={styles.formSection}>
+                <View style={styles.sectionHeading}>
+                  <Text variant="label">Tes mesures</Text>
+                  <Text variant="caption" tone="secondary">
+                    Facultatives
+                  </Text>
+                </View>
+                <View style={styles.columns}>
+                  <View style={styles.column}>
+                    <FormField
+                      ref={(ref) => {
+                        if (ref) fields.current.distance = ref;
+                      }}
+                      label="Distance · km"
+                      icon="navigate-outline"
+                      placeholder="Ex. 8,5"
+                      keyboardType="decimal-pad"
+                      maxLength={12}
+                      editable={!saving}
+                      value={draft.distance}
+                      onChangeText={(value) => change('distance', value)}
+                      error={errors.distance}
+                    />
+                  </View>
+                  <View style={styles.column}>
+                    <FormField
+                      ref={(ref) => {
+                        if (ref) fields.current.elevationGain = ref;
+                      }}
+                      label="Dénivelé + · m"
+                      icon="trending-up-outline"
+                      placeholder="Ex. 450"
+                      keyboardType="number-pad"
+                      maxLength={10}
+                      editable={!saving}
+                      value={draft.elevationGain}
+                      onChangeText={(value) => change('elevationGain', value)}
+                      error={errors.elevationGain}
+                    />
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.formSection}>
-            <View style={styles.sectionHeading}>
-              <Text variant="label">Tes mesures</Text>
-              <Text variant="caption" tone="secondary">
-                Facultatives
-              </Text>
-            </View>
-            <View style={styles.columns}>
-              <View style={styles.column}>
-                <FormField
-                  ref={(ref) => {
-                    if (ref) fields.current.distance = ref;
-                  }}
-                  label="Distance · km"
-                  icon="navigate-outline"
-                  placeholder="Ex. 8,5"
-                  keyboardType="decimal-pad"
-                  maxLength={12}
-                  editable={!saving}
-                  value={draft.distance}
-                  onChangeText={(value) => change('distance', value)}
-                  error={errors.distance}
-                />
-              </View>
-              <View style={styles.column}>
-                <FormField
-                  ref={(ref) => {
-                    if (ref) fields.current.elevationGain = ref;
-                  }}
-                  label="Dénivelé + · m"
-                  icon="trending-up-outline"
-                  placeholder="Ex. 450"
-                  keyboardType="number-pad"
-                  maxLength={10}
-                  editable={!saving}
-                  value={draft.elevationGain}
-                  onChangeText={(value) => change('elevationGain', value)}
-                  error={errors.elevationGain}
-                />
-              </View>
-            </View>
-          </View>
+            </>
+          ) : null}
           <Pressable
             accessibilityRole="button"
             accessibilityState={{ expanded: details }}
@@ -435,9 +467,13 @@ export function CreateActivityView({
                 ref={(ref) => {
                   if (ref) fields.current.notes = ref;
                 }}
-                label="Un souvenir de cette sortie"
+                label={isPlanned ? 'Intention de la séance' : 'Un souvenir de cette sortie'}
                 icon="create-outline"
-                placeholder="Les sensations, les rencontres…"
+                placeholder={
+                  isPlanned
+                    ? 'Allure, objectif, repères…'
+                    : 'Les sensations, les rencontres…'
+                }
                 value={draft.notes}
                 onChangeText={(value) => change('notes', value)}
                 editable={!saving}
@@ -452,8 +488,9 @@ export function CreateActivityView({
             </View>
           ) : null}
           <Text variant="caption" tone="secondary">
-            Saisie manuelle. Seules les informations renseignées seront ajoutées
-            à ton carnet.
+            {isPlanned
+              ? 'Tu retrouveras cette séance dans ton planning.'
+              : 'Saisie manuelle. Seules les informations renseignées seront ajoutées à ton carnet.'}
           </Text>
         </ScrollView>
         <View style={styles.footer}>
@@ -464,9 +501,9 @@ export function CreateActivityView({
               </Text>
               {uncertain ? (
                 <Button
-                  label="Vérifier dans le carnet"
+                  label={isPlanned ? 'Vérifier le planning' : 'Vérifier dans le carnet'}
                   variant="secondary"
-                  onPress={() => onJournal()}
+                  onPress={isPlanned ? onPlanning : () => onJournal()}
                 />
               ) : null}
             </View>
@@ -481,8 +518,8 @@ export function CreateActivityView({
             </Text>
           ) : null}
           <Button
-            label="Enregistrer ma sortie"
-            loadingLabel="Enregistrement…"
+            label={isPlanned ? 'Planifier la séance' : 'Enregistrer ma sortie'}
+            loadingLabel={isPlanned ? 'Planification…' : 'Enregistrement…'}
             loading={saving}
             onPress={save}
           />

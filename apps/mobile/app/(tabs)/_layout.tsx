@@ -91,6 +91,10 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="action"
+        listeners={({ navigation }) => ({
+          tabPress: () =>
+            navigation.setParams({ date: undefined, status: undefined }),
+        })}
         options={{
           title: 'Ajouter',
           tabBarAccessibilityLabel: 'Action principale HOVREN',
@@ -113,16 +117,16 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="planning"
         options={{
-          title: 'Profil',
-          tabBarAccessibilityLabel: 'Ouvrir le Profil',
+          title: 'Planning',
+          tabBarAccessibilityLabel: 'Ouvrir le Planning',
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
-              activeName="person"
+              activeName="calendar"
               color={color}
               focused={focused}
-              inactiveName="person-outline"
+              inactiveName="calendar-outline"
             />
           ),
         }}

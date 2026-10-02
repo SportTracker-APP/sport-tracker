@@ -9,6 +9,7 @@ export type RefugeActivity = {
   description?: string | null;
   elevationGain?: number | null;
   id: string;
+  plannedWorkoutId?: string | null;
   routePolyline?: string | null;
   sport: string;
   startedAt: string;
